@@ -1,52 +1,264 @@
+/* ===== FONT IMPORT & RESET ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f7f7;
-    margin: 0;
-    padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
 }
 
+/* ===== HEADER SECTION ===== */
 header {
-    background-color: #004b8d;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
+  position: relative;
+  background: #333 url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')
+    center/cover;
+  color: #fff;
+  text-align: center;
+  padding: 100px 20px;  /* Increased padding for a larger gap */
 }
 
-.container {
-    max-width: 900px;
-    margin: 20px auto;
-    background: #fff;
-    padding: 30px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 0;
 }
 
-.profile {
-    text-align: center;
+header .header-content {
+  position: relative;
+  z-index: 1;
 }
 
-.profile img {
-    border-radius: 50%;
-    max-width: 150px;
-    margin-bottom: 20px;
+header h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
-h1, h2, h3 {
-    color: #333;
+header h2 {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 5px;
 }
 
+/* ===== MAIN CONTAINER ===== */
+.main-container {
+  max-width: 1100px;
+  margin: -40px auto 40px; /* Slight overlap but with clear gap */
+  background: #fff;
+  display: flex;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== LEFT COLUMN ===== */
+.left-column {
+  width: 35%;
+  background: #fafafa;
+  padding: 40px 20px;
+  border-right: 1px solid #eee;
+}
+
+.profile-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.profile-section img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.15);
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+.profile-section img:hover {
+  transform: scale(1.05);
+}
+
+.profile-section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+}
+
+.profile-section p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Info Boxes */
+.info-box {
+  margin-bottom: 30px;
+}
+
+.info-box h4 {
+  font-size: 1.1rem;
+  color: #004b8d;
+  margin-bottom: 10px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+/* ===== RIGHT COLUMN ===== */
+.right-column {
+  width: 65%;
+  padding: 40px 40px;
+}
+
+/* Section Titles */
 .section {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
 }
 
-.skill-list {
-    list-style: none;
-    padding: 0;
+.section h2 {
+  font-size: 1.3rem;
+  color: #004b8d;
+  text-transform: uppercase;
+  border-bottom: 2px solid #004b8d;
+  display: inline-block;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
 }
 
-.skill-list li {
-    background-color: #e0e0e0;
-    display: inline-block;
-    margin: 5px;
-    padding: 8px 12px;
-    border-radius: 4px;
+/* Profile Summary */
+.profile-summary {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* ===== DONUT SKILLS (BLACK THEME) ===== */
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.skill-item {
+  text-align: center;
+  width: 100px;
+}
+
+.skill-item .donut {
+  --percentage: 0deg; /* Updated by JS */
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(#000 var(--percentage), #ccc 0);
+  margin: 0 auto 10px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.skill-item .donut:hover {
+  transform: scale(1.05);
+}
+
+/* Donut hole */
+.skill-item .donut::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.skill-item .donut span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  color: #000;
+}
+
+/* ===== TIMELINE (Experience & Education) ===== */
+/* Adjusted so dates appear inside the right column */
+.timeline {
+  border-left: 2px solid #004b8d;
+  padding-left: 20px;
+  margin-top: 20px;
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.timeline-date {
+  width: 120px;
+  font-weight: bold;
+  color: #004b8d;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  padding-left: 20px;
+}
+
+.timeline-content h3 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #004b8d;
+}
+
+.timeline-content span {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.timeline-content p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 992px) {
+  .main-container {
+    flex-direction: column;
+    margin: 0 auto 40px;
+  }
+  .left-column, .right-column {
+    width: 100%;
+    border: none;
+  }
+  .right-column {
+    padding: 20px;
+  }
+  .timeline {
+    border-left: 2px solid #004b8d;
+    padding-left: 15px;
+  }
+  .timeline-date {
+    width: 100px;
+    font-size: 0.85rem;
+  }
 }
