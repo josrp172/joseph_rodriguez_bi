@@ -7,110 +7,123 @@
   box-sizing: border-box;
 }
 
+/* Global Styles */
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #f7f7f7;
+  background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
   color: #333;
+  scroll-behavior: smooth;
 }
 
-/* ===== HEADER SECTION ===== */
-header {
-  position: relative;
-  background: #333 url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')
-    center/cover;
-  color: #fff;
-  text-align: center;
-  padding: 100px 20px;  /* Increased padding for a larger gap */
+/* ===== NAVIGATION BAR ===== */
+nav {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 999;
 }
 
-header::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 0;
-}
-
-header .header-content {
-  position: relative;
-  z-index: 1;
-}
-
-header h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-header h2 {
-  font-size: 1.2rem;
-  font-weight: 300;
-  margin-bottom: 5px;
-}
-
-/* ===== MAIN CONTAINER ===== */
-.main-container {
-  max-width: 1100px;
-  margin: -40px auto 40px; /* Slight overlap but with clear gap */
-  background: #fff;
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  overflow: hidden;
-  animation: fadeIn 0.8s ease;
+  align-items: center;
+  padding: 0 20px;
+  height: 70px;
+  justify-content: space-between;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.nav-left h3 {
+  font-size: 1.4rem;
+  color: #004b8d;
 }
 
-/* ===== LEFT COLUMN ===== */
-.left-column {
-  width: 35%;
-  background: #fafafa;
-  padding: 40px 20px;
-  border-right: 1px solid #eee;
+.nav-right a {
+  margin-left: 25px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
 }
 
-.profile-section {
+.nav-right a:hover {
+  color: #004b8d;
+}
+
+/* ===== BANNER SECTION ===== */
+#banner {
+  background-color: #fff;
+  padding: 80px 20px;
   text-align: center;
   margin-bottom: 40px;
 }
 
-.profile-section img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 0 5px rgba(0,0,0,0.15);
-  margin-bottom: 15px;
-  transition: transform 0.3s ease;
+.header-content h1 {
+  font-size: 2.4rem;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.profile-section img:hover {
-  transform: scale(1.05);
-}
-
-.profile-section h3 {
-  font-size: 1.4rem;
+.header-content p {
+  font-size: 1.1rem;
+  color: #555;
   margin-bottom: 5px;
 }
 
-.profile-section p {
-  font-size: 0.9rem;
-  color: #666;
+/* ===== SECTION SEPARATOR ===== */
+.section-separator {
+  width: 100%;
+  height: 1px;
+  background: #eee;
+  margin: 40px 0;
+  animation: fadeIn 0.8s ease;
 }
 
-/* Info Boxes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MAIN CONTAINER (Experience & About) ===== */
+.main-container {
+  max-width: 1400px;
+  margin: 0 auto 60px;
+  background: #fff;
+  display: flex;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+  padding: 40px;
+  gap: 40px;
+}
+
+/* LEFT COLUMN */
+.left-column {
+  width: 35%;
+  padding: 20px;
+  border-right: 1px solid #eee;
+}
+
+.profile-section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #004b8d;
+}
+
+.profile-summary {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Education Info (optional) */
 .info-box {
   margin-bottom: 30px;
 }
 
 .info-box h4 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #004b8d;
   margin-bottom: 10px;
 }
@@ -118,14 +131,14 @@ header h2 {
 .info-item {
   display: flex;
   justify-content: space-between;
-  margin: 5px 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  margin: 6px 0;
 }
 
-/* ===== RIGHT COLUMN ===== */
+/* ===== RIGHT COLUMN (Skills + Timeline) ===== */
 .right-column {
   width: 65%;
-  padding: 40px 40px;
+  padding: 20px;
 }
 
 /* Section Titles */
@@ -134,27 +147,22 @@ header h2 {
 }
 
 .section h2 {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   color: #004b8d;
   text-transform: uppercase;
   border-bottom: 2px solid #004b8d;
   display: inline-block;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   padding-bottom: 5px;
 }
 
-/* Profile Summary */
-.profile-summary {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #555;
-}
-
-/* ===== DONUT SKILLS (BLACK THEME) ===== */
+/* ===== DONUT SKILLS (Black Theme) ===== */
 .skills {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
+  justify-content: center;
+  margin-bottom: 40px;
 }
 
 .skill-item {
@@ -163,7 +171,7 @@ header h2 {
 }
 
 .skill-item .donut {
-  --percentage: 0deg; /* Updated by JS */
+  --percentage: 0deg;
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -177,7 +185,6 @@ header h2 {
   transform: scale(1.05);
 }
 
-/* Donut hole */
 .skill-item .donut::before {
   content: "";
   position: absolute;
@@ -199,28 +206,40 @@ header h2 {
   color: #000;
 }
 
-/* ===== TIMELINE (Experience & Education) ===== */
-/* Adjusted so dates appear inside the right column */
+.skill-item p {
+  font-size: 0.9rem;
+}
+
+/* ===== TIMELINE ===== */
 .timeline {
   border-left: 2px solid #004b8d;
   padding-left: 20px;
   margin-top: 20px;
+  gap: 20px;
 }
 
 .timeline-item {
   display: flex;
+  align-items: flex-start;
   margin-bottom: 30px;
+  gap: 20px;
 }
 
 .timeline-date {
-  width: 120px;
+  width: 150px;
   font-weight: bold;
   color: #004b8d;
   flex-shrink: 0;
 }
 
-.timeline-content {
-  padding-left: 20px;
+.timeline-company {
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.timeline-company img {
+  width: 100%;
+  object-fit: contain;
 }
 
 .timeline-content h3 {
@@ -235,30 +254,153 @@ header h2 {
 }
 
 .timeline-content p {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #555;
   margin-top: 5px;
 }
 
+/* ===== PROJECTS SECTION ===== */
+#projects {
+  max-width: 1400px;
+  margin: 60px auto;
+  padding: 40px 20px;
+}
+
+.projects-header h2 {
+  font-size: 1.8rem;
+  color: #004b8d;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.projects-header p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.project-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.project-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.project-card h3 {
+  font-size: 1rem;
+  margin: 15px;
+  color: #333;
+}
+
+.project-card p {
+  font-size: 0.9rem;
+  margin: 0 15px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* ===== CONTACT SECTION ===== */
+#contact {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+#contact h2 {
+  font-size: 1.8rem;
+  color: #004b8d;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+#contact p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background-color: #fff;
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  margin-top: 60px;
+  border-top: 1px solid #eee;
+}
+
+footer p {
+  font-size: 0.95rem;
+}
+
 /* ===== RESPONSIVE ===== */
 @media screen and (max-width: 992px) {
-  .main-container {
+  .nav-container, .main-container, #projects {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  .timeline-item {
     flex-direction: column;
-    margin: 0 auto 40px;
+    align-items: flex-start;
   }
-  .left-column, .right-column {
+  .timeline-date, .timeline-company {
     width: 100%;
-    border: none;
   }
-  .right-column {
-    padding: 20px;
-  }
-  .timeline {
-    border-left: 2px solid #004b8d;
-    padding-left: 15px;
+}
+
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+  .timeline-item {
+    flex-direction: column;
   }
   .timeline-date {
-    width: 100px;
-    font-size: 0.85rem;
+    width: 100%;
+    margin-bottom: 5px;
   }
+  .timeline-content {
+    padding-left: 0;
+  }
+}
+
+/* Additional styling for the typed text effect */
+.typed-container {
+  display: inline;
+  color: #f44336; /* Red highlight for the typed roles */
+  font-weight: 600;
+}
+
+/* If you'd like a blinking cursor style (Typed.js provides one by default),
+   you can customize it like this: */
+.typed-cursor {
+  font-weight: 100;
+  color: #333;
+  animation: blink 0.7s infinite;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }

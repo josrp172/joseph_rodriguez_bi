@@ -8,49 +8,51 @@
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
+  <!-- ===== NAVIGATION BAR ===== -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-left">
+        <h3>Joseph Rodriguez</h3>
+      </div>
+      <div class="nav-right">
+        <a href="#banner">Home</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== BANNER / HEADER ===== -->
+  <header id="banner">
     <div class="header-content">
-      <h1>Joseph Ignacio Rodriguez</h1>
-      <h2>(He/Him) – Senior BI Engineer @ TeamHealth</h2>
+      <!-- Typed Banner -->
+      <h1>
+        Hi, I'm Joseph Rodriguez, a
+        <span class="typed-container" id="typed-roles"></span>
+      </h1>
+      <p>(He/Him) – Senior BI Engineer @ TeamHealth</p>
       <p>BI, Full Stack, RPA</p>
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <div class="main-container">
-    <!-- LEFT COLUMN -->
+  <!-- ===== SECTION SEPARATOR ===== -->
+  <div class="section-separator"></div>
+
+  <!-- ===== MAIN CONTAINER (Experience & About) ===== -->
+  <div class="main-container" id="experience">
+    <!-- LEFT COLUMN: About Me & Education -->
     <div class="left-column">
-      <!-- Profile Section -->
       <div class="profile-section">
-        <img src="/static/images/profile.png" alt="Profile Photo">
-        <h3>Joseph Ignacio Rodriguez</h3>
-        <p>Senior BI Engineer</p>
+        <h3>About Me</h3>
+        <p class="profile-summary">
+          Experienced IT professional specializing in Business Intelligence, Data Analysis, RPA, and Full Stack Development.
+          Skilled in migrating and optimizing reports using Tableau and Power BI, and creating intricate dashboards tailored to specific requirements.
+          Proficient in crafting interactive PowerApps solutions that ensure user-friendly interfaces and seamless experiences.
+          Collaborative and results-oriented, I translate complex data sets into actionable insights for key stakeholders.
+        </p>
       </div>
-      <!-- Personal Info -->
-      <div class="info-box">
-        <h4>Personal</h4>
-        <div class="info-item">
-          <strong>Name:</strong> <span>Joseph Ignacio Rodriguez</span>
-        </div>
-        <div class="info-item">
-          <strong>Pronouns:</strong> <span>He/Him</span>
-        </div>
-        <div class="info-item">
-          <strong>Location:</strong> <span>Metro Manila, NCR, Philippines</span>
-        </div>
-      </div>
-      <!-- Contact Info -->
-      <div class="info-box">
-        <h4>Contact</h4>
-        <div class="info-item">
-          <strong>Phone:</strong> <span>+63 912 345 6789</span>
-        </div>
-        <div class="info-item">
-          <strong>Email:</strong> <span>joseph@example.com</span>
-        </div>
-      </div>
-      <!-- Education Info (Brief) -->
+      <!-- Education Info -->
       <div class="info-box">
         <h4>Education</h4>
         <div class="info-item">
@@ -62,19 +64,8 @@
       </div>
     </div>
 
-    <!-- RIGHT COLUMN -->
+    <!-- RIGHT COLUMN: Skills & Timeline -->
     <div class="right-column">
-      <!-- Profile Summary -->
-      <div class="section">
-        <h2>About Me</h2>
-        <p class="profile-summary">
-          Experienced IT professional specializing in Business Intelligence, Data Analysis, RPA, and Full Stack Development.
-          Skilled in migrating and optimizing reports using Tableau and Power BI, and creating intricate dashboards tailored to specific requirements.
-          Proficient in crafting interactive PowerApps solutions that ensure user-friendly interfaces and seamless experiences.
-          Collaborative and results-oriented, I translate complex data sets into actionable insights for key stakeholders.
-        </p>
-      </div>
-
       <!-- Skills Section (Donut Charts) -->
       <div class="section">
         <h2>Technical Skills</h2>
@@ -116,33 +107,42 @@
       <div class="section">
         <h2>Experience</h2>
         <div class="timeline">
-          <!-- Senior BI Engineer at TeamHealth -->
+          <!-- Senior BI Engineer @ TeamHealth -->
           <div class="timeline-item">
             <div class="timeline-date">Jan 2024 - Present</div>
+            <div class="timeline-company">
+              <img src="/static/images/th.jpg" alt="TeamHealth">
+            </div>
             <div class="timeline-content">
               <h3>Senior BI Engineer @ TeamHealth</h3>
               <span>1 yr 2 mos</span>
               <p>
-                Spearheading BI initiatives at TeamHealth with a focus on migrating and optimizing reports using Tableau and Power BI.
+                Spearheading BI initiatives with a focus on migrating and optimizing reports using Tableau and Power BI.
                 Developing interactive dashboards and PowerApps solutions that drive business insights.
               </p>
             </div>
           </div>
-          <!-- Consultant Team Lead at NCS Group -->
+          <!-- Consultant Team Lead @ NCS Group -->
           <div class="timeline-item">
             <div class="timeline-date">May 2023 - Jan 2024</div>
+            <div class="timeline-company">
+              <img src="/static/images/ncs.jpg" alt="NCS Group">
+            </div>
             <div class="timeline-content">
               <h3>Consultant Team Lead @ NCS Group</h3>
               <span>9 mos</span>
               <p>
                 Led and mentored a team of BI analysts.
-                Migrated home-grown reports to enterprise-grade workflows and collaborated closely with data engineering teams.
+                Migrated home-grown reports to enterprise workflows and collaborated closely with data engineering teams.
               </p>
             </div>
           </div>
           <!-- Application Consultant - BI -->
           <div class="timeline-item">
             <div class="timeline-date">Dec 2021 - Apr 2023</div>
+            <div class="timeline-company">
+              <!-- Optionally add an image if available -->
+            </div>
             <div class="timeline-content">
               <h3>Application Consultant - BI</h3>
               <span>1 yr 5 mos</span>
@@ -152,9 +152,12 @@
               </p>
             </div>
           </div>
-          <!-- Business Intelligence Developer at Unilab, Inc. -->
+          <!-- Business Intelligence Developer @ Unilab, Inc. -->
           <div class="timeline-item">
             <div class="timeline-date">May 2020 - Dec 2021</div>
+            <div class="timeline-company">
+              <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
+            </div>
             <div class="timeline-content">
               <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
               <span>1 yr 8 mos</span>
@@ -163,9 +166,12 @@
               </p>
             </div>
           </div>
-          <!-- Full Stack Developer at Ubiquity -->
+          <!-- Full Stack Developer @ Ubiquity -->
           <div class="timeline-item">
             <div class="timeline-date">Feb 2020 - May 2020</div>
+            <div class="timeline-company">
+              <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
+            </div>
             <div class="timeline-content">
               <h3>Full Stack Developer @ Ubiquity</h3>
               <span>4 mos</span>
@@ -174,9 +180,12 @@
               </p>
             </div>
           </div>
-          <!-- Software Engineer at Globe Telecom -->
+          <!-- Software Engineer @ Globe Telecom -->
           <div class="timeline-item">
             <div class="timeline-date">Sep 2018 - Feb 2020</div>
+            <div class="timeline-company">
+              <img src="/static/images/globe.jpg" alt="Globe Telecom">
+            </div>
             <div class="timeline-content">
               <h3>Software Engineer @ Globe Telecom</h3>
               <span>1 yr 6 mos</span>
@@ -185,9 +194,12 @@
               </p>
             </div>
           </div>
-          <!-- Software Engineer Intern at Jump Digital Asia -->
+          <!-- Software Engineer Intern @ Jump Digital Asia -->
           <div class="timeline-item">
             <div class="timeline-date">Oct 2017 - Apr 2018</div>
+            <div class="timeline-company">
+              <!-- No company image provided -->
+            </div>
             <div class="timeline-content">
               <h3>Software Engineer Intern @ Jump Digital Asia</h3>
               <span>7 mos</span>
@@ -198,24 +210,70 @@
           </div>
         </div>
       </div>
-
-      <!-- Education Timeline -->
-      <div class="section">
-        <h2>Education</h2>
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-date">2014 - 2018</div>
-            <div class="timeline-content">
-              <h3>Bachelors, Computer Science</h3>
-              <p>Technological Institute of the Philippines<br>Graduated with Distinction/Honours</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- ===== SECTION SEPARATOR ===== -->
+  <div class="section-separator"></div>
+
+  <!-- ===== PROJECTS SECTION ===== -->
+  <section id="projects">
+    <div class="projects-header">
+      <h2>Projects</h2>
+      <p>Some personal & professional projects I've worked on:</p>
+    </div>
+    <div class="projects-grid">
+      <!-- Project Card 1 -->
+      <div class="project-card">
+        <img src="https://via.placeholder.com/400x150" alt="Project 1">
+        <h3>Project One</h3>
+        <p>
+          A short description of this project. It includes interesting features and technologies.
+        </p>
+      </div>
+      <!-- Project Card 2 -->
+      <div class="project-card">
+        <img src="https://via.placeholder.com/400x150" alt="Project 2">
+        <h3>Project Two</h3>
+        <p>
+          Another cool project with a different tech stack. Created innovative solutions and overcame challenges.
+        </p>
+      </div>
+      <!-- Project Card 3 -->
+      <div class="project-card">
+        <img src="https://via.placeholder.com/400x150" alt="Project 3">
+        <h3>Project Three</h3>
+        <p>
+          Demonstration of advanced data visualization or full stack development using modern frameworks.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION SEPARATOR ===== -->
+  <div class="section-separator"></div>
+
+  <!-- ===== CONTACT SECTION ===== -->
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <p>
+      Feel free to reach out for inquiries or collaborations!
+    </p>
+    <p style="font-weight:600;">Name: Joseph Ignacio Rodriguez (He/Him)</p>
+    <p style="font-weight:600;">Location: Metro Manila, NCR, Philippines</p>
+    <p style="font-weight:600;">Phone: +63 912 345 6789</p>
+    <p style="font-weight:600;">Email: joseph@example.com</p>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>© 2023 Joseph Rodriguez. All rights reserved.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <!-- 1) Typed.js library -->
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <!-- 2) Custom scripts -->
   <script src="/static/js/scripts.js"></script>
 </body>
 </html>
