@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="/static/css/style.css">
   <!-- AOS CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+
 </head>
 <body>
   <!-- ===== NAVIGATION BAR ===== -->
@@ -377,6 +379,29 @@
 </section>
 
 
+<!-- ===== CHATBOX SECTION ===== -->
+  <!-- Floating Chat Button -->
+  <div class="chat-button" onclick="toggleChat()">
+    <img src="/static/images/chat-icon.png" alt="Chat Icon" style="width:24px; height:24px;">
+  </div>
+  <!-- Chatbox -->
+  <div class="chatbox" id="chatbox">
+    <div class="chatbox-header">
+      <span>Chat with me</span>
+      <button class="chatbox-close" onclick="closeChat()">×</button>
+
+    </div>
+    <div class="chatbox-body">
+      <div class="chat-message bot-message">
+        <img src="/static/images/profile.png" alt="Bot Avatar" class="bot-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+        <span>Hello! How can I help you today?</span>
+      </div>
+    </div>
+    <div class="chatbox-footer">
+      <input type="text" id="chat-input" placeholder="Type a message..." />
+      <button onclick="sendMessageAndResponse()">Send</button>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer data-aos="fade-up">

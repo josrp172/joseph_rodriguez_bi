@@ -604,6 +604,138 @@ footer p {
   background: #003c7a;
 }
 
+/* ---------- Chatbox CSS ---------- */
+
+/* Floating Chat Button */
+.chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #004b8d;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+
+/* Chatbox Container */
+.chatbox {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 350px;
+  height: 400px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: none; /* Initially hidden; toggle with JS */
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* Chatbox Header */
+.chatbox-header {
+  background: #004b8d;
+  color: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Chatbox Close Button */
+.chatbox-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.chatbox-body {
+  padding: 10px;
+  flex: 1;
+  overflow-y: auto;
+  /* Ensure a max-height is set so overflow works */
+  max-height: 300px; /* adjust as needed */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;  /* Changed from center to flex-start */
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  max-width: 80%;
+}
+/* User Message Styles */
+.user-message {
+  background-color: #e0f7fa;
+  align-self: flex-end;
+}
+
+.bot-message {
+  background-color: #f1f1f1;
+  align-self: flex-start;
+  align-items: flex-start; /* Ensure content aligns to the top */
+}
+
+/* Bot Avatar */
+.bot-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Chatbox Footer (Input & Button) */
+.chatbox-footer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.chatbox-footer input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+}
+
+.chatbox-footer button {
+  background: #004b8d;
+  color: #fff;
+  border: none;
+  margin-left: 8px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.chatbox-footer button:hover {
+  background: #003c7a;
+}
+
+
+
+
+
+
 /* Additional styling for the typed text effect */
 .typed-container {
   display: inline;
