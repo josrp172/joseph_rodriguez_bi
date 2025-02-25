@@ -385,7 +385,6 @@ nav {
 
 /* ===== CONTACT SECTION ===== */
 #contact {
-  max-width: 600px;
   margin: 60px auto;
   padding: 60px 20px;
   text-align: center;
@@ -731,9 +730,119 @@ footer p {
   background: #003c7a;
 }
 
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+/* Project Card Basic Styles */
+.project-card {
+  position: relative; /* needed for the badge positioning */
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
+}
+
+.project-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.project-card h3 {
+  font-size: 1rem;
+  margin: 15px;
+  color: #333;
+}
+
+.project-card p {
+  font-size: 0.9rem;
+  margin: 0 15px 15px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* Category Badge - positioned at the top right */
+.project-category {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #004b8d;  /* default color, override with classes below */
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* Color-coded category badges */
+.project-category.powerbi {
+  background-color: #0078d7;
+}
+.project-category.tableau {
+  background-color: #e97627;
+}
+.project-category.other {
+  background-color: #6c757d;
+}
+
+/* Filter Buttons for Projects */
+#project-filters {
+  margin-bottom: 20px;
+}
+
+#project-filters .filter-btn {
+  background-color: #fff;
+  color: #004b8d;
+  border: 1px solid #004b8d;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#project-filters .filter-btn:hover,
+#project-filters .filter-btn.active {
+  background-color: #004b8d;
+  color: #fff;
+}
 
 
+/* Contact Section Container */
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
 
+/* Left and Right Columns */
+.contact-left, .contact-right {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Vertical Separator */
+.separator {
+  width: 2px;
+  background: #ccc;
+  margin: 0 20px;
+}
 
 
 /* Additional styling for the typed text effect */

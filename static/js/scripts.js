@@ -20,6 +20,29 @@ document.addEventListener("DOMContentLoaded", () => {
       once: true
     });
   }
+   // Project Filter Buttons Functionality
+  const filterButtons = document.querySelectorAll('#project-filters .filter-btn');
+  const projectCards = document.querySelectorAll('.projects-grid .project-card');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons, add to clicked one
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      const filterValue = button.getAttribute('data-filter').toLowerCase();
+
+      projectCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category').toLowerCase();
+        if (filterValue === 'all' || cardCategory === filterValue) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
 });
 
 document.querySelectorAll('.experience-item').forEach(item => {
@@ -197,4 +220,5 @@ document.getElementById('chat-input').addEventListener('keypress', function(e) {
     e.preventDefault();
     sendMessageAndResponse();
   }
+
 });

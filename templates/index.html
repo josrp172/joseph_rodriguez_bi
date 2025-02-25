@@ -9,7 +9,6 @@
   <!-- AOS CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
-
 </head>
 <body>
   <!-- ===== NAVIGATION BAR ===== -->
@@ -86,62 +85,62 @@
 
     <!-- RIGHT COLUMN: Skills & Experience -->
     <div class="right-column">
- <!-- Technical Skills Section: Progress Bars with Tool Icons in One Row -->
-<div class="section" data-aos="fade-up">
-  <h2>Technical Skills</h2>
-  <div class="progress-skills">
-    <div class="progress-skill">
-      <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: 90%;"></div>
+      <!-- Technical Skills Section: Progress Bars with Tool Icons in One Row -->
+      <div class="section" data-aos="fade-up">
+        <h2>Technical Skills</h2>
+        <div class="progress-skills">
+          <div class="progress-skill">
+            <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 90%;"></div>
+              </div>
+              <span class="progress-percentage">90%</span>
+            </div>
+            <p>Tableau</p>
+          </div>
+          <div class="progress-skill">
+            <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 85%;"></div>
+              </div>
+              <span class="progress-percentage">85%</span>
+            </div>
+            <p>Power BI</p>
+          </div>
+          <div class="progress-skill">
+            <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 80%;"></div>
+              </div>
+              <span class="progress-percentage">80%</span>
+            </div>
+            <p>SQL</p>
+          </div>
+          <div class="progress-skill">
+            <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 75%;"></div>
+              </div>
+              <span class="progress-percentage">75%</span>
+            </div>
+            <p>RPA</p>
+          </div>
+          <div class="progress-skill">
+            <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 70%;"></div>
+              </div>
+              <span class="progress-percentage">70%</span>
+            </div>
+            <p>Full Stack</p>
+          </div>
         </div>
-        <span class="progress-percentage">90%</span>
       </div>
-      <p>Tableau</p>
-    </div>
-    <div class="progress-skill">
-      <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: 85%;"></div>
-        </div>
-        <span class="progress-percentage">85%</span>
-      </div>
-      <p>Power BI</p>
-    </div>
-    <div class="progress-skill">
-      <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: 80%;"></div>
-        </div>
-        <span class="progress-percentage">80%</span>
-      </div>
-      <p>SQL</p>
-    </div>
-    <div class="progress-skill">
-      <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: 75%;"></div>
-        </div>
-        <span class="progress-percentage">75%</span>
-      </div>
-      <p>RPA</p>
-    </div>
-    <div class="progress-skill">
-      <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar-container">
-          <div class="progress-bar" style="width: 70%;"></div>
-        </div>
-        <span class="progress-percentage">70%</span>
-      </div>
-      <p>Full Stack</p>
-    </div>
-  </div>
-</div>
       <!-- Experience Section with Horizontal Separators -->
       <div class="section" data-aos="fade-up">
         <h2>Experience</h2>
@@ -255,33 +254,43 @@
   <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-  <!-- PROJECTS SECTION -->
+  <!-- PROJECTS SECTION with Filter Buttons and Right-Aligned Category Badge -->
   <section id="projects" data-aos="fade-up">
-    <div class="projects-header" style="text-align:center; margin-bottom:40px;">
-      <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:20px;">Projects</h2>
+    <div class="projects-header" style="text-align:center; margin-bottom:20px;">
+      <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:10px;">Projects</h2>
       <p style="color: #555;">Some personal & professional projects I've worked on:</p>
     </div>
+
+    <!-- Filter Buttons -->
+    <div id="project-filters" style="text-align:center; margin-bottom:30px;">
+      <button class="filter-btn" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="powerbi">Power BI</button>
+      <button class="filter-btn" data-filter="tableau">Tableau</button>
+      <button class="filter-btn" data-filter="other">Other</button>
+    </div>
+
+    <!-- Projects Grid -->
     <div class="projects-grid">
-      <div class="project-card">
+      <!-- Example Project Card for Tableau -->
+      <div class="project-card" data-category="tableau">
+        <div class="project-category">Tableau</div>
         <img src="https://placehold.co/400x150" alt="Project 1">
         <h3>Project One</h3>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
-        </p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       </div>
-      <div class="project-card">
+      <!-- Example Project Card for Power BI -->
+      <div class="project-card" data-category="powerbi">
+        <div class="project-category">Power BI</div>
         <img src="https://placehold.co/400x150" alt="Project 2">
         <h3>Project Two</h3>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
-        </p>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
       </div>
-      <div class="project-card">
+      <!-- Example Project Card for Other -->
+      <div class="project-card" data-category="other">
+        <div class="project-category">Other</div>
         <img src="https://placehold.co/400x150" alt="Project 3">
         <h3>Project Three</h3>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
-        </p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
       </div>
     </div>
   </section>
@@ -289,123 +298,168 @@
   <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-<!-- CONTACT SECTION - Two Columns on a White Background -->
-<section id="contact" style="background: #fff; color: #333; padding: 60px 20px;">
-  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px;">
-    <!-- Left Column: Heading + Description -->
-    <div style="flex: 1; min-width: 280px;">
-      <h2 style="font-size: 2rem; margin-bottom: 10px;">Let’s Talk</h2>
-      <p style="margin-bottom: 30px; font-size: 1rem; color: #555;">
-        Have a question or a project in mind? Feel free to reach out. I’d love to hear from you and discuss how we can work together.
-      </p>
-    </div>
-
-    <!-- Right Column: Contact Form -->
-    <div style="flex: 1; min-width: 280px;">
-      <form style="display: flex; flex-direction: column; gap: 20px;">
-        <div>
-          <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Your Name"
-            style="
-              width: 100%;
-              padding: 12px;
-              border: 1px solid #ccc;
-              border-radius: 4px;
-              color: #333;
-            "
-            required
-          />
-        </div>
-
-        <div>
-          <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="you@example.com"
-            style="
-              width: 100%;
-              padding: 12px;
-              border: 1px solid #ccc;
-              border-radius: 4px;
-              color: #333;
-            "
-            required
-          />
-        </div>
-
-        <div>
-          <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="5"
-            placeholder="Your Message"
-            style="
-              width: 100%;
-              padding: 12px;
-              border: 1px solid #ccc;
-              border-radius: 4px;
-              color: #333;
-              resize: vertical;
-            "
-            required
-          ></textarea>
-        </div>
-
-        <button
-          type="submit"
+<!-- CONTACT SECTION - Two Columns (Same Structure as About/Experience) -->
+<div class="main-container" id="contact" data-aos="fade-up" style="
+  margin: 0 auto 60px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  padding: 40px;
+  display: flex;
+  gap: 40px;
+">
+  <!-- LEFT COLUMN: "Let’s Talk" & Contact Form -->
+  <div class="left-column" style="width: 35%; padding: 20px; border-right: 1px solid #eee;">
+    <h2 style="font-size: 1.6rem; color: #004b8d; margin-bottom: 20px;">Let’s Talk</h2>
+    <p style="font-size: 1rem; line-height: 1.8; color: #555; margin-bottom: 20px;">
+      Have a question or a project in mind? Feel free to reach out. I’d love to hear from you and discuss how we can work together.
+    </p>
+    <form style="display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your Name"
           style="
-            align-self: flex-start;
-            background: #004b8d;
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
+            color: #333;
           "
-        >
-          Submit
-        </button>
-      </form>
+          required
+        />
+      </div>
+      <div>
+        <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          style="
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+          "
+          required
+        />
+      </div>
+      <div>
+        <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="5"
+          placeholder="Your Message"
+          style="
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            color: #333;
+            resize: vertical;
+          "
+          required
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        style="
+          align-self: flex-start;
+          background: #004b8d;
+          color: #fff;
+          border: none;
+          padding: 14px 28px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+        "
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+
+  <!-- RIGHT COLUMN: "Chat with My AI Persona" Card -->
+  <div class="right-column" style="width: 65%; padding: 20px;">
+    <h2 style="font-size: 1.6rem; color: #004b8d; margin-bottom: 20px;">Chat with My AI Persona</h2>
+    <p style="font-size: 1rem; line-height: 1.8; color: #555; margin-bottom: 20px;">
+      Prefer a conversational approach? Use the chatbox to interact with my AI persona for personalized assistance and instant responses.
+    </p>
+    <div style="
+      border: 1px solid #ccc;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    ">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+        <img
+          src="/static/images/profile.jpg"
+          alt="AI Persona"
+          style="
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+          "
+        />
+        <span style="font-weight: bold; color: #004b8d; font-size: 1.1rem;">My AI Persona</span>
+      </div>
+      <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">
+        Get quick answers and personalized assistance by chatting with my AI persona.
+      </p>
+      <button
+        onclick="toggleChat()"
+        style="
+          background: #004b8d;
+          color: #fff;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+        "
+      >
+        Open Chat
+      </button>
     </div>
   </div>
+</div>
 </section>
 
+<!-- ===== FLOATING CHATBOX (Single Instance) ===== -->
+<!-- Floating Chat Button -->
+<div class="chat-button" onclick="toggleChat()">
+  <img src="/static/images/chat-icon.png" alt="Chat Icon" style="width:24px; height:24px;">
+</div>
 
-<!-- ===== CHATBOX SECTION ===== -->
-  <!-- Floating Chat Button -->
-  <div class="chat-button" onclick="toggleChat()">
-    <img src="/static/images/chat-icon.png" alt="Chat Icon" style="width:24px; height:24px;">
+<!-- Chatbox (Floating, Single Instance) -->
+<div class="chatbox" id="chatbox">
+  <div class="chatbox-header">
+    <span>Chat with my AI Persona</span>
+    <button class="chatbox-close" onclick="closeChat()">×</button>
   </div>
-  <!-- Chatbox -->
-  <div class="chatbox" id="chatbox">
-    <div class="chatbox-header">
-      <span>Chat with my AI Persona</span>
-      <button class="chatbox-close" onclick="closeChat()">×</button>
-
-    </div>
-    <div class="chatbox-body">
-      <div class="chat-message bot-message">
-        <img src="/static/images/profile.jpg" alt="Bot Avatar" class="bot-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
-        <span>Hello! How can I help you today?</span>
-      </div>
-    </div>
-    <div class="chatbox-footer">
-      <input type="text" id="chat-input" placeholder="Type a message..." />
-      <button onclick="sendMessageAndResponse()">Send</button>
+  <div class="chatbox-body">
+    <div class="chat-message bot-message">
+      <img src="/static/images/profile.jpg" alt="Bot Avatar" class="bot-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+      <span>Hello! How can I help you today?</span>
     </div>
   </div>
+  <div class="chatbox-footer">
+    <input type="text" id="chat-input" placeholder="Type a message..." />
+    <button onclick="sendMessageAndResponse()">Send</button>
+  </div>
+</div>
+
 
   <!-- FOOTER -->
   <footer data-aos="fade-up">
-    <p style="font-size:0.95rem; text-align:center;">© 2023 Joseph Rodriguez. All rights reserved.</p>
+    <p style="font-size:0.95rem; text-align:center;">© 2025 Joseph Rodriguez. All rights reserved.</p>
   </footer>
 
   <!-- SCRIPTS -->
@@ -438,12 +492,14 @@
         typedEl.style.color = colors[arrayPos] || '#000';
       }
     });
+
     // Initialize AOS
     AOS.init({
       duration: 800,
       once: true
     });
-    // Optional: GSAP hover animation for project cards (if desired)
+
+    // GSAP hover animation for project cards (optional)
     document.querySelectorAll('.project-card').forEach(card => {
       card.addEventListener('mouseenter', () => {
         gsap.to(card, { scale: 1.05, duration: 0.3 });
