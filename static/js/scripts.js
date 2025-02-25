@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Clear any saved chat context on a fresh load
   localStorage.removeItem('chatContext');
 
+
+
+
   // Initialize donut skill arcs
   const donuts = document.querySelectorAll('.donut');
   donuts.forEach(donut => {
@@ -130,7 +133,7 @@ async function sendMessageAndResponse() {
   botMsgDiv.classList.add('chat-message', 'bot-message');
 
   const botAvatar = document.createElement('img');
-  botAvatar.src = '/static/images/profile.png'; // Use your profile pic as bot avatar
+  botAvatar.src = '/static/images/profile.jpg'; // Use your profile pic as bot avatar
   botAvatar.alt = 'Bot Avatar';
   botAvatar.classList.add('bot-avatar');
 
