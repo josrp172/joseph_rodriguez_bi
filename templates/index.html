@@ -6,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- CSS -->
   <link rel="stylesheet" href="/static/css/style.css">
+  <!-- AOS CSS via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 </head>
 <body>
+
+
   <!-- ===== NAVIGATION BAR ===== -->
   <nav>
     <div class="nav-container">
@@ -23,10 +27,9 @@
     </div>
   </nav>
 
-  <!-- ===== BANNER / HEADER ===== -->
-  <header id="banner">
+ <!-- ===== BANNER / HEADER ===== -->
+  <header id="banner" data-aos="fade-down">
     <div class="header-content">
-      <!-- Typed Banner -->
       <h1>
         Hi, I'm Joseph Rodriguez, a
         <span class="typed-container" id="typed-roles"></span>
@@ -37,37 +40,54 @@
   </header>
 
   <!-- ===== SECTION SEPARATOR ===== -->
-  <div class="section-separator"></div>
+  <div class="section-separator" data-aos="fade-up"></div>
 
   <!-- ===== MAIN CONTAINER (Experience & About) ===== -->
-  <div class="main-container" id="experience">
+  <div class="main-container" id="experience" data-aos="fade-up">
     <!-- LEFT COLUMN: About Me & Education -->
     <div class="left-column">
-      <div class="profile-section">
+      <!-- About Me row with centered profile picture -->
+      <div class="about-me-row">
+        <img src="/static/images/profile.png" alt="Profile Photo" class="profile-pic">
         <h3>About Me</h3>
-        <p class="profile-summary">
-          Experienced IT professional specializing in Business Intelligence, Data Analysis, RPA, and Full Stack Development.
-          Skilled in migrating and optimizing reports using Tableau and Power BI, and creating intricate dashboards tailored to specific requirements.
-          Proficient in crafting interactive PowerApps solutions that ensure user-friendly interfaces and seamless experiences.
-          Collaborative and results-oriented, I translate complex data sets into actionable insights for key stakeholders.
-        </p>
       </div>
-      <!-- Education Info -->
+      <p class="profile-summary">
+        Experienced IT professional specializing in
+        <span class="highlight">Business Intelligence</span>,
+        <span class="highlight">Data Analysis</span>,
+        <span class="highlight">RPA</span>, and
+        <span class="highlight">Full Stack Development</span>.
+        Skilled in migrating and optimizing reports using Tableau and Power BI,
+        creating intricate dashboards tailored to specific requirements.
+        Proficient in crafting interactive PowerApps solutions for user-friendly interfaces
+        and seamless experiences. Collaborative and results‑oriented,
+        I translate complex data sets into actionable insights for key stakeholders.
+      </p>
+      <!-- Education Table -->
       <div class="info-box">
         <h4>Education</h4>
-        <div class="info-item">
-          <strong>Institute:</strong> <span>Technological Institute of the Philippines</span>
-        </div>
-        <div class="info-item">
-          <strong>Degree:</strong> <span>Bachelors, Computer Science (2014-2018)</span>
-        </div>
+        <table class="education-table">
+          <tr>
+            <td rowspan="2" style="width:60px; text-align:center;">
+              <img src="/static/images/tip_c.png" alt="TIP Logo" class="school-logo">
+            </td>
+            <td>
+              <strong>Institute:</strong> Technological Institute of the Philippines
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Degree:</strong> Bachelors, Computer Science (2014-2018)
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
 
-    <!-- RIGHT COLUMN: Skills & Timeline -->
+    <!-- RIGHT COLUMN: Skills & Experience -->
     <div class="right-column">
       <!-- Skills Section (Donut Charts) -->
-      <div class="section">
+      <div class="section" data-aos="fade-up">
         <h2>Technical Skills</h2>
         <div class="skills">
           <div class="skill-item">
@@ -103,17 +123,17 @@
         </div>
       </div>
 
-      <!-- Experience Timeline -->
-      <div class="section">
+      <!-- Experience Section -->
+      <div class="section" data-aos="fade-up">
         <h2>Experience</h2>
-        <div class="timeline">
-          <!-- Senior BI Engineer @ TeamHealth -->
-          <div class="timeline-item">
-            <div class="timeline-date">Jan 2024 - Present</div>
-            <div class="timeline-company">
+        <div class="experience-list">
+          <!-- Experience Item 1: Senior BI Engineer @ TeamHealth -->
+          <div class="experience-item">
+            <div class="experience-company">
               <img src="/static/images/th.jpg" alt="TeamHealth">
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">Jan 2024 - Present</div>
               <h3>Senior BI Engineer @ TeamHealth</h3>
               <span>1 yr 2 mos</span>
               <p>
@@ -122,28 +142,28 @@
               </p>
             </div>
           </div>
-          <!-- Consultant Team Lead @ NCS Group -->
-          <div class="timeline-item">
-            <div class="timeline-date">May 2023 - Jan 2024</div>
-            <div class="timeline-company">
+          <!-- Experience Item 2: Consultant Team Lead @ NCS Group -->
+          <div class="experience-item">
+            <div class="experience-company">
               <img src="/static/images/ncs.jpg" alt="NCS Group">
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">May 2023 - Jan 2024</div>
               <h3>Consultant Team Lead @ NCS Group</h3>
               <span>9 mos</span>
               <p>
-                Led and mentored a team of BI analysts.
-                Migrated home-grown reports to enterprise workflows and collaborated closely with data engineering teams.
+                Led and mentored a team of BI analysts. Migrated home-grown reports to enterprise workflows and collaborated
+                closely with data engineering teams.
               </p>
             </div>
           </div>
-          <!-- Application Consultant - BI -->
-          <div class="timeline-item">
-            <div class="timeline-date">Dec 2021 - Apr 2023</div>
-            <div class="timeline-company">
-              <!-- Optionally add an image if available -->
+          <!-- Experience Item 3: Application Consultant - BI -->
+          <div class="experience-item">
+            <div class="experience-company">
+              <!-- No company image -->
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">Dec 2021 - Apr 2023</div>
               <h3>Application Consultant - BI</h3>
               <span>1 yr 5 mos</span>
               <p>
@@ -152,13 +172,13 @@
               </p>
             </div>
           </div>
-          <!-- Business Intelligence Developer @ Unilab, Inc. -->
-          <div class="timeline-item">
-            <div class="timeline-date">May 2020 - Dec 2021</div>
-            <div class="timeline-company">
+          <!-- Experience Item 4: Business Intelligence Developer @ Unilab, Inc. -->
+          <div class="experience-item">
+            <div class="experience-company">
               <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">May 2020 - Dec 2021</div>
               <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
               <span>1 yr 8 mos</span>
               <p>
@@ -166,13 +186,13 @@
               </p>
             </div>
           </div>
-          <!-- Full Stack Developer @ Ubiquity -->
-          <div class="timeline-item">
-            <div class="timeline-date">Feb 2020 - May 2020</div>
-            <div class="timeline-company">
+          <!-- Experience Item 5: Full Stack Developer @ Ubiquity -->
+          <div class="experience-item">
+            <div class="experience-company">
               <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">Feb 2020 - May 2020</div>
               <h3>Full Stack Developer @ Ubiquity</h3>
               <span>4 mos</span>
               <p>
@@ -180,13 +200,13 @@
               </p>
             </div>
           </div>
-          <!-- Software Engineer @ Globe Telecom -->
-          <div class="timeline-item">
-            <div class="timeline-date">Sep 2018 - Feb 2020</div>
-            <div class="timeline-company">
+          <!-- Experience Item 6: Software Engineer @ Globe Telecom -->
+          <div class="experience-item">
+            <div class="experience-company">
               <img src="/static/images/globe.jpg" alt="Globe Telecom">
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">Sep 2018 - Feb 2020</div>
               <h3>Software Engineer @ Globe Telecom</h3>
               <span>1 yr 6 mos</span>
               <p>
@@ -194,13 +214,13 @@
               </p>
             </div>
           </div>
-          <!-- Software Engineer Intern @ Jump Digital Asia -->
-          <div class="timeline-item">
-            <div class="timeline-date">Oct 2017 - Apr 2018</div>
-            <div class="timeline-company">
-              <!-- No company image provided -->
+          <!-- Experience Item 7: Software Engineer Intern @ Jump Digital Asia -->
+          <div class="experience-item">
+            <div class="experience-company">
+              <!-- No company image -->
             </div>
-            <div class="timeline-content">
+            <div class="experience-details">
+              <div class="experience-date">Oct 2017 - Apr 2018</div>
               <h3>Software Engineer Intern @ Jump Digital Asia</h3>
               <span>7 mos</span>
               <p>
@@ -214,16 +234,15 @@
   </div>
 
   <!-- ===== SECTION SEPARATOR ===== -->
-  <div class="section-separator"></div>
+  <div class="section-separator" data-aos="fade-up"></div>
 
   <!-- ===== PROJECTS SECTION ===== -->
-  <section id="projects">
-    <div class="projects-header">
-      <h2>Projects</h2>
-      <p>Some personal & professional projects I've worked on:</p>
+  <section id="projects" data-aos="fade-up">
+    <div class="projects-header" style="text-align:center; margin-bottom:40px;">
+      <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:20px;">Projects</h2>
+      <p style="color: #555;">Some personal & professional projects I've worked on:</p>
     </div>
     <div class="projects-grid">
-      <!-- Project Card 1 -->
       <div class="project-card">
         <img src="https://via.placeholder.com/400x150" alt="Project 1">
         <h3>Project One</h3>
@@ -231,7 +250,6 @@
           A short description of this project. It includes interesting features and technologies.
         </p>
       </div>
-      <!-- Project Card 2 -->
       <div class="project-card">
         <img src="https://via.placeholder.com/400x150" alt="Project 2">
         <h3>Project Two</h3>
@@ -239,7 +257,6 @@
           Another cool project with a different tech stack. Created innovative solutions and overcame challenges.
         </p>
       </div>
-      <!-- Project Card 3 -->
       <div class="project-card">
         <img src="https://via.placeholder.com/400x150" alt="Project 3">
         <h3>Project Three</h3>
@@ -251,29 +268,98 @@
   </section>
 
   <!-- ===== SECTION SEPARATOR ===== -->
-  <div class="section-separator"></div>
+  <div class="section-separator" data-aos="fade-up"></div>
 
   <!-- ===== CONTACT SECTION ===== -->
-  <section id="contact">
-    <h2>Contact Me</h2>
-    <p>
+  <section id="contact" data-aos="fade-up">
+    <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:20px; text-align:center;">Contact Me</h2>
+    <p style="color: #555; margin-bottom:20px; text-align:center;">
       Feel free to reach out for inquiries or collaborations!
     </p>
-    <p style="font-weight:600;">Name: Joseph Ignacio Rodriguez (He/Him)</p>
-    <p style="font-weight:600;">Location: Metro Manila, NCR, Philippines</p>
-    <p style="font-weight:600;">Phone: +63 912 345 6789</p>
-    <p style="font-weight:600;">Email: joseph@example.com</p>
+    <p style="font-weight:600; text-align:center;">Name: Joseph Ignacio Rodriguez (He/Him)</p>
+    <p style="font-weight:600; text-align:center;">Location: Metro Manila, NCR, Philippines</p>
+    <p style="font-weight:600; text-align:center;">Phone: +63 912 345 6789</p>
+    <p style="font-weight:600; text-align:center;">Email: joseph@example.com</p>
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer>
-    <p>© 2023 Joseph Rodriguez. All rights reserved.</p>
+  <footer data-aos="fade-up">
+    <p style="font-size:0.95rem; text-align:center;">© 2023 Joseph Rodriguez. All rights reserved.</p>
   </footer>
 
-  <!-- Scripts -->
-  <!-- 1) Typed.js library -->
+  <!-- ===== SCRIPTS ===== -->
+  <!-- Typed.js library via CDN -->
   <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
-  <!-- 2) Custom scripts -->
+  <!-- AOS library via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <!-- GSAP library via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+  <!-- Custom scripts -->
   <script src="/static/js/scripts.js"></script>
+  <script>
+    // Initialize Typed.js with preStringTyped to set color before typing begins
+    new Typed('#typed-roles', {
+      strings: [
+        'BI Developer',
+        'RPA Developer',
+        'Full Stack Developer'
+      ],
+      typeSpeed: 70,
+      backSpeed: 50,
+      backDelay: 1500,
+      startDelay: 500,
+      loop: true,
+      showCursor: true,
+      cursorChar: '|',
+      preStringTyped: function(arrayPos, self) {
+        const colors = ['red', 'green', 'blue'];
+        const typedEl = document.querySelector('#typed-roles');
+        typedEl.style.color = colors[arrayPos] || '#000';
+      }
+    });
+    // Initialize AOS
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+      // Example GSAP Animation for a smooth entrance of sections
+      gsap.from(".header-content", { duration: 1, y: -50, opacity: 0, ease: "power2.out" });
+      gsap.from(".about-me-row", { duration: 1, x: -50, opacity: 0, ease: "power2.out", delay: 0.5 });
+      gsap.from(".experience-item", { duration: 1, x: 50, opacity: 0, ease: "power2.out", stagger: 0.2, delay: 1 });
+      gsap.from(".project-card", { duration: 1, scale: 0.8, opacity: 0, ease: "back.out(1.7)", stagger: 0.2, delay: 1.5 });
+
+       // GSAP: Loading Animation
+      window.addEventListener("load", function() {
+        // Animate the loader overlay out
+        gsap.to("#loader", { duration: 1, opacity: 0, ease: "power1.out", onComplete: () => {
+          document.getElementById("loader").style.display = "none";
+        }});
+      });
+
+      // GSAP: Background Animation (example: animate a gradient)
+      gsap.to("#bg-animation", {
+        backgroundPosition: "200% 200%",
+        duration: 20,
+        repeat: -1,
+        ease: "none"
+      });
+
+      // Wait until the page is fully loaded
+    window.addEventListener("load", () => {
+      // Create a GSAP timeline with a total delay of 5 seconds
+      gsap.timeline()
+        // Optionally animate the spinner (rotate continuously)
+        .to(".loader-spinner", { duration: 5, rotation: 360 * 5, ease: "none" })
+        // Then fade out the loader (after 5 seconds)
+        .to("#loader", { duration: 1, opacity: 0, ease: "power1.out", onComplete: () => {
+            document.getElementById("loader").style.display = "none";
+          }
+        }, "-=0.5")
+        // Simultaneously fade in the main content
+        .to("#main-content", { duration: 1, opacity: 1 }, "-=0.5");
+    });
+
+  </script>
 </body>
 </html>

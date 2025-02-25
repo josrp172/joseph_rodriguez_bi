@@ -1,13 +1,54 @@
 /* ===== FONT IMPORT & RESET ===== */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
+/* Loader Overlay */
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Loader Spinner */
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #004b8d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Fallback spinner animation (in case GSAP doesn't override) */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Background Animation Container */
+#bg-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #e0f7fa, #ffffff, #e0f7fa);
+  background-size: 400% 400%;
+  z-index: -1;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Global Styles */
 body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
@@ -76,12 +117,6 @@ nav {
   height: 1px;
   background: #eee;
   margin: 40px 0;
-  animation: fadeIn 0.8s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== MAIN CONTAINER (Experience & About) ===== */
@@ -89,11 +124,10 @@ nav {
   max-width: 1400px;
   margin: 0 auto 60px;
   background: #fff;
-  display: flex;
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  overflow: hidden;
   padding: 40px;
+  display: flex;
   gap: 40px;
 }
 
@@ -104,10 +138,31 @@ nav {
   border-right: 1px solid #eee;
 }
 
-.profile-section h3 {
+/* About Me row: picture & heading in one row */
+.about-me-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.about-me-row img.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.15);
+}
+.about-me-row h3 {
   font-size: 1.6rem;
-  margin-bottom: 10px;
   color: #004b8d;
+  margin: 0;
+}
+
+
+.highlight:hover {
+  transform: scale(1.1);
+  color: darkred;
 }
 
 .profile-summary {
@@ -117,25 +172,24 @@ nav {
   margin-bottom: 20px;
 }
 
-/* Education Info (optional) */
-.info-box {
-  margin-bottom: 30px;
+/* Education table: first column merged for the logo, second column for text */
+.education-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.education-table td,
+.education-table th {
+  padding: 8px;
+  vertical-align: middle;
+}
+.education-table img.school-logo {
+  width: 50px;
+  height: auto;
+  object-fit: contain;
 }
 
-.info-box h4 {
-  font-size: 1.2rem;
-  color: #004b8d;
-  margin-bottom: 10px;
-}
-
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.95rem;
-  margin: 6px 0;
-}
-
-/* ===== RIGHT COLUMN (Skills + Timeline) ===== */
+/* ===== RIGHT COLUMN (Skills & Experience) ===== */
 .right-column {
   width: 65%;
   padding: 20px;
@@ -210,50 +264,58 @@ nav {
   font-size: 0.9rem;
 }
 
-/* ===== TIMELINE ===== */
-.timeline {
-  border-left: 2px solid #004b8d;
-  padding-left: 20px;
-  margin-top: 20px;
-  gap: 20px;
-}
-
-.timeline-item {
+/* ===== EXPERIENCE ===== */
+/* No vertical line or circle markers; just line separators between companies */
+.experience-list {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 30px;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.experience-item {
+  display: flex;
   gap: 20px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee; /* line separator at bottom */
+}
+.experience-item:last-child {
+  border-bottom: none;
 }
 
-.timeline-date {
-  width: 150px;
-  font-weight: bold;
-  color: #004b8d;
+.experience-company {
+  width: 60px;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
-
-.timeline-company {
-  width: 50px;
-  flex-shrink: 0;
-}
-
-.timeline-company img {
+.experience-company img {
   width: 100%;
   object-fit: contain;
 }
 
-.timeline-content h3 {
+.experience-details {
+  flex: 1;
+}
+
+.experience-date {
+  font-weight: bold;
+  color: #004b8d;
+  margin-bottom: 5px;
+}
+
+.experience-details h3 {
   font-size: 1rem;
   margin-bottom: 5px;
   color: #004b8d;
 }
 
-.timeline-content span {
+.experience-details span {
   font-size: 0.8rem;
   color: #666;
 }
 
-.timeline-content p {
+.experience-details p {
   font-size: 0.95rem;
   color: #555;
   margin-top: 5px;
@@ -362,29 +424,38 @@ footer p {
     max-width: 100%;
     padding: 0 10px;
   }
-  .timeline-item {
+  .about-me-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .education-table td,
+  .education-table th {
+    display: block;
+    width: 100%;
+  }
+  .experience-item {
     flex-direction: column;
     align-items: flex-start;
   }
-  .timeline-date, .timeline-company {
-    width: 100%;
+  .experience-company {
+    margin-bottom: 10px;
   }
 }
 
+.highlight {
+  color: red;
+  animation: glow 2s ease-in-out infinite alternate;
+}
 
-/* ===== RESPONSIVE ===== */
-@media screen and (max-width: 768px) {
-  .timeline-item {
-    flex-direction: column;
+@keyframes glow {
+  from {
+    text-shadow: 0 0 2px red;
   }
-  .timeline-date {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-  .timeline-content {
-    padding-left: 0;
+  to {
+    text-shadow: 0 0 2px red;
   }
 }
+
 
 /* Additional styling for the typed text effect */
 .typed-container {
