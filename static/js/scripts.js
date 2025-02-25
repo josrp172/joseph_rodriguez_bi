@@ -47,3 +47,23 @@ document.querySelectorAll('.timeline-company img').forEach(logo => {
     gsap.to(logo, { duration: 0.3, boxShadow: 'none' });
   });
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.highlight').forEach(el => {
+    const text = el.textContent;
+    el.innerHTML = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === ' ') {
+        // Append a regular space text node
+        el.appendChild(document.createTextNode(' '));
+      } else {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.animationDelay = `${i * 0.1}s`;
+        el.appendChild(span);
+      }
+    }
+  });
+});

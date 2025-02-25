@@ -10,8 +10,6 @@
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 </head>
 <body>
-
-
   <!-- ===== NAVIGATION BAR ===== -->
   <nav>
     <div class="nav-container">
@@ -27,9 +25,10 @@
     </div>
   </nav>
 
- <!-- ===== BANNER / HEADER ===== -->
+  <!-- ===== BANNER / HEADER ===== -->
   <header id="banner" data-aos="fade-down">
     <div class="header-content">
+      <!-- Typed Banner -->
       <h1>
         Hi, I'm Joseph Rodriguez, a
         <span class="typed-container" id="typed-roles"></span>
@@ -46,7 +45,7 @@
   <div class="main-container" id="experience" data-aos="fade-up">
     <!-- LEFT COLUMN: About Me & Education -->
     <div class="left-column">
-      <!-- About Me row with centered profile picture -->
+      <!-- Row with Profile Picture & "About Me" heading -->
       <div class="about-me-row">
         <img src="/static/images/profile.png" alt="Profile Photo" class="profile-pic">
         <h3>About Me</h3>
@@ -63,7 +62,6 @@
         and seamless experiences. Collaborative and results‑oriented,
         I translate complex data sets into actionable insights for key stakeholders.
       </p>
-      <!-- Education Table -->
       <div class="info-box">
         <h4>Education</h4>
         <table class="education-table">
@@ -86,48 +84,67 @@
 
     <!-- RIGHT COLUMN: Skills & Experience -->
     <div class="right-column">
-      <!-- Skills Section (Donut Charts) -->
-      <div class="section" data-aos="fade-up">
-        <h2>Technical Skills</h2>
-        <div class="skills">
-          <div class="skill-item">
-            <div class="donut" data-percent="90">
-              <span></span>
-            </div>
-            <p>Tableau</p>
-          </div>
-          <div class="skill-item">
-            <div class="donut" data-percent="85">
-              <span></span>
-            </div>
-            <p>Power BI</p>
-          </div>
-          <div class="skill-item">
-            <div class="donut" data-percent="80">
-              <span></span>
-            </div>
-            <p>SQL</p>
-          </div>
-          <div class="skill-item">
-            <div class="donut" data-percent="75">
-              <span></span>
-            </div>
-            <p>RPA</p>
-          </div>
-          <div class="skill-item">
-            <div class="donut" data-percent="70">
-              <span></span>
-            </div>
-            <p>Full Stack</p>
-          </div>
+ <!-- Technical Skills Section: Progress Bars with Tool Icons in One Row -->
+<div class="section" data-aos="fade-up">
+  <h2>Technical Skills</h2>
+  <div class="progress-skills">
+    <div class="progress-skill">
+      <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 90%;"></div>
         </div>
+        <span class="progress-percentage">90%</span>
       </div>
-
-      <!-- Experience Section -->
+      <p>Tableau</p>
+    </div>
+    <div class="progress-skill">
+      <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 85%;"></div>
+        </div>
+        <span class="progress-percentage">85%</span>
+      </div>
+      <p>Power BI</p>
+    </div>
+    <div class="progress-skill">
+      <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 80%;"></div>
+        </div>
+        <span class="progress-percentage">80%</span>
+      </div>
+      <p>SQL</p>
+    </div>
+    <div class="progress-skill">
+      <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 75%;"></div>
+        </div>
+        <span class="progress-percentage">75%</span>
+      </div>
+      <p>RPA</p>
+    </div>
+    <div class="progress-skill">
+      <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: 70%;"></div>
+        </div>
+        <span class="progress-percentage">70%</span>
+      </div>
+      <p>Full Stack</p>
+    </div>
+  </div>
+</div>
+      <!-- Experience Section with Horizontal Separators -->
       <div class="section" data-aos="fade-up">
         <h2>Experience</h2>
         <div class="experience-list">
-          <!-- Experience Item 1: Senior BI Engineer @ TeamHealth -->
+          <!-- Experience Item 1 -->
           <div class="experience-item">
             <div class="experience-company">
               <img src="/static/images/th.jpg" alt="TeamHealth">
@@ -142,7 +159,7 @@
               </p>
             </div>
           </div>
-          <!-- Experience Item 2: Consultant Team Lead @ NCS Group -->
+          <!-- Experience Item 2 -->
           <div class="experience-item">
             <div class="experience-company">
               <img src="/static/images/ncs.jpg" alt="NCS Group">
@@ -157,7 +174,7 @@
               </p>
             </div>
           </div>
-          <!-- Experience Item 3: Application Consultant - BI -->
+          <!-- Experience Item 3 -->
           <div class="experience-item">
             <div class="experience-company">
               <!-- No company image -->
@@ -167,12 +184,12 @@
               <h3>Application Consultant - BI</h3>
               <span>1 yr 5 mos</span>
               <p>
-                Delivered robust BI solutions using Tableau and Power BI.
-                Engaged in requirement analysis, dashboard development, and performance optimizations.
+                Delivered robust BI solutions using Tableau and Power BI. Engaged in requirement analysis, dashboard
+                development, and performance optimizations.
               </p>
             </div>
           </div>
-          <!-- Experience Item 4: Business Intelligence Developer @ Unilab, Inc. -->
+          <!-- Experience Item 4 -->
           <div class="experience-item">
             <div class="experience-company">
               <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
@@ -186,7 +203,7 @@
               </p>
             </div>
           </div>
-          <!-- Experience Item 5: Full Stack Developer @ Ubiquity -->
+          <!-- Experience Item 5 -->
           <div class="experience-item">
             <div class="experience-company">
               <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
@@ -200,7 +217,7 @@
               </p>
             </div>
           </div>
-          <!-- Experience Item 6: Software Engineer @ Globe Telecom -->
+          <!-- Experience Item 6 -->
           <div class="experience-item">
             <div class="experience-company">
               <img src="/static/images/globe.jpg" alt="Globe Telecom">
@@ -214,7 +231,7 @@
               </p>
             </div>
           </div>
-          <!-- Experience Item 7: Software Engineer Intern @ Jump Digital Asia -->
+          <!-- Experience Item 7 -->
           <div class="experience-item">
             <div class="experience-company">
               <!-- No company image -->
@@ -233,10 +250,10 @@
     </div>
   </div>
 
-  <!-- ===== SECTION SEPARATOR ===== -->
+  <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-  <!-- ===== PROJECTS SECTION ===== -->
+  <!-- PROJECTS SECTION -->
   <section id="projects" data-aos="fade-up">
     <div class="projects-header" style="text-align:center; margin-bottom:40px;">
       <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:20px;">Projects</h2>
@@ -244,57 +261,136 @@
     </div>
     <div class="projects-grid">
       <div class="project-card">
-        <img src="https://via.placeholder.com/400x150" alt="Project 1">
+        <img src="https://placehold.co/400x150" alt="Project 1">
         <h3>Project One</h3>
         <p>
-          A short description of this project. It includes interesting features and technologies.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
         </p>
       </div>
       <div class="project-card">
-        <img src="https://via.placeholder.com/400x150" alt="Project 2">
+        <img src="https://placehold.co/400x150" alt="Project 2">
         <h3>Project Two</h3>
         <p>
-          Another cool project with a different tech stack. Created innovative solutions and overcame challenges.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
         </p>
       </div>
       <div class="project-card">
-        <img src="https://via.placeholder.com/400x150" alt="Project 3">
+        <img src="https://placehold.co/400x150" alt="Project 3">
         <h3>Project Three</h3>
         <p>
-          Demonstration of advanced data visualization or full stack development using modern frameworks.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse sapien.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ===== SECTION SEPARATOR ===== -->
+  <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-  <!-- ===== CONTACT SECTION ===== -->
-  <section id="contact" data-aos="fade-up">
-    <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:20px; text-align:center;">Contact Me</h2>
-    <p style="color: #555; margin-bottom:20px; text-align:center;">
-      Feel free to reach out for inquiries or collaborations!
-    </p>
-    <p style="font-weight:600; text-align:center;">Name: Joseph Ignacio Rodriguez (He/Him)</p>
-    <p style="font-weight:600; text-align:center;">Location: Metro Manila, NCR, Philippines</p>
-    <p style="font-weight:600; text-align:center;">Phone: +63 912 345 6789</p>
-    <p style="font-weight:600; text-align:center;">Email: joseph@example.com</p>
-  </section>
+<!-- CONTACT SECTION - Two Columns on a White Background -->
+<section id="contact" style="background: #fff; color: #333; padding: 60px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px;">
+    <!-- Left Column: Heading + Description -->
+    <div style="flex: 1; min-width: 280px;">
+      <h2 style="font-size: 2rem; margin-bottom: 10px;">Let’s Talk</h2>
+      <p style="margin-bottom: 30px; font-size: 1rem; color: #555;">
+        Have a question or a project in mind? Feel free to reach out. I’d love to hear from you and discuss how we can work together.
+      </p>
+    </div>
 
-  <!-- ===== FOOTER ===== -->
+    <!-- Right Column: Contact Form -->
+    <div style="flex: 1; min-width: 280px;">
+      <form style="display: flex; flex-direction: column; gap: 20px;">
+        <div>
+          <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your Name"
+            style="
+              width: 100%;
+              padding: 12px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              color: #333;
+            "
+            required
+          />
+        </div>
+
+        <div>
+          <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            style="
+              width: 100%;
+              padding: 12px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              color: #333;
+            "
+            required
+          />
+        </div>
+
+        <div>
+          <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="5"
+            placeholder="Your Message"
+            style="
+              width: 100%;
+              padding: 12px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              color: #333;
+              resize: vertical;
+            "
+            required
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          style="
+            align-self: flex-start;
+            background: #004b8d;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+          "
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- FOOTER -->
   <footer data-aos="fade-up">
     <p style="font-size:0.95rem; text-align:center;">© 2023 Joseph Rodriguez. All rights reserved.</p>
   </footer>
 
-  <!-- ===== SCRIPTS ===== -->
-  <!-- Typed.js library via CDN -->
+  <!-- SCRIPTS -->
+  <!-- Typed.js via CDN -->
   <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
-  <!-- AOS library via CDN -->
+  <!-- AOS via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <!-- GSAP library via CDN -->
+  <!-- GSAP via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
-  <!-- Custom scripts -->
+  <!-- Custom Scripts -->
   <script src="/static/js/scripts.js"></script>
   <script>
     // Initialize Typed.js with preStringTyped to set color before typing begins
@@ -322,44 +418,15 @@
       duration: 800,
       once: true
     });
-
-      // Example GSAP Animation for a smooth entrance of sections
-      gsap.from(".header-content", { duration: 1, y: -50, opacity: 0, ease: "power2.out" });
-      gsap.from(".about-me-row", { duration: 1, x: -50, opacity: 0, ease: "power2.out", delay: 0.5 });
-      gsap.from(".experience-item", { duration: 1, x: 50, opacity: 0, ease: "power2.out", stagger: 0.2, delay: 1 });
-      gsap.from(".project-card", { duration: 1, scale: 0.8, opacity: 0, ease: "back.out(1.7)", stagger: 0.2, delay: 1.5 });
-
-       // GSAP: Loading Animation
-      window.addEventListener("load", function() {
-        // Animate the loader overlay out
-        gsap.to("#loader", { duration: 1, opacity: 0, ease: "power1.out", onComplete: () => {
-          document.getElementById("loader").style.display = "none";
-        }});
+    // Optional: GSAP hover animation for project cards (if desired)
+    document.querySelectorAll('.project-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, { scale: 1.05, duration: 0.3 });
       });
-
-      // GSAP: Background Animation (example: animate a gradient)
-      gsap.to("#bg-animation", {
-        backgroundPosition: "200% 200%",
-        duration: 20,
-        repeat: -1,
-        ease: "none"
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { scale: 1, duration: 0.3 });
       });
-
-      // Wait until the page is fully loaded
-    window.addEventListener("load", () => {
-      // Create a GSAP timeline with a total delay of 5 seconds
-      gsap.timeline()
-        // Optionally animate the spinner (rotate continuously)
-        .to(".loader-spinner", { duration: 5, rotation: 360 * 5, ease: "none" })
-        // Then fade out the loader (after 5 seconds)
-        .to("#loader", { duration: 1, opacity: 0, ease: "power1.out", onComplete: () => {
-            document.getElementById("loader").style.display = "none";
-          }
-        }, "-=0.5")
-        // Simultaneously fade in the main content
-        .to("#main-content", { duration: 1, opacity: 1 }, "-=0.5");
     });
-
   </script>
 </body>
 </html>

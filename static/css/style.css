@@ -444,18 +444,165 @@ footer p {
 
 .highlight {
   color: red;
-  animation: glow 2s ease-in-out infinite alternate;
+  animation: subtleShineWhite 3s ease-in-out infinite;
 }
 
-@keyframes glow {
-  from {
-    text-shadow: 0 0 2px red;
+@keyframes subtleShineWhite {
+  0%, 100% {
+    text-shadow: 0 0 1px white;
   }
-  to {
-    text-shadow: 0 0 2px red;
+  50% {
+    text-shadow: 0 0 3px white;
   }
 }
 
+/* ---------- Technical Skills: Progress Bars with Tool Icons in One Row ---------- */
+.progress-skills {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-wrap: nowrap; /* all in one row */
+}
+
+.progress-skill {
+  width: 180px; /* adjust as needed */
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.progress-skill:hover {
+  transform: scale(1.05);
+}
+
+.progress-skill .skill-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+  transition: filter 0.3s ease;
+  object-fit: contain;
+}
+
+.progress-skill:hover .skill-icon {
+  filter: brightness(1.2);
+}
+
+/* Wrapper for progress bar + percentage text */
+.progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Progress Bar Container */
+.progress-bar-container {
+  position: relative;
+  flex: 1;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 14px;
+  margin-right: 8px;
+}
+
+/* Progress Bar with shiny overlay */
+.progress-bar {
+  position: relative;
+  height: 100%;
+  background: #004b8d;
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+/* Shiny overlay on the progress bar */
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-25deg);
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  from { left: -100%; }
+  to { left: 100%; }
+}
+
+/* Percentage text to the right */
+.progress-percentage {
+  font-size: 0.9rem;
+  color: #004b8d;
+  font-weight: bold;
+}
+
+/* ---------- Projects Section GSAP Hover (if not already applied) ---------- */
+/* (The project card hover effect can be applied via JS, but we also add a fallback transition) */
+.project-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Contact Section Layout */
+#contact {
+  background: #fff;
+  color: #333;
+  padding: 60px 20px;
+}
+
+#contact .contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+/* Left Column */
+#contact .left-column {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Right Column (Form) */
+#contact .right-column {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Form Elements */
+#contact form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#contact input,
+#contact textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: #333;
+}
+
+#contact button[type="submit"] {
+  align-self: flex-start;
+  background: #004b8d;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#contact button[type="submit"]:hover {
+  background: #003c7a;
+}
 
 /* Additional styling for the typed text effect */
 .typed-container {
