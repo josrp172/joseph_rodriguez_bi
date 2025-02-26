@@ -215,6 +215,14 @@ nav {
   margin-bottom: 20px;
 }
 
+.profile-summary {
+  margin-bottom: 20px !important;
+}
+
+.info-box {
+  margin-top: 20px !important;
+}
+
 /* Education table: first column merged for the logo, second column for text */
 .education-table {
   width: 100%;
@@ -658,11 +666,90 @@ footer p {
   to { left: 100%; }
 }
 
-/* Percentage text to the right */
-.progress-percentage {
-  font-size: 0.9rem;
+.progress-rating {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.progress-rating .segment {
+  width: 20px;
+  height: 20px;
+  background: #eee;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-rating .segment.filled {
+  background: #004b8d;
+}
+
+.progress-rating .segment.filled::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
+  animation: shine 6s linear infinite;
+}
+
+/* Sequential delays for each segment */
+.progress-rating .segment:nth-child(1).filled::before {
+  animation-delay: 0s;
+}
+.progress-rating .segment:nth-child(2).filled::before {
+  animation-delay: 0.25s;
+}
+.progress-rating .segment:nth-child(3).filled::before {
+  animation-delay: 0.5s;
+}
+.progress-rating .segment:nth-child(4).filled::before {
+  animation-delay: 0.75s;
+}
+.progress-rating .segment:nth-child(5).filled::before {
+  animation-delay: 1s;
+}
+
+/* Faster shine keyframes:
+   - 0% to 30%: no shine.
+   - 30% to 40%: shine quickly crosses.
+   - 40% to 100%: no shine.
+*/
+@keyframes shine {
+  0%, 30% {
+    left: -100%;
+    opacity: 0;
+  }
+  35% {
+    left: 0%;
+    opacity: 1;
+  }
+  40% {
+    left: 100%;
+    opacity: 1;
+  }
+  41%, 100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.rating-label {
+  display: block;
+  font-size: 0.7rem;
   color: #004b8d;
-  font-weight: bold;
+  font-weight: normal;
+  margin-top: 2px;
+}
+
+#typed-about {
+  display: inline;
+}
+.typed-cursor {
+  display: inline;
 }
 
 /* ---------- Projects Section GSAP Hover (if not already applied) ---------- */
@@ -690,6 +777,7 @@ footer p {
 #contact .left-column {
   flex: 1;
   min-width: 280px;
+
 }
 
 /* Right Column (Form) */
@@ -1180,4 +1268,76 @@ footer p {
 @keyframes blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
+}
+
+/* Apply pulsating box-shadow effect for the entire left column in the contact section */
+#contact .left-column:hover {
+  animation: pulsateLeft 1.5s infinite;
+}
+
+/* Ensure the right column has a transparent border initially */
+#contact .right-column {
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+/* When hovering over the right column, animate the border color */
+#contact .right-column:hover {
+  animation: pulsateRight 1.5s infinite;
+}
+
+/* Keyframes for left column pulsating effect (box-shadow) */
+@keyframes pulsateLeft {
+  0% {
+    box-shadow: 0 0 5px rgba(0,75,141,0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0,75,141,1);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0,75,141,0.5);
+  }
+}
+
+/* Keyframes for left column pulsating effect (box-shadow) */
+@keyframes pulsateRight {
+  0% {
+    box-shadow: 0 0 5px rgba(0,75,141,0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0,75,141,1);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(0,75,141,0.5);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }

@@ -5,7 +5,67 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.removeItem('chatContext');
 
 
+// Make sure the "typed-about" element is empty before starting
+// Ensure the container is empty
+document.getElementById('typed-about').innerHTML = "";
 
+new Typed('#typed-about', {
+  strings: [
+    "Experienced IT professional specializing in <span class='highlight'>Business Intelligence</span>, <span class='highlight'>Data Analysis</span>, <span class='highlight'>RPA</span>, and <span class='highlight'>Full Stack Development</span>. Skilled in migrating and optimizing reports using Tableau and Power BI, creating intricate dashboards tailored to specific requirements. Proficient in crafting interactive PowerApps solutions for user-friendly interfaces and seamless experiences. Collaborative and results‑oriented, I translate complex data sets into actionable insights for key stakeholders."
+  ],
+  typeSpeed: 0.5,
+  startDelay: 100,
+  showCursor: true,
+  cursorChar: '|',
+  loop: false,
+  contentType: 'html'
+});
+
+
+const filterButtons = document.querySelectorAll('#project-filters .filter-btn');
+const projectCards = document.querySelectorAll('.projects-grid .project-card');
+
+filterButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Remove active class from all buttons and add to the clicked one
+    filterButtons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+
+    const filterValue = button.getAttribute('data-filter').toLowerCase();
+
+    projectCards.forEach(card => {
+      // If a previous animation timeout exists, clear it
+      if (card.animationTimeout) {
+        clearTimeout(card.animationTimeout);
+        card.animationTimeout = null;
+      }
+
+      // Remove any existing animation classes so we start fresh
+      card.classList.remove('fade-in', 'fade-out');
+
+      const cardCategory = card.getAttribute('data-category').toLowerCase();
+
+      if (filterValue === 'all' || cardCategory === filterValue) {
+        // Show the card (reset inline display) and add fade-in
+        card.style.display = '';
+        card.classList.add('fade-in');
+        // Remove fade-in after animation completes (500ms)
+        card.animationTimeout = setTimeout(() => {
+          card.classList.remove('fade-in');
+          card.animationTimeout = null;
+        }, 500);
+      } else {
+        // Add fade-out animation to hide the card
+        card.classList.add('fade-out');
+        card.animationTimeout = setTimeout(() => {
+          card.style.display = 'none';
+          card.classList.remove('fade-out');
+          card.animationTimeout = null;
+        }, 500);
+      }
+    });
+  });
+});
 
   /* ------------------------------ */
   /* 2. Navigation Smooth Scroll    */
@@ -70,22 +130,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ------------------------------ */
-  /* 6. Project Filter Functionality */
-  /* ------------------------------ */
-  const filterButtons = document.querySelectorAll('#project-filters .filter-btn');
-  const projectCards = document.querySelectorAll('.projects-grid .project-card');
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      const filterValue = button.getAttribute('data-filter').toLowerCase();
-      projectCards.forEach(card => {
-        const cardCategory = card.getAttribute('data-category').toLowerCase();
-        card.style.display = (filterValue === 'all' || cardCategory === filterValue) ? 'block' : 'none';
-      });
-    });
+// Animate the 1-5 rating indicators for Technical Skills sequentially
+document.querySelectorAll('.progress-rating').forEach(rating => {
+  const level = parseInt(rating.getAttribute('data-level'));
+  const segments = rating.querySelectorAll('.segment');
+  segments.forEach((segment, index) => {
+    if (index < level) {
+      setTimeout(() => {
+        segment.classList.add('filled');
+      }, index * 300); // 300ms delay between each segment fill
+    }
   });
+});
+
+  document.querySelectorAll('.progress-rating').forEach(rating => {
+  const level = parseInt(rating.getAttribute('data-level'));
+  let labelText = '';
+  switch(level) {
+    case 1: labelText = 'Beginner'; break;
+    case 2: labelText = 'Novice'; break;
+    case 3: labelText = 'Intermediate'; break;
+    case 4: labelText = 'Advanced'; break;
+    case 5: labelText = 'Expert'; break;
+    default: labelText = '';
+  }
+  const labelEl = rating.parentElement.querySelector('.rating-label');
+  if (labelEl) {
+    labelEl.textContent = labelText;
+  }
+});
 
   /* ------------------------------ */
   /* 7. Experience Item Animations  */

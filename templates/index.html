@@ -58,7 +58,7 @@
         <img src="/static/images/profile.jpg" alt="Profile Photo" class="profile-pic">
         <h3>About Me</h3>
       </div>
-      <p class="profile-summary">
+      <p class="profile-summary" id="typed-about">
         Experienced IT professional specializing in
         <span class="highlight">Business Intelligence</span>,
         <span class="highlight">Data Analysis</span>,
@@ -114,58 +114,73 @@
       <!-- Technical Skills Section: Progress Bars with Tool Icons in One Row -->
       <div class="section" data-aos="fade-up">
         <h2>Technical Skills</h2>
-        <div class="progress-skills">
-          <div class="progress-skill">
-            <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 90%;"></div>
-              </div>
-              <span class="progress-percentage">90%</span>
-            </div>
-            <p>Tableau</p>
-          </div>
-          <div class="progress-skill">
-            <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 85%;"></div>
-              </div>
-              <span class="progress-percentage">85%</span>
-            </div>
-            <p>Power BI</p>
-          </div>
-          <div class="progress-skill">
-            <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 80%;"></div>
-              </div>
-              <span class="progress-percentage">80%</span>
-            </div>
-            <p>SQL</p>
-          </div>
-          <div class="progress-skill">
-            <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 75%;"></div>
-              </div>
-              <span class="progress-percentage">75%</span>
-            </div>
-            <p>RPA</p>
-          </div>
-          <div class="progress-skill">
-            <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
-            <div class="progress-bar-wrapper">
-              <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 70%;"></div>
-              </div>
-              <span class="progress-percentage">70%</span>
-            </div>
-            <p>Full Stack</p>
-          </div>
-        </div>
+<div class="progress-skills">
+  <!-- Tableau Skill (Expert - level 5) -->
+  <div class="progress-skill">
+    <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
+    <div class="progress-rating" data-level="5">
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+    </div>
+    <span class="rating-label">Expert</span>
+    <p>Tableau</p>
+  </div>
+  <!-- Power BI Skill (Advanced - level 4) -->
+  <div class="progress-skill">
+    <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
+    <div class="progress-rating" data-level="4">
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+    </div>
+    <span class="rating-label">Advanced</span>
+    <p>Power BI</p>
+  </div>
+  <!-- SQL Skill (Advanced - level 4) -->
+  <div class="progress-skill">
+    <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
+    <div class="progress-rating" data-level="4">
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+    </div>
+    <span class="rating-label">Advanced</span>
+    <p>SQL</p>
+  </div>
+  <!-- RPA Skill (Intermediate - level 3) -->
+  <div class="progress-skill">
+    <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
+    <div class="progress-rating" data-level="3">
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+    </div>
+    <span class="rating-label">Intermediate</span>
+    <p>RPA</p>
+  </div>
+  <!-- Full Stack Skill (Intermediate - level 3) -->
+  <div class="progress-skill">
+    <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
+    <div class="progress-rating" data-level="3">
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+      <div class="segment"></div>
+    </div>
+    <span class="rating-label">Intermediate</span>
+    <p>Full Stack</p>
+  </div>
+</div>
       </div>
 
       <!-- EXPERIENCE SECTION -->
