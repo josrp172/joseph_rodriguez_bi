@@ -485,6 +485,7 @@
         ></textarea>
       </div>
       <button
+        id="submit-btn"
         type="submit"
         style="
           align-self: flex-start;
@@ -515,22 +516,18 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
     ">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-        <img
-          src="/static/images/profile.jpg"
-          alt="AI Persona"
-          style="
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-          "
-        />
+        <!-- AI Persona Image with Speaking Effect -->
+<div class="speaking-container">
+  <img src="/static/images/profile.jpg" alt="AI Persona" class="ai-avatar" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+   <div class="speaking-effect"></div>
+</div>
         <span style="font-weight: bold; color: #004b8d; font-size: 1.1rem;">My AI Persona</span>
       </div>
       <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">
         Get quick answers and personalized assistance by chatting with my AI persona.
       </p>
       <button
+              id="open-chat-btn"
         onclick="toggleChat()"
         style="
           background: #004b8d;

@@ -963,6 +963,32 @@ footer p {
   min-width: 300px;
 }
 
+/* Default Button Styling */
+#open-chat-btn,
+#submit-btn {
+  background-color: #004b8d;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Hover Effect */
+#open-chat-btn:hover,
+#submit-btn:hover {
+  background-color: #002b5c !important; /* Darker blue */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Click Effect */
+#open-chat-btn:active,
+#submit-btn:active {
+  transform: scale(0.95); /* Slight press-down effect */
+}
+
 /* Vertical Separator */
 .separator {
   width: 2px;
@@ -1066,6 +1092,49 @@ footer p {
   pointer-events: none;
   transform: translate(-50%, -50%) scale(0);
   opacity: 1;
+}
+
+/* AI Persona Speaking Effect - Always Visible */
+.speaking-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Upper-Left Floating Speaking Effect */
+.speaking-effect {
+  position: absolute;
+  top: -5px; /* Adjust for fine-tuning */
+  left: -10px; /* Adjust for fine-tuning */
+  width: 10px;
+  height: 10px;
+  background: rgba(0, 75, 141, 0.9);
+  border-radius: 50%;
+  opacity: 1;
+  animation: pulse-animation 1.5s infinite ease-in-out;
+}
+
+/* Pulsing Effect for Speaking */
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Contact Section - Button Hover Effect */
+.contact-right button:hover,
+.contact-left button:hover {
+  background-color: #002b5c !important;
+  transform: scale(1.05);
+  transition: 0.3s ease-in-out;
 }
 
 

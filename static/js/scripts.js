@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
   /* ------------------------------ */
   /* 2. Navigation Smooth Scroll    */
   /* ------------------------------ */
@@ -376,3 +377,13 @@ function closeProjectModal() {
     const sec = document.querySelector(selector);
     if (sec) observer.observe(sec);
   });
+
+  // Keyframe animation for particle fading
+const style = document.createElement("style");
+style.innerHTML = `
+  @keyframes particle-fade {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
