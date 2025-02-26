@@ -9,13 +9,19 @@
   <!-- AOS CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
   <!-- ===== NAVIGATION BAR ===== -->
   <nav>
     <div class="nav-container">
       <div class="nav-left">
-        <h3>Joseph Rodriguez</h3>
+            <div class="nav-left">
+              <h3 class="nav-title">
+                <span class="nav-text">JR</span>
+              </h3>
+            </div>
       </div>
       <div class="nav-right">
         <a href="#banner">Home</a>
@@ -26,18 +32,20 @@
     </div>
   </nav>
 
-  <!-- ===== BANNER / HEADER ===== -->
-  <header id="banner" data-aos="fade-down">
-    <div class="header-content">
-      <!-- Typed Banner -->
-      <h1>
-        Hi, I'm Joseph Rodriguez, a
-        <span class="typed-container" id="typed-roles"></span>
-      </h1>
-      <p>(He/Him) – Senior BI Engineer @ TeamHealth</p>
-      <p>BI, Full Stack, RPA</p>
-    </div>
-  </header>
+<!-- ===== BANNER / HEADER ===== -->
+<header id="banner" data-aos="fade-down">
+  <div class="header-content">
+    <!-- Typed Banner -->
+    <h1>
+      Hi, I'm Joseph Rodriguez, a
+      <span class="typed-container" id="typed-roles"></span>
+    </h1>
+    <p>(He/Him) – Senior BI Engineer @ TeamHealth</p>
+    <p>BI, Full Stack, RPA</p>
+  </div>
+  <!-- Laser effect container -->
+  <div class="laser"></div>
+</header>
 
   <!-- ===== SECTION SEPARATOR ===== -->
   <div class="section-separator" data-aos="fade-up"></div>
@@ -81,7 +89,26 @@
           </tr>
         </table>
       </div>
+
+
+    <hr style="border: 0; border-top: 2px solid #ccc; margin: 20px 0;">
+       <div class="social-icons">
+      <a href="https://www.linkedin.com/in/joseph-ignacio-rodriguez-50379b134/" target="_blank" class="social-icon linkedin">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+       <a href="https://facebook.com/your_facebook" target="_blank" class="social-icon facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+
+      <a href="https://twitter.com/your_twitter" target="_blank" class="social-icon twitter">
+        <i class="fab fa-twitter"></i>
+      </a>
+
+
     </div>
+
+    </div>
+
 
     <!-- RIGHT COLUMN: Skills & Experience -->
     <div class="right-column">
@@ -141,159 +168,250 @@
           </div>
         </div>
       </div>
-      <!-- Experience Section with Horizontal Separators -->
-      <div class="section" data-aos="fade-up">
-        <h2>Experience</h2>
-        <div class="experience-list">
-          <!-- Experience Item 1 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <img src="/static/images/th.jpg" alt="TeamHealth">
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">Jan 2024 - Present</div>
-              <h3>Senior BI Engineer @ TeamHealth</h3>
-              <span>1 yr 2 mos</span>
-              <p>
-                Spearheading BI initiatives with a focus on migrating and optimizing reports using Tableau and Power BI.
-                Developing interactive dashboards and PowerApps solutions that drive business insights.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 2 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <img src="/static/images/ncs.jpg" alt="NCS Group">
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">May 2023 - Jan 2024</div>
-              <h3>Consultant Team Lead @ NCS Group</h3>
-              <span>9 mos</span>
-              <p>
-                Led and mentored a team of BI analysts. Migrated home-grown reports to enterprise workflows and collaborated
-                closely with data engineering teams.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 3 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <!-- No company image -->
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">Dec 2021 - Apr 2023</div>
-              <h3>Application Consultant - BI</h3>
-              <span>1 yr 5 mos</span>
-              <p>
-                Delivered robust BI solutions using Tableau and Power BI. Engaged in requirement analysis, dashboard
-                development, and performance optimizations.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 4 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">May 2020 - Dec 2021</div>
-              <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
-              <span>1 yr 8 mos</span>
-              <p>
-                Designed and implemented Tableau dashboards, automated SQL view creation, and supported operational BI tasks.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 5 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">Feb 2020 - May 2020</div>
-              <h3>Full Stack Developer @ Ubiquity</h3>
-              <span>4 mos</span>
-              <p>
-                Developed RESTful APIs using Java Spring Boot and built web applications with ReactJS.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 6 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <img src="/static/images/globe.jpg" alt="Globe Telecom">
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">Sep 2018 - Feb 2020</div>
-              <h3>Software Engineer @ Globe Telecom</h3>
-              <span>1 yr 6 mos</span>
-              <p>
-                Created interactive dashboards and developed various RPA solutions to streamline telecom operations.
-              </p>
-            </div>
-          </div>
-          <!-- Experience Item 7 -->
-          <div class="experience-item">
-            <div class="experience-company">
-              <!-- No company image -->
-            </div>
-            <div class="experience-details">
-              <div class="experience-date">Oct 2017 - Apr 2018</div>
-              <h3>Software Engineer Intern @ Jump Digital Asia</h3>
-              <span>7 mos</span>
-              <p>
-                Developed encryption software and data processing scripts using Python and Oracle.
-              </p>
-            </div>
-          </div>
+
+      <!-- EXPERIENCE SECTION -->
+<div class="section" data-aos="fade-up">
+  <h2>Experience</h2>
+  <div class="experience-list">
+
+    <!-- Experience Item 1: TeamHealth -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <img src="/static/images/th.jpg" alt="TeamHealth">
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">Jan 2024 - Present</div>
+        <h3>Senior BI Engineer @ TeamHealth</h3>
+        <span>1 yr 2 mos</span>
+        <p>
+          Migrating and optimizing reports using Tableau and Power BI.
+          Developing interactive dashboards and PowerApps solutions that drive business insights.
+        </p>
+        <!-- Extra details hidden by default -->
+        <div class="experience-extra" style="display: none;">
+          <p>
+            In this role, I lead a team through modernizing legacy systems and mentor junior analysts to boost technical skills.
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
         </div>
       </div>
+    </div>
+
+    <!-- Experience Item 2: NCS Group -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <img src="/static/images/ncs.jpg" alt="NCS Group">
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">May 2023 - Jan 2024</div>
+        <h3>Consultant Team Lead @ NCS Group</h3>
+        <span>9 mos</span>
+        <p>
+          Led and mentored a team of BI analysts, migrated home-grown reports to enterprise workflows, and collaborated with data engineering teams.
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            Additional responsibilities included optimizing data processes and establishing reporting best practices.
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Item 3: Application Consultant - BI -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <!-- No company image provided -->
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">Dec 2021 - Apr 2023</div>
+        <h3>Application Consultant - BI</h3>
+        <span>1 yr 5 mos</span>
+        <p>
+          Delivered robust BI solutions using Tableau and Power BI while engaging in requirement analysis and dashboard development.
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            To be added
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Item 4: Unilab, Inc. -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">May 2020 - Dec 2021</div>
+        <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
+        <span>1 yr 8 mos</span>
+        <p>
+          Designed and implemented Tableau dashboards, automated SQL view creation, and supported day-to-day BI tasks.
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            To be added
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Item 5: Ubiquity -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">Feb 2020 - May 2020</div>
+        <h3>Full Stack Developer @ Ubiquity</h3>
+        <span>4 mos</span>
+        <p>
+          Designed and constructed the Restful API architecture of a web project utilizing the Java Spring Boot Framework, ensuring seamless communication and data exchange.
+        </p>
+        <p>
+          Engineered reliable and efficient internal applications using Golang and C++, enhancing system performance and productivity.
+
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            Developed a robust Model-View-Controller (MVC) web application, utilizing the Java Spring Boot Framework for the backend and ReactJs for the frontend, delivering an intuitive and user-friendly interface.
+
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Item 6: Globe Telecom -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <img src="/static/images/globe.jpg" alt="Globe Telecom">
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">Sep 2018 - Feb 2020</div>
+        <h3>Software Engineer @ Globe Telecom</h3>
+        <span>1 yr 6 mos</span>
+        <p>
+          Created interactive dashboards and developed various RPA solutions to streamline telecom operations.
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            To be added
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experience Item 7: Jump Digital Asia -->
+    <div class="experience-item">
+      <div class="experience-company">
+        <!-- No company image provided -->
+      </div>
+      <div class="experience-details">
+        <div class="experience-date">Oct 2017 - Apr 2018</div>
+        <h3>Software Engineer Intern @ Jump Digital Asia</h3>
+        <span>7 mos</span>
+        <p>
+           Developed a sophisticated software program utilizing Symmetric Encryption techniques to secure and encrypt diverse file types, facilitating secure sharing among multiple users. Ensured robust data protection and confidentiality.
+        </p>
+        <div class="experience-extra" style="display: none;">
+          <p>
+            Created efficient data processing scripts using Oracle and Python, streamlining data manipulation and analysis processes. Implemented effective solutions to enhance data accuracy and integrity
+          </p>
+        </div>
+        <div class="toggle-extra-container">
+          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
     </div>
   </div>
 
   <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-  <!-- PROJECTS SECTION with Filter Buttons and Right-Aligned Category Badge -->
-  <section id="projects" data-aos="fade-up">
-    <div class="projects-header" style="text-align:center; margin-bottom:20px;">
-      <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom:10px;">Projects</h2>
-      <p style="color: #555;">Some personal & professional projects I've worked on:</p>
+<!-- PROJECTS SECTION -->
+<section id="projects" data-aos="fade-up">
+  <div class="projects-header" style="text-align: center; margin-bottom: 20px;">
+    <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom: 10px;">Projects</h2>
+    <p style="color: #555;">Some personal & professional projects I've worked on:</p>
+  </div>
+
+  <!-- Filter Buttons (Optional) -->
+  <div id="project-filters" style="text-align: center; margin-bottom: 30px;">
+    <button class="filter-btn" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="powerbi">Power BI</button>
+    <button class="filter-btn" data-filter="tableau">Tableau</button>
+    <button class="filter-btn" data-filter="other">Other</button>
+  </div>
+
+  <!-- Projects Grid -->
+  <div class="projects-grid">
+    <!-- Example Project Card for Tableau -->
+    <div class="project-card" data-category="tableau"
+         data-title="Project One"
+         data-description="This is the full description for Project One. It includes detailed info about the project, the technologies used, and the impact of the project."
+         data-image="https://placehold.co/600x300">
+      <div class="project-category tableau">Tableau</div>
+      <img src="https://placehold.co/400x150" alt="Project 1">
+      <h3>Project One</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
     </div>
 
-    <!-- Filter Buttons -->
-    <div id="project-filters" style="text-align:center; margin-bottom:30px;">
-      <button class="filter-btn" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="powerbi">Power BI</button>
-      <button class="filter-btn" data-filter="tableau">Tableau</button>
-      <button class="filter-btn" data-filter="other">Other</button>
+    <!-- Example Project Card for Power BI -->
+    <div class="project-card" data-category="powerbi"
+         data-title="Project Two"
+         data-description="Detailed description for Project Two with full info and insights about the technologies used."
+         data-image="https://placehold.co/600x300">
+      <div class="project-category powerbi">Power BI</div>
+      <img src="https://placehold.co/400x150" alt="Project 2">
+      <h3>Project Two</h3>
+      <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
     </div>
 
-    <!-- Projects Grid -->
-    <div class="projects-grid">
-      <!-- Example Project Card for Tableau -->
-      <div class="project-card" data-category="tableau">
-        <div class="project-category">Tableau</div>
-        <img src="https://placehold.co/400x150" alt="Project 1">
-        <h3>Project One</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      </div>
-      <!-- Example Project Card for Power BI -->
-      <div class="project-card" data-category="powerbi">
-        <div class="project-category">Power BI</div>
-        <img src="https://placehold.co/400x150" alt="Project 2">
-        <h3>Project Two</h3>
-        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-      </div>
-      <!-- Example Project Card for Other -->
-      <div class="project-card" data-category="other">
-        <div class="project-category">Other</div>
-        <img src="https://placehold.co/400x150" alt="Project 3">
-        <h3>Project Three</h3>
-        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-      </div>
+    <!-- Example Project Card for Other -->
+    <div class="project-card" data-category="other"
+         data-title="Project Three"
+         data-description="Full project details for Project Three. It shows all the details of the project and how it was executed."
+         data-image="https://placehold.co/600x300">
+      <div class="project-category other">Other</div>
+      <img src="https://placehold.co/400x150" alt="Project 3">
+      <h3>Project Three</h3>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- Modal Popup for Project Details -->
+<div id="project-modal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeProjectModal()">&times;</span>
+    <img id="modal-image" src="" alt="Project Image">
+    <h3 id="modal-title"></h3>
+    <p id="modal-description"></p>
+  </div>
+</div>
 
   <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>

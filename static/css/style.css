@@ -75,21 +75,64 @@ nav {
   justify-content: space-between;
 }
 
-.nav-left h3 {
+.nav-title {
   font-size: 1.4rem;
-  color: #004b8d;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.nav-text {
+  background-color: #004b8d;  /* Brand color */
+  color: #fff;
+  padding: 8px 12px;          /* Adjust to achieve a square/rectangular look */
+  display: inline-block;
+  transition: background-color 0.3s ease;
 }
 
 .nav-right a {
-  margin-left: 25px;
+  position: relative;
   text-decoration: none;
   color: #333;
   font-weight: 500;
+  margin: 0 15px;       /* Extra horizontal spacing */
+  padding: 8px 0;       /* Extra vertical spacing */
 }
 
-.nav-right a:hover {
-  color: #004b8d;
+/* Animated underline using a pseudo-element */
+.nav-right a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  transition: width 0.3s ease;
 }
+
+/* Unique underline colors per link */
+.nav-right a:nth-child(1)::after {
+  background-color: #004b8d; /* Blue */
+}
+.nav-right a:nth-child(2)::after {
+  background-color: #e97627; /* Orange */
+}
+.nav-right a:nth-child(3)::after {
+  background-color: #0078d7; /* Lighter Blue */
+}
+.nav-right a:nth-child(4)::after {
+  background-color: #6c757d; /* Gray */
+}
+
+/* Underline on hover */
+.nav-right a:hover::after {
+  width: 100%;
+}
+
+/* Keep underline for the active nav link */
+.nav-right a.active::after {
+  width: 100%;
+}
+
 
 /* ===== BANNER SECTION ===== */
 #banner {
@@ -264,39 +307,87 @@ nav {
   font-size: 0.9rem;
 }
 
-/* ===== EXPERIENCE ===== */
-/* No vertical line or circle markers; just line separators between companies */
+/* Tighter spacing for the Experience section */
 .experience-list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 5px; /* Decreased gap between items */
 }
 
 .experience-item {
   display: flex;
   gap: 20px;
-  align-items: center;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eee; /* line separator at bottom */
+  align-items: flex-start;
+  padding-bottom: 5px; /* Less internal spacing */
+  border-bottom: 1px solid #eee;
 }
 .experience-item:last-child {
   border-bottom: none;
 }
 
+/* Company image container */
 .experience-company {
   width: 60px;
+  height: 80px; /* fixed to keep image static */
   flex-shrink: 0;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 }
 .experience-company img {
   width: 100%;
   object-fit: contain;
 }
 
+/* Details container with absolute toggle */
 .experience-details {
-  flex: 1;
+  position: relative;
+  min-height: 100px; /* Lower minimum height */
+  padding-bottom: 20px; /* Less space at the bottom */
 }
+
+/* Remove extra spacing from paragraphs */
+.experience-details p {
+  margin: 0; /* No top/bottom margin */
+  padding-top: 5px; /* Small space above text if needed */
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Toggle container pinned at the bottom-right */
+.toggle-extra-container {
+  position: absolute;
+  bottom: 20px;
+  right: 5px;
+}
+
+.toggle-extra {
+  display: inline-block;
+
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* If you also want to reduce the font size or line-height of .experience-date, .experience-details h3, etc., you can do so here. */
+.experience-date {
+  font-weight: bold;
+  color: #004b8d;
+  margin-bottom: 3px; /* Slightly less spacing */
+}
+.experience-details h3 {
+  font-size: 1rem;
+  margin-bottom: 3px; /* Slightly less spacing */
+  color: #004b8d;
+}
+.experience-details span {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+
 
 .experience-date {
   font-weight: bold;
@@ -320,6 +411,16 @@ nav {
   color: #555;
   margin-top: 5px;
 }
+
+
+
+
+
+.arrow-icon {
+  display: inline-block;
+
+}
+
 
 /* ===== PROJECTS SECTION ===== */
 #projects {
@@ -454,6 +555,10 @@ footer p {
     text-shadow: 0 0 3px white;
   }
 }
+
+
+
+
 
 /* ---------- Technical Skills: Progress Bars with Tool Icons in One Row ---------- */
 .progress-skills {
@@ -842,6 +947,104 @@ footer p {
   width: 2px;
   background: #ccc;
   margin: 0 20px;
+}
+
+.social-icons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.social-icon {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 10px;
+  text-align: center;
+  border: 2px solid #004b8d;
+  border-radius: 0;
+  color: #004b8d;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  border-radius: 50%;
+  background: #004b8d;
+  color: #fff;
+}
+
+/* Modal container (hidden by default) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  max-width: 600px;
+  border-radius: 8px;
+  position: relative;
+  text-align: center;
+}
+
+/* Close button for modal */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: #000;
+}
+
+/* Modal image styling */
+#modal-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+
+/* Laser effect styling */
+#banner {
+  position: relative; /* Ensure the banner is positioned for absolute children */
+  overflow: hidden;
+}
+
+.laser-spark {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  /* Conic gradient for swirl effect; adjust colors & stops as desired */
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(0, 150, 255, 0.6) 0%,
+    transparent 30%,
+    rgba(0, 150, 255, 0.3) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 1;
 }
 
 
