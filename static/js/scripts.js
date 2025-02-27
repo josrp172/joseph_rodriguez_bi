@@ -369,7 +369,7 @@ async function sendMessageAndResponse() {
     const data = await response.json();
     clearInterval(typingInterval);
 
-    // Use the raw response text (non-HTML) for display
+    // Use the raw response text (plain text, not HTML) for display
     const finalResponse = data.response;
     console.log("Final plain text response:", finalResponse);
     botTextSpan.textContent = ""; // Clear the typing indicator
@@ -380,7 +380,10 @@ async function sendMessageAndResponse() {
       if (index < finalResponse.length) {
         botTextSpan.textContent = finalResponse.substring(0, index + 1);
         index++;
-        setTimeout(typeLetter, 30); // Adjust the speed (ms) as desired
+        setTimeout(typeLetter, 30); // Adjust speed as needed
+      } else {
+        // Once finished, save the complete response so it reloads fully later
+        saveChatContext();
       }
     }
     typeLetter();
@@ -389,8 +392,10 @@ async function sendMessageAndResponse() {
     console.error("Error sending message:", error);
     botTextSpan.textContent = "An error occurred. Please try again later.";
   }
-  saveChatContext();
+  // Optionally, you might also call saveChatContext() here
+  // if you want to update after appending user's message, etc.
 }
+
 
 
 function saveChatContext() {
