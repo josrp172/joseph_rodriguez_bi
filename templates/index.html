@@ -386,16 +386,15 @@
   <!-- SECTION SEPARATOR -->
   <div class="section-separator" data-aos="fade-up"></div>
 
-<!-- PROJECTS SECTION -->
 <section id="projects" data-aos="fade-up">
   <div class="projects-header" style="text-align: center; margin-bottom: 20px;">
     <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom: 10px;">Projects</h2>
     <p style="color: #555;">Some personal & professional projects I've worked on:</p>
   </div>
 
-  <!-- Filter Buttons (Optional) -->
+  <!-- Filter Buttons -->
   <div id="project-filters" style="text-align: center; margin-bottom: 30px;">
-    <button class="filter-btn" data-filter="all">All</button>
+    <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="powerbi">Power BI</button>
     <button class="filter-btn" data-filter="tableau">Tableau</button>
     <button class="filter-btn" data-filter="other">Other</button>
@@ -403,40 +402,49 @@
 
   <!-- Projects Grid -->
   <div class="projects-grid">
-    <!-- Example Project Card for Tableau -->
+    <!-- Project Card 1: Tableau -->
     <div class="project-card" data-category="tableau"
          data-title="Project One"
-         data-description="This is the full description for Project One. It includes detailed info about the project, the technologies used, and the impact of the project."
+         data-description="This is a sample project description for Project One."
          data-image="https://placehold.co/600x300">
-      <div class="project-category tableau">Tableau</div>
-      <img src="https://placehold.co/400x150" alt="Project 1">
+      <div class="project-image-container">
+        <img src="https://placehold.co/400x150" alt="Project 1">
+        <div class="project-category tableau">Tableau</div>
+      </div>
       <h3>Project One</h3>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
     </div>
 
-    <!-- Example Project Card for Power BI -->
+    <!-- Project Card 2: Power BI -->
     <div class="project-card" data-category="powerbi"
          data-title="Project Two"
-         data-description="Detailed description for Project Two with full info and insights about the technologies used."
+         data-description="This is a sample project description for Project Two."
          data-image="https://placehold.co/600x300">
-      <div class="project-category powerbi">Power BI</div>
-      <img src="https://placehold.co/400x150" alt="Project 2">
+      <div class="project-image-container">
+        <img src="https://placehold.co/400x150" alt="Project 2">
+        <div class="project-category powerbi">Power BI</div>
+      </div>
       <h3>Project Two</h3>
       <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
     </div>
 
-    <!-- Example Project Card for Other -->
+    <!-- Project Card 3: Other -->
     <div class="project-card" data-category="other"
          data-title="Project Three"
-         data-description="Full project details for Project Three. It shows all the details of the project and how it was executed."
+         data-description="This is a sample project description for Project Three."
          data-image="https://placehold.co/600x300">
-      <div class="project-category other">Other</div>
-      <img src="https://placehold.co/400x150" alt="Project 3">
+      <div class="project-image-container">
+        <img src="https://placehold.co/400x150" alt="Project 3">
+        <div class="project-category other">Other</div>
+      </div>
       <h3>Project Three</h3>
       <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
     </div>
   </div>
 </section>
+
+
+
 
 
 <!-- Modal Popup for Project Details -->
