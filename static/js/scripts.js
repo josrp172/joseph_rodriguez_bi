@@ -282,6 +282,8 @@ document.querySelectorAll('.progress-rating').forEach(rating => {
         onComplete: () => spark.remove()
       }
     );
+
+
   });
 
 
