@@ -855,6 +855,7 @@ footer p {
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
   animation: pulseEffect 2s infinite;
+  z-index:1
 }
 
 /* Chat Icon inside Button */
@@ -1582,4 +1583,9 @@ footer p {
   content: " ]";
   opacity: 1;
   color: red;
+}
+
+.experience-item:hover .toggle-extra {
+  color: red;
+  transition: color 0.3s ease;
 }
