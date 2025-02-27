@@ -608,6 +608,26 @@ footer p {
   transform: scale(1.05);
 }
 
+/* Change skill title color on hover */
+.progress-skill:hover p {
+  color: red;
+  transition: color 0.3s ease;
+}
+
+/* Shake animation for skill image */
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+.progress-skill:hover .skill-icon {
+  animation: shake 0.5s ease-in-out;
+}
+
 .progress-skill .skill-icon {
   width: 60px;
   height: 60px;
@@ -1312,6 +1332,7 @@ footer p {
   }
 }
 
+/* Fade animation classes */
 .fade-in {
   animation: fadeIn 0.5s forwards;
 }
@@ -1339,5 +1360,78 @@ footer p {
   to {
     opacity: 0;
     transform: translateY(20px);
+  }
+}
+
+/* For a 1/5 rating: highlight the first segment */
+.progress-skill:hover .progress-rating[data-level="1"] .segment:nth-child(1) {
+  animation: highlightAchievement 1.5s infinite alternate;
+}
+
+/* For a 2/5 rating: highlight the second segment */
+.progress-skill:hover .progress-rating[data-level="2"] .segment:nth-child(2) {
+  animation: highlightAchievement 1.5s infinite alternate;
+}
+
+/* For a 3/5 rating: highlight the third segment */
+.progress-skill:hover .progress-rating[data-level="3"] .segment:nth-child(3) {
+  animation: highlightAchievement 1.5s infinite alternate;
+}
+
+/* For a 4/5 rating: highlight the fourth segment */
+.progress-skill:hover .progress-rating[data-level="4"] .segment:nth-child(4) {
+  animation: highlightAchievement 1.5s infinite alternate;
+}
+
+/* For a 5/5 rating: highlight the fifth segment */
+.progress-skill:hover .progress-rating[data-level="5"] .segment:nth-child(5) {
+  animation: highlightAchievement 1.5s infinite alternate;
+}
+
+/* Keyframes for the glowing border animation */
+@keyframes highlightAchievement {
+  0% {
+    border: 2px solid rgba(255, 215, 0, 0.6); /* Gold, low opacity */
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    border: 2px solid rgba(255, 215, 0, 1); /* Gold, full opacity */
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.7);
+  }
+}
+
+.profile-pic-wrapper {
+  position: relative;
+  display: inline-block; /* Ensures the container wraps tightly around the image */
+}
+
+.profile-pic-wrapper::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 3px solid rgba(0,75,141,0.8);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.profile-pic-wrapper:hover::after {
+  opacity: 1;
+  animation: borderSpinPulse 2s linear infinite;
+}
+
+@keyframes borderSpinPulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(-180deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(-360deg) scale(1);
   }
 }
