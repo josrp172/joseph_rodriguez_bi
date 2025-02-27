@@ -338,7 +338,7 @@ async function sendMessageAndResponse() {
   chatBody.scrollTop = chatBody.scrollHeight;
   input.value = '';
 
-  // Append temporary bot message
+  // Append temporary bot message with typing indicator
   const botMsgDiv = document.createElement('div');
   botMsgDiv.classList.add('chat-message', 'bot-message');
   const botAvatar = document.createElement('img');
@@ -346,11 +346,19 @@ async function sendMessageAndResponse() {
   botAvatar.alt = 'Bot Avatar';
   botAvatar.classList.add('bot-avatar');
   const botTextSpan = document.createElement('span');
-  botTextSpan.textContent = "Joseph is typing...";
   botMsgDiv.appendChild(botAvatar);
   botMsgDiv.appendChild(botTextSpan);
   chatBody.appendChild(botMsgDiv);
   chatBody.scrollTop = chatBody.scrollHeight;
+
+  // Simulate "Joseph is typing" with a cycling ellipsis
+  const baseText = "Joseph is typing";
+  botTextSpan.textContent = baseText;
+  let dotCount = 0;
+  const typingInterval = setInterval(() => {
+    dotCount = (dotCount + 1) % 5; // cycles through 0 to 4 dots
+    botTextSpan.textContent = baseText + ".".repeat(dotCount);
+  }, 500);
 
   try {
     const response = await fetch('/chat', {
@@ -359,17 +367,31 @@ async function sendMessageAndResponse() {
       body: JSON.stringify({ message })
     });
     const data = await response.json();
-    if (response.ok) {
-      botTextSpan.innerHTML = marked.parse(data.response);
-    } else {
-      botTextSpan.textContent = "Error: " + data.error;
+    clearInterval(typingInterval);
+
+    // Use the raw response text (non-HTML) for display
+    const finalResponse = data.response;
+    console.log("Final plain text response:", finalResponse);
+    botTextSpan.textContent = ""; // Clear the typing indicator
+
+    // Typewriter effect for the plain text response
+    let index = 0;
+    function typeLetter() {
+      if (index < finalResponse.length) {
+        botTextSpan.textContent = finalResponse.substring(0, index + 1);
+        index++;
+        setTimeout(typeLetter, 30); // Adjust the speed (ms) as desired
+      }
     }
+    typeLetter();
   } catch (error) {
+    clearInterval(typingInterval);
     console.error("Error sending message:", error);
     botTextSpan.textContent = "An error occurred. Please try again later.";
   }
   saveChatContext();
 }
+
 
 function saveChatContext() {
   const chatBody = document.querySelector('.chatbox-body');
