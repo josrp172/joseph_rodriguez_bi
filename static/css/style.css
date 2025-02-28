@@ -1780,3 +1780,52 @@ footer p {
   }
 }
 
+.experience-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tool-badge {
+  position: relative;      /* Needed for the shiny effect overlay */
+  overflow: hidden;        /* Hide the moving highlight */
+  background-color: #e0f3ff; /* Light blue */
+  color: #004b8d;          /* Darker blue text */
+  padding: 4px 8px;        /* Smaller padding */
+  border-radius: 4px;
+  font-size: 0.8rem;       /* Slightly smaller text */
+  font-weight: 500;
+  display: inline-block;
+  cursor: default;         /* or 'pointer' if clickable */
+  white-space: nowrap;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* The "shiny" diagonal overlay, hidden by default */
+.tool-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.4); /* Semi-transparent white highlight */
+  transform: skewX(-25deg);
+  transition: left 0.4s ease;
+}
+
+/* On hover:
+   - Slight scale-up
+   - Soft box-shadow
+   - "Shine" sweeps across the badge
+*/
+.tool-badge:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 8px rgba(0, 75, 141, 0.2);
+}
+
+.tool-badge:hover::before {
+  left: 150%; /* Moves the highlight from left to right */
+}
+
