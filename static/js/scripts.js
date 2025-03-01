@@ -5,6 +5,96 @@ document.addEventListener("DOMContentLoaded", () => {
   localStorage.removeItem('chatContext');
 
 
+
+  /* ------------------------------ */
+  /* 7. Experience Item Animations  */
+  /* ------------------------------ */
+  // Existing hover animations for experience items
+  document.querySelectorAll('.experience-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      gsap.to(item, {
+        x: 5,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 1,
+        ease: "power1.inOut"
+      });
+    });
+  });
+
+  // Existing title color change on hover
+  document.querySelectorAll('.experience-item').forEach(item => {
+    const title = item.querySelector('h3');
+    item.addEventListener('mouseenter', () => {
+      gsap.to(title, { color: 'red', duration: 0.3 });
+    });
+    item.addEventListener('mouseleave', () => {
+      gsap.to(title, { color: '#004b8d', duration: 0.3 });
+    });
+  });
+
+gsap.timeline({
+  scrollTrigger: {
+    trigger: ".experience-list",  // or .experience-section if that's a wrapper
+    start: "top 100%",              // Trigger when the top of the container touches the top of the viewport
+    toggleActions: "play none none reverse",
+    //markers: true,                // For debugging; remove when done
+    onEnter: function() {
+      gsap.to(loader, { autoAlpha: 0, duration: 0.5, ease: "power2.out" });
+    }
+  }
+})
+.fromTo(".tool-badge",
+  { opacity: 0, scale: 0.5 },
+  { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)", stagger: 0.2 }
+);
+
+ document.querySelectorAll('.nav-right a').forEach(link => {
+  link.addEventListener('mousemove', (e) => {
+    console.log('mousemove fired on', link);
+    const rect = link.getBoundingClientRect();
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    console.log(`Magnetic effect: dx=${dx}, dy=${dy}`);
+
+    gsap.to(link, {
+      x: dx * 0.3,
+      y: dy * 0.3,
+      ease: "power2.out",
+      duration: 0.2
+    });
+  });
+
+  link.addEventListener('mouseleave', () => {
+    console.log('mouseleave fired on', link);
+    gsap.to(link, {
+      x: 0,
+      y: 0,
+      ease: "power2.out",
+      duration: 0.2
+    });
+  });
+});
+
+ const chatButton = document.querySelector(".chat-button");
+
+  gsap.registerPlugin(Draggable);
+  Draggable.create(chatButton, {
+    type: "x,y",
+    bounds: document.body,
+    inertia: false, // Follow the mouse exactly
+    onDragEnd: function() {
+      // Animate back to transform (0, 0)
+      gsap.to(this.target, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out"
+      });
+    }
+  });
+
+
 // Make sure the "typed-about" element is empty before starting
 // Ensure the container is empty
 document.getElementById('typed-about').innerHTML = "";
@@ -164,28 +254,6 @@ document.querySelectorAll('.progress-rating').forEach(rating => {
   /* 7. Experience Item Animations  */
   /* ------------------------------ */
   // Shake effect on hover (using GSAP)
-  document.querySelectorAll('.experience-item').forEach(item => {
-    item.addEventListener('mouseenter', () => {
-      gsap.to(item, {
-        x: 5,
-        duration: 0.1,
-        yoyo: true,
-        repeat: 1,
-        ease: "power1.inOut"
-      });
-    });
-  });
-
-  // Change title color on hover (using GSAP)
-  document.querySelectorAll('.experience-item').forEach(item => {
-    const title = item.querySelector('h3');
-    item.addEventListener('mouseenter', () => {
-      gsap.to(title, { color: 'red', duration: 0.3 });
-    });
-    item.addEventListener('mouseleave', () => {
-      gsap.to(title, { color: '#004b8d', duration: 0.3 });
-    });
-  });
 
   /* ------------------------------ */
   /* 8. Timeline Company Logos Hover */
@@ -431,6 +499,12 @@ function toggleExtra(button) {
 /*         Project Modal Functions          */
 /* ======================================== */
 function openProjectModal(card) {
+  // Populate modal with card data (existing logic)
+  gsap.fromTo("#project-modal .modal-content",
+    { opacity: 0, y: -50 },
+    { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
+  );
+
   const title = card.getAttribute('data-title') || "Project Title";
   const description = card.getAttribute('data-description') || "Full project details here.";
   const imageSrc = card.getAttribute('data-image') || card.querySelector('img').src;
@@ -438,6 +512,8 @@ function openProjectModal(card) {
   document.getElementById('modal-description').textContent = description;
   document.getElementById('modal-image').src = imageSrc;
   document.getElementById('project-modal').style.display = "block";
+
+
 }
 
 function closeProjectModal() {
@@ -489,5 +565,10 @@ style.innerHTML = `
   }
 `;
 document.head.appendChild(style);
+
+
+
+
+
 
 
