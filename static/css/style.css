@@ -550,6 +550,7 @@ footer p {
 
 /* ===== RESPONSIVE ===== */
 @media screen and (max-width: 992px) {
+
   .nav-container, .main-container, #projects {
     max-width: 100%;
     padding: 0 10px;
