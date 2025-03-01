@@ -549,6 +549,7 @@ footer p {
 }
 
 /* ===== RESPONSIVE ===== */
+/*
 @media screen and (max-width: 992px) {
 
   .nav-container, .main-container, #projects {
@@ -572,6 +573,7 @@ footer p {
     margin-bottom: 10px;
   }
 }
+*/
 
 .highlight {
   color: red;
