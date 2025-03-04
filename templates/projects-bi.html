@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>Projects BI – Joseph Ignacio Rodriguez</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    /* Minimal styling for badges */
+    .tool-badge {
+      display: inline-block;
+      padding: 6px 10px;
+      margin-left: 8px; /* space between each badge and the title */
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #fff;
+      text-transform: uppercase;
+    }
+    /* Example badge colors (adjust as desired) */
+    .badge-powerbi {
+      background-color: #F2C811; /* Power BI yellow */
+      color: #333;              /* Darker text for contrast */
+    }
+    .badge-deneb {
+      background-color: #0099cc; /* A teal shade */
+    }
+    .badge-myanimelist {
+      background-color: #ff9900; /* Orange shade */
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar (Same as in index.html) -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-left">
+        <h3 class="nav-title">
+          <span class="nav-text">JR</span>
+          <span class="linkedin-status">
+            <span class="status-indicator online"></span>
+            <span class="status-text">Online Linkedin</span>
+          </span>
+        </h3>
+      </div>
+      <div class="nav-right">
+        <a href="/">Home</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main style="max-width: 1200px; margin: 20px auto;">
+    <!-- Page Title -->
+    <h1>Projects BI</h1>
+
+    <!-- Title + Badges in one row -->
+    <div style="display: flex; align-items: center; margin-top: 10px;">
+      <h2 style="font-size: 1.2rem; margin: 0;">
+        SephAnimeList
+      </h2>
+      <!-- Badges immediately to the right of the title -->
+      <span class="tool-badge badge-powerbi">Power BI</span>
+      <span class="tool-badge badge-deneb">Deneb</span>
+      <span class="tool-badge badge-myanimelist">MyAnimelist API</span>
+    </div>
+
+    <!-- Embed the Power BI report using an iframe -->
+    <iframe
+      style="width: 1350px; height: 1850px; border: none; margin-top: 20px;"
+      src="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee"
+      allowFullScreen="true">
+    </iframe>
+  </main>
+
+  <footer style="text-align:center; margin-bottom:20px;">
+    <p>© 2025 Joseph Rodriguez. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+
+
 gsap.timeline({
   scrollTrigger: {
     trigger: ".experience-list",  // or .experience-section if that's a wrapper
@@ -499,17 +501,19 @@ function toggleExtra(button) {
 /*         Project Modal Functions          */
 /* ======================================== */
 function openProjectModal(card) {
-  // Populate modal with card data (existing logic)
   gsap.fromTo("#project-modal .modal-content",
     { opacity: 0, y: -50 },
     { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
   );
 
   const title = card.getAttribute('data-title') || "Project Title";
+  // Get the full HTML content from data-description without additional replacements
   const description = card.getAttribute('data-description') || "Full project details here.";
   const imageSrc = card.getAttribute('data-image') || card.querySelector('img').src;
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-description').textContent = description;
+
+  // Populate the modal elements
+  document.getElementById('modal-title').innerHTML = title;
+  document.getElementById('modal-description').innerHTML = description;
   document.getElementById('modal-image').src = imageSrc;
   document.getElementById('project-modal').style.display = "block";
 

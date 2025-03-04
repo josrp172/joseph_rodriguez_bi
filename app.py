@@ -29,6 +29,10 @@ except Exception as e:
 def home():
     return render_template('index.html')
 
+@app.route('/projects-bi')
+def projects_bi():
+    return render_template('projects-bi.html')
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()

@@ -29,8 +29,8 @@
 <h3 class="nav-title">
   <span class="nav-text">JR</span>
   <span class="linkedin-status">
-    <span class="status-indicator offline"></span>
-    <span class="status-text">Offline Linkedin</span>
+    <span class="status-indicator online"></span>
+    <span class="status-text">Online Linkedin</span>
   </span>
 </h3>
       </div>
@@ -243,7 +243,6 @@
         <div class="experience-tools">
           <span class="tool-badge">Tableau</span>
           <span class="tool-badge">Power BI</span>
-          <span class="tool-badge">PowerApps</span>
           <span class="tool-badge">SQL</span>
         </div>
       </div>
@@ -468,42 +467,82 @@
   <!-- Projects Grid -->
   <div class="projects-grid">
     <!-- Project Card 1: Tableau -->
-    <div class="project-card" data-category="tableau"
-         data-title="Project One"
-         data-description="This is a sample project description for Project One."
-         data-image="https://placehold.co/600x300">
+    <div class="project-card" data-category="powerbi"
+         data-title="SephAnimeList Power BI Report"
+ data-description="
+<div style='padding: 0 1.5rem; text-align: left;'>
+  <!-- Overview -->
+  <p style='margin: 1rem 0 0.5rem;'><strong>Overview</strong></p>
+  <p style='margin-bottom: 1.5rem;'>
+    Welcome to <strong>SephAnimeList</strong>, my personal anime tracking dashboard built using Power BI.
+    This project pulls data from <strong>MyAnimeList's API</strong> to track my anime watchlist, including what I’ve watched, what I’m currently watching, and what’s planned.
+    It also highlights ratings, trends, and recommendations, all displayed in an interactive and visually engaging format.
+  </p>
+
+  <!-- Features -->
+  <p style='margin: 1rem 0 0.5rem;'><strong>Features</strong></p>
+  <ul style='margin-left: 2em; margin-bottom: 1.5rem; list-style-type: disc;'>
+    <li><strong>2024-2025 Watchlist</strong> – Categorizes my anime into <strong>Watched</strong>, <strong>Currently Watching</strong>, and <strong>Planned to Watch</strong>.</li>
+    <li><strong>Anime Ratings</strong> – Displays average ratings for anime I’ve watched.</li>
+    <li><strong>Most Popular Anime</strong> – Shows the top trending anime based on MyAnimeList’s popularity data.</li>
+    <li><strong>Recommendations</strong> – Provides anime suggestions based on genres and themes I enjoy.</li>
+    <li><strong>Deneb-Powered Visuals</strong> – Uses <strong>Deneb</strong> to create visually stunning charts and animations that enhance the dashboard experience.</li>
+  </ul>
+
+  <!-- Limitations -->
+  <p style='margin: 1rem 0 0.5rem;'><strong>Limitations</strong></p>
+  <ul style='margin-left: 2em; margin-bottom: 1.5rem; list-style-type: disc;'>
+    <li>The dashboard <strong>only pulls my watchlist</strong> from MyAnimeList and does not provide full database access.</li>
+    <li>Recommendations are manually curated based on my preferences rather than an AI-driven suggestion system.</li>
+  </ul>
+
+  <!-- Why Power BI & Deneb? -->
+  <p style='margin: 1rem 0 0.5rem;'><strong>Why Power BI & Deneb?</strong></p>
+  <p style='margin-bottom: 1.5rem;'>
+    Power BI makes it easy to visualize and analyze my anime data in a structured way. <strong>Deneb</strong> enhances this further by allowing me to create custom visuals
+    with smooth animations and unique aesthetics, making my dashboard more immersive than standard Power BI visuals.
+  </p>
+
+  <!-- Dashboard Link -->
+  <p style='margin: 1rem 0;'>
+    <strong>Check Out SephAnimeList:</strong>
+    <a href='/projects-bi'>Click Here</a>
+  </p>
+</div>"
+
+         data-image="static/images/sephanimelist.png">
       <div class="project-image-container">
-        <img src="https://placehold.co/400x150" alt="Project 1">
-        <div class="project-category tableau">Tableau</div>
+        <img src="/static/images/sephanimelist.png" alt="Project 1">
+        <div class="project-category powerbi">Power BI</div>
       </div>
-      <h3>Project One</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <h3>SephAnimeList - A Power BI Anime Dashboard</h3>
+<p>A personalized anime tracking dashboard powered by Power BI, pulling my watchlist from MyAnimeList's API. It features my anime list, ratings, recommendations, and popular trends with custom Deneb visuals for a unique and immersive experience.</p>
     </div>
 
     <!-- Project Card 2: Power BI -->
-    <div class="project-card" data-category="powerbi"
+    <div class="project-card" data-category="tableau"
          data-title="Project Two"
-         data-description="This is a sample project description for Project Two."
+         data-description="Soon..."
          data-image="https://placehold.co/600x300">
       <div class="project-image-container">
         <img src="https://placehold.co/400x150" alt="Project 2">
-        <div class="project-category powerbi">Power BI</div>
+        <div class="project-category tableau">Tableau</div>
       </div>
       <h3>Project Two</h3>
-      <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <p>Soon...</p>
     </div>
 
     <!-- Project Card 3: Other -->
     <div class="project-card" data-category="other"
          data-title="Project Three"
-         data-description="This is a sample project description for Project Three."
+         data-description="Soon..."
          data-image="https://placehold.co/600x300">
       <div class="project-image-container">
         <img src="https://placehold.co/400x150" alt="Project 3">
         <div class="project-category other">Other</div>
       </div>
       <h3>Project Three</h3>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <p>Soon...</p>
     </div>
   </div>
 </section>
