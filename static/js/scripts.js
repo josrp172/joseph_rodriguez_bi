@@ -4,6 +4,33 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ------------------------------ */
   localStorage.removeItem('chatContext');
 
+  function updateLinkedInStatus() {
+    // Get current time in UTC and convert to PHT (UTC+8)
+    const now = new Date();
+    const utcHour = now.getUTCHours();
+    const phtHour = (utcHour + 8) % 24;
+
+    // Select the status elements
+    const statusIndicator = document.querySelector('.linkedin-status .status-indicator');
+    const statusText = document.querySelector('.linkedin-status .status-text');
+
+    // Check: if current hour is between 8pm (20) and midnight OR midnight to 6am (<6)
+    if (phtHour >= 20 || phtHour < 6) {
+      // Set status to online
+      statusIndicator.classList.remove('offline');
+      statusIndicator.classList.add('online');
+      statusText.textContent = 'Online Linkedin';
+    } else {
+      // Set status to offline
+      statusIndicator.classList.remove('online');
+      statusIndicator.classList.add('offline');
+      statusText.textContent = 'Offline Linkedin';
+    }
+  }
+
+  // Run status update on page load and every minute in case the page remains open
+  updateLinkedInStatus();
+  setInterval(updateLinkedInStatus, 60000);
 
 
   /* ------------------------------ */
