@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=1280">
   <title>Projects BI – Joseph Ignacio Rodriguez</title>
   <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- Enable smooth scrolling when using #anchors -->
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
     /* Minimal styling for badges */
     .tool-badge {
       display: inline-block;
@@ -28,8 +33,12 @@
     .badge-myanimelist {
       background-color: #ff9900; /* Orange shade */
     }
+    .badge-tableau {
+      background-color: #E97635; /* A typical Tableau orange */
+    }
   </style>
 </head>
+
 <body>
   <!-- Navigation Bar (Same as in index.html) -->
   <nav>
@@ -56,30 +65,85 @@
     <!-- Page Title -->
     <h1>Projects BI</h1>
 
-    <!-- Title + Badges in one row -->
-    <div style="display: flex; align-items: center; margin-top: 10px;">
-      <h2 style="font-size: 1.2rem; margin: 0;">
-        SephAnimeList
-      </h2>
-      <!-- Badges immediately to the right of the title -->
-      <span class="tool-badge badge-powerbi">Power BI</span>
-      <span class="tool-badge badge-deneb">Deneb</span>
-      <span class="tool-badge badge-myanimelist">MyAnimelist API</span>
+    <!-- ========== FIRST PROJECT (Power BI) ========== -->
+    <!-- Give this container an ID of "project1" -->
+    <div id="project1" style="margin-top: 30px;">
+      <!-- Title + Badges in one row -->
+      <div style="display: flex; align-items: center; margin-top: 10px;">
+        <h2 style="font-size: 1.2rem; margin: 0;">
+          SephAnimeList
+        </h2>
+        <!-- Badges immediately to the right of the title -->
+        <span class="tool-badge badge-powerbi">Power BI</span>
+        <span class="tool-badge badge-deneb">Deneb</span>
+        <span class="tool-badge badge-myanimelist">MyAnimelist API</span>
+      </div>
+
+      <!-- Embed the Power BI report using an iframe -->
+      <iframe
+        style="width: 1350px; height: 1850px; border: none; margin-top: 20px;"
+        src="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee"
+        allowFullScreen="true">
+      </iframe>
     </div>
 
-    <!-- Embed the Power BI report using an iframe -->
-    <iframe
-      style="width: 1350px; height: 1850px; border: none; margin-top: 20px;"
-      src="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee"
-      allowFullScreen="true">
-    </iframe>
+    <!-- ========== SECOND PROJECT (Tableau) ========== -->
+    <!-- Give this container an ID of "project2" -->
+    <div id="project2" style="margin-top: 50px;">
+      <!-- Title and Badge -->
+      <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <h2 style="margin: 0; font-size: 1.5rem;">
+          The Life and Journey of Forrest Gump: A Data Story
+        </h2>
+        <span class="tool-badge badge-tableau" style="margin-left: 10px;">Tableau</span>
+      </div>
+
+      <!-- Fixed-width container to match PBI's 1350px width -->
+      <div style="width: 1350px; border: 1px solid #ccc; padding: 10px;">
+        <!-- The Tableau Embed -->
+        <div class="tableauPlaceholder" style="width: 100%; height: 2150px; margin: 0 auto;">
+          <noscript>
+            <a href="#">
+              <img alt="Forrest Gump Dashboard"
+                   src="https://public.tableau.com/static/images/fo/forrestgump/ForrestGrumpFinal/1_rss.png"
+                   style="border: none" />
+            </a>
+          </noscript>
+          <object class="tableauViz" width="100%" height="100%" style="display: block;">
+            <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
+            <param name="embed_code_version" value="3" />
+            <param name="site_root" value="" />
+            <param name="name" value="forrestgump/ForrestGrumpFinal" />
+            <param name="tabs" value="no" />
+            <param name="toolbar" value="yes" />
+            <param name="static_image"
+                   value="https://public.tableau.com/static/images/fo/forrestgump/ForrestGrumpFinal/1.png" />
+            <param name="animate_transition" value="yes" />
+            <param name="display_static_image" value="yes" />
+            <param name="display_spinner" value="yes" />
+            <param name="display_overlay" value="yes" />
+            <param name="display_count" value="yes" />
+            <param name="language" value="en-US" />
+            <param name="filter" value="publish=yes" />
+          </object>
+        </div>
+      </div>
+
+      <!-- Minimal script to load the Tableau Viz (no auto-resize) -->
+      <script type="text/javascript">
+        var divElement = document.querySelector('.tableauPlaceholder');
+        var vizElement = divElement.getElementsByTagName('object')[0];
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+      </script>
+    </div>
   </main>
 
   <footer style="text-align:center; margin-bottom:20px;">
     <p>© 2025 Joseph Rodriguez. All rights reserved.</p>
   </footer>
 
-<script src="/static/js/scripts.js"></script>
-
+  <script src="/static/js/scripts.js"></script>
 </body>
 </html>
