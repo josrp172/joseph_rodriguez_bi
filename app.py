@@ -6,8 +6,12 @@ import json
 
 app = Flask(__name__)
 
-# Initialize the GenAI client (API key should be kept secret)
-client = genai.Client(api_key="AIzaSyCmVExBw1v18vCNcdYzIwTrX00O5_9J3SE")
+# Initialize the GenAI client using an environment variable
+api_key = os.environ.get('GOOGLE_API_KEY')
+if not api_key:
+    raise EnvironmentError('GOOGLE_API_KEY environment variable not set')
+
+client = genai.Client(api_key=api_key)
 
 # Load the entire knowledge.json from the "knowledgebase" folder
 knowledge_path = os.path.join('knowledgebase', 'knowledge.json')
