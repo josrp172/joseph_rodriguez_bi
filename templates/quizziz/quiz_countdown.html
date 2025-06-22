@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz - Get Ready!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #7e2385;
+      background-image:
+        linear-gradient(90deg, transparent 90%, rgba(255,255,255,0.03) 100%),
+        linear-gradient(0deg, transparent 90%, rgba(255,255,255,0.03) 100%);
+      background-size: 80px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+    .fullscreen-countdown {
+      display: flex;
+      position: fixed;
+      z-index: 99;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: transparent;
+      align-items: center;
+      justify-content: center;
+      pointer-events: all;
+    }
+    .countdown-bar {
+      background: rgba(20, 10, 25, 0.48);
+      width: 100vw;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: barPulse 0.9s infinite cubic-bezier(.61,.02,.75,.53);
+      will-change: transform, opacity;
+    }
+    @keyframes barPulse {
+      0%   { opacity: 0.88; transform: scaleX(0.97) scaleY(1);}
+      40%  { opacity: 1;    transform: scaleX(1.08) scaleY(1.14);}
+      50%  { opacity: 1;    transform: scaleX(1.12) scaleY(1.19);}
+      60%  { opacity: 1;    transform: scaleX(1.08) scaleY(1.14);}
+      100% { opacity: 0.88; transform: scaleX(0.97) scaleY(1);}
+    }
+    .fullscreen-countdown-number {
+      font-size: 6rem;
+      font-weight: 900;
+      color: #fff;
+      opacity: 0.91;
+      letter-spacing: 2px;
+      text-shadow: 0 6px 32px #0008;
+      animation: numPop 0.6s cubic-bezier(.23,1.29,.47,1.18);
+      will-change: transform, opacity;
+    }
+    @keyframes numPop {
+      0% { transform: scale(0.65); opacity: 0.2;}
+      70% { transform: scale(1.16); opacity: 1;}
+      100% { transform: scale(1); opacity: 1;}
+    }
+    .player-label {
+      position: fixed;
+      top: 48px;
+      left: 0;
+      width: 100vw;
+      text-align: center;
+      color: #fff;
+      font-size: 1.35rem;
+      letter-spacing: 1px;
+      opacity: 0.89;
+      font-weight: 600;
+      text-shadow: 0 2px 16px #0006;
+      z-index: 101;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    @media (max-width: 600px) {
+      .countdown-bar { height: 100px; }
+      .fullscreen-countdown-number { font-size: 3.3rem; }
+      .player-label { font-size: 1rem; }
+    }
+  </style>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+</head>
+<body>
+  <div class="player-label" id="playerLabel"></div>
+  <div class="fullscreen-countdown" id="fullscreenCountdown">
+    <div class="countdown-bar">
+      <span class="fullscreen-countdown-number" id="fullscreenCountdownNum">3</span>
+    </div>
+  </div>
+  <script>
+
+    // Maintain socket connection for the session!
+    var socket = io();
+
+    let myName = localStorage.getItem('quiz_username') || "Your Name";
+    let myAvatarIdx = +(localStorage.getItem('quizPlayerAvatar') || 0);
+
+    // Re-join the participants list!
+    socket.on('connect', function() {
+      socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
+    });
+
+    // Show player's name from localStorage
+    const playerLabel = document.getElementById('playerLabel');
+    let username = localStorage.getItem('quiz_username') || "";
+    if(username) {
+      playerLabel.innerText = `Good luck, ${username}!`;
+    } else {
+      playerLabel.innerText = "Get Ready!";
+    }
+
+    // Countdown animation
+    const fsCountdownNum = document.getElementById('fullscreenCountdownNum');
+    function replayNumPop() {
+      fsCountdownNum.style.animation = "none";
+      void fsCountdownNum.offsetWidth;
+      fsCountdownNum.style.animation = "";
+    }
+
+    let count = 3;
+    fsCountdownNum.textContent = count;
+    replayNumPop();
+    const intv = setInterval(() => {
+      count -= 1;
+      if (count === 0) {
+        clearInterval(intv);
+        fsCountdownNum.textContent = "GO!";
+        replayNumPop();
+        setTimeout(() => {
+          window.location.href = "/quiz/play"; // CHANGE to your quiz question route!
+        }, 750);
+      } else {
+        fsCountdownNum.textContent = count;
+        replayNumPop();
+      }
+    }, 950);
+
+    // Listen for quiz_started (defensive in case re-broadcasted)
+    socket.on('quiz_started', function() {
+      window.location.href = "/quiz/play";
+    });
+
+    // Optionally, inform backend player entered countdown:
+    // socket.emit('entered_countdown');
+  </script>
+</body>
+</html>

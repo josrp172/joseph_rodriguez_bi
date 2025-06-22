@@ -1,10 +1,22 @@
 import os
+import time
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from google import genai
 import json
+from flask_socketio import SocketIO, emit
+
+
+questions = [
+    {"id": 1, "question": "What is 2 + 2?", "choices": ["2", "3", "4", "5"], "answer": "4"},
+    {"id": 2, "question": "Capital of France?", "choices": ["London", "Paris", "Rome", "Madrid"], "answer": "Paris"},
+]
+player_scores = {}  # {username: score}
+participants = {}
+last_gif_time = {}
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # Initialize the GenAI client (API key should be kept secret)
 client = genai.Client(api_key="AIzaSyCmVExBw1v18vCNcdYzIwTrX00O5_9J3SE")
@@ -33,6 +45,12 @@ def home():
 def projects_bi():
     return render_template('projects-bi.html')
 
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -56,5 +74,127 @@ def chat():
         print("Error generating AI response:", e)
         return jsonify({"error": str(e)}), 500
 
+@app.route('/games')
+def games():
+    return render_template('quizziz/game_list.html')
+
+@app.route('/quiz/start')
+def quiz_start():
+    return render_template('quizziz/quiz_start.html')
+
+@app.route('/quiz/waiting')
+def quiz_waiting():
+    return render_template('quizziz/quiz_waiting.html')
+
+@app.route('/quiz/countdown')
+def quiz_countdown():
+    return render_template('quizziz/quiz_countdown.html')
+
+@app.route('/quiz/play')
+def quiz_play():
+    return render_template('quizziz/quiz_play.html')
+
+@app.route('/quiz/admin_lobby')
+def quiz_admin_lobby():
+    join_code = '185620'  # Or random code, or from DB/session
+    return render_template('quizziz/quiz_admin_lobby.html', join_code=join_code)
+
+@app.route('/quiz/admin')
+def quiz_admin():
+    return render_template('quizziz/quiz_admin.html')
+
+@socketio.on('join_waiting')
+def on_join_waiting(data):
+    name = data.get('name', 'No Name')
+    avatar = data.get('avatar', 0)
+    # Remove any previous participants with the same name (avoids duplicates)
+    for sid, p in list(participants.items()):
+        if p['name'] == name:
+            del participants[sid]
+    participants[request.sid] = {
+        'id': request.sid,
+        'name': name,
+        'avatar': avatar
+    }
+    emit('player_list', list(participants.values()), broadcast=True)
+
+@socketio.on('update_avatar')
+def on_update_avatar(idx):
+    if request.sid in participants:
+        participants[request.sid]['avatar'] = idx
+        emit('player_list', list(participants.values()), broadcast=True)
+
+
+@socketio.on('update_name')
+def on_update_name(name):
+    if request.sid in participants:
+        participants[request.sid]['name'] = name
+        emit('player_list', list(participants.values()), broadcast=True)
+
+@socketio.on('disconnect')
+def on_disconnect():
+    if request.sid in participants:
+        del participants[request.sid]
+        emit('player_list', list(participants.values()), broadcast=True)
+
+@socketio.on('submit_answer')
+def handle_answer(data):
+    username = data['username']
+    qid = data['qid']
+    choice = data['choice']
+    # Check answer
+    correct = [q for q in questions if q["id"] == qid][0]["answer"] == choice
+    player_scores.setdefault(username, 0)
+    if correct:
+        player_scores[username] += 1
+    emit('update_leaderboard', player_scores, broadcast=True, namespace='/admin')
+
+
+
+
+
+
+
+@socketio.on('admin_get_players')
+def handle_admin_get_players():
+    emit('player_list', list(participants.values()))
+
+@socketio.on('admin_start_quiz')
+def handle_admin_start_quiz():
+    emit('quiz_started', broadcast=True)
+    # Optionally: emit to a "room" only
+
+# Clear players when server restarts, or add a /reset route for dev/demo
+
+@socketio.on('connect', namespace='/admin')
+def admin_connect():
+    emit('update_leaderboard', player_scores)
+
+
+@app.route('/static/images/gif/<filename>')
+def serve_gif(filename):
+    return send_from_directory('static/images/gif', filename)
+
+@socketio.on('send_gif')
+def handle_send_gif(data):
+    # data: {'gif': 'deal-with-it.gif', 'name': 'Joseph', 'avatar': 0}
+    gif_name = data.get('gif')
+    name = data.get('name')
+    avatar = data.get('avatar')
+    sid = request.sid
+
+    now = time.time()
+    # Enforce per-5s limit
+    if sid in last_gif_time and now - last_gif_time[sid] < 5:
+        emit('gif_error', {'msg': 'Please wait before sending another GIF.'})
+        return
+    last_gif_time[sid] = now
+
+    socketio.emit('show_gif', {
+        'gif': gif_name,
+        'name': name,
+        'avatar': avatar
+    })
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

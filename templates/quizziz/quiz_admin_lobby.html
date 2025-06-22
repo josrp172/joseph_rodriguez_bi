@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Admin Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <!-- Google Fonts for consistent design -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+html, body {
+  height: 100%;
+  width: 100vw;
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  font-family: 'Nunito', Arial, sans-serif;
+  background: transparent;
+}
+body {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  background: transparent;
+}
+/* === Animated SVG Mesh BG & Blobs === */
+.bg-animated-mesh {
+  position: fixed !important; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; overflow:hidden;
+}
+.quiz-bg-blobs {
+  position: fixed !important; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; overflow:hidden;
+}
+.blob { position:absolute; border-radius:50%; filter:blur(64px); opacity:0.45; animation:moveBlobs 16s linear infinite alternate;}
+.blob1 { width:360px; height:320px; background:#7e2385; left:3vw; top:5vh; animation-delay:0s;}
+.blob2 { width:250px; height:300px; background:#f6e26d; left:58vw; top:16vh; animation-delay:3s;}
+.blob3 { width:320px; height:220px; background:#22d07a; left:29vw; top:65vh; animation-delay:7s;}
+.blob4 { width:220px; height:220px; background:#fa9660; left:72vw; top:62vh; animation-delay:10s;}
+@keyframes moveBlobs {
+  0% { transform:translateY(0px) scale(1);}
+  30%{ transform:translateY(-22px) scale(1.05);}
+  50%{ transform:translateY(38px) scale(0.98);}
+  80%{ transform:translateY(-14px) scale(1.09);}
+  100%{transform:translateY(0px) scale(1);}
+}
+.bg-bottom-blur {
+  position:fixed;
+  left:0; bottom:0;
+  width:100vw; height:210px;
+  z-index:2;
+  background:linear-gradient(0deg,rgba(240,230,255,0.13) 50%,transparent 100%);
+  filter: blur(22px) saturate(2.2);
+  pointer-events:none;
+  opacity:0.9;
+}
+/* === Navbar and Footer === */
+.topbar {
+  width: 100vw;
+  padding: 0 32px 0 24px;
+  height: 70px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: 1.2px;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 10;
+  background: rgba(25, 9, 32, 0.93);
+  border-bottom: 1.5px solid rgba(255,255,255,0.11);
+  box-shadow: 0 2px 18px 0 #0004, 0 1.5px 10px 0 #62228b22;
+  backdrop-filter: blur(3.5px);
+  user-select: none;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+.topbar-logo {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 900;
+  font-size: 2.1rem;
+  margin-right: 18px;
+}
+.topbar-title {
+  opacity: 0.82;
+  font-size: 1.23rem;
+  margin-left: 12px;
+  font-weight: 700;
+  font-family: 'Nunito', Arial, sans-serif;
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-title .admin-icon { font-size: 1.32em; vertical-align: middle; opacity: 0.78; margin-right: 2px; }
+.site-footer {
+  position: fixed; left: 0; bottom: 0; width: 100vw;
+  color: #fff; text-align: center;
+  font-size: 1.11em; font-weight: 500;
+  padding: 18px 0 15px 0;
+  z-index: 10000;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(22px) saturate(2.3);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 -1px 18px 0 #0002, 0 1px 9px 0 #fff1 inset;
+  border-top: 1.5px solid rgba(255,255,255,0.13);
+  user-select: none;
+  text-shadow: 0 1.5px 4px #4442, 0 0 8px #0002;
+  font-family: 'Montserrat', Arial, sans-serif;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+/* === Center container === */
+.admin-center-container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 20;
+  margin-top: 112px;
+  margin-bottom: 0;        /* No more extra gap */
+  padding-bottom: 40px;    /* Just enough space above footer */
+  gap: 32px;
+  overflow-x: auto;
+}
+/* === Cards === */
+.lobby-card, .lobby-wait {
+  background: rgba(28, 10, 40, 0.99);
+  border-radius: 28px;
+  color: #fff;
+  box-shadow: 0 10px 34px 8px #0004, 0 2.5px 15px 3px #62228b2b;
+  backdrop-filter: blur(12px) saturate(1.4);
+  opacity: 0.99;
+  border: 1.5px solid rgba(180,180,255,0.04);
+  margin-bottom: 0;
+  transition: box-shadow 0.18s, transform 0.18s, width 0.35s cubic-bezier(.55,1.8,.53,1), height 0.4s cubic-bezier(.63,1.5,.67,1);
+  padding: 36px 42px 28px 42px;
+  width: 480px;
+  min-width: 480px;
+  max-width: 98vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Nunito', Arial, sans-serif;
+}
+.lobby-card { margin-bottom: 22px; }
+
+
+@keyframes cardFadeIn { 0%{opacity:0;transform:translateY(44px) scale(0.97);} 100%{opacity:1;transform:none;} }
+.section-divider {
+  height: 1.5px;
+  width: 95%;
+  background: linear-gradient(to right, #f6e26d22, #fff1 60%, #f6e26d22);
+  border: none;
+  margin: 18px 0 18px 0;
+  opacity: 0.4;
+}
+/* === Participants grid layout === */
+/* Participants grid auto grows horizontally, no scrollbars */
+.participants-list {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(54px, auto));
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 18px 20px;
+  padding: 8px 6px 6px 6px;
+  background: rgba(34,18,56,0.46);
+  border-radius: 18px;
+  box-shadow: 0 4px 18px #7e238533 inset;
+  margin-bottom: 0;
+  min-width: 0;
+  max-width: none;
+  width: auto;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  scrollbar-width: none;
+}
+.participants-list::-webkit-scrollbar {
+  display: none;
+}
+
+.participants-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #a549d2 30%, #f6e26d 80%);
+  border-radius: 9px;
+  box-shadow: 0 2px 6px #7e238530;
+}
+.participant {
+  background: rgba(255,255,255,0.15);
+  padding: 8px 17px 8px 11px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.08em;
+  gap: 10px;
+  box-shadow: 0 2px 12px #0002, 0 1.5px 8px #7e238522;
+  margin: 0;
+  outline: none;
+  cursor: pointer;
+  min-width: 130px;
+  max-width: 220px;
+  transition: background 0.14s, box-shadow 0.16s, transform 0.13s;
+  animation: participantAppear 0.5s;
+}
+.participant:hover,
+.participant:focus-visible {
+  background:rgba(246,226,109,0.15);
+  box-shadow:0 2px 16px #f6e26d26;
+  transform: scale(1.035);
+}
+@keyframes participantAppear {0%{opacity:0; transform:scale(0.92);}100%{opacity:1;transform:none;}}
+.participant-num {
+  font-size: 1.06em;
+  font-weight: 700;
+  color: #a082e7;
+  width: 1.6em;
+  text-align: right;
+  margin-right: 2px;
+  display: flex; align-items: center; justify-content: center;
+}
+.participant-icon img, .participant-icon .avatar-img {
+  width: 38px; height: 38px; border-radius: 10px;
+  box-shadow: 0 1px 4px #0001; border: 2px solid #f6e26d80;
+  object-fit:cover; background:#fff;
+}
+.participant-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.07em;
+  letter-spacing: 0.2px;
+  padding-left: 2px;
+  text-shadow: 0 1px 4px #7e238540;
+  flex: 1 1 auto;
+}
+/* Loader for empty state */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; width: 100%; padding: 22px 0 10px 0;
+}
+.loader {
+  border: 3px solid #ae7cf233;
+  border-top: 3px solid #f6e26d;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 11px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+/* Responsive */
+@media (max-width: 900px) {
+  .lobby-card { width: 99vw; max-width: 99vw; padding: 18px 4vw;}
+  .participants-list { grid-template-rows: repeat(3,minmax(48px,auto)); gap: 11px 7px;}
+  .lobby-wait {
+    max-width: 99vw;   /* Card stops at edge of screen */
+    padding: 13px 2vw;
+  }
+  .participants-list {
+    gap: 11px 7px;
+  }
+}
+@media (max-width: 700px) {
+  .lobby-card, .lobby-wait { padding: 12px 2vw;}
+  .admin-center-container { margin-top: 82px; }
+  .topbar { font-size: 1.09rem; height: 56px;}
+  .topbar-logo { font-size: 1.13rem;}
+  .participants-list { grid-template-rows: repeat(3,minmax(40px,auto)); gap: 7px 6px;}
+  .participant { min-width: 100px; max-width: 96vw; font-size: 1em; }
+}
+/* Accessibility: focus ring */
+.participant:focus-visible { outline: 2.5px solid #ae7cf2; }
+.start-btn:focus-visible, .copy-btn:focus-visible { outline: 2.5px solid #f6e26d; }
+.join-code:focus { outline: 2px solid #f6e26d; }
+
+/* === Join Card Improvements === */
+.join-card {
+  padding-top: 40px;
+  padding-bottom: 35px;
+  background: rgba(28, 10, 40, 0.99);
+  box-shadow: 0 10px 34px 8px #0004, 0 2.5px 15px 3px #62228b2b;
+  border-radius: 28px;
+  border: 1.5px solid rgba(180,180,255,0.07);
+  backdrop-filter: blur(13px) saturate(1.5);
+  min-width: 320px;
+  width: 480px;
+  max-width: 98vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.join-card-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 1.24em;
+  letter-spacing: 0.05em;
+  margin-bottom: 18px;
+  color: #f6e26d;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-shadow: 0 2px 8px #7e238540;
+}
+
+.join-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.join-link {
+  font-size: 1.09em;
+  line-height: 1.6;
+  color: #f3e8fc;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2px;
+  letter-spacing: 0.01em;
+}
+
+.join-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin-top: 3px;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.join-code {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 2.3em;
+  font-weight: 900;
+  color: #f6e26d;
+  background: rgba(34, 18, 56, 0.38);
+  padding: 8px 32px;
+  border-radius: 15px;
+  text-align: center;
+  letter-spacing: 0.11em;
+  user-select: all;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 14px #f6e26d24;
+  border: 1.5px solid rgba(246,226,109,0.20);
+  transition: background 0.17s, box-shadow 0.18s, transform 0.13s;
+}
+.join-code:hover, .join-code:focus {
+  background: rgba(246,226,109,0.15);
+  color: #ffe579;
+  box-shadow: 0 4px 18px #f6e26d45;
+  transform: scale(1.035);
+}
+
+.copy-btn {
+  margin-left: 2px;
+  background: rgba(180,180,255,0.14);
+  color: #f6e26d;
+  border: none;
+  border-radius: 11px;
+  font-size: 1.47em;
+  padding: 6px 12px 5px 12px;
+  cursor: pointer;
+  box-shadow: 0 1px 6px #0002;
+  transition: background 0.16s, box-shadow 0.15s, transform 0.13s;
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
+.copy-btn:hover, .copy-btn:focus {
+  background: rgba(246,226,109,0.17);
+  color: #fff;
+  box-shadow: 0 2px 12px #f6e26d44;
+  transform: scale(1.09);
+}
+
+.copy-tooltip {
+  position: absolute;
+  left: 50%;
+  top: -38px;
+  transform: translateX(-50%) scale(0.95);
+  opacity: 0;
+  pointer-events: none;
+  background: #1c0a28;
+  color: #f6e26d;
+  padding: 6px 19px;
+  border-radius: 12px;
+  font-size: 1em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px #0005;
+  white-space: nowrap;
+  z-index: 2;
+  transition: opacity 0.34s cubic-bezier(.61,.23,.52,.99), transform 0.22s cubic-bezier(.43,1.5,.44,1.1);
+  will-change: opacity, transform;
+}
+.copy-tooltip.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1.03);
+}
+
+/* Align controls horizontally on wide, stack on mobile */
+.lobby-controls.join-controls {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 17px;
+  flex-wrap: wrap;
+}
+.autostart-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05em;
+  font-weight: 500;
+  color: #fff;
+  user-select: none;
+}
+.start-btn {
+  font-size: 1.13em;
+  font-weight: 800;
+  padding: 10px 34px;
+  background: linear-gradient(90deg, #7e2385 60%, #f6e26d 100%);
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 2px 18px #7e238533, 0 1.5px 9px #f6e26d15;
+  cursor: pointer;
+  transition: background 0.17s, box-shadow 0.14s, transform 0.11s;
+  letter-spacing: 0.03em;
+  outline: none;
+}
+.start-btn:hover, .start-btn:focus {
+  background: linear-gradient(90deg, #f6e26d 40%, #7e2385 100%);
+  color: #222;
+  box-shadow: 0 4px 22px #f6e26d55;
+  transform: scale(1.04);
+}
+.autostart-checkbox {
+  accent-color: #f6e26d;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 5px;
+}
+
+/* --- Responsive: Stack controls & shrink --- */
+@media (max-width: 600px) {
+  .join-card {
+    padding: 19px 3vw 19px 3vw;
+    min-width: 0;
+    width: 98vw;
+    border-radius: 21px;
+  }
+  .join-code {
+    font-size: 1.32em;
+    padding: 7px 12vw;
+  }
+  .lobby-controls.join-controls {
+    flex-direction: column;
+    gap: 11px;
+    width: 100%;
+    align-items: stretch;
+  }
+  .start-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 0;
+    font-size: 1.05em;
+  }
+}
+
+.lobby-card, .lobby-wait, .join-card {
+  background: rgba(28, 10, 40, 0.99);
+  border-radius: 28px;
+  color: #fff;
+  box-shadow: 0 10px 34px 8px #0004, 0 2.5px 15px 3px #62228b2b;
+  backdrop-filter: blur(12px) saturate(1.4);
+  opacity: 0.99;
+  border: 1.5px solid rgba(180,180,255,0.04);
+  margin-bottom: 0;
+  transition: box-shadow 0.18s, transform 0.18s, width 0.35s cubic-bezier(.55,1.8,.53,1), height 0.4s cubic-bezier(.63,1.5,.67,1);
+  padding: 36px 42px 28px 42px;
+  width: 480px;
+  min-width: 480px;
+  max-width: 98vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Nunito', Arial, sans-serif;
+}
+
+    .section-title, .join-card-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 1.24em;
+  letter-spacing: 0.05em;
+  margin-bottom: 15px;
+  color: #f6e26d;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-shadow: 0 2px 8px #7e238540;
+}
+.participants-title {
+  justify-content: center;
+}
+.section-title-icon {
+  font-size: 1.16em;
+  margin-right: 3px;
+}
+
+    /* Make empty state fill the participants list, minus some padding */
+.participants-list .empty-state {
+  grid-column: 1 / -1;
+  min-height: 90px;
+  box-sizing: border-box;
+  background: transparent; /* Remove inner card look */
+  padding: 16px 0 16px 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.participants-list .empty-state span {
+  color: #fff;
+  font-size: 1.07em;
+  font-weight: 500;
+  opacity: 0.92;
+  text-align: center;
+}
+.participants-list .loader {
+  margin-bottom: 11px;
+}
+
+    .participants-list.empty {
+  display: block !important;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding: 8px 0 6px 0;
+}
+
+.participants-list.empty .empty-state {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding: 30px 0 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+        .gif-toast-popup {
+      position: fixed;
+      bottom: 18px;
+      right: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 22px 10px 14px;
+      background: rgba(25, 22, 44, 0.86);
+      border-radius: 16px;
+      box-shadow: 0 6px 28px 0 #0003;
+      z-index: 99999;
+      min-width: 132px;
+      max-width: 92vw;
+      opacity: 1;
+      transition: opacity 0.22s;
+      backdrop-filter: blur(6px);
+    }
+    .gif-toast-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 2px 6px #0002;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gif-toast-text {
+      margin-right: 7px;
+      display: flex;
+      align-items: center;
+      min-width: 38px;
+    }
+    .gif-toast-name {
+      color: #f6e26d;
+      font-size: 1.15em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px #0002;
+      line-height: 1.08;
+      padding-left: 2px;
+    }
+    .gif-toast-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2.5px solid #fff3;
+      background: #fff7;
+      box-shadow: 0 2px 12px #0002;
+      margin-left: 2px;
+    }
+    @keyframes floatUpSmooth {
+      0%   { bottom: 18px; opacity: 1; }
+      95%  { bottom: 85vh; opacity: 1; }
+      100% { bottom: 85vh; opacity: 0.3; }
+    }
+    @media (max-width: 700px) {
+      .gif-toast-popup { right: 4vw; padding: 7px 10px 7px 9px;}
+      .gif-toast-img { width: 38px; height: 38px; }
+      .gif-toast-avatar { width: 32px; height: 32px; }
+      .gif-toast-name { font-size: 1em; }
+    }
+</style>
+
+</head>
+<body>
+<div id="gif-popup" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;"></div>
+
+  <!-- Animated SVG Mesh BG -->
+  <div class="bg-animated-mesh">
+    <svg viewBox="0 0 1440 700" width="100%" height="100%" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;">
+      <defs>
+        <linearGradient id="bgMeshGrad1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7e2385">
+            <animate attributeName="stop-color" values="#7e2385;#ad78fa;#22d07a;#7e2385" dur="8s" repeatCount="indefinite"/>
+          </stop>
+          <stop offset="100%" stop-color="#22d07a">
+            <animate attributeName="stop-color" values="#22d07a;#fa9660;#f6e26d;#22d07a" dur="8s" repeatCount="indefinite"/>
+          </stop>
+        </linearGradient>
+      </defs>
+      <path fill="url(#bgMeshGrad1)">
+        <animate attributeName="d"
+          dur="8s"
+          repeatCount="indefinite"
+          values="
+            M0,400 Q360,300 720,400 Q1080,500 1440,400 L1440,700 L0,700Z;
+            M0,380 Q360,450 720,300 Q1080,200 1440,380 L1440,700 L0,700Z;
+            M0,400 Q360,300 720,400 Q1080,500 1440,400 L1440,700 L0,700Z
+          "
+        />
+      </path>
+    </svg>
+  </div>
+  <div class="quiz-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+  <div class="bg-bottom-blur"></div>
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="topbar-logo">WAYGROUND</span>
+    <span class="topbar-title"><span class="admin-icon" aria-label="Admin">&#128100;</span> Admin Lobby</span>
+  </div>
+  <div class="admin-center-container">
+    <!-- Main Card -->
+    <div class="lobby-card join-card">
+  <div class="join-card-title">
+    <span class="lobby-wait-icon" aria-label="Join">&#128279;</span>
+    Join the Quiz
+  </div>
+  <div class="join-section">
+    <div class="join-link">
+      Go to <b>yourdomain.com/quiz/join</b> on your phone or computer to participate:
+    </div>
+    <div class="join-code-row">
+      <div
+        class="join-code"
+        id="joinCode"
+        tabindex="0"
+        aria-label="Quiz join code"
+        role="text"
+      >{{ join_code }}</div>
+      <button
+        class="copy-btn"
+        id="copyCodeBtn"
+        aria-label="Copy join code to clipboard"
+        title="Copy code"
+      >📋</button>
+      <span class="copy-tooltip" id="copyTooltip" role="status" aria-live="polite">Copied!</span>
+    </div>
+  </div>
+  <hr class="section-divider" />
+  <div class="lobby-controls join-controls">
+    <label class="autostart-row">
+      <input type="checkbox" id="autostart" class="autostart-checkbox" disabled />
+      <span class="autostart-label">Auto start quiz</span>
+    </label>
+    <button class="start-btn" id="startQuizBtn" tabindex="0" aria-label="Start the quiz">START</button>
+  </div>
+</div>
+
+    <!-- Participants Card -->
+    <div class="lobby-wait" id="lobbyWait">
+      <div class="section-title participants-title">
+        <span class="section-title-icon" aria-label="Participants">&#128101;</span>
+        Participants
+      </div>
+      <!-- Grid-based, horizontally scrollable participant list -->
+      <div class="participants-list" id="participantsList" aria-live="polite"></div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    © Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.
+  </footer>
+  <script>
+ // Avatars array (should match backend avatar indexes)
+    const avatars = [
+      `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Leonard" />`,
+      `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Morty" />`,
+      `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Rick" />`,
+      `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Sheldon" />`,
+      `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Walter" />`
+    ];
+
+    // Helper: insert participants in grid (max 3 per column)
+    function renderParticipantsGrid(players) {
+      const container = document.getElementById('participantsList');
+      container.innerHTML = '';
+      if (!players.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="loader"></div>
+              Waiting for participants…
+            </div>
+          `;
+          container.classList.add('empty');
+          return;
+        return;
+      }
+      container.classList.remove('empty');
+
+      // Build grid: chunk into columns of max 3 rows
+      let columns = [];
+      for (let i = 0; i < players.length; i += 3) {
+        columns.push(players.slice(i, i + 3));
+      }
+      // Flatten as per CSS grid (row-wise per column)
+      let gridOrder = [];
+      for (let row = 0; row < 3; ++row) {
+        for (let col = 0; col < columns.length; ++col) {
+          if (columns[col][row]) gridOrder.push(columns[col][row]);
+        }
+      }
+      // Actually render as grid items
+      gridOrder.forEach((player, idx) => {
+        let avatarIdx = (typeof player.avatar === "number" && player.avatar >= 0 && player.avatar < avatars.length) ? player.avatar : 0;
+        let el = document.createElement('div');
+        el.className = "participant";
+        el.tabIndex = 0;
+        el.setAttribute('aria-label', `Participant ${idx+1}: ${player.name || '(No Name)'}`);
+        let svgIcon = `<span class="participant-icon" style="vertical-align:middle;">${avatars[avatarIdx]}</span>`;
+        el.innerHTML = `
+          <span class="participant-num">${idx + 1}.</span>
+          ${svgIcon}
+          <span class="participant-name">${player.name || '(No Name)'}</span>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+     // ========== GIF TOAST LOGIC (from quiz_waiting.html) ==========
+    function showGifToast(gifFile, name, avatarIdx) {
+      // Construct toast DOM
+      const toast = document.createElement('div');
+      toast.className = 'gif-toast-popup';
+      toast.innerHTML = `
+        <div class="gif-toast-avatar">${avatars[typeof avatarIdx === "number" ? avatarIdx : 0]}</div>
+        <div class="gif-toast-text">
+          <div class="gif-toast-name">${name}</div>
+        </div>
+        <img class="gif-toast-img" src="/static/images/gif/${gifFile}" alt="GIF"/>
+      `;
+      document.body.appendChild(toast);
+      // Animate
+      toast.style.animation = 'floatUpSmooth 5s linear forwards';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 250);
+      }, 5000);
+    }
+
+    // --- Socket events: as before, just update render logic ---
+    var socket = io();
+    socket.on('player_list', function(players) {
+      renderParticipantsGrid(players);
+    });
+
+    // --- Quiz start button ---
+    document.getElementById('startQuizBtn').onclick = function() {
+      socket.emit('admin_start_quiz');
+    };
+    socket.on('quiz_started', function() {
+      document.getElementById('startQuizBtn').textContent = "Started!";
+      document.getElementById('startQuizBtn').disabled = true;
+    });
+    socket.emit('admin_get_players');
+
+    const joinCodeElem = document.getElementById('joinCode');
+    const copyBtn = document.getElementById('copyCodeBtn');
+    const copyTooltip = document.getElementById('copyTooltip');
+    copyBtn.onclick = function() {
+      let text = joinCodeElem.textContent || joinCodeElem.innerText;
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        copyTooltip.classList.add('show');
+        setTimeout(() => copyTooltip.classList.remove('show'), 1350);
+      });
+    };
+
+    joinCodeElem.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        copyBtn.click();
+      }
+    });
+
+    // Listen for show_gif (NEW TOAST VERSION)
+    socket.on('show_gif', function(data) {
+      // Use new toast method (matches quiz_waiting.html)
+      // Expect: data.gif (file name), data.name, data.avatar (idx)
+      if (data && data.gif && data.name !== undefined && data.avatar !== undefined) {
+        showGifToast(data.gif, data.name, data.avatar);
+      }
+      // Optionally: still show the old modal popup for backward compat
+      // showGifPopup('/static/images/gif/' + data.gif);
+    });
+
+
+    // (Keep your original showGifPopup function for other usages)
+    function showGifPopup(url) {
+      const popup = document.getElementById('gif-popup');
+      popup.innerHTML = `<img src="${url}" style="max-width:350px;max-height:350px;border-radius:15px;box-shadow:0 4px 22px #0008;">`;
+      popup.style.display = 'block';
+      setTimeout(() => { popup.style.display = 'none'; }, 5000);
+    }
+  </script>
+</body>
+</html>

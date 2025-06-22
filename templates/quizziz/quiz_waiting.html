@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Waiting Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <style>
+    body {
+      min-height: 100vh;
+      background: #7e2385;
+      margin: 0;
+      font-family: 'Nunito', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .quiz-bg-blobs {
+      position: fixed; top:0; left:0; width:100vw; height:100vh; z-index: 0; pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(64px);
+      opacity: 0.45;
+      animation: moveBlobs 16s linear infinite alternate;
+    }
+    .blob1 { width: 360px; height: 320px; background: #7e2385; left: 3vw; top: 5vh; animation-delay: 0s;}
+    .blob2 { width: 250px; height: 300px; background: #f6e26d; left: 58vw; top: 16vh; animation-delay: 3s;}
+    .blob3 { width: 320px; height: 220px; background: #22d07a; left: 29vw; top: 65vh; animation-delay: 7s;}
+    .blob4 { width: 220px; height: 220px; background: #fa9660; left: 72vw; top: 62vh; animation-delay: 10s;}
+    @keyframes moveBlobs {
+      0% { transform: translateY(0px) scale(1);}
+      30% { transform: translateY(-22px) scale(1.05);}
+      50% { transform: translateY(38px) scale(0.98);}
+      80% { transform: translateY(-14px) scale(1.09);}
+      100% { transform: translateY(0px) scale(1);}
+    }
+
+    /* Glassmorphism waiting card */
+    .waiting-card {
+      background: rgba(40,20,60,0.82);
+      color: #fff;
+      padding: 46px 44px 36px 44px;
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 10px 38px 0 #0005, 0 2px 16px 0 #fff2 inset;
+      position: relative;
+      z-index: 2;
+      width: 480px;
+      max-width: 97vw;
+      backdrop-filter: blur(18px) saturate(1.5);
+      transition: box-shadow 0.18s, background 0.17s;
+      animation: fadeCardIn 0.7s;
+    }
+    @keyframes fadeCardIn { from { opacity:0; transform:scale(0.98) translateY(48px);} to {opacity:1; transform:none;} }
+
+    /* Heading */
+    .waiting-card h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: #f6e26d;
+      text-shadow: 0 2px 16px #2e1432c0;
+      animation: pulse 1.8s infinite alternate;
+    }
+    @keyframes pulse { 0%{opacity:0.89;} 100%{opacity:1;} }
+
+    /* Avatar picker + user area */
+    .avatar-section {
+      margin: 18px 0 22px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .current-user-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 16px 6px 10px;
+      box-shadow: 0 1.5px 8px #0001;
+      transition: box-shadow 0.22s, background 0.14s, transform 0.19s;
+    }
+    .current-user-card.anim-edit {
+      animation: popEdit 0.4s;
+    }
+    @keyframes popEdit {
+      0% { box-shadow: 0 0 0 0 #f6e26d44, 0 0 0 0 #ae7cf233; transform:scale(1);}
+      30%{ box-shadow: 0 0 0 14px #f6e26d33, 0 0 0 8px #ae7cf233; transform:scale(1.07);}
+      100%{ box-shadow: 0 0 0 0 #f6e26d44, 0 0 0 0 #ae7cf233; transform:scale(1);}
+    }
+    .avatar-top {
+      width: 54px;
+      height: 54px;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 16px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 3px 18px #7e238520;
+      margin-right: 12px;
+    }
+    .avatar-top img {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 16px !important;
+      object-fit: cover;
+      display: block;
+    }
+    .my-name {
+      font-size: 1.34em;
+      font-weight: 800;
+      color: #fff;
+      margin-left: 2px;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1.5px 10px #2e143280;
+    }
+    .edit-name-btn {
+      font-size: 1.22em;
+      background: none;
+      border: none;
+      color: #ae7cf2;
+      cursor: pointer;
+      margin-left: 7px;
+      padding: 0;
+      vertical-align: middle;
+      transition: color 0.14s, transform 0.15s;
+    }
+    .edit-name-btn:hover, .edit-name-btn:focus { color: #f6e26d; transform: scale(1.23); outline: none;}
+    .edit-name-btn:active { color: #7e2385; }
+
+    /* Avatar picker list */
+    .avatar-list {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 7px;
+      margin-bottom: 7px;
+    }
+    .avatar-choice {
+      border: 2.5px solid transparent;
+      border-radius: 17px;
+      cursor: pointer;
+      transition: border 0.14s, box-shadow 0.17s, transform 0.18s;
+      background: #fff1;
+      padding: 5px;
+      position: relative;
+      outline: none;
+      box-shadow: 0 1.5px 9px #7e238511;
+    }
+    .avatar-choice img {
+      width: 54px; height: 54px; border-radius: 13px;
+      object-fit: cover; background: #fff;
+      transition: filter 0.18s, transform 0.18s;
+    }
+    .avatar-choice.selected {
+      border: 2.5px solid #f6e26d;
+      box-shadow: 0 0 0 8px #f6e26d2c, 0 1.5px 9px #7e238533;
+      background: #fff3;
+      animation: popAvatar 0.38s;
+    }
+    .avatar-choice.selected img {
+      filter: brightness(1.13) drop-shadow(0 0 10px #f6e26d55);
+      transform: scale(1.10);
+    }
+    .avatar-choice:focus, .avatar-choice:hover {
+      border: 2.5px solid #ae7cf2;
+      box-shadow: 0 0 0 6px #ae7cf222, 0 1.5px 9px #7e238522;
+      background: #f6e26d13;
+      outline: none;
+      transform: scale(1.09);
+    }
+    .avatar-tooltip {
+      position: absolute;
+      bottom: -32px; left: 50%;
+      transform: translateX(-50%);
+      background: #22274aee;
+      color: #f6e26d;
+      font-size: 0.99em;
+      border-radius: 7px;
+      padding: 3px 11px;
+      pointer-events: none;
+      opacity: 0;
+      white-space: nowrap;
+      transition: opacity 0.18s;
+      z-index: 100;
+      box-shadow: 0 3px 18px #22274a11;
+    }
+    .avatar-choice:focus .avatar-tooltip,
+    .avatar-choice:hover .avatar-tooltip {
+      opacity: 1;
+    }
+    @keyframes popAvatar {
+      0% { transform:scale(1);}
+      33% { transform:scale(1.20);}
+      100% { transform:scale(1.10);}
+    }
+
+    /* Participants area */
+    .participants-meta {
+      color: #f6e26d;
+      font-weight: 700;
+      font-size: 1.07em;
+      margin-bottom: 7px;
+      text-align: left;
+      width: 100%;
+    }
+    .participants-list {
+      background: #201033b0;
+      border-radius: 16px;
+      padding: 16px 13px;
+      margin: 8px 0 11px 0;
+      min-height: 38px;
+      max-height: 185px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 1.09em;
+      box-shadow: 0 2px 16px #0001;
+      width: 100%;
+      transition: box-shadow 0.18s;
+    }
+    .participant-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 7px;
+      gap: 13px;
+      opacity: 1;
+      animation: participantJoin 0.38s;
+    }
+    @keyframes participantJoin {
+      0% { opacity:0; transform:translateY(16px) scale(0.95);}
+      100%{ opacity:1; transform:none;}
+    }
+    .participant-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      overflow: hidden;
+      margin-right: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 9px #fa966020;
+    }
+    .participant-avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .participant-name {
+      font-weight: 700;
+      color: #fff;
+      margin-right: 7px;
+      font-size: 1.07em;
+      text-shadow: 0 1px 6px #2e143240;
+    }
+
+    /* Empty state illustration */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 16px 0 10px 0;
+      color: #fff;
+      opacity: 0.93;
+      animation: fadeCardIn 0.8s;
+    }
+    .empty-illustration {
+      width: 70px;
+      margin-bottom: 10px;
+      animation: floatIdle 2.5s infinite alternate;
+      opacity: 0.78;
+    }
+    @keyframes floatIdle { 0%{ transform:translateY(0);} 100%{ transform:translateY(-12px);} }
+
+    /* GIFs */
+    .gif-btn img {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      vertical-align: middle;
+      margin-right: 3px;
+      object-fit: cover;
+      border: 1.5px solid #ae7cf277;
+      background: #fff;
+      transition: box-shadow 0.15s, transform 0.16s;
+    }
+    .gif-btn {
+      background:#fff2; border:none; margin:0 4px; cursor:pointer; padding:3px 7px; border-radius:8px;
+      transition: background 0.14s, transform 0.15s, box-shadow 0.16s;
+      box-shadow: 0 1.5px 7px #7e238511;
+      outline: none;
+    }
+    .gif-btn:focus, .gif-btn:hover { background:#fa966055; transform:scale(1.09); }
+    .gif-btn:active { background:#22d07a44; transform:scale(0.95);}
+    /* Animate GIF preview in card when sent */
+    .main-gif-preview {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9;
+      pointer-events: none;
+      display: none; /* default hidden */
+    }
+    .main-gif-preview.show {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      animation: gifFloat 1.2s;
+    }
+   @keyframes gifFloat {
+    0%{ opacity:0; transform:translate(-50%,32px) scale(0.95);}
+    40%{ opacity:1; transform:translate(-50%,-10px) scale(1.1);}
+    100%{ opacity:0; transform:translate(-50%,-38px) scale(1);}
+  }
+  .main-gif-preview img {
+    width: 74px;
+    height: 74px;
+    border-radius: 16px;
+    box-shadow: 0 3px 18px #7e238522;
+    border: 2.5px solid #fff3;
+    background: #fff7;
+  }
+
+    /* Status text */
+    #waitingStatus {
+      margin:20px 0 0 0;
+      color: #fffde7;
+      font-size: 1.13em;
+      font-weight: 500;
+      text-shadow: 0 1px 5px #2e143266;
+    }
+    /* Mobile responsive */
+    @media (max-width: 700px) {
+      .waiting-card { width: 99vw; max-width: 99vw; padding: 13px 2vw;}
+      .avatar-top { width: 48px; height: 48px; }
+      .participant-avatar { width: 32px; height: 32px; }
+      .participant-row { font-size: 0.99em; }
+      .main-gif-preview img {
+        width: 74px;
+        height: 74px;
+        border-radius: 16px;
+        box-shadow: 0 3px 18px #7e238522;
+        border: 2.5px solid #fff3;
+        background: #fff7;
+      }
+    }
+
+    /* Focus states for accessibility */
+    .avatar-choice:focus-visible, .gif-btn:focus-visible, .edit-name-btn:focus-visible { outline:2.5px solid #f6e26d;}
+  </style>
+</head>
+<body>
+  <!-- Animated Blobs -->
+  <div class="quiz-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+  <!-- ...inside <body> ... -->
+  <div class="waiting-card" id="mainCard">
+    <h1>Hang tight! The host will start soon.</h1>
+    <div class="avatar-section">
+      <!-- Your name & avatar at the top -->
+      <div class="current-user-card" id="currentUserCard">
+        <span id="myAvatar" class="avatar-top" aria-label="Your avatar"></span>
+        <span id="myName" class="my-name"></span>
+        <button class="edit-name-btn" onclick="editName()" title="Edit name" aria-label="Edit name">&#9998;</button>
+      </div>
+      <div>
+        <div style="font-size: 1em; color: #f6e26d; margin-bottom:4px;">Choose your character:</div>
+        <div class="avatar-list" id="avatarList"></div>
+      </div>
+    </div>
+    <div class="participants-meta" id="participantsMeta"></div>
+    <div class="participants-list" id="participantsList"></div>
+    <!-- THE GIF PREVIEW IS NOW ABSOLUTE OVERLAY, NO GAP! -->
+    <div class="main-gif-preview" id="mainGifPreview"></div>
+    <div style="margin:17px 0 8px 0;">
+      <span style="color:#fff; font-weight:500; font-size:1.08em;">Send a GIF:</span>
+      <span id="gifButtons"></span>
+    </div>
+    <div id="waitingStatus">Hang tight! The host will start soon.</div>
+  </div>
+<script>
+const avatars = [
+  `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Avatar: Leonard" />`,
+  `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Avatar: Morty" />`,
+  `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Avatar: Rick" />`,
+  `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Avatar: Sheldon" />`,
+  `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`
+];
+
+let myName = localStorage.getItem('quiz_username') || "Your Name";
+let myAvatarIdx = +(localStorage.getItem('quizPlayerAvatar') || 0);
+let mainCard = document.getElementById('mainCard');
+let currentUserCard = document.getElementById('currentUserCard');
+let lastParticipantCount = 0;
+
+function animateCurrentUserCard() {
+  currentUserCard.classList.remove('anim-edit');
+  void currentUserCard.offsetWidth; // force reflow
+  currentUserCard.classList.add('anim-edit');
+}
+
+document.getElementById('myName').textContent = myName;
+document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
+
+var socket = io();
+let participants = [];
+
+// Redirect when quiz starts
+socket.on('quiz_started', function() {
+  window.location.href = "/quiz/countdown";
+});
+socket.on('connect', function() {
+  socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
+});
+
+// Render avatars with tooltips and animation
+function renderAvatars() {
+  const container = document.getElementById('avatarList');
+  container.innerHTML = '';
+  avatars.forEach((svg, idx) => {
+    const el = document.createElement('span');
+    el.className = 'avatar-choice' + (idx === myAvatarIdx ? ' selected' : '');
+    el.tabIndex = 0;
+    el.setAttribute('aria-label', 'Avatar choice: ' + ['Leonard','Morty','Rick','Sheldon','Walter'][idx]);
+    el.innerHTML = svg + `<span class="avatar-tooltip">Choose this character!</span>`;
+    el.onclick = () => {
+      if (myAvatarIdx !== idx) {
+        myAvatarIdx = idx;
+        localStorage.setItem('quizPlayerAvatar', idx);
+        socket.emit('update_avatar', idx);
+        document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
+        renderAvatars();
+        animateCurrentUserCard();
+      }
+    };
+    el.onfocus = el.onmouseover = function(){ el.querySelector('.avatar-tooltip').style.opacity=1; }
+    el.onblur = el.onmouseout = function(){ el.querySelector('.avatar-tooltip').style.opacity=0; }
+    container.appendChild(el);
+  });
+}
+
+// Animate and update name
+function updateName(newName) {
+  myName = newName;
+  document.getElementById('myName').textContent = myName;
+  localStorage.setItem('quiz_username', myName);
+  socket.emit('update_name', myName);
+  animateCurrentUserCard();
+}
+function editName() {
+  const name = prompt("Enter your name:", myName);
+  if(name && name.trim().length > 0) updateName(name.trim());
+}
+
+function renderParticipants() {
+  const list = document.getElementById('participantsList');
+  const meta = document.getElementById('participantsMeta');
+  // Only show OTHERS
+  const others = participants.filter(p => !p.isMe);
+  lastParticipantCount = others.length;
+  if (others.length === 0) {
+    // Friendly illustration/placeholder
+    list.innerHTML = `<div class="empty-state">
+      <svg class="empty-illustration" viewBox="0 0 64 64" aria-hidden="true">
+        <ellipse cx="32" cy="60" rx="24" ry="6" fill="#201033" opacity="0.2"/>
+        <circle cx="32" cy="32" r="20" fill="#f6e26d" />
+        <ellipse cx="32" cy="42" rx="12" ry="4" fill="#fff" opacity="0.12"/>
+        <circle cx="26" cy="30" r="3.4" fill="#fff"/>
+        <circle cx="38" cy="30" r="3.4" fill="#fff"/>
+        <rect x="26" y="38" width="12" height="2.5" rx="1.2" fill="#fff"/>
+      </svg>
+      <span>No other players yet! <br>Share the code to invite your friends.</span>
+    </div>`;
+    meta.textContent = "";
+  } else {
+    meta.textContent = `Players joined: ${others.length + 1}`;
+    list.innerHTML = "";
+    others.forEach((p,i) => {
+      let idx = (typeof p.avatar === 'number' && avatars[p.avatar]) ? p.avatar : 0;
+      const row = document.createElement('div');
+      row.className = "participant-row";
+      row.setAttribute('aria-label', `Player ${i+2}: ${p.name ? p.name : '(No Name)'}`);
+      row.innerHTML = `
+        <span class="participant-avatar"><img src="/static/images/avatar/${['leonard','morty','rick','sheldon','walter'][idx]}.png" alt="Avatar of ${['Leonard','Morty','Rick','Sheldon','Walter'][idx]}" /></span>
+        <span class="participant-name">${p.name ? p.name : '(No Name)'}</span>
+      `;
+      list.appendChild(row);
+    });
+  }
+}
+
+socket.on('player_list', function(players) {
+  participants = players.map(p => ({
+    ...p,
+    isMe: (p.id === socket.id)
+  }));
+  // Sync my avatar and name (in case changed from elsewhere)
+  const me = participants.find(p => p.isMe);
+  if (me) {
+    myAvatarIdx = typeof me.avatar === 'number' ? me.avatar : 0;
+    myName = me.name || myName;
+    document.getElementById('myName').textContent = myName;
+    document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
+    localStorage.setItem('quizPlayerAvatar', myAvatarIdx);
+    localStorage.setItem('quiz_username', myName);
+  }
+  renderParticipants();
+  renderAvatars();
+});
+
+// --- GIF Button Logic ---
+const gifs = [
+  { file: "deal-with-it.gif", label: "😎", alt:"Deal with it GIF" },
+  { file: "jammies.gif", label: "🛌", alt:"Jammies GIF" }
+];
+let gifCooldown = false;
+function setGifButtonsDisabled(disabled) {
+  document.querySelectorAll('#gifButtons button').forEach(btn => {
+    btn.disabled = disabled;
+  });
+}
+function renderGifButtons() {
+  const container = document.getElementById('gifButtons');
+  container.innerHTML = '';
+  gifs.forEach(gif => {
+    const btn = document.createElement('button');
+    btn.className = "gif-btn";
+    btn.innerHTML = `<img src="/static/images/gif/${gif.file}" alt="${gif.alt}" />`;
+    btn.title = `Send ${gif.file}`;
+    btn.onclick = function() {
+        if(gifCooldown) return;
+        socket.emit('send_gif', { gif: gif.file, name: myName, avatar: myAvatarIdx });
+        gifCooldown = true;
+        setGifButtonsDisabled(true);
+        // Animate GIF in main card:
+        showMainGifPreview(gif);
+      };
+    container.appendChild(btn);
+  });
+}
+renderGifButtons();
+
+function showMainGifPreview(gif) {
+  const mainGif = document.getElementById('mainGifPreview');
+  mainGif.innerHTML = `<img src="/static/images/gif/${gif.file}" alt="${gif.alt}" />`;
+  mainGif.classList.add('show');
+  setTimeout(()=> {
+    mainGif.classList.remove('show');
+    mainGif.innerHTML = '';
+  }, 1200);
+}
+
+function showGifOnScreen(gif, name, avatar) {
+  // Floating animated popup (for ALL, as before)
+  const toast = document.createElement('div');
+  toast.className = 'gif-toast-popup';
+  toast.innerHTML = `
+    <div class="gif-toast-avatar">${avatars[typeof avatar==='number'?avatar:0]}</div>
+    <div class="gif-toast-text">
+      <div class="gif-toast-name">${name}</div>
+    </div>
+    <img class="gif-toast-img" src="/static/images/gif/${gif}" alt="GIF"/>
+  `;
+  document.body.appendChild(toast);
+
+  // Animation: float up for 5s
+  toast.style.animation = 'floatUpSmooth 5s linear forwards';
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 250);
+    gifCooldown = false;
+    setGifButtonsDisabled(false);
+  }, 5000);
+}
+// Toast CSS (unchanged)
+const style = document.createElement('style');
+style.innerHTML = `
+.gif-toast-popup {
+  position: fixed; bottom: 18px; right: 32px; display: flex; align-items: center; gap: 12px;
+  padding: 10px 22px 10px 14px; background: rgba(25, 22, 44, 0.86);
+  border-radius: 16px; box-shadow: 0 6px 28px 0 #0003; z-index: 99999;
+  min-width: 132px; max-width: 92vw; opacity: 1; transition: opacity 0.22s; backdrop-filter: blur(6px);
+}
+.gif-toast-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; box-shadow: 0 2px 6px #0002; background: #fff; display: flex; align-items: center; justify-content: center;}
+.gif-toast-text { margin-right: 7px; display: flex; align-items: center; min-width: 38px;}
+.gif-toast-name { color: #f6e26d; font-size: 1.15em; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 1px 2px #0002; line-height: 1.08; padding-left: 2px;}
+.gif-toast-img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 2.5px solid #fff3; background: #fff7; box-shadow: 0 2px 12px #0002; margin-left: 2px;}
+@keyframes floatUpSmooth {
+  0%   { bottom: 18px; opacity: 1; }
+  95%  { bottom: 85vh; opacity: 1; }
+  100% { bottom: 85vh; opacity: 0.3; }
+}
+`;
+document.head.appendChild(style);
+
+// Listen for show_gif event
+socket.on('show_gif', data => {
+  showGifOnScreen(data.gif, data.name, data.avatar);
+});
+
+// Initial UI
+renderAvatars();
+renderParticipants();
+
+</script>
+</body>
+</html>

@@ -189,17 +189,20 @@ filterButtons.forEach(button => {
   /* ------------------------------ */
   /* 2. Navigation Smooth Scroll    */
   /* ------------------------------ */
-  const navLinks = document.querySelectorAll('.nav-right a');
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+ const navLinks = document.querySelectorAll('.nav-right a');
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    const targetId = link.getAttribute('href');
+    if (targetId.startsWith('#')) {
       e.preventDefault();
-      const targetId = link.getAttribute('href');
       const targetSection = document.querySelector(targetId);
       if (targetSection) {
         targetSection.scrollIntoView({ behavior: 'smooth' });
       }
-    });
+    }
+    // If it's not a hash link (i.e., it's a normal URL like /news), let the browser do a full navigation.
   });
+});
 
   /* ------------------------------ */
   /* 3. Navigation Typing Effect    */
