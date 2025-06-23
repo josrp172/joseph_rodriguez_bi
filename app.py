@@ -1,13 +1,15 @@
+import eventlet
+eventlet.monkey_patch()
+
 import os
 import time
 
-import eventlet
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from google import genai
 import json
 from flask_socketio import SocketIO, emit
 
-eventlet.monkey_patch()
+
 
 questions = [
     {"id": 1, "question": "What is 2 + 2?", "choices": ["2", "3", "4", "5"], "answer": "4"},
