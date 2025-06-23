@@ -241,7 +241,7 @@ def handle_send_gif(data):
     sid = request.sid
 
     now = time.time()
-    popup_duration = 2.5  # Match your JS animation time
+    popup_duration = 5  # Match your JS animation time
 
     # Block if GIF already sent in last 2.5 seconds
     if sid in last_gif_time and now - last_gif_time[sid] < popup_duration:

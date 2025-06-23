@@ -367,6 +367,46 @@
       margin-top: 10px; /* spacing from label */
     }
 
+.spline-robot-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 800px;
+  height: 800px;
+  z-index: 999;
+  opacity: 0.85;
+  transform: translate(10px, 10px) scale(0.9);
+  pointer-events: none; /* Still block pointer on container */
+}
+
+
+.spline-robot-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: auto;
+}
+
+.spline-robot-container::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 160px;
+  height: 80px;
+  background: #7e2385; /* match your background */
+  border-radius: 12px;
+  z-index: 3;
+  box-shadow: 0 0 12px #7e2385cc;
+}
+@media (max-width: 600px) {
+  .spline-robot-container {
+    width: 180px;
+    height: 180px;
+    opacity: 0.7;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -376,6 +416,11 @@
     <div class="blob blob2"></div>
     <div class="blob blob3"></div>
     <div class="blob blob4"></div>
+  </div>
+
+  <!-- Spline Embed -->
+  <div class="spline-robot-container">
+    <iframe src="https://my.spline.design/genkubgreetingrobot-8NWhFu34Nolgs3NHyJbHsODs/" frameborder="0" width="100%" height="100%"></iframe>
   </div>
   <!-- ...inside <body> ... -->
   <div class="waiting-card" id="mainCard">
@@ -635,19 +680,18 @@ function showGifOnScreen(gif, name, avatar) {
   const toTop = screenH - 160;
 
   gsap.set(toast, { opacity: 0.96, y: 0, x: 0 });
-  gsap.to(toast, {
-    y: -toTop,
-    opacity: 0,
-    duration: 2.5,
-    ease: "power1.inOut",
-    scale: 1.15,
-    onComplete: () => {
-      toast.remove();
-      gifCooldown = false;
-      setGifButtonsDisabled(false);
-    }
-  });
-
+ gsap.to(toast, {
+  y: -toTop,
+  duration: 5,
+  ease: "power2.out", // Snappier ease
+  scale: 1.15,
+  // Remove the opacity animation so it won't fade out
+  onComplete: () => {
+    toast.remove();
+    gifCooldown = false;
+    setGifButtonsDisabled(false);
+  }
+});
   if (gif === 'party-blob.gif' || gif === 'deal-with-it.gif') {
     gsap.to(toast, {
       boxShadow: "0 0 30px 4px #f6e26d77, 0 6px 28px 0 #0003",
@@ -752,7 +796,7 @@ socket.on('show_gif', data => {
     setTimeout(() => {
       gifCooldown = false;
       setGifButtonsDisabled(false);
-    }, 2500); // Duration should match your GSAP animation
+    }, 5000); // Duration should match your GSAP animation
   }
 });
 socket.on('force_leave', function() {
