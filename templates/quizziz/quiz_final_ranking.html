@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🏆 Ranking | Quiz App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/TextPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollToPlugin.min.js"></script>
+  <!-- Socket.IO for real-time communication -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <!-- App-specific scripts -->
+  <script src="/static/js/quick_flow.js"></script>
+  <!-- Fonts and Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+      html, body {
+        height: 100%;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        font-family: 'Nunito', Arial, sans-serif;
+        background: #23113A;
+        overflow-x: hidden;
+      }
+      body {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+      }
+      .ranking-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(ellipse 65% 35% at 40% 12%, #7e238555 0%, transparent 75%),
+                    radial-gradient(ellipse 40% 30% at 75% 24%, #f6e26d55 0%, transparent 75%),
+                    radial-gradient(ellipse 38% 42% at 70% 80%, #22d07a44 0%, transparent 70%),
+                    radial-gradient(ellipse 32% 21% at 19% 77%, #fa966077 0%, transparent 80%);
+        opacity: 0.8;
+      }
+    .site-footer {
+      position: fixed; left: 0; bottom: 0; width: 100vw;
+      color: #fff; text-align: center;
+      font-size: 1.11em; font-weight: 500;
+      padding: 18px 0 15px 0;
+      z-index: 10000;
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(22px) saturate(2.3);
+      background: rgba(255, 255, 255, 0.13);
+      box-shadow: 0 -1px 18px 0 #0002, 0 1px 9px 0 #fff1 inset;
+      border-top: 1.5px solid rgba(255,255,255,0.13);
+      user-select: none;
+      text-shadow: 0 1.5px 4px #4442, 0 0 8px #0002;
+      font-family: 'Montserrat', Arial, sans-serif;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .final-main-container {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 34px;
+      padding-bottom: 100px;
+    }
+    .final-title-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 68px;
+    }
+    .final-title {
+        font-size: 2.6rem;
+        font-family: 'Montserrat', Arial, sans-serif;
+        color: #ffe97e;
+        text-shadow: 0 2px 22px #2e1432c0, 0 0 12px #f6e26d66;
+        font-weight: 900;
+        animation: glowTitle 2.2s infinite alternate;
+        letter-spacing: 0.09em;
+    }
+    @keyframes glowTitle {
+        0%{box-shadow:0 6px 32px #ffe97e20,0 2px 16px #fff2 inset;}
+        100%{box-shadow:0 10px 46px #ffe97e80,0 2px 22px #fa9660cc inset;}
+    }
+    .podium-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 44px;
+      margin-bottom: 32px;
+      min-height: 180px;
+      width: 100%;
+      max-width: 560px;
+      margin-top: 70px;
+    }
+    .podium-place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .podium-medal {
+        font-size: 2.2rem;
+        margin-bottom: 6px;
+        font-weight: 900;
+        filter: drop-shadow(0 0 7px #fff9);
+    }
+    .podium-avatar {
+        width: 86px;
+        height: 86px;
+        border-radius: 50%;
+        border: 6px solid #ffe97eaa;
+        box-shadow: 0 8px 32px #ffe97e55;
+        background: #fff;
+        overflow: hidden;
+        margin-bottom: 7px;
+        z-index: 2;
+        position: relative;
+        top: 0;
+    }
+    .podium-1 .podium-avatar {
+        animation: gold-shine 2.2s infinite alternate;
+        width: 136px;
+        height: 136px;
+        border-width: 8px;
+        border-color: #ffe97e;
+        box-shadow: 0 0 38px #ffe97ecc, 0 0 18px #f6e26d90;
+        z-index: 2;
+    }
+    @keyframes gold-shine {
+      0% { box-shadow: 0 0 38px #ffe97ecc, 0 0 18px #f6e26d90; }
+      100% { box-shadow: 0 0 70px #ffe97eee, 0 0 32px #f6e26dbb; }
+    }
+    .podium-2 .podium-avatar,
+    .podium-3 .podium-avatar {
+      width: 92px;
+      height: 92px;
+      border-width: 7px;
+      box-shadow: 0 0 16px #eee9e999;
+      z-index: 1;
+    }
+    .podium-2 .podium-avatar { border-color: #d7d7d7; }
+    .podium-3 .podium-avatar { border-color: #c59a6b; }
+    .podium-1 { margin-bottom: 0; z-index: 3; }
+    .podium-2, .podium-3 { margin-bottom: 36px; z-index: 1; }
+      .podium-floor {
+        width: 80%;
+        height: 24px;
+        background: radial-gradient(ellipse at center, #ffe97e77 0%, #fa966055 60%, transparent 100%);
+        border-radius: 50%;
+        margin-top: -18px;
+        z-index: 1;
+        position: relative;
+        filter: blur(1.2px) brightness(0.93);
+      }
+      .podium-name {
+        font-size: 1.12rem;
+        color: #fff;
+        font-weight: 800;
+        max-width: 110px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        text-align: center;
+        margin-top: 2px;
+      }
+      .podium-score {
+        font-size: 1.12rem;
+        color: #ffe97e;
+        font-weight: 800;
+        margin-top: 1px;
+        text-shadow: 0 2px 10px #2e1432a0;
+      }
+    .final-leaderboard-list {
+      width: 100%;
+      max-width: 610px;
+      margin: 0 auto;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 90px;
+    }
+      .ranking-row {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: rgba(255,255,255,0.16);
+        border-radius: 18px;
+        padding: 14px 18px;
+        font-size: 1.19em;
+        font-weight: 700;
+        color: #fff;
+        box-shadow: 0 2px 14px #0001, 0 1.5px 8px #7e238512;
+        min-height: 60px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        max-width: 100%;
+      }
+      .rank-num {
+        font-size: 1.33em;
+        min-width: 2.6em;
+        text-align: right;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        font-family: 'Montserrat', Arial, sans-serif;
+        display: flex; align-items: center; justify-content: flex-end;
+      }
+      .rank-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 9px #fa966020;
+      }
+      .rank-avatar img {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+        border-radius: 14px;
+        display: block;
+      }
+      .rank-name {
+        flex: 1 1 auto;
+        text-align: left;
+        font-weight: 800;
+        color: #fff;
+        font-size: 1.08em;
+        letter-spacing: 0.01em;
+        text-shadow: 0 1px 7px #2e143240;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .rank-score {
+        color: #ffe97e;
+        font-weight: 900;
+        font-size: 1.18em;
+        letter-spacing: 0.04em;
+        margin-left: 9px;
+        min-width: 2.6em;
+        text-align: right;
+        font-family: 'Montserrat', Arial, sans-serif;
+        filter: drop-shadow(0 0 8px #ffe97e99);
+      }
+      .empty-state {
+        opacity: 0.9;
+        color: #ffe97e;
+        font-size: 1.14em;
+        text-align: center;
+        padding: 27px 0;
+      }
+    .ranking-row.highlight {
+      background: linear-gradient(90deg,#ffe97e4d 12%,#fa966020 90%);
+      border: 2px solid #ffe97e90;
+      box-shadow: 0 10px 42px #ffe97e80, 0 0px 24px #fff4 inset;
+      color: #332304;
+      animation: highlightRow 1.5s cubic-bezier(.5,1.7,.6,1.1) infinite alternate;
+      padding: 0 18px;
+      border-radius: 18px;
+    }
+    @keyframes highlightRow {
+      0%   { box-shadow: 0 6px 28px #ffe97e20, 0 0px 18px #fff4 inset; }
+      100% { box-shadow: 0 10px 60px #ffe97e80, 0 0px 34px #fa9660cc inset; }
+    }
+    .spline-robot-container {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 700px;
+      height: 700px;
+      z-index: 99991;
+      opacity: 0.85;
+      transform: translate(10px, 10px) scale(0.9);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .spline-robot-container iframe {
+      position: absolute;
+      bottom: -60px;
+      left: 0;
+      width: 100%;
+      height: calc(100% + 40px);
+      pointer-events: auto;
+    }
+    @media (max-width: 700px) {
+        .final-main-container, .final-leaderboard-list { max-width: 100vw; width: 100vw; }
+        .podium-row { gap: 13vw; min-height: 62px;}
+        .podium-1 .podium-avatar { width: 78px; height: 78px; }
+        .podium-2 .podium-avatar, .podium-3 .podium-avatar { width: 64px; height: 64px; }
+        .podium-floor { height: 13px; }
+        .ranking-row { font-size: 1em; padding: 9px 5vw; min-height: 40px; }
+        .rank-avatar, .rank-avatar img { width: 34px; height: 34px; border-radius: 8px;}
+    }
+    </style>
+</head>
+<body>
+  <!-- Spline Embed -->
+  <div class="spline-robot-container">
+    <iframe src="https://my.spline.design/genkubgreetingrobot-8NWhFu34Nolgs3NHyJbHsODs/" frameborder="0" width="100%" height="100%"></iframe>
+  </div>
+
+  <div class="ranking-bg"></div>
+  <div class="final-main-container">
+    <div class="final-title-row">
+      <span class="final-title">🏆 Ranking</span>
+    </div>
+    <div class="podium-row" id="podiumRow">
+      <!-- Top 3 players will be inserted here by JavaScript -->
+    </div>
+    <div id="waitingResults" class="empty-state">Waiting for results…</div>
+
+    <div id="finalLeaderboard" class="final-leaderboard-list">
+      <!-- The rest of the leaderboard will be inserted here -->
+    </div>
+  </div>
+  <footer class="site-footer">© Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.</footer>
+
+<script>
+    // =============== DATA AND SOCKET LOGIC ===============
+    const avatarKeys = [
+        "eleven", "jesse", "Katniss", "leonard",
+        "lisa", "morty", "rick", "sheldon",
+        "walter", "wednesday"
+    ];
+
+    const isDevMock = window.location.hash === "#devmock";
+    let participants = [];
+    let initialAnimationDone = false; // To ensure animations run only once
+    const socket = window.quizSocket;
+
+    if (isDevMock) {
+        const fakeNames = [
+          "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Robin", "Skyler", "Reese", "Riley",
+          "Quinn", "Drew", "Avery", "Parker", "Kai", "Emerson", "Hayden", "Rowan", "Sage", "Peyton",
+          "Finley", "Dakota", "Remy"
+        ];
+        const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
+          id:   "fake_" + i,
+          name: fakeNames[i % fakeNames.length],
+          avatar: i % avatarKeys.length,
+          score: Math.floor(Math.random() * 1200) + 50,
+          isMe: false
+        }));
+        const myPlayer = {
+            id: 'my_fake_id',
+            name: 'Joseph',
+            avatar: 4, // lisa avatar
+            score: Math.floor(Math.random() * 500) + 800, // Score between 800-1300
+            isMe: true
+        };
+        participants = [myPlayer, ...fakePlayers].sort((a, b) => b.score - a.score);
+
+        // Use a DOMContentLoaded listener to ensure elements are ready before rendering.
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            renderAll();
+        } else {
+            window.addEventListener('DOMContentLoaded', renderAll);
+        }
+    } else {
+        // Real data logic
+        // Listen for continuous player list updates
+        socket.on('player_list', (players) => {
+            participants = players
+                .map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    avatar: p.avatar,
+                    score: p.score != null ? p.score : p.total,
+                    isMe: p.id === socket.id
+                }))
+                .sort((a, b) => (b.score || 0) - (a.score || 0)); // Sort by score
+            renderAll();
+        });
+
+        // Request the initial list of players
+        socket.emit('admin_get_players');
+
+        // Fallback for single-player or slow connections
+        setTimeout(() => {
+            if (participants && participants.length === 0) {
+                const name = localStorage.getItem('quiz_username') || 'Player';
+                const avatar = +localStorage.getItem('quizPlayerAvatar') || 0;
+                const scores = JSON.parse(localStorage.getItem('quiz::scores') || '[0]');
+                const total = scores.reduce((a, b) => a + b, 0);
+
+                participants = [{
+                    id: "me",
+                    name,
+                    avatar,
+                    score: total,
+                    isMe: true
+                }];
+                renderAll();
+            }
+        }, 800);
+    }
+
+    // Main function to render/update the entire display
+    function renderAll() {
+        const waitingDiv = document.getElementById('waitingResults');
+        if (!participants || participants.length === 0) {
+            if (waitingDiv) waitingDiv.style.display = 'block';
+            document.getElementById('podiumRow').innerHTML = '';
+            document.getElementById('finalLeaderboard').innerHTML = '';
+            return;
+        }
+
+        if (waitingDiv) waitingDiv.style.display = 'none';
+
+        // Always re-render the HTML to show latest scores and ranks
+        renderPodium(participants);
+        renderLeaderboard(participants);
+
+        // But only trigger the entrance animations on the very first render
+        if (!initialAnimationDone) {
+            animatePodium();
+            animateLeaderboard();
+            initialAnimationDone = true;
+        }
+    }
+
+    // =============== RENDERING LOGIC ===============
+
+    function renderPodium(participants) {
+        const medals = ['🥇', '🥈', '🥉'];
+        const slots = [null, null, null];
+        const positionMap = [1, 0, 2]; // rank -> slot (1st is center, 2nd left, 3rd right)
+
+        participants.slice(0, 3).forEach((p, rank) => {
+            slots[positionMap[rank]] = { player: p, rank };
+        });
+
+        const html = slots.map((entry) => {
+            if (!entry) return `<div class="podium-place"></div>`;
+            const { player, rank } = entry;
+            const placeClass = `podium-${rank + 1}`;
+            return `
+          <div class="podium-place ${placeClass}">
+            <div class="podium-medal">${medals[rank]}</div>
+            <div class="podium-avatar">
+              <img
+                src="/static/images/avatar/${avatarKeys[player.avatar]}.png"
+                alt="${player.name}"
+                style="width:100%;height:100%;object-fit:cover;"
+              />
+            </div>
+            <div class="podium-floor"></div>
+            <div class="podium-name">${player.name}</div>
+            <div class="podium-score">${player.score ?? player.total}</div>
+          </div>
+        `;
+        }).join('');
+        document.getElementById('podiumRow').innerHTML = html;
+    }
+
+    function renderLeaderboard(participants) {
+        const leaderboardDiv = document.getElementById('finalLeaderboard');
+        const rows = participants.slice(3).map((p, i) => `
+        <div class="ranking-row${p.isMe ? ' highlight' : ''}" id="ranking-row-${i + 4}">
+          <span class="rank-num">${i + 4}.</span>
+          <span class="rank-avatar">
+            <img src="/static/images/avatar/${avatarKeys[p.avatar]}.png" alt="${p.name}'s avatar"/>
+          </span>
+          <span class="rank-name">${p.name}</span>
+          <span class="rank-score">${p.score ?? p.total}</span>
+        </div>
+      `).join('');
+        leaderboardDiv.innerHTML = rows;
+    }
+
+    // =============== ANIMATION LOGIC (Called only once) ===============
+
+    function animatePodium() {
+        gsap.from('.podium-place', {
+            y: -140,
+            opacity: 0,
+            scale: 0.62,
+            stagger: { each: 0.14, from: "center" },
+            duration: 1.17,
+            ease: "back.out(2)",
+            delay: 0.20
+        });
+        gsap.fromTo('.podium-1', {
+            scale: 1.7,
+            filter: "brightness(2.3) drop-shadow(0 0 28px #ffe97e)",
+            zIndex: 3
+        }, {
+            scale: 1,
+            filter: "brightness(1) drop-shadow(0 0 10px #ffe97e99)",
+            duration: 1.1,
+            ease: "expo.out",
+            delay: 0.48
+        });
+        setTimeout(() => confettiBurst(document.querySelector('.podium-1')), 900);
+    }
+
+    function animateLeaderboard() {
+        const rows = document.querySelectorAll('.ranking-row');
+        if (rows.length === 0) return;
+        gsap.set(rows, { opacity: 0, y: 40, scale: 0.92, rotateX: 14 });
+        gsap.to(rows, {
+            opacity: 1, y: 0, scale: 1, rotateX: 0,
+            duration: 1.1, ease: "expo.out", stagger: { each: 0.07, from: "start" }
+        });
+    }
+
+    function confettiBurst(el) {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        for (let i = 0; i < 22; i++) {
+            let conf = document.createElement("div");
+            const hue = Math.floor(Math.random() * 360);
+            conf.style.cssText = `
+          position:fixed; z-index:9999; pointer-events:none;
+          left:${rect.left + rect.width / 2 + (Math.random() - 0.5) * 34}px;
+          top:${rect.top + 28 + (Math.random() - 0.5) * 24}px;
+          width:12px; height:6px;
+          background: linear-gradient(90deg,hsl(${hue},95%,72%) 60%, #fff0 100%);
+          border-radius:4px; opacity:0.87; transform:scale(${Math.random() + 0.7});
+        `;
+            document.body.appendChild(conf);
+            gsap.to(conf, {
+                x: (Math.random() - 0.5) * 320,
+                y: -Math.random() * 210 - 40,
+                rotation: Math.random() * 1080 - 540,
+                opacity: 0,
+                duration: 1.8 + Math.random() * 0.7,
+                ease: "power4.out",
+                onComplete: () => conf.remove()
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

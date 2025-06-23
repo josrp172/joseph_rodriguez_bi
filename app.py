@@ -151,6 +151,11 @@ def on_join_waiting(data):
 
     broadcast_player_list()
 
+@app.route('/quiz/final_ranking')
+def quiz_final_ranking():
+    return render_template('quizziz/quiz_final_ranking.html')
+
+
 @socketio.on('update_avatar')
 def on_update_avatar(idx):
     if request.sid in participants:
@@ -208,14 +213,10 @@ def handle_admin_reset_all():
     emit('all_reset', broadcast=True)
 
 
-
-
-
-
-
 @socketio.on('admin_get_players')
 def handle_admin_get_players():
-    emit('player_list', list(participants.values()))
+    broadcast_player_list()
+
 
 @socketio.on('admin_start_quiz')
 def handle_admin_start_quiz():

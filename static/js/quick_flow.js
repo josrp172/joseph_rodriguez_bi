@@ -57,7 +57,7 @@ const blocks = raw
           document.getElementById('quizTimer').classList.add('warning');
       });
     },
-    finishQuestion(correct, secsLeft) {
+     finishQuestion: async function(correct, secsLeft) {
       const score = correct ? 100 - (30 - secsLeft) * 2 : 0;
       const scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
       scores.push(score);
@@ -69,7 +69,13 @@ const blocks = raw
 
       let idx = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
       sessionStorage.setItem(IDX_KEY, ++idx);
-      location.replace('/quiz/initial_ranking');
+
+      const bank = await loadBank();
+     if (idx >= bank.length) {
+      location.replace('/quiz/final_ranking');
+    } else {
+      location.replace('/quiz/initial_ranking'); // Always visit initial_ranking before each question
+    }
     },
     async initRanking() {
       const scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
@@ -81,7 +87,7 @@ const blocks = raw
       setTimeout(async () => {
         const bank = await loadBank();
         const idx = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
-        if (idx >= bank.length) location.replace('/quiz/initial_ranking');
+        if (idx >= bank.length) location.replace('/quiz/final_ranking');
         else location.replace(nextPath(bank[idx].type));
       }, 7000);
     },
