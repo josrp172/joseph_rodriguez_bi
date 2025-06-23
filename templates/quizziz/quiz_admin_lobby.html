@@ -873,11 +873,38 @@ body {
 .action-btn--danger{background:linear-gradient(90deg,#f32646 10%,#f6e26d 100%)}
 .action-btn:hover,.action-btn:focus{transform:scale(1.05);box-shadow:0 4px 22px #f6e26d55}
 
+.spline-robot-container iframe {
+  position: absolute;
+  bottom: -60px; /* shift content down so watermark goes out of view */
+  left: 0;
+  width: 100%;
+  height: calc(100% + 40px); /* extend height to avoid clipping top */
+  pointer-events: auto; /* optional: prevent interaction with iframe */
+}
 
+
+.spline-robot-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 750px;
+  height: 900px;
+  z-index: 99999;
+  opacity: 1;
+  transform: translate(10px, 10px) scale(0.9);
+    overflow: hidden; /* hides anything that overflows */
+
+  pointer-events: none; /* Still block pointer on container */
+}
 </style>
 
 </head>
 <body>
+  <!-- Spline Embed -->
+  <div class="spline-robot-container">
+    <iframe src="https://my.spline.design/r4xbot-YknGfrOp29k8x2i3khm6rVnF/" frameborder="0" width="100%" height="100%"></iframe>
+  </div>
+
 <div id="gif-popup" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;"></div>
 
   <!-- Animated SVG Mesh BG -->
@@ -1189,5 +1216,7 @@ if (window.location.hash === "#devmock") {
 }
 
   </script>
+
+
 </body>
 </html>
