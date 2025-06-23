@@ -371,7 +371,8 @@
     };
 
     // SocketIO + Form logic
-    var socket = io();
+    // skips polling and goes straight to websocket
+    var socket = io({ transports: ['websocket'] });
     const nameForm = document.getElementById('nameForm');
     nameForm.onsubmit = function(e) {
       e.preventDefault();

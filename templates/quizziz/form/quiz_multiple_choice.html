@@ -230,7 +230,9 @@
     }
 
     // JOIN WAITING ROOM
-    const socket = io();
+    const socket = io({
+      transports: ['websocket']
+    });
     socket.on('connect', () => {
       socket.emit('join_waiting', { name: userName, avatar: avatarIdx });
     });

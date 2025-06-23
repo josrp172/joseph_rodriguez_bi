@@ -1,11 +1,13 @@
 import os
 import time
 
+import eventlet
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from google import genai
 import json
 from flask_socketio import SocketIO, emit
 
+eventlet.monkey_patch()
 
 questions = [
     {"id": 1, "question": "What is 2 + 2?", "choices": ["2", "3", "4", "5"], "answer": "4"},
@@ -16,7 +18,8 @@ participants = {}
 last_gif_time = {}
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+
+socketio = SocketIO(app, async_mode='eventlet')
 
 # Initialize the GenAI client (API key should be kept secret)
 client = genai.Client(api_key="AIzaSyCmVExBw1v18vCNcdYzIwTrX00O5_9J3SE")

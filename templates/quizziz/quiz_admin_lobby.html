@@ -810,7 +810,8 @@ body {
     }
 
     // --- Socket events: as before, just update render logic ---
-    var socket = io();
+    var socket = io({ transports: ['websocket'] });
+
     socket.on('player_list', function(players) {
       renderParticipantsGrid(players);
     });

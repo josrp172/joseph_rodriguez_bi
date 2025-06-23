@@ -246,7 +246,9 @@
   </footer>
 <script>
   // 1) Connect & join waiting room
-  const socket = io();
+  const socket = io({
+    transports: ['websocket']
+  });
   const myName      = localStorage.getItem('quiz_username')     || 'Player';
   const myAvatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
   let participants  = [];

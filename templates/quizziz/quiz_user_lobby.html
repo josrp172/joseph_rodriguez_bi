@@ -430,7 +430,7 @@ function animateCurrentUserCard() {
 document.getElementById('myName').textContent = myName;
 document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
 
-var socket = io();
+var socket = io({ transports: ['websocket'] });
 let participants = [];
 
 // Redirect when quiz starts

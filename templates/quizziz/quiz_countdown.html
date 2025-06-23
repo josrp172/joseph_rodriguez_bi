@@ -308,7 +308,8 @@
       `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
     ];
 
-    var socket = io();
+    var socket = io({ transports: ['websocket'] });
+
 
     // Get user info
     let myName = localStorage.getItem('quiz_username') || "Your Name";
