@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz — Fill in the Blank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fonts -->
+  <link rel="stylesheet" href="/static/css/quiz_common.css">
+<script src="/static/js/quick_flow.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:800,700,400|Nunito:700,400" rel="stylesheet">
+  <style>
+    html,body { min-height:100vh; margin:0; font-family:'Nunito','Montserrat',Arial,sans-serif; background:#7e2385; overflow-x:hidden;}
+    .quiz-bg-blobs { position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+    .blob { position:absolute; border-radius:50%; filter:blur(64px); opacity:0.42; animation:moveBlobs 16s linear infinite alternate;}
+    .blob1 { width:360px; height:320px; background:#7e2385; left:2vw; top:7vh; animation-delay:0s;}
+    .blob2 { width:250px; height:300px; background:#f6e26d; left:61vw; top:16vh; animation-delay:3s;}
+    .blob3 { width:320px; height:220px; background:#22d07a; left:22vw; top:67vh; animation-delay:7s;}
+    .blob4 { width:220px; height:220px; background:#fa9660; left:75vw; top:58vh; animation-delay:10s;}
+    @keyframes moveBlobs {
+      0%{transform:translateY(0px) scale(1);}
+      30%{transform:translateY(-22px) scale(1.05);}
+      50%{transform:translateY(38px) scale(0.98);}
+      80%{transform:translateY(-14px) scale(1.09);}
+      100%{transform:translateY(0px) scale(1);}
+    }
+    .progress-bar-wrap {
+      width:100%; max-width:900px;
+      margin:0 auto 24px auto;
+      height:22px; border-radius:17px;
+      background:rgba(255,255,255,0.14);
+      box-shadow:0 1px 8px #f6e26d26;
+      overflow:hidden;
+      position:relative; z-index:3;
+    }
+    .progress-bar {
+      height:100%; width:40%;
+      background:linear-gradient(90deg,#f6e26d 60%, #22d07a 100%);
+      border-radius:17px;
+      transition:width 0.6s cubic-bezier(.8,0,.18,1);
+    }
+    .progress-label {
+      font-family:'Montserrat',sans-serif;
+      font-weight:900;
+      font-size:1em;
+      color:#fff;
+      position:absolute; left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      text-shadow:0 1.5px 7px #7e2385c4;
+      z-index:4; pointer-events:none;
+    }
+    .quiz-card {
+      background: rgba(40,20,60,0.83);
+      color: #fff;
+      padding: 54px 6vw 48px 6vw;
+      border-radius: 36px;
+      box-shadow: 0 10px 38px 0 #0007, 0 2px 16px 0 #fff2 inset;
+      position: relative; z-index: 2;
+      width: 56vw; max-width: 900px; min-width: 360px;
+      margin: 9vh auto 0 auto;
+      text-align:center;
+      backdrop-filter: blur(18px) saturate(1.7);
+      animation: fadeCardIn 0.7s cubic-bezier(.64,.21,.33,1.08);
+    }
+    @keyframes fadeCardIn { from { opacity:0; transform:scale(0.97) translateY(48px);} to   { opacity:1; transform:none;} }
+    .user-bar {
+      display: flex; align-items: center; justify-content: center; margin-bottom: 24px; gap: 16px;
+    }
+    .avatar-quiz { width: 54px; height: 54px; border-radius: 18px; background: #fff; box-shadow: 0 3px 18px #7e238520; overflow: hidden; display: flex; align-items: center; justify-content: center;}
+    .avatar-quiz img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px;}
+    .username-quiz {
+      font-size: 1.37em;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Montserrat',sans-serif;
+      text-shadow: 0 1px 10px #2e143280;
+    }
+    .quiz-timer {
+      position: fixed; top: 36px; right: 54px; z-index: 20;
+      font-family: 'Montserrat', sans-serif; font-size: 2.1em; font-weight: 900; color: #f6e26d;
+      padding: 13px 28px; border-radius: 42px; background: rgba(56, 33, 72, 0.81);
+      box-shadow: 0 2px 22px #7e238566, 0 1.5px 14px #f6e26d11;
+      border: 2.7px solid #f6e26d55;
+      text-align: center; animation: timerFadeIn 0.6s; min-width: 80px; user-select: none;
+    }
+    @media (max-width:900px) {.quiz-timer{top:14px;right:12px;font-size:1.35em;padding:8px 20px;border-radius:25px;min-width:54px;}}
+    @keyframes timerFadeIn { from { opacity:0; transform:translateY(-18px) scale(0.92);} to { opacity:1; transform:none;} }
+    .quiz-timer.warning {
+      color: #ff6961;
+      background: rgba(255, 190, 76, 0.83);
+      border-color: #ff696199;
+      box-shadow: 0 0 14px 2px #fa966077;
+      animation: timerPulse 0.8s infinite alternate;
+    }
+    @keyframes timerPulse { 0% { box-shadow: 0 0 14px 2px #fa966077; } 100% { box-shadow: 0 0 24px 7px #ff696144; } }
+    .quiz-card h2 {
+      font-family:'Montserrat',sans-serif; font-size:1.35rem; font-weight:800;
+      margin-bottom:28px; color: #f6e26d; text-shadow:0 2px 16px #2e1432a0;
+      letter-spacing:0.02em; animation:pulse 1.5s infinite alternate; line-height:1.36; text-align:center; max-width:900px;
+    }
+    @media (min-width: 900px) { .quiz-card h2 { font-size:1.7rem; } }
+    @keyframes pulse { 0%{opacity:0.91;} 100%{opacity:1;} }
+    .hint { color:#ffe97e; font-size:1.1em; margin-bottom: 18px; text-align: center;}
+    .fib-area { margin:32px 0 28px 0; display:flex; flex-direction:column; align-items:center;}
+    .answer-input {
+      padding: 20px 26px; font-size:1.19em; border-radius:18px;
+      width:80%; max-width:360px; border:2px solid #f6e26d44;
+      background:rgba(255,255,255,0.13); color:#fff;
+      font-family:'Nunito',sans-serif;
+      outline:none; margin-bottom:18px;
+      box-shadow: 0 1px 8px #22d07a11;
+      transition: border 0.18s, box-shadow 0.18s, background 0.16s;
+      animation: scaleIn 0.4s cubic-bezier(.41,1.39,.29,.99);
+    }
+    .answer-input:focus {
+      border:2.5px solid #f6e26d;
+      background:rgba(246,226,109,0.08);
+      box-shadow:0 2px 18px #f6e26d44;
+      animation: inputPulse 1.2s infinite alternate;
+    }
+    @keyframes inputPulse {0%{box-shadow:0 2px 18px #f6e26d44;}100%{box-shadow:0 4px 28px #f6e26d66;}}
+    @keyframes scaleIn { from{transform:scale(0.97);opacity:0;} to{transform:none;opacity:0.96;} }
+    .fib-btn {
+      font-family:'Montserrat',sans-serif;
+      font-weight:900;
+      background:linear-gradient(98deg,#7e2385 20%,#f6e26d 80%);
+      color:#222;
+      padding:16px 46px;
+      border-radius:20px;
+      font-size:1.13em;
+      box-shadow:0 3px 15px #0002,0 0px 8px #22d07a19;
+      border:none;
+      outline:none;
+      cursor:pointer;
+      letter-spacing:0.06em;
+      opacity:0.93;
+      transition:background 0.13s,box-shadow 0.15s,transform 0.17s;
+      margin-top:8px;
+      margin-bottom:8px;
+    }
+    .fib-btn:active { background:#22d07a; color:#1a1d16; }
+    .fib-btn[disabled] { opacity:0.6; pointer-events:none; }
+    .feedback { margin-top:18px; font-size:1.25em; font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:0.01em; color:#22d07a; text-shadow:0 2px 8px #1c7c4a38; opacity:0; transform:translateY(12px); animation:fadeInUp 0.38s 0.2s forwards;}
+    .feedback.wrong { color:#fa9660; text-shadow:0 1.5px 7px #f6e26d24; }
+    @keyframes fadeInUp { to { opacity:1; transform:none; } }
+    .next-btn {
+      display:inline-block; margin-top:34px; font-family:'Montserrat',sans-serif; font-weight:900;
+      background:linear-gradient(98deg,#7e2385 20%,#f6e26d 80%);
+      color:#222; padding:18px 60px; border-radius:20px; font-size:1.23em;
+      box-shadow:0 3px 15px #0002,0 0px 8px #22d07a19; border:none; outline:none; cursor:pointer;
+      letter-spacing:0.06em; animation:fadeInUp 0.42s 0.36s backwards; opacity:0.93;
+      transition:background 0.13s,box-shadow 0.15s,transform 0.17s;
+    }
+    .next-btn:active { background:#22d07a; color:#1a1d16; }
+    .footer {
+      width:100vw; position:fixed; left:0; bottom:0; text-align:center; z-index:10;
+      color:#f6e26d; font-size:1.1em; letter-spacing:0.04em;
+      font-family:'Montserrat',sans-serif; font-weight:700;
+      padding:22px 0 12px 0; user-select:none; pointer-events:none;
+      background:linear-gradient(90deg,rgba(40,20,60,0.16) 0%,rgba(126,35,133,0.23) 100%);
+      backdrop-filter: blur(4px);
+      text-shadow: 0 2px 8px #2e143260;
+    }
+    @media (max-width:1200px) { .quiz-card {width:72vw;} }
+    @media (max-width:800px) { .quiz-card {width:99vw; min-width: 0; padding: 8vw 2vw;} .quiz-card h2 { font-size:1.06rem; } .answer-input {font-size:1em;} }
+    @media (max-width:480px) { .quiz-card {width:99vw;max-width:99vw;padding:13px 1vw;} .user-bar {gap:7px;} .footer {font-size:1em;} .quiz-card h2 { font-size:0.96rem; } }
+  </style>
+</head>
+<body>
+<div class="quiz-bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+</div>
+<div class="quiz-timer" id="quizTimer">30</div>
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar" style="width: 40%;"></div>
+  <span class="progress-label" id="progressLabel">2 / 5</span>
+</div>
+<div class="quiz-card" id="quizCard"></div>
+<div class="footer">All rights reserved by Joseph 2025</div>
+<script>
+
+  // Get avatar and name from storage (replace with your actual system if needed)
+  const avatarIdx = +(localStorage.getItem('quizPlayerAvatar') || 0);
+  const avatarMap = [
+    "eleven", "jesse", "Katniss", "leonard", "lisa",
+    "morty", "rick", "sheldon", "walter", "wednesday"
+  ];
+  const avatar = `<img src="/static/images/avatar/${avatarMap[avatarIdx]}.png" alt="Avatar" style="width:100%;height:100%;"/>`;
+  const userName = localStorage.getItem('quiz_username') || "Player";
+
+  let questionData = {};
+  let answered = false;
+
+ quizFlow.initQuestion((question, number, total) => {
+    questionData = question;
+    answered = false;
+
+
+    state = { selectedL: null, selectedR: null, links: {}, locked: false, draggingRight: null };
+    document.getElementById('progressBar').style.width = `${(number/total)*100}%`;
+    document.getElementById('progressLabel').innerText = `${number} / ${total}`;
+    renderCard();
+});
+
+  function renderCard() {
+    const card = document.getElementById('quizCard');
+    card.innerHTML = `
+      <div class="user-bar">
+        <span class="avatar-quiz">${avatar}</span>
+        <span class="username-quiz">${userName}</span>
+      </div>
+      <h2>${questionData.question}</h2>
+      ${questionData.hint ? `<div class="hint">💡 Hint: ${questionData.hint}</div>` : ""}
+      <form class="fib-area" id="fibForm" autocomplete="off">
+        <input type="text" class="answer-input" id="fibInput" placeholder="Your answer..." aria-label="Fill in the blank" required autofocus />
+        <button type="submit" class="fib-btn" id="fibBtn">Submit</button>
+      </form>
+      <div class="feedback" id="feedback" style="display:none"></div>
+      <button class="next-btn" id="nextBtn" style="display:none;">Next</button>
+    `;
+    document.getElementById('fibForm').onsubmit = (e) => {
+      e.preventDefault();
+      if (answered) return;
+      checkAnswer();
+    };
+    document.getElementById('nextBtn').onclick = () => location.reload();
+    document.getElementById('fibInput').onkeydown = e => {
+      if (e.key === "Enter") {
+        e.preventDefault(); checkAnswer();
+      }
+    };
+  }
+
+  function checkAnswer() {
+    if (answered) return;
+    answered = true;
+    const input = document.getElementById('fibInput');
+    const btn = document.getElementById('fibBtn');
+    btn.disabled = true; input.disabled = true;
+    let val = input.value.trim();
+    let correct = Array.isArray(questionData.answer)
+      ? questionData.answer.some(a => a.toLowerCase() === val.toLowerCase())
+      : val.toLowerCase() === questionData.answer.toLowerCase();
+    showFeedback(correct);
+  }
+
+  function showFeedback(correct) {
+    answered = true;
+    let fb = document.getElementById('feedback');
+    fb.style.display = "";
+    fb.className = "feedback" + (correct ? "" : " wrong");
+    fb.innerHTML = correct ? "Correct! 🎉" : "Wrong. " + (questionData.explanation || "");
+    if (!correct && questionData.explanation)
+      fb.innerHTML += `<div class="exp" style="color:#fffbe7;font-size:0.98em;margin-top:8px;">${questionData.explanation}</div>`;
+    // Call quizFlow.finishQuestion to handle score, navigation, etc.
+    setTimeout(() => {
+      quizFlow.finishQuestion(correct, parseInt(document.getElementById('quizTimer').textContent));
+    }, 1200);
+  }
+
+
+</script>
+
+</body>
+</html>

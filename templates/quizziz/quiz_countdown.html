@@ -4,151 +4,411 @@
   <meta charset="UTF-8">
   <title>Quiz - Get Ready!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:800,900&display=swap" rel="stylesheet">
   <style>
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
-      min-height: 100vh;
-      background: #7e2385;
-      background-image:
-        linear-gradient(90deg, transparent 90%, rgba(255,255,255,0.03) 100%),
-        linear-gradient(0deg, transparent 90%, rgba(255,255,255,0.03) 100%);
-      background-size: 80px 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+      padding: 0;
       overflow: hidden;
     }
-    .fullscreen-countdown {
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      font-family: 'Montserrat', 'Nunito', 'Segoe UI', Arial, sans-serif;
+      background: radial-gradient(ellipse at 50% 45%, #2c0735 0%, #16071f 65%, #060412 100%);
+      transition: background 0.7s cubic-bezier(.19,1,.22,1);
       display: flex;
-      position: fixed;
-      z-index: 99;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      background: transparent;
       align-items: center;
       justify-content: center;
+      position: relative;
+    }
+    .fullscreen-countdown {
+     font-family: 'Poppins', 'Inter', 'Nunito', Arial, sans-serif;
+     font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw; height: 100vh;
+      z-index: 999;
+      left: 0; top: 0;
+      display: flex;
+      justify-content: center;
+      background: none;
       pointer-events: all;
+      user-select: none;
+      transition: background 0.7s;
     }
     .countdown-bar {
-      background: rgba(20, 10, 25, 0.48);
-      width: 100vw;
-      height: 160px;
+      background: rgba(22, 9, 34, 0.72);
+      border-radius: 2.5rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      animation: barPulse 0.9s infinite cubic-bezier(.61,.02,.75,.53);
-      will-change: transform, opacity;
+      box-shadow: 0 6px 40px 8px #17032844;
+      transition:
+        box-shadow 0.3s,
+        background 0.7s,
+        min-width 0.3s cubic-bezier(.7,1.6,.55,1.05),
+        min-height 0.3s cubic-bezier(.7,1.6,.55,1.05),
+        width 0.4s cubic-bezier(.7,1.6,.55,1.05),
+        height 0.4s cubic-bezier(.7,1.6,.55,1.05),
+        padding 0.35s cubic-bezier(.77,1.5,.4,1.01);
+      padding: 2vw 5vw;
+      min-width: 0;
+      min-height: 0;
+      width: auto;
+      height: auto;
+      max-width: 96vw;
+      max-height: 88vh;
     }
     @keyframes barPulse {
-      0%   { opacity: 0.88; transform: scaleX(0.97) scaleY(1);}
-      40%  { opacity: 1;    transform: scaleX(1.08) scaleY(1.14);}
-      50%  { opacity: 1;    transform: scaleX(1.12) scaleY(1.19);}
-      60%  { opacity: 1;    transform: scaleX(1.08) scaleY(1.14);}
-      100% { opacity: 0.88; transform: scaleX(0.97) scaleY(1);}
+      0%   { box-shadow: 0 0px 22px 2px #29154c22; }
+      60%  { box-shadow: 0 12px 48px 12px #622b7b66; }
+      100% { box-shadow: 0 0px 22px 2px #29154c22; }
     }
     .fullscreen-countdown-number {
-      font-size: 6rem;
+      font-size: 14vw;
+      min-font-size: 5rem;
+      max-font-size: 16rem;
+      font-family: 'Montserrat', 'Nunito', Arial, sans-serif;
       font-weight: 900;
       color: #fff;
-      opacity: 0.91;
-      letter-spacing: 2px;
-      text-shadow: 0 6px 32px #0008;
-      animation: numPop 0.6s cubic-bezier(.23,1.29,.47,1.18);
-      will-change: transform, opacity;
+      letter-spacing: 0.1em;
+      opacity: 0.98;
+      text-shadow: 0 10px 60px #b35ae2a8, 0 4px 48px #120b20cc, 0 0px 4px #fff9;
+      filter: drop-shadow(0 0 10px #f6e5ff33);
+      will-change: transform, opacity, filter, color;
+      display: block;
+      text-align: center;
+      min-width: 150px;
+      transition: color 0.25s, font-size 0.2s cubic-bezier(.5,1.5,.6,1.1);
+      background: none !important;
+      -webkit-background-clip: initial !important;
+      -webkit-text-fill-color: initial !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0.15em 0 0.15em 0 !important;
+      line-height: 1.05;
     }
-    @keyframes numPop {
-      0% { transform: scale(0.65); opacity: 0.2;}
-      70% { transform: scale(1.16); opacity: 1;}
-      100% { transform: scale(1); opacity: 1;}
+.color-3 {
+  color: #ffd347; /* Cinematic gold */
+  text-shadow:
+    0 2px 10px #fff07e88,
+    0 1px 2px #b48c20cc,
+    0 0 6px #fff8;
+  -webkit-text-stroke: 1.2px #8c6c20;
+  text-stroke: 1.2px #8c6c20;
+}
+.color-2 {
+  color: #a36e00; /* Golden brown, darker than bg-2 */
+  text-shadow:
+    0 2px 10px #ffd84b66,
+    0 1px 2px #664800cc;
+  -webkit-text-stroke: 1.2px #ffe066;
+  text-stroke: 1.2px #ffe066;
+}
+.color-1 {
+  color: #780948; /* Plum, darker than bg-1 */
+  text-shadow:
+    0 2px 10px #ff7eb966,
+    0 1px 2px #2e0420cc;
+  -webkit-text-stroke: 1.2px #ffb2e2;
+  text-stroke: 1.2px #ffb2e2;
+}
+.color-go {
+  color: #06774a; /* Deep green, darker than bg-go */
+  text-shadow:
+    0 2px 12px #77ff7e77,
+    0 2px 4px #022615cc;
+  -webkit-text-stroke: 1.7px #77ff7e;
+  text-stroke: 1.7px #77ff7e;
+}
+    /* BG for each tick */
+    .bg-3 { background: radial-gradient(ellipse at 50% 45%, #003049 0%, #23124d 70%, #0e0626 100%);}
+    .bg-2 { background: radial-gradient(ellipse at 50% 45%, #ffcb47 0%, #a97904 70%, #342900 100%);}
+    .bg-1 { background: radial-gradient(ellipse at 50% 45%, #ad1457 0%, #4b174c 70%, #290014 100%);}
+    .bg-go { background: radial-gradient(ellipse at 50% 45%, #1aff9e 0%, #51e68c 70%, #124d24 100%);}
+    /* Countdown bar for each tick */
+    .bar-3 { background: rgba(0, 90, 170, 0.55); }
+    .bar-2 { background: rgba(255, 202, 69, 0.43);}
+    .bar-1 { background: rgba(197, 35, 102, 0.43);}
+    .bar-go { background: rgba(30, 255, 158, 0.38);}
+    /* Animation: 3 slides in from top, shakes */
+    .animate-3 {
+      animation: fromTopShake 0.85s cubic-bezier(.52,1.7,.57,1.01);
     }
+    @keyframes fromTopShake {
+      0%   { transform: translateY(-150vh) scale(1.15); opacity: 0.2; filter: blur(10px);}
+      30%  { transform: translateY(0) scale(1.15) rotate(-2deg);}
+      38%  { transform: translateY(0) scale(1.18) rotate(2.5deg);}
+      43%  { transform: translateY(0) scale(1.11) rotate(-2deg);}
+      48%  { transform: translateY(0) scale(1.18) rotate(1.5deg);}
+      55%  { transform: translateY(0) scale(1.07);}
+      65%  { transform: translateY(0) scale(1.02);}
+      100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0);}
+    }
+    /* Animation: 2 zoom/blurs in from center */
+    .animate-2 {
+      animation: zoomBlurIn 0.95s cubic-bezier(.13,1.26,.71,.98);
+    }
+    @keyframes zoomBlurIn {
+      0%   { transform: scale(2.3) rotate(-8deg); opacity: 0; filter: blur(28px);}
+      55%  { transform: scale(0.90) rotate(2deg); opacity: 1; filter: blur(4px);}
+      75%  { transform: scale(1.08) rotate(-2deg);}
+      100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0);}
+    }
+    /* Animation: 1 spins and scales up */
+    .animate-1 {
+      animation: spinPop 1.05s cubic-bezier(.32,1.34,.51,.93);
+    }
+    @keyframes spinPop {
+      0%   { transform: scale(0.7) rotate(-360deg); opacity: 0; filter: blur(12px);}
+      48%  { transform: scale(1.2) rotate(8deg); opacity: 1; filter: blur(0);}
+      70%  { transform: scale(1.06) rotate(-2deg);}
+      100% { transform: scale(1) rotate(0deg); opacity: 1;}
+    }
+    /* Animation: GO! expands, flashes, and pulses */
+    .animate-go {
+      animation: goFlash 0.95s cubic-bezier(.63,2.11,.68,.64);
+    }
+    @keyframes goFlash {
+      0%   { transform: scale(0.7); opacity: 0; filter: blur(18px);}
+      55%  { transform: scale(1.26); opacity: 1; filter: blur(2px);}
+      68%  { transform: scale(1.43); opacity: 1; filter: blur(0);}
+      75%  { transform: scale(1.03); opacity: 1;}
+      87%  { transform: scale(2.15); opacity: 1; filter: blur(0);}
+      100% { transform: scale(4); opacity: 0;}
+    }
+    /* Player label lively animation */
     .player-label {
       position: fixed;
-      top: 48px;
+      top: 40px;
       left: 0;
       width: 100vw;
       text-align: center;
       color: #fff;
-      font-size: 1.35rem;
-      letter-spacing: 1px;
-      opacity: 0.89;
+      font-size: 1.28rem;
+      opacity: 0.97;
       font-weight: 600;
-      text-shadow: 0 2px 16px #0006;
-      z-index: 101;
+      letter-spacing: 1.5px;
+      text-shadow: 0 4px 16px #611a8e80, 0 0 2px #fff6;
+      z-index: 1001;
       pointer-events: none;
-      transition: opacity 0.4s;
+      user-select: none;
+      transition: color 0.3s, text-shadow 0.3s;
     }
+    .player-label-highlight {
+      color: #fff07e;
+      text-shadow: 0 0 18px #fff37d, 0 8px 26px #ffe58b, 0 1px 2px #fff;
+      animation: popLabel 1s cubic-bezier(.7,1.7,.67,1.02) 1;
+    }
+    @keyframes popLabel {
+      0%   { transform: scale(0.7) rotate(-3deg); opacity: 0.5;}
+      60%  { transform: scale(1.08) rotate(2deg);}
+      100% { transform: scale(1) rotate(0deg); opacity: 1;}
+    }
+    /* Avatar styles */
+    .avatar-go-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2.3rem; /* Extra padding from GO! */
+      margin-bottom: 0.2rem;
+      animation: avatarGoIn 0.8s cubic-bezier(.3,1.7,.64,1.07) 0.15s backwards;
+      width: 100%;
+    }
+    @keyframes avatarGoIn {
+      0% { opacity: 0; transform: scale(0.3) rotate(-60deg);}
+      70% { opacity: 1; transform: scale(1.07) rotate(8deg);}
+      100% { opacity: 1; transform: scale(1) rotate(0);}
+    }
+    .avatar-img {
+      width: 82px; height: 82px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 36px #fffccc99, 0 2px 12px #3335;
+      object-fit: cover;
+      border: 4px solid #fff07e;
+      margin-bottom: 0.7rem;
+      margin-top: 0;
+      display: block;
+      transition: border-color 0.3s;
+    }
+    .avatar-go-name {
+      font-size: 1.32rem;
+      font-weight: 900;
+      color: #fff07e;
+      text-shadow: 0 4px 16px #ffd37c, 0 0px 2px #fff6;
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #fffccf 20%, #ffe34b 50%, #f2d065 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: popLabel 1s cubic-bezier(.7,1.7,.67,1.02) 0.15s backwards;
+      text-align: center;
+      width: 100%;
+      display: block;
+    }
+    /* Responsive tweaks */
     @media (max-width: 600px) {
-      .countdown-bar { height: 100px; }
-      .fullscreen-countdown-number { font-size: 3.3rem; }
-      .player-label { font-size: 1rem; }
+      .countdown-bar {
+        width: 94vw; max-width: 96vw;
+        min-width: 40vw; min-height: 100px;
+        height: 35vw; max-height: 180px;
+        border-radius: 1.3rem;
+      }
+      .fullscreen-countdown-number {
+        font-size: 2.6rem;
+        min-width: 70px;
+      }
+      .player-label {
+        font-size: 1rem; top: 19px;
+      }
+      .avatar-img { width: 54px; height: 54px;}
+      .avatar-go-name { font-size: 1rem;}
+      .avatar-go-container { margin-top: 1.1rem; }
     }
+    @media (max-width: 370px) {
+      .fullscreen-countdown-number {
+        font-size: 1.75rem;
+        min-width: 45px;
+      }
+      .player-label { font-size: 0.9rem; top: 8px;}
+    }
+
+    @media (min-width: 1600px) {
+  .fullscreen-countdown-number { font-size: 15rem; }
+}
+@media (max-width: 600px) {
+  .fullscreen-countdown-number { font-size: 4.5rem; }
+}
   </style>
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
 </head>
 <body>
   <div class="player-label" id="playerLabel"></div>
-  <div class="fullscreen-countdown" id="fullscreenCountdown">
-    <div class="countdown-bar">
-      <span class="fullscreen-countdown-number" id="fullscreenCountdownNum">3</span>
+  <div class="fullscreen-countdown bg-3" id="fullscreenCountdown">
+    <div class="countdown-bar bar-3" id="countdownBar">
+      <span class="fullscreen-countdown-number color-3" id="fullscreenCountdownNum">3</span>
     </div>
   </div>
   <script>
+    // Avatars array (should match backend avatar indexes)
+    const avatars = [
+      `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
+      `<img src="/static/images/avatar/jesse.png" class="avatar-img" alt="Avatar: Jesse" />`,
+      `<img src="/static/images/avatar/katniss.png" class="avatar-img" alt="Avatar: Katniss" />`,
+      `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Avatar: Leonard" />`,
+      `<img src="/static/images/avatar/lisa.png" class="avatar-img" alt="Avatar: Lisa" />`,
+      `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Avatar: Morty" />`,
+      `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Avatar: Rick" />`,
+      `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Avatar: Sheldon" />`,
+      `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`,
+      `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
+    ];
 
-    // Maintain socket connection for the session!
     var socket = io();
 
+    // Get user info
     let myName = localStorage.getItem('quiz_username') || "Your Name";
     let myAvatarIdx = +(localStorage.getItem('quizPlayerAvatar') || 0);
 
-    // Re-join the participants list!
+    // Socket join
     socket.on('connect', function() {
       socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
     });
 
-    // Show player's name from localStorage
+    // Lively player label
     const playerLabel = document.getElementById('playerLabel');
-    let username = localStorage.getItem('quiz_username') || "";
-    if(username) {
-      playerLabel.innerText = `Good luck, ${username}!`;
-    } else {
-      playerLabel.innerText = "Get Ready!";
+    let username = myName;
+    function setLabelHighlight() {
+      playerLabel.innerHTML = username
+        ? `Good luck, <span style="color:#fff07e;font-size:1.12em;text-shadow:0 2px 8px #fff37dcc,0 0 8px #ffe58b,0 1px 2px #fff;">${username}</span>!`
+        : "Get Ready!";
+      playerLabel.classList.add("player-label-highlight");
+      setTimeout(() => playerLabel.classList.remove("player-label-highlight"), 1100);
     }
+    setLabelHighlight();
 
-    // Countdown animation
+    // DOM elements
     const fsCountdownNum = document.getElementById('fullscreenCountdownNum');
-    function replayNumPop() {
-      fsCountdownNum.style.animation = "none";
+    const fsCountdown = document.getElementById('fullscreenCountdown');
+    const countdownBar = document.getElementById('countdownBar');
+
+    // Each tick: value, numClass, bgClass, barClass
+    let countdownNumbers = [
+      { value: 3, class: "animate-3 color-3", bg: "bg-3", bar: "bar-3" },
+      { value: 2, class: "animate-2 color-2", bg: "bg-2", bar: "bar-2" },
+      { value: 1, class: "animate-1 color-1", bg: "bg-1", bar: "bar-1" },
+      { value: "GO!", class: "animate-go color-go", bg: "bg-go", bar: "bar-go" }
+    ];
+
+    let countIdx = 0;
+    let avatarGo = null;
+    let goAvatarTimeout = null;
+
+    function showCountdownTick() {
+      // Remove all animation/color classes
+      fsCountdownNum.className = "fullscreen-countdown-number";
+      fsCountdown.className = "fullscreen-countdown";
+      countdownBar.className = "countdown-bar";
+
+      // Remove any avatar-go-container immediately
+      let oldAvatar = countdownBar.querySelector('.avatar-go-container');
+      if (oldAvatar) oldAvatar.remove();
+      if (goAvatarTimeout) { clearTimeout(goAvatarTimeout); goAvatarTimeout = null; }
+
+      // Current tick
+      let tick = countdownNumbers[countIdx];
+      // Set number and classes
+      fsCountdownNum.textContent = tick.value;
       void fsCountdownNum.offsetWidth;
-      fsCountdownNum.style.animation = "";
+      fsCountdownNum.className = "fullscreen-countdown-number " + tick.class;
+      fsCountdown.classList.add(tick.bg);
+      countdownBar.classList.add(tick.bar);
+
+      // Highlight label on each tick
+      setLabelHighlight();
+
+      // On GO!, show avatar and lively name after delay
+      if (tick.value === "GO!") {
+        if (!avatarGo) {
+          avatarGo = document.createElement('div');
+          avatarGo.className = "avatar-go-container";
+          avatarGo.innerHTML = avatars[myAvatarIdx] +
+            `<div class="avatar-go-name">${username || "You"}</div>`;
+        }
+        // Dramatic delay: Avatar and name drop in after GO! flashes (~420ms)
+        goAvatarTimeout = setTimeout(() => {
+          countdownBar.appendChild(avatarGo);
+        }, 420);
+      }
+
+      // Next tick
+      countIdx++;
+      if (countIdx < countdownNumbers.length) {
+        setTimeout(showCountdownTick, countIdx === countdownNumbers.length - 1 ? 950 : 900);
+      } else {
+        // Let the GO + avatar + name sit for a moment before redirecting
+        setTimeout(() => {
+          fsCountdown.style.opacity = 0;
+          setTimeout(() => {
+            window.location.href = "/quiz/initial_ranking";
+          }, 420);
+        }, 1500); // more dramatic, avatar stays visible
+      }
     }
 
-    let count = 3;
-    fsCountdownNum.textContent = count;
-    replayNumPop();
-    const intv = setInterval(() => {
-      count -= 1;
-      if (count === 0) {
-        clearInterval(intv);
-        fsCountdownNum.textContent = "GO!";
-        replayNumPop();
-        setTimeout(() => {
-          window.location.href = "/quiz/play"; // CHANGE to your quiz question route!
-        }, 750);
-      } else {
-        fsCountdownNum.textContent = count;
-        replayNumPop();
-      }
-    }, 950);
+    // Start on load
+    window.onload = () => {
+      setTimeout(showCountdownTick, 400);
+    };
 
-    // Listen for quiz_started (defensive in case re-broadcasted)
+    // Listen for quiz_started socket event
     socket.on('quiz_started', function() {
-      window.location.href = "/quiz/play";
+      window.location.href = "/quiz/initial_ranking";
     });
-
-    // Optionally, inform backend player entered countdown:
-    // socket.emit('entered_countdown');
   </script>
 </body>
 </html>

@@ -597,16 +597,27 @@ body {
       line-height: 1.08;
       padding-left: 2px;
     }
-    .gif-toast-img {
-      width: 52px;
-      height: 52px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 2.5px solid #fff3;
-      background: #fff7;
-      box-shadow: 0 2px 12px #0002;
-      margin-left: 2px;
-    }
+ .gif-toast-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background-color: #fff;
+  border: 2.5px solid #fff3;
+  box-shadow: 0 2px 12px #0002;
+  margin-left: 2px;
+  object-fit: contain;
+  padding: 2px; /* ✅ Add spacing to ensure it doesn’t touch the edges */
+  background-clip: padding-box;
+}
+.gif-toast-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* Key! */
+  object-position: center;/* Key! */
+  display: block;
+  border-radius: 50%;     /* Extra safety, even if img is not square */
+  background: #fff;
+}
     @keyframes floatUpSmooth {
       0%   { bottom: 18px; opacity: 1; }
       95%  { bottom: 85vh; opacity: 1; }
@@ -618,6 +629,9 @@ body {
       .gif-toast-avatar { width: 32px; height: 32px; }
       .gif-toast-name { font-size: 1em; }
     }
+
+
+
 </style>
 
 </head>
@@ -716,11 +730,16 @@ body {
   <script>
  // Avatars array (should match backend avatar indexes)
     const avatars = [
-      `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Leonard" />`,
-      `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Morty" />`,
-      `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Rick" />`,
-      `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Sheldon" />`,
-      `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Walter" />`
+      `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
+      `<img src="/static/images/avatar/jesse.png" class="avatar-img" alt="Avatar: Jesse" />`,
+      `<img src="/static/images/avatar/katniss.png" class="avatar-img" alt="Avatar: Katniss" />`,
+      `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Avatar: Leonard" />`,
+      `<img src="/static/images/avatar/lisa.png" class="avatar-img" alt="Avatar: Lisa" />`,
+      `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Avatar: Morty" />`,
+      `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Avatar: Rick" />`,
+      `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Avatar: Sheldon" />`,
+      `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`,
+      `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
     ];
 
     // Helper: insert participants in grid (max 3 per column)

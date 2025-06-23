@@ -80,19 +80,43 @@ def games():
 
 @app.route('/quiz/start')
 def quiz_start():
-    return render_template('quizziz/quiz_start.html')
+    return render_template('quizziz/quiz_user_initial.html')
 
-@app.route('/quiz/waiting')
-def quiz_waiting():
-    return render_template('quizziz/quiz_waiting.html')
+@app.route('/quiz/user_lobby')
+def quiz_user_lobby():
+    return render_template('quizziz/quiz_user_lobby.html')
 
 @app.route('/quiz/countdown')
 def quiz_countdown():
     return render_template('quizziz/quiz_countdown.html')
 
+@app.route('/quiz/initial_ranking')
+def quiz_initial_ranking():
+    return render_template('quizziz/quiz_initial_ranking.html')
+
 @app.route('/quiz/play')
 def quiz_play():
-    return render_template('quizziz/quiz_play.html')
+    return render_template('quizziz/quiz_questions.html')  # Or whatever the main game page is
+
+@app.route('/quiz/waiting')
+def quiz_waiting():
+    return render_template('quizziz/quiz_waiting.html')
+
+@app.route('/quiz/form/quiz_multiple_choice')
+def quiz_multiple_choice():
+    return render_template('quizziz/form/quiz_multiple_choice.html')
+
+@app.route('/quiz/form/quiz_match')
+def quiz_match():
+    return render_template('quizziz/form/quiz_match.html')
+
+@app.route('/quiz/form/quiz_fill_in_blank')
+def quiz_fill_in_blank():
+    return render_template('quizziz/form/quiz_fill_in_blank.html')
+
+@app.route('/quiz/form/drag_drop')
+def quiz_drag_drop():
+    return render_template('quizziz/form/drag_drop.html')
 
 @app.route('/quiz/admin_lobby')
 def quiz_admin_lobby():

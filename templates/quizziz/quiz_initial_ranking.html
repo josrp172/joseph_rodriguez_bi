@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🏆 Initial Ranking | Quiz App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      width: 100vw;
+      margin: 0; padding: 0;
+      font-family: 'Nunito', Arial, sans-serif;
+      background: transparent;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+    body {
+      min-height: 100vh;
+      width: 100vw;
+      position: relative;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    /* --- Animated Blobs & Background --- */
+    .quiz-bg-blobs {
+      position: fixed; top:0; left:0; width:100vw; height:100vh; z-index: 0; pointer-events: none;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(64px);
+      opacity: 0.45;
+      animation: moveBlobs 16s linear infinite alternate;
+    }
+    .blob1 { width: 360px; height: 320px; background: #7e2385; left: 3vw; top: 5vh; animation-delay: 0s;}
+    .blob2 { width: 250px; height: 300px; background: #f6e26d; left: 58vw; top: 16vh; animation-delay: 3s;}
+    .blob3 { width: 320px; height: 220px; background: #22d07a; left: 29vw; top: 65vh; animation-delay: 7s;}
+    .blob4 { width: 220px; height: 220px; background: #fa9660; left: 72vw; top: 62vh; animation-delay: 10s;}
+    @keyframes moveBlobs {
+      0% { transform: translateY(0px) scale(1);}
+      30%{ transform: translateY(-22px) scale(1.05);}
+      50%{ transform: translateY(38px) scale(0.98);}
+      80%{ transform: translateY(-14px) scale(1.09);}
+      100%{transform: translateY(0px) scale(1);}
+    }
+    .bg-bottom-blur {
+      position:fixed;
+      left:0; bottom:0;
+      width:100vw; height:210px;
+      z-index:2;
+      background:linear-gradient(0deg,rgba(240,230,255,0.13) 50%,transparent 100%);
+      filter: blur(22px) saturate(2.2);
+      pointer-events:none;
+      opacity:0.9;
+    }
+
+    /* --- Main Card --- */
+    .ranking-card {
+      background: rgba(40,20,60,0.93);
+      color: #fff;
+      padding: 42px 36px 34px 36px;
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 10px 38px 0 #0005, 0 2px 16px 0 #fff2 inset;
+      width: 440px;
+      max-width: 97vw;
+      min-width: 0;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      backdrop-filter: blur(16px) saturate(1.5);
+      transition: box-shadow 0.18s, background 0.17s;
+      animation: fadeCardIn 0.7s;
+    }
+    @keyframes fadeCardIn { from { opacity:0; transform:scale(0.98) translateY(48px);} to {opacity:1; transform:none;} }
+
+    .ranking-title {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 2.15rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      color: #ffe97e;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 22px #2e1432c0, 0 0 12px #f6e26d66;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      animation: titleGlow 2.8s infinite alternate;
+      filter: drop-shadow(0 0 12px #f6e26d99);
+    }
+    @keyframes titleGlow { 0%{text-shadow:0 2px 22px #2e1432c0, 0 0 12px #ffe97e88;} 100%{text-shadow:0 2px 26px #7e2385, 0 0 22px #ffe97e;} }
+
+    /* --- Leaderboard --- */
+    .leaderboard-list {
+      margin: 0 auto;
+      margin-top: 18px;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 11px;
+      min-height: 92px;
+    }
+    .ranking-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(255,255,255,0.13);
+      border-radius: 17px;
+      padding: 11px 20px;
+      font-size: 1.21em;
+      font-weight: 700;
+      box-shadow: 0 2px 14px #0002, 0 1.5px 8px #7e238522;
+      color: #fff;
+      position: relative;
+      opacity: 0;
+      transform: scale(0.86) translateY(24px);
+      animation: none;
+      min-height: 58px;
+      min-width: 0;
+    }
+    .ranking-row.revealed {
+      animation: rowReveal 0.44s cubic-bezier(.55,1.7,.65,1.04) forwards;
+    }
+    @keyframes rowReveal {
+      0% { opacity: 0; transform: scale(0.86) translateY(24px);}
+      65%{ opacity: 1; transform: scale(1.09) translateY(-9px);}
+      100% { opacity: 1; transform: scale(1) translateY(0);}
+    }
+
+    .rank-num {
+      font-size: 1.1em;
+      color: #ffe97e;
+      min-width: 2.3em;
+      text-align: right;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      filter: drop-shadow(0 0 7px #ffe97e99);
+    }
+    .rank-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 9px #fa966020;
+    }
+    .rank-avatar img {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+    .rank-name {
+      flex: 1 1 auto;
+      text-align: left;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.08em;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 7px #2e143240;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rank-score {
+      color: #ffe97e;
+      font-weight: 800;
+      font-size: 1.1em;
+      letter-spacing: 0.04em;
+      margin-left: 8px;
+      min-width: 2.6em;
+      text-align: right;
+      font-family: 'Montserrat', Arial, sans-serif;
+      filter: drop-shadow(0 0 7px #ffe97e99);
+    }
+
+    .empty-state {
+      opacity: 0.86;
+      color: #ffe97e;
+      font-size: 1.14em;
+      text-align: center;
+      padding: 23px 0;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 600px) {
+      .ranking-card { width: 99vw; max-width: 99vw; padding: 13px 2vw; }
+      .leaderboard-list { max-width: 99vw; }
+      .ranking-row { font-size: 1em; padding: 7px 8vw; min-height: 44px; }
+      .rank-avatar, .rank-avatar img { width: 34px; height: 34px; border-radius: 9px;}
+      .ranking-title { font-size: 1.18rem;}
+    }
+
+    /* --- Footer --- */
+    .site-footer {
+      position: fixed; left: 0; bottom: 0; width: 100vw;
+      color: #fff; text-align: center;
+      font-size: 1.11em; font-weight: 500;
+      padding: 18px 0 15px 0;
+      z-index: 10000;
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(22px) saturate(2.3);
+      background: rgba(255, 255, 255, 0.13);
+      box-shadow: 0 -1px 18px 0 #0002, 0 1px 9px 0 #fff1 inset;
+      border-top: 1.5px solid rgba(255,255,255,0.13);
+      user-select: none;
+      text-shadow: 0 1.5px 4px #4442, 0 0 8px #0002;
+      font-family: 'Montserrat', Arial, sans-serif;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+  </style>
+
+</head>
+<body>
+  <link rel="stylesheet" href="/static/css/quiz_common.css">
+<script src="/static/js/quiz_flow.js"></script>
+  <!-- Animated Blobs -->
+  <div class="quiz-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+  <div class="bg-bottom-blur"></div>
+  <!-- Main Card -->
+  <div class="ranking-card" id="mainCard">
+    <div class="ranking-title">🏆 Initial Ranking</div>
+    <div id="leaderboard" class="leaderboard-list"></div>
+    <div id="leaderboardEmpty" class="empty-state" style="display:none;">Waiting for players…</div>
+  </div>
+  <footer class="site-footer">
+    © Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.
+  </footer>
+<script>
+  // 1) Connect & join waiting room
+  const socket = io();
+  const myName      = localStorage.getItem('quiz_username')     || 'Player';
+  const myAvatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
+  let participants  = [];
+
+  socket.on('connect', () => {
+    socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
+  });
+
+  // 2) When the server sends the current player list, re-draw the table
+  socket.on('player_list', players => {
+    participants = players.map(p => ({
+      ...p,
+      isMe: p.id === socket.id
+    }));
+    renderRanking();
+  });
+
+  // 3) Render the leaderboard, injecting your real total from localStorage
+  function renderRanking() {
+    const leaderboard = document.getElementById('leaderboard');
+
+    if (!participants.length) {
+      leaderboard.innerHTML = '<div class="empty-state">Waiting for players…</div>';
+      return;
+    }
+
+    // Pull in the scores array that quick_flow.js wrote after every question
+    const scoresArr = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
+    const myTotal   = scoresArr.reduce((sum, s) => sum + s, 0);
+
+    leaderboard.innerHTML = participants.map((p, i) => {
+      // decide avatar filename
+      const avatars = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
+      const key     = (typeof p.avatar === 'number') ? avatars[p.avatar] : p.avatar;
+      // if this is you, show your real total; otherwise show 0 (or hook in a server score)
+      const displayScore = p.isMe ? myTotal : 0;
+
+      return `
+        <div class="ranking-row revealed">
+          <span class="rank-num">${i+1}.</span>
+          <span class="rank-avatar">
+            <img src="/static/images/avatar/${key}.png" alt="Avatar" />
+          </span>
+          <span class="rank-name">${p.name || 'Player'}</span>
+          <span class="rank-score">${displayScore}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 4) On *very first* load, clear out the old score array and reset question index
+  (function initState(){
+    if (!sessionStorage.getItem('quiz::started')) {
+      localStorage.removeItem('quiz::scores');
+      sessionStorage.setItem('quiz::currentIdx', 0);
+      sessionStorage.setItem('quiz::started', '1');
+    }
+  })();
+
+  // 5) After the 7-second “Initial Ranking” timer, advance to the next question
+  setTimeout(async () => {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    const bank = raw
+      .trim()
+      .split(/^---$/m)
+      .map(block => {
+        const sanitized = block.replace(/\/\/.*$/gm, '');
+        try { return JSON.parse(sanitized); }
+        catch { return null; }
+      })
+      .filter(Boolean);
+
+    const idx = Number(sessionStorage.getItem('quiz::currentIdx') || 0);
+    const q   = bank[idx];
+    if (!q) return location.replace('/quiz/initial_ranking');
+
+    const routes = {
+      multiple_choice: '/quiz/form/quiz_multiple_choice',
+      fill_in_blank:   '/quiz/form/quiz_fill_in_blank',
+      match:           '/quiz/form/quiz_match',
+      drag_and_drop:   '/quiz/form/drag_drop',
+      categorize:      '/quiz/form/quiz_categorize'
+    };
+    location.replace(routes[q.type]);
+  }, 7000);
+</script>
+
+
+</body>
+</html>

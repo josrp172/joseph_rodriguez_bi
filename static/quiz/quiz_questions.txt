@@ -1,0 +1,57 @@
+{
+  "type": "multiple_choice",
+  "question": "Which of the following are fruits?",
+  "choices": ["Apple", "Carrot", "Banana", "Cabbage"],
+  "answer": [0, 2],           // Indices of correct answers
+  "allowMultiple": true,
+  "hint": "Fruits usually contain seeds.",
+  "explanation": "Apple and banana are fruits. Carrot and cabbage are vegetables.",
+  "image": "",                // Optional: URL or base64
+  "latex": ""                 // Optional: For math
+}
+---
+{
+  "type": "fill_in_blank",
+  "question": "The capital of France is ___",
+  "answer": "Paris",
+  "hint": "It's also called the City of Lights.",
+  "explanation": "Paris is the capital of France.",
+  "markdown": true
+}
+---
+{
+  "type": "match",
+  "question": "Match the countries to their capitals",
+  "pairs": {
+    "France": "Paris",
+    "Germany": "Berlin",
+    "Japan": "Tokyo"
+  },
+  "hint": "Think about famous landmarks.",
+  "explanation": "France → Paris, Germany → Berlin, Japan → Tokyo"
+}
+---
+{
+  "type": "drag_and_drop",
+  "question": "Order the planets from closest to farthest from the sun.",
+  "items": ["Mercury", "Venus", "Earth", "Mars"],
+  "correctOrder": ["Mercury", "Venus", "Earth", "Mars"],
+  "image": "",
+  "explanation": "The order from the sun: Mercury, Venus, Earth, Mars."
+}
+---
+{
+  "type": "multiple_choice",
+  "question": "What does $E = mc^2$ describe?",
+  "choices": [
+    "Newton's second law",
+    "Einstein's mass–energy equivalence",
+    "The area of a circle",
+    "Photosynthesis"
+  ],
+  "answer": [1],
+  "allowMultiple": false,
+  "latex": "E = mc^2",
+  "hint": "Relativity.",
+  "explanation": "Einstein's famous formula shows mass-energy equivalence."
+}
