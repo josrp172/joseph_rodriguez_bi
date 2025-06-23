@@ -4,240 +4,299 @@
   <meta charset="UTF-8">
   <title>🏆 Initial Ranking | Quiz App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollToPlugin.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/TextPlugin.min.js"></script>
+  <!-- Socket.IO -->
+  <link rel="stylesheet" href="/static/css/quiz_common.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <script src="/static/js/quick_flow.js"></script>
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      height: 100%;
-      width: 100vw;
-      margin: 0; padding: 0;
-      font-family: 'Nunito', Arial, sans-serif;
-      background: transparent;
-      box-sizing: border-box;
-      overflow-x: hidden;
-    }
-    body {
-      min-height: 100vh;
-      width: 100vw;
-      position: relative;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    /* --- Animated Blobs & Background --- */
-    .quiz-bg-blobs {
-      position: fixed; top:0; left:0; width:100vw; height:100vh; z-index: 0; pointer-events: none;
-    }
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(64px);
-      opacity: 0.45;
-      animation: moveBlobs 16s linear infinite alternate;
-    }
-    .blob1 { width: 360px; height: 320px; background: #7e2385; left: 3vw; top: 5vh; animation-delay: 0s;}
-    .blob2 { width: 250px; height: 300px; background: #f6e26d; left: 58vw; top: 16vh; animation-delay: 3s;}
-    .blob3 { width: 320px; height: 220px; background: #22d07a; left: 29vw; top: 65vh; animation-delay: 7s;}
-    .blob4 { width: 220px; height: 220px; background: #fa9660; left: 72vw; top: 62vh; animation-delay: 10s;}
-    @keyframes moveBlobs {
-      0% { transform: translateY(0px) scale(1);}
-      30%{ transform: translateY(-22px) scale(1.05);}
-      50%{ transform: translateY(38px) scale(0.98);}
-      80%{ transform: translateY(-14px) scale(1.09);}
-      100%{transform: translateY(0px) scale(1);}
-    }
-    .bg-bottom-blur {
-      position:fixed;
-      left:0; bottom:0;
-      width:100vw; height:210px;
-      z-index:2;
-      background:linear-gradient(0deg,rgba(240,230,255,0.13) 50%,transparent 100%);
-      filter: blur(22px) saturate(2.2);
-      pointer-events:none;
-      opacity:0.9;
-    }
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+html, body {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', Arial, sans-serif;
+  background: #23113A;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+body {
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  background: #23113A;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.ranking-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 65% 35% at 40% 12%, #7e238555 0%, transparent 75%),
+              radial-gradient(ellipse 40% 30% at 75% 24%, #f6e26d55 0%, transparent 75%),
+              radial-gradient(ellipse 38% 42% at 70% 80%, #22d07a44 0%, transparent 70%),
+              radial-gradient(ellipse 32% 21% at 19% 77%, #fa966077 0%, transparent 80%);
+  opacity: 0.8;
+}
+.leaderboard-main-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  padding-top: 58px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  padding-bottom: 100px !important;
 
-    /* --- Main Card --- */
-    .ranking-card {
-      background: rgba(40,20,60,0.93);
-      color: #fff;
-      padding: 42px 36px 34px 36px;
-      border-radius: 28px;
-      text-align: center;
-      box-shadow: 0 10px 38px 0 #0005, 0 2px 16px 0 #fff2 inset;
-      width: 440px;
-      max-width: 97vw;
-      min-width: 0;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-      backdrop-filter: blur(16px) saturate(1.5);
-      transition: box-shadow 0.18s, background 0.17s;
-      animation: fadeCardIn 0.7s;
-    }
-    @keyframes fadeCardIn { from { opacity:0; transform:scale(0.98) translateY(48px);} to {opacity:1; transform:none;} }
+}
 
-    .ranking-title {
-      font-family: 'Montserrat', Arial, sans-serif;
-      font-size: 2.15rem;
-      font-weight: 900;
-      margin-bottom: 20px;
-      color: #ffe97e;
-      letter-spacing: 0.03em;
-      text-shadow: 0 2px 22px #2e1432c0, 0 0 12px #f6e26d66;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      animation: titleGlow 2.8s infinite alternate;
-      filter: drop-shadow(0 0 12px #f6e26d99);
-    }
-    @keyframes titleGlow { 0%{text-shadow:0 2px 22px #2e1432c0, 0 0 12px #ffe97e88;} 100%{text-shadow:0 2px 26px #7e2385, 0 0 22px #ffe97e;} }
+/* And just in case… */
+body, .leaderboard-main-container {
+  overflow-x: hidden;
+}
+.ranking-title-row {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(40,20,60,0.98);
+  width: 100%;
+  max-width: 610px;
+  margin: 0 auto 18px auto;
+  border-radius: 0 0 28px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  box-shadow: 0 6px 32px 0 #0005, 0 2px 16px 0 #fff2 inset;
+  padding: 20px 0 15px 0;
+  box-sizing: border-box;
+  animation: glowTitle 2.2s infinite alternate;
+}
+@keyframes glowTitle {
+  0%   { box-shadow: 0 6px 32px #ffe97e20, 0 2px 16px #fff2 inset; }
+  100% { box-shadow: 0 10px 46px #ffe97e80, 0 2px 22px #fa9660cc inset; }
+}
+.ranking-trophy {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 14px #ffe97e88);
+  animation: spinTrophy 2.8s cubic-bezier(.86,.07,.54,.87) infinite alternate;
+}
+@keyframes spinTrophy {
+  0%   { transform: rotate(-8deg) scale(1); }
+  60%  { transform: rotate(6deg) scale(1.18);}
+  100% { transform: rotate(-8deg) scale(1);}
+}
+.ranking-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 2.23rem;
+  font-weight: 900;
+  color: #ffe97e;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 22px #2e1432c0, 0 0 12px #f6e26d66;
+  filter: drop-shadow(0 0 10px #f6e26d66);
+  letter-spacing: 0.07em;
+}
+.leaderboard-list {
+  width: 100%;
+  max-width: 610px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  min-height: 92px;
+  overflow-y: auto;
+  margin: 0 auto;
+  padding-bottom: 36px;
+  padding-right: 18px;
+  padding-left: 32px;    /* NEW */
+  padding-top: 18px;   /* push content down below the  header */
 
-    /* --- Leaderboard --- */
-    .leaderboard-list {
-      margin: 0 auto;
-      margin-top: 18px;
-      width: 100%;
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 11px;
-      min-height: 92px;
-    }
-    .ranking-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: rgba(255,255,255,0.13);
-      border-radius: 17px;
-      padding: 11px 20px;
-      font-size: 1.21em;
-      font-weight: 700;
-      box-shadow: 0 2px 14px #0002, 0 1.5px 8px #7e238522;
-      color: #fff;
-      position: relative;
-      opacity: 0;
-      transform: scale(0.86) translateY(24px);
-      animation: none;
-      min-height: 58px;
-      min-width: 0;
-    }
-    .ranking-row.revealed {
-      animation: rowReveal 0.44s cubic-bezier(.55,1.7,.65,1.04) forwards;
-    }
-    @keyframes rowReveal {
-      0% { opacity: 0; transform: scale(0.86) translateY(24px);}
-      65%{ opacity: 1; transform: scale(1.09) translateY(-9px);}
-      100% { opacity: 1; transform: scale(1) translateY(0);}
-    }
+  background: none;
+  border-radius: 0 0 28px 28px;
+  box-sizing: border-box;
+  padding-bottom: 100px !important;
+  overflow-x: hidden;  /* hide sideways spill */
 
-    .rank-num {
-      font-size: 1.1em;
-      color: #ffe97e;
-      min-width: 2.3em;
-      text-align: right;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      font-family: 'Montserrat', Arial, sans-serif;
-      filter: drop-shadow(0 0 7px #ffe97e99);
-    }
-    .rank-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 9px #fa966020;
-    }
-    .rank-avatar img {
-      width: 44px;
-      height: 44px;
-      object-fit: cover;
-      border-radius: 14px;
-      display: block;
-    }
-    .rank-name {
-      flex: 1 1 auto;
-      text-align: left;
-      font-weight: 800;
-      color: #fff;
-      font-size: 1.08em;
-      letter-spacing: 0.01em;
-      text-shadow: 0 1px 7px #2e143240;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .rank-score {
-      color: #ffe97e;
-      font-weight: 800;
-      font-size: 1.1em;
-      letter-spacing: 0.04em;
-      margin-left: 8px;
-      min-width: 2.6em;
-      text-align: right;
-      font-family: 'Montserrat', Arial, sans-serif;
-      filter: drop-shadow(0 0 7px #ffe97e99);
-    }
 
-    .empty-state {
-      opacity: 0.86;
-      color: #ffe97e;
-      font-size: 1.14em;
-      text-align: center;
-      padding: 23px 0;
-    }
+}
+.leaderboard-list::-webkit-scrollbar {
+  width: 8px;
+  background: #23113A;
+}
+.leaderboard-list::-webkit-scrollbar-thumb {
+  background: #ffe97e33;
+  border-radius: 12px;
+}
+.ranking-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255,255,255,0.16);
+  border-radius: 18px;
+  padding: 14px 18px;         /* unchanged */
+  font-size: 1.19em;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 2px 14px #0001, 0 1.5px 8px #7e238512;
+  position: relative;
+  opacity: 0;
+  transform: scale(0.96) translateY(32px) rotateX(18deg);
+  min-height: 60px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;         /* clip anything outside */
+  max-width: calc(100% - 32px);
+  width: 100%;
 
-    /* --- Responsive --- */
-    @media (max-width: 600px) {
-      .ranking-card { width: 99vw; max-width: 99vw; padding: 13px 2vw; }
-      .leaderboard-list { max-width: 99vw; }
-      .ranking-row { font-size: 1em; padding: 7px 8vw; min-height: 44px; }
-      .rank-avatar, .rank-avatar img { width: 34px; height: 34px; border-radius: 9px;}
-      .ranking-title { font-size: 1.18rem;}
-    }
-
-    /* --- Footer --- */
-    .site-footer {
-      position: fixed; left: 0; bottom: 0; width: 100vw;
-      color: #fff; text-align: center;
-      font-size: 1.11em; font-weight: 500;
-      padding: 18px 0 15px 0;
-      z-index: 10000;
-      letter-spacing: 0.04em;
-      backdrop-filter: blur(22px) saturate(2.3);
-      background: rgba(255, 255, 255, 0.13);
-      box-shadow: 0 -1px 18px 0 #0002, 0 1px 9px 0 #fff1 inset;
-      border-top: 1.5px solid rgba(255,255,255,0.13);
-      user-select: none;
-      text-shadow: 0 1.5px 4px #4442, 0 0 8px #0002;
-      font-family: 'Montserrat', Arial, sans-serif;
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-  </style>
-
+}
+.ranking-row.revealed {
+  opacity: 1;
+  transform: scale(1) translateY(0) rotateX(0);
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.ranking-row.highlight {
+  background: linear-gradient(90deg,#ffe97e4d 12%,#fa966020 90%);
+  border: 2px solid #ffe97e90;
+  box-shadow: 0 10px 42px #ffe97e80, 0 0px 24px #fff4 inset;
+  color: #332304;
+  animation: highlightRow 1.5s cubic-bezier(.5,1.7,.6,1.1) infinite alternate;
+    padding: 0 18px;          /* ensure consistent inner spacing */
+  border-radius: 18px;      /* match the normal row */
+}
+@keyframes highlightRow {
+  0%   { box-shadow: 0 6px 28px #ffe97e20, 0 0px 18px #fff4 inset; }
+  100% { box-shadow: 0 10px 60px #ffe97e80, 0 0px 34px #fa9660cc inset; }
+}
+.rank-num {
+  font-size: 1.33em;
+  min-width: 2.6em;
+  text-align: right;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  font-family: 'Montserrat', Arial, sans-serif;
+  display: flex; align-items: center; justify-content: flex-end;
+}
+.rank-medal {
+  margin-right: 5px;
+  font-size: 1.28em;
+  filter: drop-shadow(0 0 8px #ffe97e88);
+  animation: popMedal 1s cubic-bezier(.68,-0.55,.27,1.55) alternate;
+}
+@keyframes popMedal {
+  from { transform: scale(0.5) rotate(-45deg);}
+  to { transform: scale(1.3) rotate(0);}
+}
+.rank-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 9px #fa966020;
+}
+.rank-avatar img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+}
+.rank-name {
+  flex: 1 1 auto;
+  text-align: left;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.08em;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 7px #2e143240;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-score {
+  color: #ffe97e;
+  font-weight: 900;
+  font-size: 1.18em;
+  letter-spacing: 0.04em;
+  margin-left: 9px;
+  min-width: 2.6em;
+  text-align: right;
+  font-family: 'Montserrat', Arial, sans-serif;
+  filter: drop-shadow(0 0 8px #ffe97e99);
+}
+.empty-state {
+  opacity: 0.9;
+  color: #ffe97e;
+  font-size: 1.14em;
+  text-align: center;
+  padding: 27px 0;
+}
+.site-footer {
+  position: fixed;
+  left: 0; bottom: 0; width: 100vw;
+  color: #fff; text-align: center;
+  font-size: 1.11em; font-weight: 500;
+  padding: 18px 0 15px 0;
+  z-index: 10000;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(22px) saturate(2.3);
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 -1px 18px 0 #0002, 0 1px 9px 0 #fff1 inset;
+  border-top: 1.5px solid rgba(255,255,255,0.13);
+  user-select: none;
+  text-shadow: 0 1.5px 4px #4442, 0 0 8px #0002;
+  font-family: 'Montserrat', Arial, sans-serif;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+@media (max-width: 700px) {
+  .leaderboard-main-container,
+  .leaderboard-list,
+  .ranking-title-row,
+  .ranking-row {
+    max-width: 100vw;
+    width: 100vw;
+    border-radius: 0;
+  }
+  .leaderboard-list {
+    padding-bottom: 52px;
+    padding-right: 0;
+  }
+  .ranking-row { font-size: 1em; padding: 9px 5vw; min-height: 40px; }
+  .rank-avatar, .rank-avatar img { width: 34px; height: 34px; border-radius: 8px;}
+  .ranking-trophy { font-size: 2rem; }
+}
+</style>
 </head>
 <body>
-  <link rel="stylesheet" href="/static/css/quiz_common.css">
-<script src="/static/js/quiz_flow.js"></script>
-  <!-- Animated Blobs -->
-  <div class="quiz-bg-blobs">
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
-    <div class="blob blob4"></div>
-  </div>
-  <div class="bg-bottom-blur"></div>
-  <!-- Main Card -->
-  <div class="ranking-card" id="mainCard">
-    <div class="ranking-title">🏆 Initial Ranking</div>
+  <div class="ranking-bg"></div>
+  <div class="leaderboard-main-container">
+    <div class="ranking-title-row">
+      <span class="ranking-trophy">🏆</span>
+      <span class="ranking-title">Initial Ranking</span>
+    </div>
     <div id="leaderboard" class="leaderboard-list"></div>
     <div id="leaderboardEmpty" class="empty-state" style="display:none;">Waiting for players…</div>
   </div>
@@ -245,61 +304,205 @@
     © Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.
   </footer>
 <script>
-  // 1) Connect & join waiting room
-  const socket = io({
-    transports: ['websocket']
-  });
+  gsap.registerPlugin(ScrollToPlugin);
+
+  // == User Identity Logic ==
   const myName      = localStorage.getItem('quiz_username')     || 'Player';
   const myAvatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
+  const isDevMock = window.location.hash === "#devmock";
+
   let participants  = [];
 
-  socket.on('connect', () => {
-    socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
-  });
+  // == Socket.IO (from quick_flow.js) ==
+  const socket = window.quizSocket;
 
-  // 2) When the server sends the current player list, re-draw the table
-  socket.on('player_list', players => {
-    participants = players.map(p => ({
-      ...p,
-      isMe: p.id === socket.id
-    }));
+  socket.once('player_list', players => {
+    if (!isDevMock) {
+        participants = players
+          .map(p => ({ ...p, isMe: p.id === socket.id }))
+          .sort((a,b) => b.score - a.score);
+        }
     renderRanking();
   });
 
-  // 3) Render the leaderboard, injecting your real total from localStorage
+  const scores = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
+  const total  = scores.reduce((a,b) => a + b, 0);
+
+
+
+  // == GSAP ANIMATION LOGIC ==
+  function gsapLeaderboardAnimate(myRowIdx) {
+    // Animate all rows entrance with stagger
+    gsap.set('.ranking-row', {opacity:0, y:64, scale:0.95, rotateX:24});
+    gsap.to('.ranking-row', {
+      opacity:1,
+      y:0,
+      scale:1,
+      rotateX:0,
+      duration: 1.05,
+      ease: "expo.out",
+      stagger: { each: 0.09, from: "start" }
+    });
+
+    // After 1.5s, scroll smoothly to "me" if needed and add celebration
+    if (myRowIdx > 7) {
+      setTimeout(() => {
+        const el = document.getElementById(`ranking-row-${myRowIdx}`);
+        if (el) {
+          const container = document.querySelector('.leaderboard-list');
+          // Get how far the element is from the top of the scroll container
+          const elTop = el.offsetTop;
+          // Compute target so the row is vertically centered
+          const scrollY = elTop - (container.clientHeight / 2) + (el.clientHeight / 2);
+          // Bound scrollY to be at least 0 and no more than maxScroll
+          const maxScroll = container.scrollHeight - container.clientHeight;
+          const finalScroll = Math.max(0, Math.min(scrollY, maxScroll));
+
+          gsap.to(container, {
+            scrollTo: { y: finalScroll },
+            duration: 1.8,
+            ease: "power2.inOut",
+            onComplete: () => {
+              el.focus();
+              // (Optional: pulse/confetti here too)
+            }
+          });
+          // Wild pulse/confetti for my row
+          gsap.fromTo(el,
+            {boxShadow: "0 0 0px #ffe97e, 0 0px #fa9660cc inset", scale: 1},
+            {
+              boxShadow: "0 0 54px 10px #ffe97e, 0 0px 34px #fa9660cc inset",
+              scale: 1.07,
+              duration: 0.55,
+              yoyo: true,
+              repeat: 3,
+              ease: "elastic.inOut(1,0.45)"
+            }
+          );
+          // Optional: Confetti pop
+          confettiBurst(el);
+        }
+      }, 1850); // Dramatic delay for cinematic scroll
+    } else if (myRowIdx >= 0) {
+      // Still animate my row if visible!
+      setTimeout(() => {
+        const el = document.getElementById(`ranking-row-${myRowIdx}`);
+        if (el) {
+          gsap.fromTo(el,
+            {boxShadow: "0 0 0px #ffe97e, 0 0px #fa9660cc inset", scale: 1},
+            {
+              boxShadow: "0 0 54px 10px #ffe97e, 0 0px 34px #fa9660cc inset",
+              scale: 1.08,
+              duration: 0.7,
+              yoyo: true,
+              repeat: 2,
+              ease: "elastic.inOut(1,0.55)"
+            }
+          );
+          confettiBurst(el);
+        }
+      }, 1350);
+    }
+  }
+
+  // === Confetti FX (simple SVG burst, can be enhanced!) ===
+  function confettiBurst(el) {
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const parent = el.parentNode;
+    for(let i=0; i<18; i++) {
+      let conf = document.createElement("div");
+      conf.className = "confetti";
+      const hue = Math.floor(Math.random()*360);
+      conf.style.cssText = `
+        position:absolute; pointer-events:none; z-index:9999;
+        left:${rect.left + rect.width/2 + (Math.random()-0.5)*30}px;
+        top:${rect.top + rect.height/2 + (Math.random()-0.5)*16}px;
+        width:12px; height:6px;
+        background: linear-gradient(90deg,hsl(${hue},95%,72%) 60%, #fff0 100%);
+        border-radius:4px; opacity:0.87; transform:scale(${Math.random()+0.7});
+      `;
+      document.body.appendChild(conf);
+      gsap.to(conf, {
+        x: (Math.random()-0.5)*220,
+        y: -Math.random()*170-40,
+        rotation: Math.random()*1080-540,
+        opacity: 0,
+        duration: 1.5 + Math.random()*0.6,
+        ease: "power4.out",
+        onComplete: ()=> conf.remove()
+      });
+    }
+  }
+
+  // == LEADERBOARD RENDER ==
   function renderRanking() {
     const leaderboard = document.getElementById('leaderboard');
-
-    if (!participants.length) {
-      leaderboard.innerHTML = '<div class="empty-state">Waiting for players…</div>';
+    if (!Array.isArray(participants) || participants.length === 0) {
+      leaderboard.innerHTML = `<div class="empty-state">Waiting for players…</div>`;
       return;
     }
-
-    // Pull in the scores array that quick_flow.js wrote after every question
-    const scoresArr = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
-    const myTotal   = scoresArr.reduce((sum, s) => sum + s, 0);
-
-    leaderboard.innerHTML = participants.map((p, i) => {
-      // decide avatar filename
-      const avatars = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
-      const key     = (typeof p.avatar === 'number') ? avatars[p.avatar] : p.avatar;
-      // if this is you, show your real total; otherwise show 0 (or hook in a server score)
-      const displayScore = p.isMe ? myTotal : 0;
-
+    const sorted = participants;
+    const avatarKeys = [
+      "eleven","jesse","Katniss","leonard",
+      "lisa","morty","rick","sheldon",
+      "walter","wednesday"
+    ];
+    const medalIcons = [
+      `<span class="rank-medal" title="1st Place">🥇</span>`,
+      `<span class="rank-medal" title="2nd Place">🥈</span>`,
+      `<span class="rank-medal" title="3rd Place">🥉</span>`
+    ];
+    let myRowIdx = sorted.findIndex(p => p.isMe);
+    leaderboard.innerHTML = sorted.map((p, i) => {
+      const key = avatarKeys[
+        (typeof p.avatar === 'number' && avatarKeys[p.avatar]) ? p.avatar : 0
+      ];
+      const medal = i < 3 ? medalIcons[i] : '';
       return `
-        <div class="ranking-row revealed">
-          <span class="rank-num">${i+1}.</span>
+        <div class="ranking-row revealed${p.isMe ? ' highlight' : ''}" tabindex="0" id="ranking-row-${i}">
+          <span class="rank-num">${medal || (i + 1) + "."}</span>
           <span class="rank-avatar">
-            <img src="/static/images/avatar/${key}.png" alt="Avatar" />
+            <img src="/static/images/avatar/${key}.png" alt="Avatar of ${p.name}" />
           </span>
           <span class="rank-name">${p.name || 'Player'}</span>
-          <span class="rank-score">${displayScore}</span>
+          <span class="rank-score">${p.score}</span>
         </div>
       `;
     }).join('');
+
+    // === Animate entrance with GSAP magic! ===
+    gsapLeaderboardAnimate(myRowIdx);
   }
 
-  // 4) On *very first* load, clear out the old score array and reset question index
+  // == MOCK TESTERS: 20 FAKE PARTICIPANTS IF #devmock IN URL ==
+  if (window.location.hash === "#devmock") {
+    setTimeout(() => {
+      const avatarKeys = [
+        "eleven", "jesse", "Katniss", "leonard", "lisa",
+        "morty", "rick", "sheldon", "walter", "wednesday"
+      ];
+      const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
+        id:   "fake_" + i,        // ensure all fake IDs are unique!
+        name: "Player" + (i+1),
+        avatar: i % avatarKeys.length,
+        score: Math.floor(Math.random() * 1200),
+        isMe: false              // only myFake is true
+      }));
+       const myFake = {
+        id: socket?.id || "me",
+        name: myName,
+        avatar: myAvatarIdx,
+        score: 240 + Math.floor(Math.random()*900),
+        isMe: true
+      };
+      participants = [myFake, ...fakePlayers].sort((a, b) => b.score - a.score);
+      renderRanking();
+      socket.off('player_list');
+    }, 700);
+  }
+
+  // == STARTUP RESET ==
   (function initState(){
     if (!sessionStorage.getItem('quiz::started')) {
       localStorage.removeItem('quiz::scores');
@@ -308,7 +511,7 @@
     }
   })();
 
-  // 5) After the 7-second “Initial Ranking” timer, advance to the next question
+  // == TIMER: 7s to next question ==
   setTimeout(async () => {
     const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
     const bank = raw
@@ -334,8 +537,12 @@
     };
     location.replace(routes[q.type]);
   }, 7000);
+
+  socket.on('force_leave', function() {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/quiz/start";
+  });
 </script>
-
-
 </body>
 </html>

@@ -5,12 +5,9 @@
   <title>Quiz — Multiple Choice</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- common styles -->
   <link rel="stylesheet" href="/static/css/quiz_common.css">
-  <!-- quiz engine -->
-  <script src="/static/js/quick_flow.js"></script>
-  <!-- Fonts -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <script src="/static/js/quick_flow.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Montserrat:800,700,400|Nunito:700,400" rel="stylesheet">
 
   <style>
@@ -229,13 +226,7 @@
       }
     }
 
-    // JOIN WAITING ROOM
-    const socket = io({
-      transports: ['websocket']
-    });
-    socket.on('connect', () => {
-      socket.emit('join_waiting', { name: userName, avatar: avatarIdx });
-    });
+
   </script>
 </body>
 </html>

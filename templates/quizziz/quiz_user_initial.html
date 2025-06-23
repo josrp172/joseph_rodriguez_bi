@@ -408,6 +408,14 @@
       btn.addEventListener('mouseup', ()=>btn.style.transform="scale(1)");
       btn.addEventListener('mouseleave', ()=>btn.style.transform="scale(1)");
     });
+
+    socket.on('force_leave', function() {
+      // Clear all local/session storage if you want a clean state
+      localStorage.clear();
+      sessionStorage.clear();
+      // Redirect to the initial page
+      window.location.href = "/quiz/start";
+    });
   </script>
 </body>
 </html>

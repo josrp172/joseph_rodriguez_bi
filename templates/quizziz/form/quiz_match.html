@@ -5,14 +5,9 @@
   <title>Quiz — Match</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- common styles (glassmorphic theme) -->
   <link rel="stylesheet" href="/static/css/quiz_common.css">
-
-  <!-- quiz engine -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
   <script src="/static/js/quick_flow.js"></script>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:800,700,400|Nunito:700,400" rel="stylesheet">
 
   <style>
     /* ─── PASTE YOUR ENTIRE CSS HERE ─── */
@@ -382,14 +377,6 @@
       }
     }
 
-    // ─── SOCKET: JOIN WAITING BEFORE START ─────────────────────────────
-    const socket = io({
-      transports: ['websocket']
-    });
-    socket.on('connect', ()=> socket.emit('join_waiting',{
-      name: localStorage.getItem('quiz_username'),
-      avatar: avatarIdx
-    }));
   </script>
 </body>
 </html>

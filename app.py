@@ -136,6 +136,7 @@ def quiz_admin():
 def on_join_waiting(data):
     name = data.get('name', 'No Name')
     avatar = data.get('avatar', 0)
+    total = data.get('total', 0)
     # Remove any previous participants with the same name (avoids duplicates)
     for sid, p in list(participants.items()):
         if p['name'] == name:
@@ -145,7 +146,10 @@ def on_join_waiting(data):
         'name': name,
         'avatar': avatar
     }
-    emit('player_list', list(participants.values()), broadcast=True)
+    # Ensure this SID has a score entry
+    player_scores[request.sid] = total   # +++ keep their running total
+
+    broadcast_player_list()
 
 @socketio.on('update_avatar')
 def on_update_avatar(idx):
@@ -162,9 +166,13 @@ def on_update_name(name):
 
 @socketio.on('disconnect')
 def on_disconnect():
-    if request.sid in participants:
-        del participants[request.sid]
-        emit('player_list', list(participants.values()), broadcast=True)
+    sid = request.sid
+    # wait 1 s – if they reconnect we’ll overwrite the old entry anyway
+    socketio.start_background_task(lambda: (
+        eventlet.sleep(1),
+        participants.pop(sid, None),
+        broadcast_player_list()
+    ))
 
 @socketio.on('submit_answer')
 def handle_answer(data):
@@ -177,6 +185,27 @@ def handle_answer(data):
     if correct:
         player_scores[username] += 1
     emit('update_leaderboard', player_scores, broadcast=True, namespace='/admin')
+
+@socketio.on('admin_reset_scores')
+def handle_admin_reset_scores():
+    global player_scores
+    # Zero scores but don't touch participants
+    for user_id in player_scores:
+        player_scores[user_id] = 0
+    # Broadcast updated leaderboard (or send your normal update event)
+    emit('update_leaderboard', player_scores, broadcast=True, namespace='/admin')
+    emit('scores_reset', broadcast=True)  # Notify all admins if needed
+
+@socketio.on('admin_reset_all')
+def handle_admin_reset_all():
+    global player_scores, participants
+    player_scores.clear()
+    participants.clear()
+    # Let all users know they need to return to the entry screen
+    emit('force_leave', broadcast=True)
+    # Optionally, update admin dashboards
+    emit('update_leaderboard', player_scores, broadcast=True, namespace='/admin')
+    emit('all_reset', broadcast=True)
 
 
 
@@ -206,16 +235,18 @@ def serve_gif(filename):
 
 @socketio.on('send_gif')
 def handle_send_gif(data):
-    # data: {'gif': 'deal-with-it.gif', 'name': 'Joseph', 'avatar': 0}
     gif_name = data.get('gif')
     name = data.get('name')
     avatar = data.get('avatar')
     sid = request.sid
 
     now = time.time()
-    # Enforce per-5s limit
-    if sid in last_gif_time and now - last_gif_time[sid] < 5:
-        emit('gif_error', {'msg': 'Please wait before sending another GIF.'})
+    popup_duration = 2.5  # Match your JS animation time
+
+    # Block if GIF already sent in last 2.5 seconds
+    if sid in last_gif_time and now - last_gif_time[sid] < popup_duration:
+        # Optionally: emit error to just this user
+        emit('gif_error', {'msg': 'Wait for your last GIF to finish!'})
         return
     last_gif_time[sid] = now
 
@@ -224,6 +255,23 @@ def handle_send_gif(data):
         'name': name,
         'avatar': avatar
     })
+
+@socketio.on('submit_score')
+def on_score(data):
+    # data['total'] is the cumulative total from that client
+    player_scores[request.sid] = data['total']
+    broadcast_player_list()
+
+def broadcast_player_list():
+    lst = []
+    for sid, info in participants.items():
+        lst.append({
+            'id':    sid,
+            'name':  info['name'],
+            'avatar': info['avatar'],
+            'score': player_scores.get(sid, 0)
+        })
+    emit('player_list', lst, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

@@ -710,7 +710,9 @@ body {
       <input type="checkbox" id="autostart" class="autostart-checkbox" disabled />
       <span class="autostart-label">Auto start quiz</span>
     </label>
-    <button class="start-btn" id="startQuizBtn" tabindex="0" aria-label="Start the quiz">START</button>
+      <button class="start-btn" id="startQuizBtn" tabindex="0" aria-label="Start the quiz">START</button>
+      <button class="start-btn" id="resetScoresBtn" style="background:linear-gradient(90deg,#7e2385 20%,#22d07a 100%);margin-left:6px;" tabindex="0" aria-label="Reset all scores to zero">Reset Scores</button>
+      <button class="start-btn" id="resetAllBtn" style="background:linear-gradient(90deg,#f32646 10%,#f6e26d 100%);margin-left:6px;" tabindex="0" aria-label="Reset everything (scores and participants)">Reset All</button>
   </div>
 </div>
 
@@ -862,6 +864,30 @@ body {
       popup.style.display = 'block';
       setTimeout(() => { popup.style.display = 'none'; }, 5000);
     }
+
+    // --- Reset scores only ---
+    document.getElementById('resetScoresBtn').onclick = function() {
+      if (confirm("Reset all scores to zero but keep everyone in the room?")) {
+        socket.emit('admin_reset_scores');
+      }
+    };
+
+    // --- Reset ALL (kicks everyone, resets scores & room) ---
+    document.getElementById('resetAllBtn').onclick = function() {
+      if (confirm("⚠️ This will remove ALL participants and scores! Are you sure?")) {
+        socket.emit('admin_reset_all');
+      }
+    };
+
+    socket.on('scores_reset', function() {
+      alert("All scores have been reset!");
+    });
+
+    socket.on('all_reset', function() {
+      alert("All participants and scores have been cleared!");
+      // Optionally refresh the page:
+      location.reload();
+    });
   </script>
 </body>
 </html>
