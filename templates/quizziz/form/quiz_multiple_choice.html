@@ -70,6 +70,8 @@
 
   <div class="quiz-card" id="quizCard"></div>
   <div class="footer">All rights reserved by Joseph 2025</div>
+  <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
+  <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
 
   <script>
     // PLAYER INFO
@@ -175,32 +177,42 @@
       });
     }
 
-    // SUBMIT & AUTO-ADVANCE
-    function submitAnswer() {
-      answered = true;
-      clearInterval(timerId);
-      let correct = true;
-      const answerKey = Array.isArray(questionData.answer)
-                 ? questionData.answer
-                 : [questionData.answer];
-      document.querySelectorAll('.answer-btn').forEach((b, i) => {
-        const isSel = selected.includes(i);
-        const isAns = answerKey.includes(i);
-        if (isSel && isAns) b.classList.add('correct');
-        else if (isSel && !isAns) { b.classList.add('wrong'); correct = false; }
-        else if (!isSel && isAns) { b.classList.add('correct'); correct = false; }
-        b.disabled = true;
-      });
-      if (correct) confetti();
-      const fb = document.getElementById('feedback');
-      fb.style.display = '';
-      fb.className = 'feedback' + (correct ? '' : ' wrong');
-      fb.innerText = correct ? 'Correct! 🎉' : 'Wrong. ' + (questionData.explanation || '');
-      setTimeout(() => {
-        const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
-        quizFlow.finishQuestion(correct, secs);
-      }, 1200);
-    }
+   function submitAnswer() {
+  answered = true;
+  clearInterval(timerId);
+  let correct = true;
+  const answerKey = Array.isArray(questionData.answer)
+             ? questionData.answer
+             : [questionData.answer];
+  document.querySelectorAll('.answer-btn').forEach((b, i) => {
+    const isSel = selected.includes(i);
+    const isAns = answerKey.includes(i);
+    if (isSel && isAns) b.classList.add('correct');
+    else if (isSel && !isAns) { b.classList.add('wrong'); correct = false; }
+    else if (!isSel && isAns) { b.classList.add('correct'); correct = false; }
+    b.disabled = true;
+  });
+
+  // --- Play correct or wrong sound ---
+  if (correct) {
+    document.getElementById('audio-correct').currentTime = 0;
+    document.getElementById('audio-correct').play();
+    confetti();
+  } else {
+    document.getElementById('audio-wrong').currentTime = 0;
+    document.getElementById('audio-wrong').play();
+  }
+  // -----------------------------------
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = '';
+  fb.className = 'feedback' + (correct ? '' : ' wrong');
+  fb.innerText = correct ? 'Correct! 🎉' : 'Wrong. ' + (questionData.explanation || '');
+  setTimeout(() => {
+    const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
+    quizFlow.finishQuestion(correct, secs);
+  }, 1200);
+}
 
     // CONFETTI
     function confetti() {

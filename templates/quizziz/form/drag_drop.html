@@ -120,6 +120,8 @@
   <div class="quiz-card" id="quizCard"></div>
   <div class="footer">All rights reserved by Joseph 2025</div>
 
+  <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
+  <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
   <script>
     // PLAYER INFO
     const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
@@ -221,6 +223,15 @@
         if(state.items[i] === ans) el.classList.add('correct'); else { el.classList.add('wrong'); correct = false; }
       });
       if(correct) confetti();
+
+      // Play sound
+      if (correct) {
+        document.getElementById('audio-correct').currentTime = 0;
+        document.getElementById('audio-correct').play();
+      } else {
+        document.getElementById('audio-wrong').currentTime = 0;
+        document.getElementById('audio-wrong').play();
+      }
       feedbacks.style.display = '';
       feedbacks.className = 'feedback' + (correct ? '' : ' wrong');
       feedbacks.innerHTML = correct ? 'Correct! 🎉' : 'Wrong. ' + (questionData.explanation||'');

@@ -347,6 +347,8 @@ body, .leaderboard-main-container {
   <footer class="site-footer">
     © Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.
   </footer>
+    <audio id="audioTada" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/whoosh.wav" preload="auto"></audio>
+
 <script>
   gsap.registerPlugin(ScrollToPlugin);
 
@@ -359,6 +361,16 @@ body, .leaderboard-main-container {
 
   // == Socket.IO (from quick_flow.js) ==
   const socket = window.quizSocket;
+
+  let tadaPlayed = false;
+  function playTadaOnce() {
+    if (tadaPlayed) return;
+    const audioEl = document.getElementById("audioTada");
+    if (!audioEl) return;
+    tadaPlayed = true;
+    audioEl.currentTime = 0;
+    audioEl.play().catch(() => {});
+  }
 
   socket.once('player_list', players => {
     if (!isDevMock) {
@@ -397,6 +409,9 @@ async function fetchTotalQuestions() {
 
   // == GSAP ANIMATION LOGIC ==
   function gsapLeaderboardAnimate(myRowIdx) {
+    // fire our “ta-da” sound
+    playTadaOnce();
+
     // Animate all rows entrance with stagger
     gsap.set('.ranking-row', {opacity:0, y:64, scale:0.95, rotateX:24});
     gsap.to('.ranking-row', {

@@ -393,7 +393,11 @@
       <!-- The rest of the leaderboard will be inserted here -->
     </div>
   </div>
+
+
   <footer class="site-footer">© Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.</footer>
+<audio id="audioStageClear" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/stage_clear.wav" preload="auto"></audio>
+<audio id="audioCatchingUp" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/robot_voice_catching_up.wav" preload="auto"></audio>
 
 <script>
     // =============== DATA AND SOCKET LOGIC ===============
@@ -407,6 +411,32 @@
     let participants = [];
     let initialAnimationDone = false; // To ensure animations run only once
     const socket = window.quizSocket;
+
+    let stageClearPlayed = false;
+    let isAnyAudioPlaying = false;
+    let catchingUpPlayed = false;
+
+    function playCatchingUpOnce() {
+        if (catchingUpPlayed || isAnyAudioPlaying) return;
+        let audioEl = document.getElementById("audioCatchingUp");
+        if (!audioEl) return;
+        isAnyAudioPlaying = true;
+        catchingUpPlayed = true;
+        audioEl.currentTime = 0;
+        audioEl.play().catch(() => {});
+        setTimeout(() => { isAnyAudioPlaying = false; }, 3500); // Adjust to actual sound length
+    }
+
+    function playStageClearOnce() {
+        if (stageClearPlayed || isAnyAudioPlaying) return;
+        let audioEl = document.getElementById("audioStageClear");
+        if (!audioEl) return;
+        isAnyAudioPlaying = true;
+        stageClearPlayed = true;
+        audioEl.currentTime = 0;
+        audioEl.play().catch(() => {});
+        setTimeout(() => { isAnyAudioPlaying = false; }, 3200); // adjust for actual length
+    }
 
     if (isDevMock) {
         const fakeNames = [
@@ -445,7 +475,8 @@
         // Real data logic
         // Listen for continuous player list updates
         socket.on('player_list', (players) => {
-            participants = players
+          fetchTotalQuestions().then(() => {
+              participants = players
             .map(p => ({
                 id: p.id,
                 name: p.name,
@@ -456,6 +487,8 @@
             }))
             .sort((a, b) => (b.score || 0) - (a.score || 0)); // Sort by score
             renderAll();
+           });
+
         });
 
         // Request the initial list of players
@@ -501,6 +534,9 @@
         if (!initialAnimationDone) {
             animatePodium();
             animateLeaderboard();
+            playStageClearOnce();      // <<---- ADD THIS LINE!
+            // Schedule catching up voice after 18 seconds
+            setTimeout(playCatchingUpOnce, 18000);
             initialAnimationDone = true;
         }
     }
@@ -644,6 +680,8 @@ function animatePodium() {
                     );
                     // Confetti burst
                     confettiBurst(el);
+
+
                 }
             }
         });
@@ -753,6 +791,10 @@ function renderAll() {
     if (!initialAnimationDone) {
         animatePodium();
         animateLeaderboard();
+         playStageClearOnce();      // <<---- ADD THIS LINE!
+      // Schedule catching up voice after 18 seconds
+      setTimeout(playCatchingUpOnce, 18000);
+
         initialAnimationDone = true;
     }
 }
@@ -783,6 +825,7 @@ function renderAll() {
             });
         }
     }
+
 </script>
 
 </body>

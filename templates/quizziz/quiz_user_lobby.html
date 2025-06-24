@@ -377,6 +377,7 @@
   opacity: 0.85;
   transform: translate(10px, 10px) scale(0.9);
   pointer-events: none; /* Still block pointer on container */
+
 }
 
 
@@ -447,6 +448,13 @@
     </div>
     <div id="waitingStatus">Hang tight! The host will start soon.</div>
   </div>
+
+  <audio id="audioAvatarPicking" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_avatar_picking.wav" preload="auto"></audio> <!- 5 secs ->
+  <audio id="audioWaiting" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_waiting_2.wav" preload="auto"></audio> <!- 7 secs ->
+  <audio id="audioGifSend" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_send.wav" preload="auto"></audio> <!- 5 secs ->
+  <audio id="audioGifReceive" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_receive.wav" preload="auto"></audio>  <!- 6 secs ->
+  <!-- <audio id="robotAudio" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_1.wav" preload="auto"></audio> -->
+
 <script>
 const avatars = [
   `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
@@ -460,6 +468,52 @@ const avatars = [
   `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`,
   `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
 ];
+
+// Only allow one play per event type, and only once
+let audioPlayed = {
+  avatar: false,
+  waiting: false,
+  gifSend: false,
+  gifReceive: false
+};
+let audioLocked = {
+  avatar: false,
+  waiting: false,
+  gifSend: false,
+  gifReceive: false
+};
+
+// Durations in milliseconds
+const audioDurations = {
+  avatar: 5000,
+  waiting: 7000,
+  gifSend: 5000,
+  gifReceive: 6000
+};
+
+let isAnyAudioPlaying = false;
+
+function playAudioOnce(type) {
+  if (audioPlayed[type] || isAnyAudioPlaying) return;
+
+  // Play the audio
+  let audioEl = document.getElementById({
+    avatar: "audioAvatarPicking",
+    waiting: "audioWaiting",
+    gifSend: "audioGifSend",
+    gifReceive: "audioGifReceive"
+  }[type]);
+
+  isAnyAudioPlaying = true;
+  audioPlayed[type] = true;
+
+  audioEl.currentTime = 0;
+  audioEl.play().catch(() => {});
+
+  setTimeout(() => {
+    isAnyAudioPlaying = false;
+  }, audioDurations[type]);
+}
 
 
 let myName = localStorage.getItem('quiz_username') || "Your Name";
@@ -516,6 +570,7 @@ function renderAvatars() {
         document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
         renderAvatars();
         animateCurrentUserCard();
+        playAudioOnce("avatar"); // Play avatar picking audio
 
 
         // GSAP pop for the picked avatar
@@ -648,6 +703,9 @@ function renderGifButtons() {
       setGifButtonsDisabled(true);
       socket.emit('send_gif', { gif: gif.file, name: myName, avatar: myAvatarIdx });
       showMainGifPreview(gif);
+
+      playAudioOnce("gifSend"); // Play GIF send audio
+
     };
     container.appendChild(btn);
   });
@@ -797,7 +855,12 @@ socket.on('show_gif', data => {
       gifCooldown = false;
       setGifButtonsDisabled(false);
     }, 5000); // Duration should match your GSAP animation
+
+
+  }else{
+  playAudioOnce("gifReceive");
   }
+
 });
 socket.on('force_leave', function() {
   // Clear all local/session storage if you want a clean state
@@ -807,6 +870,11 @@ socket.on('force_leave', function() {
   window.location.href = "/quiz/start";
 });
 
+  window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    playAudioOnce("waiting");
+  }, 3000); // 5 seconds
+});
 
 // Initial UI
 renderAvatars();

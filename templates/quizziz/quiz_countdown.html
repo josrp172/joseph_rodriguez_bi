@@ -293,6 +293,10 @@
       <span class="fullscreen-countdown-number color-3" id="fullscreenCountdownNum">3</span>
     </div>
   </div>
+  <audio id="audio-3" src="/static/mp3/Countdown_3.mp3"></audio>
+<audio id="audio-2" src="/static/mp3/Countdown_2.mp3"></audio>
+<audio id="audio-1" src="/static/mp3/Countdown_1.mp3"></audio>
+<audio id="audio-go" src="/static/mp3/Countdown_GO.mp3"></audio>
   <script>
     // Avatars array (should match backend avatar indexes)
     const avatars = [
@@ -360,14 +364,25 @@
       if (oldAvatar) oldAvatar.remove();
       if (goAvatarTimeout) { clearTimeout(goAvatarTimeout); goAvatarTimeout = null; }
 
-      // Current tick
-      let tick = countdownNumbers[countIdx];
-      // Set number and classes
-      fsCountdownNum.textContent = tick.value;
-      void fsCountdownNum.offsetWidth;
-      fsCountdownNum.className = "fullscreen-countdown-number " + tick.class;
-      fsCountdown.classList.add(tick.bg);
-      countdownBar.classList.add(tick.bar);
+ let tick = countdownNumbers[countIdx];
+
+    // Play sound based on tick
+    if (tick.value === 3) {
+      document.getElementById('audio-3').play();
+    } else if (tick.value === 2) {
+      document.getElementById('audio-2').play();
+    } else if (tick.value === 1) {
+      document.getElementById('audio-1').play();
+    } else if (tick.value === "GO!") {
+      document.getElementById('audio-go').play();
+    }
+
+    // Set number and classes
+    fsCountdownNum.textContent = tick.value;
+    void fsCountdownNum.offsetWidth;
+    fsCountdownNum.className = "fullscreen-countdown-number " + tick.class;
+    fsCountdown.classList.add(tick.bg);
+    countdownBar.classList.add(tick.bar);
 
       // Highlight label on each tick
       setLabelHighlight();
@@ -411,5 +426,6 @@
       window.location.href = "/quiz/initial_ranking";
     });
   </script>
+
 </body>
 </html>

@@ -181,6 +181,8 @@
 </div>
 <div class="quiz-card" id="quizCard"></div>
 <div class="footer">All rights reserved by Joseph 2025</div>
+  <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
+  <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
 <script>
 
   // Get avatar and name from storage (replace with your actual system if needed)
@@ -249,6 +251,14 @@
   }
 
   function showFeedback(correct) {
+    // Play sound
+    if (correct) {
+      document.getElementById('audio-correct').currentTime = 0;
+      document.getElementById('audio-correct').play();
+    } else {
+      document.getElementById('audio-wrong').currentTime = 0;
+      document.getElementById('audio-wrong').play();
+    }
     answered = true;
     let fb = document.getElementById('feedback');
     fb.style.display = "";
