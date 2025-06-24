@@ -72,6 +72,7 @@
   <div class="footer">All rights reserved by Joseph 2025</div>
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
+  <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/mouse_click.wav" preload="auto"></audio>
 
   <script>
     // PLAYER INFO
@@ -160,6 +161,11 @@
         btn.disabled = answered;
         btn.onclick = () => {
           if (answered) return;
+          // — play click sound —
+          const clickSnd = document.getElementById('audio-click');
+          clickSnd.currentTime = 0;
+          clickSnd.play().catch(()=>{});
+
           const multi = !!questionData.allowMultiple;
           if (multi) {
             const pos = selected.indexOf(i);

@@ -160,6 +160,8 @@
   <div class="quiz-card" id="quizCard"></div>
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
+      <audio id="audio-connect"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/connect.wav" preload="auto"></audio>
+
   <script>
     // ─── PLAYER INFO ────────────────────────────────────────────────────
     const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
@@ -288,6 +290,10 @@
       // remove any existing link to r
       for(let k in state.links) if(state.links[k]==r) delete state.links[k];
       state.links[l]=r;
+      // — play match sound —
+      const clickSnd = document.getElementById('audio-connect');
+      clickSnd.currentTime = 0;
+      clickSnd.play().catch(()=>{});
       updateVisuals();
       if(Object.keys(state.links).length===left.length)
         document.getElementById('submitBtn').style.display='';

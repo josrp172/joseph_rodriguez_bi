@@ -121,5 +121,14 @@ const blocks = raw
 });
   // if you ever need to push events later:
   window.quizSocket = socket;
+
+  socket.on('force_leave', function() {
+  // Clear all local/session storage if you want a clean state
+  localStorage.clear();
+  sessionStorage.clear();
+  // Redirect to the initial page
+  window.location.href = "/quiz/start";
+});
 })();
 // ─────────────────────────────────────────────────────────────────
+

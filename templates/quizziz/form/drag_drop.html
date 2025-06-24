@@ -122,6 +122,8 @@
 
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
+    <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/mouse_click.wav" preload="auto"></audio>
+
   <script>
     // PLAYER INFO
     const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
@@ -197,6 +199,12 @@
           e.preventDefault();
           e.currentTarget.classList.remove('dropzone');
           const targetIdx = +e.currentTarget.dataset.idx;
+
+          // — play click sound on drop —
+          const clickSnd = document.getElementById('audio-click');
+          clickSnd.currentTime = 0;
+          clickSnd.play().catch(() => {});
+
           // swap the two items in place
           [state.items[state.draggingIdx], state.items[targetIdx]] =
             [state.items[targetIdx], state.items[state.draggingIdx]];
