@@ -271,6 +271,50 @@ body, .leaderboard-main-container {
   font-family: 'Montserrat', Arial, sans-serif;
   transition: background 0.2s, box-shadow 0.2s;
 }
+
+.completion-badge,
+.progress-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  min-width: 38px;
+  max-width: 44px;
+  padding: 0 0.5em;
+  font-size: 0.91em;
+  font-weight: 800;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin: 0;
+  white-space: nowrap;
+  text-align: center;
+  margin-left: 10px;
+}
+.completion-badge {
+  background: linear-gradient(90deg,#22d07a 70%,#63e19c 100%);
+  color: #fff;
+  border: 1.2px solid #19c68b;
+  gap: 4px;
+}
+.completion-badge .check {
+  font-size: 1.13em;
+  margin: 0 1px 0 0;
+  font-style: normal;
+}
+.progress-badge {
+  background: #ffe97e;
+  color: #7e2385;
+  border: 1.2px solid #ffe97e;
+  gap: 0;
+}
+.score-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
 @media (max-width: 700px) {
   .leaderboard-main-container,
   .leaderboard-list,
@@ -327,6 +371,27 @@ body, .leaderboard-main-container {
 
   const scores = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
   const total  = scores.reduce((a,b) => a + b, 0);
+
+  let totalQuestions = 0;
+async function fetchTotalQuestions() {
+  try {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    const blocks = raw
+      .trim()
+      .split(/^---$/m)
+      .map(b => {
+        const sanitized = b.replace(/\/\/.*$/gm, '');
+        try { return JSON.parse(sanitized); }
+        catch { return null; }
+      })
+      .filter(Boolean);
+    totalQuestions = blocks.length;
+    window.totalQuizQuestions = totalQuestions;
+  } catch (e) {
+    totalQuestions = 0;
+    window.totalQuizQuestions = 0;
+  }
+}
 
 
 
@@ -436,71 +501,63 @@ body, .leaderboard-main-container {
   }
 
   // == LEADERBOARD RENDER ==
-  function renderRanking() {
-    const leaderboard = document.getElementById('leaderboard');
-    if (!Array.isArray(participants) || participants.length === 0) {
-      leaderboard.innerHTML = `<div class="empty-state">Waiting for players…</div>`;
-      return;
+async function renderRanking() {
+  await fetchTotalQuestions(); // ensure totalQuestions is up-to-date
+
+  const leaderboard = document.getElementById('leaderboard');
+  if (!Array.isArray(participants) || participants.length === 0) {
+    leaderboard.innerHTML = `<div class="empty-state">Waiting for players…</div>`;
+    return;
+  }
+  const sorted = participants;
+  const avatarKeys = [
+    "eleven","jesse","Katniss","leonard",
+    "lisa","morty","rick","sheldon",
+    "walter","wednesday"
+  ];
+  const medalIcons = [
+    `<span class="rank-medal" title="1st Place">🥇</span>`,
+    `<span class="rank-medal" title="2nd Place">🥈</span>`,
+    `<span class="rank-medal" title="3rd Place">🥉</span>`
+  ];
+  let myRowIdx = sorted.findIndex(p => p.isMe);
+  leaderboard.innerHTML = sorted.map((p, i) => {
+    const key = avatarKeys[
+      (typeof p.avatar === 'number' && avatarKeys[p.avatar]) ? p.avatar : 0
+    ];
+    const medal = i < 3 ? medalIcons[i] : '';
+    let progressHtml = '';
+    if (typeof p.progress === "number") {
+      if (p.progress >= totalQuestions) {
+        progressHtml = `
+          <span class="completion-badge" title="Completed">
+            <span class="check">✓</span>
+          </span>`;
+      } else {
+        progressHtml = `
+          <span class="progress-badge" title="In progress">
+            ${p.progress}/${totalQuestions}
+          </span>`;
+      }
     }
-    const sorted = participants;
-    const avatarKeys = [
-      "eleven","jesse","Katniss","leonard",
-      "lisa","morty","rick","sheldon",
-      "walter","wednesday"
-    ];
-    const medalIcons = [
-      `<span class="rank-medal" title="1st Place">🥇</span>`,
-      `<span class="rank-medal" title="2nd Place">🥈</span>`,
-      `<span class="rank-medal" title="3rd Place">🥉</span>`
-    ];
-    let myRowIdx = sorted.findIndex(p => p.isMe);
-    leaderboard.innerHTML = sorted.map((p, i) => {
-      const key = avatarKeys[
-        (typeof p.avatar === 'number' && avatarKeys[p.avatar]) ? p.avatar : 0
-      ];
-      const medal = i < 3 ? medalIcons[i] : '';
-      return `
-        <div class="ranking-row revealed${p.isMe ? ' highlight' : ''}" tabindex="0" id="ranking-row-${i}">
-          <span class="rank-num">${medal || (i + 1) + "."}</span>
-          <span class="rank-avatar">
-            <img src="/static/images/avatar/${key}.png" alt="Avatar of ${p.name}" />
-          </span>
-          <span class="rank-name">${p.name || 'Player'}</span>
+    return `
+      <div class="ranking-row revealed${p.isMe ? ' highlight' : ''}" tabindex="0" id="ranking-row-${i}">
+        <span class="rank-num">${medal || (i + 1) + "."}</span>
+        <span class="rank-avatar">
+          <img src="/static/images/avatar/${key}.png" alt="Avatar of ${p.name}" />
+        </span>
+        <span class="rank-name">${p.name || 'Player'}</span>
+        <span class="score-badge-wrap">
           <span class="rank-score">${p.score}</span>
-        </div>
-      `;
-    }).join('');
+          ${progressHtml}
+        </span>
+      </div>
+    `;
+  }).join('');
 
-    // === Animate entrance with GSAP magic! ===
-    gsapLeaderboardAnimate(myRowIdx);
-  }
-
-  // == MOCK TESTERS: 20 FAKE PARTICIPANTS IF #devmock IN URL ==
-  if (window.location.hash === "#devmock") {
-    setTimeout(() => {
-      const avatarKeys = [
-        "eleven", "jesse", "Katniss", "leonard", "lisa",
-        "morty", "rick", "sheldon", "walter", "wednesday"
-      ];
-      const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
-        id:   "fake_" + i,        // ensure all fake IDs are unique!
-        name: "Player" + (i+1),
-        avatar: i % avatarKeys.length,
-        score: Math.floor(Math.random() * 1200),
-        isMe: false              // only myFake is true
-      }));
-       const myFake = {
-        id: socket?.id || "me",
-        name: myName,
-        avatar: myAvatarIdx,
-        score: 240 + Math.floor(Math.random()*900),
-        isMe: true
-      };
-      participants = [myFake, ...fakePlayers].sort((a, b) => b.score - a.score);
-      renderRanking();
-      socket.off('player_list');
-    }, 700);
-  }
+  // === Animate entrance with GSAP magic! ===
+  gsapLeaderboardAnimate(myRowIdx);
+}
 
   // == STARTUP RESET ==
   (function initState(){

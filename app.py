@@ -137,18 +137,17 @@ def on_join_waiting(data):
     name = data.get('name', 'No Name')
     avatar = data.get('avatar', 0)
     total = data.get('total', 0)
-    # Remove any previous participants with the same name (avoids duplicates)
+    progress = data.get('progress', 0)
     for sid, p in list(participants.items()):
         if p['name'] == name:
             del participants[sid]
     participants[request.sid] = {
         'id': request.sid,
         'name': name,
-        'avatar': avatar
+        'avatar': avatar,
+        'progress': progress    # <--- ADD THIS LINE
     }
-    # Ensure this SID has a score entry
-    player_scores[request.sid] = total   # +++ keep their running total
-
+    player_scores[request.sid] = total
     broadcast_player_list()
 
 @app.route('/quiz/final_ranking')
@@ -259,8 +258,9 @@ def handle_send_gif(data):
 
 @socketio.on('submit_score')
 def on_score(data):
-    # data['total'] is the cumulative total from that client
     player_scores[request.sid] = data['total']
+    if request.sid in participants:
+        participants[request.sid]['progress'] = data.get('progress', participants[request.sid].get('progress', 0))
     broadcast_player_list()
 
 def broadcast_player_list():
@@ -270,7 +270,8 @@ def broadcast_player_list():
             'id':    sid,
             'name':  info['name'],
             'avatar': info['avatar'],
-            'score': player_scores.get(sid, 0)
+            'score': player_scores.get(sid, 0),
+            'progress': info.get('progress', 0)
         })
     emit('player_list', lst, broadcast=True)
 

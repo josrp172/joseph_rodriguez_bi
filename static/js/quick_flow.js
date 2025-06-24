@@ -65,7 +65,8 @@ const blocks = raw
 
       // — NEW: tell the server my updated total —
       const total = scores.reduce((a,b) => a + b, 0);
-      window.quizSocket.emit('submit_score', { total });
+      const progress = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
+      window.quizSocket.emit('submit_score', { total, progress });
 
       let idx = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
       sessionStorage.setItem(IDX_KEY, ++idx);
@@ -110,14 +111,14 @@ const blocks = raw
   // will reuse the same socket on every page
   const socket = io({ transports: ['websocket'] });
   socket.on('connect', () => {
-    const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
-    const userName  = localStorage.getItem('quiz_username') || 'Player';
-    const scores    = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
-    const total     = scores.reduce((a,b) => a + b, 0);
+      const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
+      const userName  = localStorage.getItem('quiz_username') || 'Player';
+      const scores    = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
+      const total     = scores.reduce((a,b) => a + b, 0);
+      const progress  = Number(sessionStorage.getItem('quiz::currentIdx') ?? 0);
 
-
-    socket.emit('join_waiting', { name: userName, avatar: avatarIdx, total });
-  });
+      socket.emit('join_waiting', { name: userName, avatar: avatarIdx, total, progress });
+});
   // if you ever need to push events later:
   window.quizSocket = socket;
 })();

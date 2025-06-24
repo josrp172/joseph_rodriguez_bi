@@ -189,21 +189,22 @@
       padding-bottom: 90px;
     }
       .ranking-row {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        background: rgba(255,255,255,0.16);
-        border-radius: 18px;
-        padding: 14px 18px;
-        font-size: 1.19em;
-        font-weight: 700;
-        color: #fff;
-        box-shadow: 0 2px 14px #0001, 0 1.5px 8px #7e238512;
-        min-height: 60px;
-        width: 100%;
-        box-sizing: border-box;
-        overflow: hidden;
-        max-width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: rgba(255,255,255,0.16);
+      border-radius: 18px;
+      padding: 14px 18px;
+      font-size: 1.19em;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 2px 14px #0001, 0 1.5px 8px #7e238512;
+      min-height: 60px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      max-width: 100%;
+      justify-content: space-between; /* New! */
       }
       .rank-num {
         font-size: 1.33em;
@@ -244,24 +245,50 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .rank-score {
-        color: #ffe97e;
-        font-weight: 900;
-        font-size: 1.18em;
-        letter-spacing: 0.04em;
-        margin-left: 9px;
-        min-width: 2.6em;
-        text-align: right;
-        font-family: 'Montserrat', Arial, sans-serif;
-        filter: drop-shadow(0 0 8px #ffe97e99);
-      }
-      .empty-state {
-        opacity: 0.9;
-        color: #ffe97e;
-        font-size: 1.14em;
-        text-align: center;
-        padding: 27px 0;
-      }
+          .rank-score {
+          min-width: 44px;
+          text-align: right;
+          color: #ffe97e;
+          font-weight: 900;
+          font-size: 1.18em;
+          letter-spacing: 0.04em;
+          font-family: 'Montserrat', Arial, sans-serif;
+          filter: drop-shadow(0 0 8px #ffe97e99);
+          display: inline-block;
+          margin-right: 0; /* Remove if present */
+        }
+      .completion-badge, .progress-badge {
+          height: 26px;
+          min-width: 28px;
+          padding: 0 10px;
+          font-size: 0.92em;
+          font-weight: 800;
+          border-radius: 13px;
+          box-shadow: 0 2px 8px #0001;
+          line-height: 1;
+          letter-spacing: 0.02em;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0; /* Remove margin-left if you want it flush with score */
+        }
+        .score-badge-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 0; /* All spacing handled by badge margin-left */
+        }
+    .empty-state {
+      opacity: 0.92;
+      color: #ffe97e;
+      font-size: 1.23em;
+      font-weight: 900;
+      text-align: center;
+      padding: 27px 0;
+      min-height: 72px;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 8px #0002;
+      transition: color 0.22s;
+    }
     .ranking-row.highlight {
       background: linear-gradient(90deg,#ffe97e4d 12%,#fa966020 90%);
       border: 2px solid #ffe97e90;
@@ -275,6 +302,46 @@
       0%   { box-shadow: 0 6px 28px #ffe97e20, 0 0px 18px #fff4 inset; }
       100% { box-shadow: 0 10px 60px #ffe97e80, 0 0px 34px #fa9660cc inset; }
     }
+
+.completion-badge,
+.progress-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;           /* Smaller pill! */
+  min-width: 38px;        /* Compact, fits '10/10' */
+  max-width: 44px;
+  padding: 0 0.5em;       /* Smaller horizontal padding */
+  font-size: 0.91em;
+  font-weight: 800;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin: 0;
+  white-space: nowrap;
+  text-align: center;
+  margin-left: 10px;      /* Adds space between score and badge */
+}
+.completion-badge {
+  background: linear-gradient(90deg,#22d07a 70%,#63e19c 100%);
+  color: #fff;
+  border: 1.2px solid #19c68b;
+  gap: 4px;
+}
+.completion-badge i,
+.completion-badge .check {
+  font-size: 1.13em;
+  margin: 0 1px 0 0;
+  font-style: normal;
+}
+.progress-badge {
+  background: #ffe97e;
+  color: #7e2385;
+  border: 1.2px solid #ffe97e;
+  gap: 0;
+}
+
     .spline-robot-container {
       position: fixed;
       bottom: 0;
@@ -347,19 +414,24 @@
           "Quinn", "Drew", "Avery", "Parker", "Kai", "Emerson", "Hayden", "Rowan", "Sage", "Peyton",
           "Finley", "Dakota", "Remy"
         ];
+        const totalQuestions = 10; // Or whatever number you want
+
         const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
           id:   "fake_" + i,
           name: fakeNames[i % fakeNames.length],
           avatar: i % avatarKeys.length,
           score: Math.floor(Math.random() * 1200) + 50,
-          isMe: false
+          isMe: false,
+          // random progress for everyone (some finish, some not)
+          progress: Math.floor(Math.random() * (totalQuestions + 1))
         }));
         const myPlayer = {
             id: 'my_fake_id',
             name: 'Joseph',
             avatar: 4, // lisa avatar
             score: Math.floor(Math.random() * 500) + 800, // Score between 800-1300
-            isMe: true
+            isMe: true,
+            progress: totalQuestions // always completed for you
         };
         participants = [myPlayer, ...fakePlayers].sort((a, b) => b.score - a.score);
 
@@ -374,14 +446,15 @@
         // Listen for continuous player list updates
         socket.on('player_list', (players) => {
             participants = players
-                .map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    avatar: p.avatar,
-                    score: p.score != null ? p.score : p.total,
-                    isMe: p.id === socket.id
-                }))
-                .sort((a, b) => (b.score || 0) - (a.score || 0)); // Sort by score
+            .map(p => ({
+                id: p.id,
+                name: p.name,
+                avatar: p.avatar,
+                score: p.score != null ? p.score : p.total,
+                progress: typeof p.progress === "number" ? p.progress : 0, // <-- add this line
+                isMe: p.id === socket.id
+            }))
+            .sort((a, b) => (b.score || 0) - (a.score || 0)); // Sort by score
             renderAll();
         });
 
@@ -432,22 +505,61 @@
         }
     }
 
-    // =============== RENDERING LOGIC ===============
+    let totalQuestions = 0;
 
-    function renderPodium(participants) {
-        const medals = ['🥇', '🥈', '🥉'];
-        const slots = [null, null, null];
-        const positionMap = [1, 0, 2]; // rank -> slot (1st is center, 2nd left, 3rd right)
+    async function fetchTotalQuestions() {
+      try {
+        const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+        const blocks = raw
+          .trim()
+          .split(/^---$/m)
+          .map(b => {
+            const sanitized = b.replace(/\/\/.*$/gm, '');
+            try {
+              return JSON.parse(sanitized);
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(Boolean);
+        totalQuestions = blocks.length;
+        window.totalQuizQuestions = totalQuestions;
+      } catch (e) {
+        totalQuestions = 0;
+        window.totalQuizQuestions = 0;
+      }
+    }
 
-        participants.slice(0, 3).forEach((p, rank) => {
-            slots[positionMap[rank]] = { player: p, rank };
-        });
+// Podium rendering with completion indicator
+function renderPodium(participants) {
+    const medals = ['🥇', '🥈', '🥉'];
+    const slots = [null, null, null];
+    const positionMap = [1, 0, 2]; // rank -> slot (1st is center, 2nd left, 3rd right)
 
-        const html = slots.map((entry) => {
-            if (!entry) return `<div class="podium-place"></div>`;
-            const { player, rank } = entry;
-            const placeClass = `podium-${rank + 1}`;
-            return `
+    participants.slice(0, 3).forEach((p, rank) => {
+        slots[positionMap[rank]] = { player: p, rank };
+    });
+
+    const html = slots.map((entry) => {
+        if (!entry) return `<div class="podium-place"></div>`;
+        const { player, rank } = entry;
+        const placeClass = `podium-${rank + 1}`;
+        // Progress/completion logic:
+        let progressHtml = '';
+        if (typeof player.progress === "number") {
+            if (player.progress >= totalQuestions) {
+                progressHtml = `
+                  <span class="completion-badge" title="Completed">
+                    <span class="check">✓</span>
+                  </span>`;
+            } else {
+                progressHtml = `
+                  <span class="progress-badge" title="In progress">
+                    ${player.progress}/${totalQuestions}
+                  </span>`;
+            }
+        }
+        return `
           <div class="podium-place ${placeClass}">
             <div class="podium-medal">${medals[rank]}</div>
             <div class="podium-avatar">
@@ -460,62 +572,190 @@
             <div class="podium-floor"></div>
             <div class="podium-name">${player.name}</div>
             <div class="podium-score">${player.score ?? player.total}</div>
+            ${progressHtml}
           </div>
         `;
-        }).join('');
-        document.getElementById('podiumRow').innerHTML = html;
-    }
+    }).join('');
+    document.getElementById('podiumRow').innerHTML = html;
+}
 
-    function renderLeaderboard(participants) {
-        const leaderboardDiv = document.getElementById('finalLeaderboard');
-        const rows = participants.slice(3).map((p, i) => `
+ // Leaderboard with completion/progress indicator
+function renderLeaderboard(participants) {
+    const leaderboardDiv = document.getElementById('finalLeaderboard');
+    const rows = participants.slice(3).map((p, i) => {
+        let progressHtml = '';
+        if (typeof p.progress === "number") {
+            if (p.progress >= totalQuestions) {
+                progressHtml = `
+                  <span class="completion-badge" title="Completed">
+                    <span class="check">✓</span>
+                  </span>`;
+             }else {
+                progressHtml = `
+                  <span class="progress-badge" title="In progress">
+                    ${p.progress}/${totalQuestions}
+                  </span>`;
+            }
+        }
+        return `
         <div class="ranking-row${p.isMe ? ' highlight' : ''}" id="ranking-row-${i + 4}">
           <span class="rank-num">${i + 4}.</span>
           <span class="rank-avatar">
             <img src="/static/images/avatar/${avatarKeys[p.avatar]}.png" alt="${p.name}'s avatar"/>
           </span>
           <span class="rank-name">${p.name}</span>
-          <span class="rank-score">${p.score ?? p.total}</span>
+          <span class="score-badge-wrap">
+              <span class="rank-score">${p.score ?? p.total}</span>
+              ${progressHtml}
+           </span>
         </div>
-      `).join('');
-        leaderboardDiv.innerHTML = rows;
+      `;
+    }).join('');
+    leaderboardDiv.innerHTML = rows;
+}
+
+function animatePodium() {
+    const podiums = [
+        document.querySelector('.podium-1'),
+        document.querySelector('.podium-2'),
+        document.querySelector('.podium-3'),
+    ].filter(Boolean);
+
+    // Entrance: Podium 2 (left), 3 (right), 1 (center) last
+    const entranceOrder = [podiums[1], podiums[2], podiums[0]];
+
+    gsap.set(podiums, { opacity: 0, y: -120, scale: 0.5, filter: "blur(12px)" });
+
+    entranceOrder.forEach((el, i) => {
+        if (!el) return;
+        gsap.to(el, {
+            opacity: 1, y: 0, scale: 1,
+            filter: "blur(0)",
+            duration: 0.85 + 0.2 * i,
+            ease: "elastic.out(1, 0.7)",
+            delay: 0.15 * i,
+            onComplete: () => {
+                // Special celebration for 1st place (center podium)
+                if (el.classList.contains("podium-1")) {
+                    // Big pulse/glow on arrival
+                    gsap.fromTo(el,
+                        { scale: 1, boxShadow: "0 0 0px #ffe97e90" },
+                        { scale: 1.14, boxShadow: "0 0 80px #ffe97ecc", duration: 0.23, yoyo: true, repeat: 1, ease: "expo.inOut" }
+                    );
+                    // Confetti burst
+                    confettiBurst(el);
+                }
+            }
+        });
+    });
+}
+
+function animateLeaderboard() {
+    const rows = document.querySelectorAll('.ranking-row');
+    if (rows.length === 0) return;
+    gsap.set(rows, { opacity: 0, y: 40, scale: 0.92, rotateX: 14 });
+    gsap.to(rows, {
+        opacity: 1, y: 0, scale: 1, rotateX: 0,
+        duration: 0.92, ease: "expo.out", stagger: { each: 0.055, from: "start" }
+    });
+}
+
+// Enhanced waiting animation logic
+let waitingAnimInterval = null;
+const waitingMessages = [
+    "Waiting for results…",
+    "Crunching the numbers…",
+    "Calculating the scores…",
+    "Who will take the crown?",
+    "Almost there!",
+    "One moment please…",
+    "Will it be you on the podium?",
+    "Verifying answers…"
+];
+
+function startWaitingAnimation() {
+    const waitingDiv = document.getElementById('waitingResults');
+    let msgIdx = 0;
+
+    function animateText() {
+        if (!waitingDiv) return;
+        waitingDiv.textContent = waitingMessages[msgIdx % waitingMessages.length];
+        gsap.fromTo(waitingDiv, { opacity: 0.55, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
+        msgIdx++;
+    }
+    animateText();
+    waitingAnimInterval = setInterval(animateText, 2300);
+
+    // Fun sparkle/shine on robot iframe while waiting
+    const robot = document.querySelector('.spline-robot-container');
+    if (robot) {
+        gsap.to(robot, {
+            filter: "drop-shadow(0 0 32px #ffe97eaa)",
+            duration: 1.7, yoyo: true, repeat: -1, ease: "sine.inOut"
+        });
+    }
+    // Emoji or bubble floats (optional)
+    floatingEmojiLoop();
+}
+
+function stopWaitingAnimation() {
+    if (waitingAnimInterval) clearInterval(waitingAnimInterval);
+    // Reset robot shine
+    const robot = document.querySelector('.spline-robot-container');
+    if (robot) {
+        gsap.to(robot, { filter: "none", duration: 0.6 });
+    }
+}
+
+// Floating emoji while waiting
+function floatingEmojiLoop() {
+    if (!document.getElementById('waitingResults') || !document.getElementById('waitingResults').offsetParent) return;
+    const emojis = ['✨', '🎉', '🥳', '💫', '🎈'];
+    const chosen = emojis[Math.floor(Math.random() * emojis.length)];
+    const el = document.createElement("span");
+    el.textContent = chosen;
+    el.style.cssText = `
+        position:fixed; left:${50 + Math.random() * 44}vw; top:${70 + Math.random() * 10}vh;
+        font-size:2.1em; pointer-events:none; opacity:0.85; z-index:99999;
+        user-select:none; filter: blur(0.5px) brightness(1.2);
+    `;
+    document.body.appendChild(el);
+    gsap.fromTo(el, { y: 0, opacity: 0.9 }, {
+        y: -90 - Math.random() * 80,
+        opacity: 0,
+        duration: 2.8 + Math.random(),
+        ease: "power1.in",
+        onComplete: () => el.remove()
+    });
+    setTimeout(floatingEmojiLoop, 650 + Math.random() * 1300);
+}
+
+// --- Update renderAll for waiting state ---
+function renderAll() {
+    const waitingDiv = document.getElementById('waitingResults');
+    if (!participants || participants.length === 0) {
+        if (waitingDiv) {
+            waitingDiv.style.display = 'block';
+            startWaitingAnimation();
+        }
+        document.getElementById('podiumRow').innerHTML = '';
+        document.getElementById('finalLeaderboard').innerHTML = '';
+        return;
+    }
+    if (waitingDiv) {
+        waitingDiv.style.display = 'none';
+        stopWaitingAnimation();
     }
 
-    // =============== ANIMATION LOGIC (Called only once) ===============
+    renderPodium(participants);
+    renderLeaderboard(participants);
 
-    function animatePodium() {
-        gsap.from('.podium-place', {
-            y: -140,
-            opacity: 0,
-            scale: 0.62,
-            stagger: { each: 0.14, from: "center" },
-            duration: 1.17,
-            ease: "back.out(2)",
-            delay: 0.20
-        });
-        gsap.fromTo('.podium-1', {
-            scale: 1.7,
-            filter: "brightness(2.3) drop-shadow(0 0 28px #ffe97e)",
-            zIndex: 3
-        }, {
-            scale: 1,
-            filter: "brightness(1) drop-shadow(0 0 10px #ffe97e99)",
-            duration: 1.1,
-            ease: "expo.out",
-            delay: 0.48
-        });
-        setTimeout(() => confettiBurst(document.querySelector('.podium-1')), 900);
+    if (!initialAnimationDone) {
+        animatePodium();
+        animateLeaderboard();
+        initialAnimationDone = true;
     }
-
-    function animateLeaderboard() {
-        const rows = document.querySelectorAll('.ranking-row');
-        if (rows.length === 0) return;
-        gsap.set(rows, { opacity: 0, y: 40, scale: 0.92, rotateX: 14 });
-        gsap.to(rows, {
-            opacity: 1, y: 0, scale: 1, rotateX: 0,
-            duration: 1.1, ease: "expo.out", stagger: { each: 0.07, from: "start" }
-        });
-    }
+}
 
     function confettiBurst(el) {
         if (!el) return;

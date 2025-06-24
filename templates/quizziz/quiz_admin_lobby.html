@@ -943,7 +943,7 @@ body {
   <div class="bg-bottom-blur"></div>
   <!-- Topbar -->
   <div class="topbar">
-    <span class="topbar-logo">WAYGROUND</span>
+    <span class="topbar-logo">QUIZSEPH</span>
     <span class="topbar-title"><span class="admin-icon" aria-label="Admin">&#128100;</span> Admin Lobby</span>
   </div>
  <main class="admin-center-container">
@@ -986,33 +986,58 @@ body {
   </footer>
   <script>
  // Avatars array (should match backend avatar indexes)
-    const avatars = [
-      `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
-      `<img src="/static/images/avatar/jesse.png" class="avatar-img" alt="Avatar: Jesse" />`,
-      `<img src="/static/images/avatar/katniss.png" class="avatar-img" alt="Avatar: Katniss" />`,
-      `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Avatar: Leonard" />`,
-      `<img src="/static/images/avatar/lisa.png" class="avatar-img" alt="Avatar: Lisa" />`,
-      `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Avatar: Morty" />`,
-      `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Avatar: Rick" />`,
-      `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Avatar: Sheldon" />`,
-      `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`,
-      `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
-    ];
+const avatars = [
+  `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
+  `<img src="/static/images/avatar/jesse.png" class="avatar-img" alt="Avatar: Jesse" />`,
+  `<img src="/static/images/avatar/katniss.png" class="avatar-img" alt="Avatar: Katniss" />`,
+  `<img src="/static/images/avatar/leonard.png" class="avatar-img" alt="Avatar: Leonard" />`,
+  `<img src="/static/images/avatar/lisa.png" class="avatar-img" alt="Avatar: Lisa" />`,
+  `<img src="/static/images/avatar/morty.png" class="avatar-img" alt="Avatar: Morty" />`,
+  `<img src="/static/images/avatar/rick.png" class="avatar-img" alt="Avatar: Rick" />`,
+  `<img src="/static/images/avatar/sheldon.png" class="avatar-img" alt="Avatar: Sheldon" />`,
+  `<img src="/static/images/avatar/walter.png" class="avatar-img" alt="Avatar: Walter" />`,
+  `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
+];
+let totalQuestions = 0;
 
-        // --- Tabs Logic ---
-      const tabBtns = [document.getElementById('tabParticipants'), document.getElementById('tabLeaderboard')];
-      const tabs = [document.getElementById('participantsTab'), document.getElementById('leaderboardTab')];
-      tabBtns.forEach((btn, i) => {
-        btn.addEventListener('click', () => {
-          tabBtns.forEach((b, j) => {
-            b.classList.toggle('active', i === j);
-            tabs[j].classList.toggle('show', i === j);
-          });
-        });
-      });
+// Fetch number of quiz questions dynamically
+async function fetchTotalQuestions() {
+  try {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    const blocks = raw
+      .trim()
+      .split(/^---$/m)
+      .map(b => {
+        const sanitized = b.replace(/\/\/.*$/gm, '');
+        try {
+          return JSON.parse(sanitized);
+        } catch (e) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+    totalQuestions = blocks.length;
+    window.totalQuizQuestions = totalQuestions; // for compatibility
+  } catch (e) {
+    totalQuestions = 0;
+    window.totalQuizQuestions = 0;
+  }
+}
 
-    // Helper: insert participants in grid (max 3 per column)
-  function renderParticipantsGrid(players) {
+// --- Tabs Logic ---
+const tabBtns = [document.getElementById('tabParticipants'), document.getElementById('tabLeaderboard')];
+const tabs = [document.getElementById('participantsTab'), document.getElementById('leaderboardTab')];
+tabBtns.forEach((btn, i) => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach((b, j) => {
+      b.classList.toggle('active', i === j);
+      tabs[j].classList.toggle('show', i === j);
+    });
+  });
+});
+
+// Helper: insert participants in grid (max 3 per column)
+function renderParticipantsGrid(players) {
   document.getElementById('participantCount').textContent = players.length;
   const container = document.getElementById('participantsList');
   container.innerHTML = '';
@@ -1028,7 +1053,6 @@ body {
   }
   container.classList.remove('empty');
 
-  // No chunking! Just render all as flat grid items.
   players.forEach((player, idx) => {
     let avatarIdx = (typeof player.avatar === "number" && player.avatar >= 0 && player.avatar < avatars.length) ? player.avatar : 0;
     let el = document.createElement('div');
@@ -1045,7 +1069,7 @@ body {
   });
 }
 
- // Leaderboard
+// Leaderboard with progress
 function renderLeaderboard(players) {
   const container = document.getElementById('leaderboardList');
   container.innerHTML = '';
@@ -1053,10 +1077,10 @@ function renderLeaderboard(players) {
     container.innerHTML = `<div class="empty-state"><div class="loader"></div>No scores yet…</div>`;
     return;
   }
-  // Sort by score
-  const ranked = [...players].sort((a,b) => (b.score||0)-(a.score||0)).reverse();
+  const ranked = [...players].sort((a,b) => (b.score||0)-(a.score||0));
   ranked.forEach((p, i) => {
     const avatarIdx = (typeof p.avatar === "number" && avatars[p.avatar]) ? p.avatar : 0;
+    const progress = typeof p.progress === "number" ? p.progress : 0;
     const el = document.createElement('div');
     el.className = 'leader-item';
     el.innerHTML = `
@@ -1064,13 +1088,14 @@ function renderLeaderboard(players) {
       <span class="participant-icon"><img src="/static/images/avatar/${avatars[avatarIdx].match(/avatar\/([^"]+)/)[1]}" class="avatar-img" /></span>
       <span class="leader-name">${p.name || 'Anonymous'}</span>
       <span class="leader-score">${p.score || 0}</span>
+      <span style="margin-left:12px;color:#22d07a;font-size:0.97em;font-weight:700;">${progress}/${totalQuestions}</span>
     `;
     container.appendChild(el);
   });
 }
 
-     // ========== GIF TOAST LOGIC (from quiz_waiting.html) ==========
-  function showGifToast(gifFile, name, avatarIdx) {
+// ========== GIF TOAST LOGIC ==========
+function showGifToast(gifFile, name, avatarIdx) {
   const toast = document.createElement('div');
   toast.className = 'gif-toast-popup';
   toast.innerHTML = `
@@ -1081,28 +1106,20 @@ function renderLeaderboard(players) {
     <img class="gif-toast-img" src="/static/images/gif/${gifFile}" alt="GIF"/>
   `;
   document.body.appendChild(toast);
-
-  // GSAP initial position at bottom
   gsap.set(toast, {opacity: 0.96, y: 0, x: 0});
-
-  // Animate up and fade out, just like user lobby
   const screenH = window.innerHeight;
   const toTop = screenH - 160;
-
-gsap.to(toast, {
-  y: -toTop,
-  duration: 5, // Faster animation
-  ease: "power2.out", // Snappier ease
-  scale: 1.15, // Optional: keep for visual impact
-  // No opacity fade
-  onComplete: () => {
-    toast.remove();
-    gifCooldown = false;
-    setGifButtonsDisabled(false);
-  }
-});
-
-  // Sparkle for special GIFs
+  gsap.to(toast, {
+    y: -toTop,
+    duration: 5,
+    ease: "power2.out",
+    scale: 1.15,
+    onComplete: () => {
+      toast.remove();
+      gifCooldown = false;
+      setGifButtonsDisabled(false);
+    }
+  });
   if (gifFile === 'party-blob.gif' || gifFile === 'deal-with-it.gif') {
     gsap.to(toast, {
       boxShadow: "0 0 30px 4px #f6e26d77, 0 6px 28px 0 #0003",
@@ -1113,107 +1130,97 @@ gsap.to(toast, {
   }
 }
 
-    // --- Socket events: as before, just update render logic ---
-    var socket = io({ transports: ['websocket'] });
+// Main logic to fetch questions first, then enable all real-time features
+fetchTotalQuestions().then(() => {
+  var socket = io({ transports: ['websocket'] });
 
-    socket.on('player_list', function(players) {
-      renderParticipantsGrid(players);
-      renderLeaderboard(players);
+  socket.on('player_list', function(players) {
+    renderParticipantsGrid(players);
+    renderLeaderboard(players);
+  });
 
-    });
+  // --- Quiz start button ---
+  document.getElementById('startQuizBtn').onclick = function() {
+    socket.emit('admin_start_quiz');
+  };
+  socket.on('quiz_started', function() {
+    document.getElementById('startQuizBtn').textContent = "Started!";
+    document.getElementById('startQuizBtn').disabled = true;
+  });
+  socket.emit('admin_get_players');
 
-    // --- Quiz start button ---
-    document.getElementById('startQuizBtn').onclick = function() {
-      socket.emit('admin_start_quiz');
-    };
-    socket.on('quiz_started', function() {
-      document.getElementById('startQuizBtn').textContent = "Started!";
-      document.getElementById('startQuizBtn').disabled = true;
-    });
-    socket.emit('admin_get_players');
-
-
-
-
-
-    // Listen for show_gif (NEW TOAST VERSION)
-    socket.on('show_gif', function(data) {
-      // Use new toast method (matches quiz_waiting.html)
-      // Expect: data.gif (file name), data.name, data.avatar (idx)
-      if (data && data.gif && data.name !== undefined && data.avatar !== undefined) {
-        showGifToast(data.gif, data.name, data.avatar);
-      }
-      // Optionally: still show the old modal popup for backward compat
-      // showGifPopup('/static/images/gif/' + data.gif);
-    });
-
-
-    // (Keep your original showGifPopup function for other usages)
-    function showGifPopup(url) {
-      const popup = document.getElementById('gif-popup');
-      popup.innerHTML = `<img src="${url}" style="max-width:350px;max-height:350px;border-radius:15px;box-shadow:0 4px 22px #0008;">`;
-      popup.style.display = 'block';
-      setTimeout(() => { popup.style.display = 'none'; }, 5000);
+  // Listen for show_gif (NEW TOAST VERSION)
+  socket.on('show_gif', function(data) {
+    if (data && data.gif && data.name !== undefined && data.avatar !== undefined) {
+      showGifToast(data.gif, data.name, data.avatar);
     }
+  });
 
-    // --- Reset scores only ---
-    document.getElementById('resetScoresBtn').onclick = function() {
-      if (confirm("Reset all scores to zero but keep everyone in the room?")) {
-        socket.emit('admin_reset_scores');
-      }
-    };
+  // (Keep your original showGifPopup function for other usages)
+  function showGifPopup(url) {
+    const popup = document.getElementById('gif-popup');
+    popup.innerHTML = `<img src="${url}" style="max-width:350px;max-height:350px;border-radius:15px;box-shadow:0 4px 22px #0008;">`;
+    popup.style.display = 'block';
+    setTimeout(() => { popup.style.display = 'none'; }, 5000);
+  }
 
-    // --- Reset ALL (kicks everyone, resets scores & room) ---
-    document.getElementById('resetAllBtn').onclick = function() {
-      if (confirm("⚠️ This will remove ALL participants and scores! Are you sure?")) {
-        socket.emit('admin_reset_all');
-      }
-    };
+  // --- Reset scores only ---
+  document.getElementById('resetScoresBtn').onclick = function() {
+    if (confirm("Reset all scores to zero but keep everyone in the room?")) {
+      socket.emit('admin_reset_scores');
+    }
+  };
 
-    socket.on('scores_reset', function() {
-      alert("All scores have been reset!");
-    });
+  // --- Reset ALL (kicks everyone, resets scores & room) ---
+  document.getElementById('resetAllBtn').onclick = function() {
+    if (confirm("⚠️ This will remove ALL participants and scores! Are you sure?")) {
+      socket.emit('admin_reset_all');
+    }
+  };
 
-    socket.on('all_reset', function() {
-      alert("All participants and scores have been cleared!");
-      // Optionally refresh the page:
-      location.reload();
-    });
+  socket.on('scores_reset', function() {
+    alert("All scores have been reset!");
+  });
 
-// == MOCK TESTERS: 20 FAKE PARTICIPANTS IF #devmock IN URL ==
-if (window.location.hash === "#devmock") {
-  setTimeout(() => {
-    const fakeNames = [
-      "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Robin", "Skyler", "Reese", "Riley",
-      "Quinn", "Drew", "Avery", "Parker", "Kai", "Emerson", "Hayden", "Rowan", "Sage", "Peyton",
-      "Finley", "Dakota", "Remy"
-    ];
-    const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
-      id:   "fake_" + i,
-      name: fakeNames[i % fakeNames.length] + " " + (i + 1),
-      avatar: i % avatars.length,
-      score: Math.floor(Math.random() * 1000),
-      isMe: false
-    }));
+  socket.on('all_reset', function() {
+    alert("All participants and scores have been cleared!");
+    location.reload();
+  });
 
-    const myFake = {
-      id: socket?.id || "me",
-      name: "Admin (Me)",
-      avatar: 0,
-      score: 999,
-      isMe: true
-    };
-    const testParticipants = [myFake, ...fakePlayers];
+  // == MOCK TESTERS: 20 FAKE PARTICIPANTS IF #devmock IN URL ==
+  if (window.location.hash === "#devmock") {
+    setTimeout(() => {
+      const fakeNames = [
+        "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Robin", "Skyler", "Reese", "Riley",
+        "Quinn", "Drew", "Avery", "Parker", "Kai", "Emerson", "Hayden", "Rowan", "Sage", "Peyton",
+        "Finley", "Dakota", "Remy"
+      ];
+      const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
+        id:   "fake_" + i,
+        name: fakeNames[i % fakeNames.length] + " " + (i + 1),
+        avatar: i % avatars.length,
+        score: Math.floor(Math.random() * 1000),
+        isMe: false,
+        progress: Math.floor(Math.random() * (totalQuestions+1))
+      }));
+      const myFake = {
+        id: socket?.id || "me",
+        name: "Admin (Me)",
+        avatar: 0,
+        score: 999,
+        isMe: true,
+        progress: totalQuestions
+      };
+      const testParticipants = [myFake, ...fakePlayers];
 
-    // render both grid and leaderboard with test data
-    renderParticipantsGrid(testParticipants);
-    renderLeaderboard(testParticipants);
-    document.getElementById('participantCount').textContent = testParticipants.length;
+      renderParticipantsGrid(testParticipants);
+      renderLeaderboard(testParticipants);
+      document.getElementById('participantCount').textContent = testParticipants.length;
 
-    // disable live socket updating to keep mock data visible
-    socket.off('player_list');
-  }, 700); // short delay to simulate loading
-}
+      socket.off('player_list');
+    }, 700);
+  }
+});
 
   </script>
 
