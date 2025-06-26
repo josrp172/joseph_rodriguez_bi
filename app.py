@@ -12,13 +12,26 @@ import firebase_admin
 from firebase_admin import credentials, db as firebase_db
 
 
-FIREBASE_CRED_PATH = 'static/quiz/sephquiz-firebase-adminsdk-fbsvc-c9e3032997.json'
+FIREBASE_SERVICE_ACCOUNT_JSON = """
+{
+  "type": "service_account",
+  "project_id": "sephquiz",
+  "private_key_id": "ff8269373a19d4f48ec344441b12a8961a7b3a67",
+  "private_key": "-----BEGIN PRIVATE KEY-----\\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrOmj/9YbTh/K0\\nmVLzM69ARIg0lEDryE3OihnbU9/YepRbuQcSmN2sCxVyQVzG5xg7AW+MIqKVVkR9\\ny9rnEZGCcnN9ZwyCFvShovt7dDF7Ej75YC6IlqDoktAKlVE4ugE9CeH3WtFuRTDW\\nxL6n91SIL7trH+dgFcEFzFq63+pKNoDHGDY6/oCtYKxjCjSBFU5RN0Ky4swTKIZl\\n03bmFsbXNpTdRaLj7/sXNQpDxjWm4AaLFAN6LVw5eMRuRkOTUEBWm1cyArT/SpT5\\nhoHAaAGbyWlmK7maZFUs2gVJjT0INjhQIBphwY9FEcj+OczzPL1bSPi4YAwqaPEG\\nK0ABH8CBAgMBAAECggEAKPPi6hkUoqIYw+YJ5138s9/QPdcZgesZ5OS103XHi3Sh\\n6CAkV2fVWNEb04Rbhrz92Br7TWZ5QUNtRTMNC4fxp+PsyFjtrm2EG+apxDihnwBZ\\nrHY7GvL/0DBQ7r8QuoMOScWD1I/VmEyXJj7PJMgsYRgdeL0cLyh0zoi2SIzGcfIb\\nd+26mweQ2ZfPGA7YNvwLhrbNNtnNEzrzhQ5j+A1RCuHNgzPdObWwuFcR/ICsQ2mZ\\nzQgh9MegqeoIHhYxG7th7ZX6YSWKNTAoqFOfe2IBb+Jd/rnzsNSvG8R/9oHceZ3b\\nyuKkSUTwUysLDKmdwdHdm0dkMdeghaqnE0MFD3vGOQKBgQDpDcs3cN7Y/yBEKpnx\\n+NU7vFWSbut/JHkIs1pD2w4+ouiKmZttq2En5cxrWZz4kvq78JPyhbSorCDfgIE4\\n8RoMP9NkMjwK/bqIzanQ51KBIjXeO85i44K5o18u23LaIUUyU377LjRxmvTVq/QS\\nDgbCTOu9+JRFYfmo93DNUr0mfQKBgQC8FkbveUz4h+rMa8nDrq8bdktJMsJ9yjDO\\nRbGilc/hztnzvfZ9J7iBjCujkXU+nI7dpAPPg1Yo2Ye272oI9fjMuxXKEYW4otZ3\\nczR4vx/C7sN0zhrC+e93a0WEZrUaJGs5C7BVI95b8iHhF1neeeoBFJIKT+Po3RNo\\nl8EheiYtVQKBgAlRH9qrjH0oVeXjvhvKUtv8f39HJ+sBTkVmxikITN18Lce8tFYC\\nD/REX5O7FWdqmNOCnqeHaN2FZBsLTB82pE/xDUZoK7ZUxmxJrIxJcybuczDbOzkA\\n120MdvWsmD7YLagBZoYsJrST+U3BfhRqsyJ5aMNDeMn9TLnQipXqxN0RAoGBAJrw\\ncwDk2M5HENnS1UOYi/FAcmZbJTKAM9JIQTug0729K3gJfZq99NTrBivZME8iouHc\\nMbNpCrnd8Fl3Qc8d6RWl7B4obxKZObjus0PglaZ8D5ESE6OYRncGbB7UiM1/QMCe\\na2THhm4RuWz2Unbd0TGQo3lRNHroWwunL1aHjBl9AoGBANZboIp0U2v6eLSzYuMS\\nWAygZs4WSoLIDPdF9qHq47E+aDrguSF0YVcro+uulAnfAAgr0Dr8/mYWg34RVfui\\n6aFbqsKWtgqCIsw4B4BCg3pUpH9O/PAzLyk+G6MW6QG9tJNe4wHrLGsKTYL4TKUa\\nx1KaJbYpPhkKfxxrQTsEoA7o\\n-----END PRIVATE KEY-----\\n",
+  "client_email": "firebase-adminsdk-fbsvc@sephquiz.iam.gserviceaccount.com",
+  "client_id": "115779035183545381373",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40sephquiz.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
+"""
 FIREBASE_DB_URL = 'https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app'
 
 if not firebase_admin._apps:
-    cred = credentials.Certificate(FIREBASE_CRED_PATH)
+    cred = credentials.Certificate(json.loads(FIREBASE_SERVICE_ACCOUNT_JSON))
     firebase_admin.initialize_app(cred, {'databaseURL': FIREBASE_DB_URL})
-
 
 questions = [
     {"id": 1, "question": "What is 2 + 2?", "choices": ["2", "3", "4", "5"], "answer": "4"},
