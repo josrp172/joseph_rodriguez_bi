@@ -35,6 +35,10 @@ The JSON array MUST start with “[`” and end with “`]”.
 ### Type-Specific Conditions
 - For **fill_in_blank**: the `"answer"` value must always be a **single word**. Design the question so that the missing word is naturally and unambiguously one word only.
 - For **target_shooter**: always mark **at least two options** as `"correct": true`. Never use only one correct answer.
+- For **target_shooter**: ensure there are at least **6 total options** to make the game visually engaging.
+- For **drag_and_drop**: must include **at least 4 items** in both `"items"` and `"random order"` arrays. Fewer than 4 is not allowed.
+- For **memory_match**: each "front" and "back" text must not exceed 10 words. Prefer fewer words to ensure visual clarity.
+- For *multiple_choice**: Each choice must not exceed 10 words to ensure compact display and visual balance.
 
 ## Allowed Question Types & Schemas (copy EXACTLY)
 

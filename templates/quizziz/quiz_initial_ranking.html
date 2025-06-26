@@ -315,6 +315,25 @@ body, .leaderboard-main-container {
   gap: 0;
 }
 
+.quizseph-logo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 200px;
+  z-index: 1100;
+  margin: 10px 0 0 14px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px #0003);
+}
+@media (max-width: 600px) {
+  .quizseph-logo-overlay {
+    height: 36px;
+    max-width: 90px;
+    margin: 6px 0 0 6px;
+  }
+}
+
 @media (max-width: 700px) {
   .leaderboard-main-container,
   .leaderboard-list,
@@ -335,7 +354,10 @@ body, .leaderboard-main-container {
 </style>
 </head>
 <body>
+
   <div class="ranking-bg"></div>
+  <img src="/static/images/logo/logo_200_100.png" alt="QUIZSEPH Logo" class="quizseph-logo-overlay" />
+
   <div class="leaderboard-main-container">
     <div class="ranking-title-row">
       <span class="ranking-trophy">🏆</span>

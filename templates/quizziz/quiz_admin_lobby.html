@@ -1357,70 +1357,77 @@ document.getElementById('chooseFormBtn').onclick = openQuestionnaireModal;
 // Open modal and fetch forms
 async function openQuestionnaireModal() {
   document.getElementById('questionnaireModal').classList.add('show');
-   document.getElementById('currentFormName').textContent = 'Loading…';
+  document.getElementById('currentFormName').textContent = 'Loading…';
 
   // Fetch default demo questionnaire first
-   let demoQuestions = [];
-      try {
-        const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
-        demoQuestions = raw
-          .trim()
-          .split(/^---$/m)
-          .map(b => JSON.parse(b.replace(/\/\/.*$/gm, '')))
-          .filter(Boolean);
-      } catch {}
+  let demoQuestions = [];
+  try {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    demoQuestions = raw
+      .trim()
+      .split(/^---$/m)
+      .map(b => JSON.parse(b.replace(/\/\/.*$/gm, '')))
+      .filter(Boolean);
+  } catch {}
 
-  // Fetch Firebase forms
- fetch(`${FIREBASE_DB_URL}/generated_quizzes.json`)
-        .then(r => r.json())
-        .then(forms => {
-          availableForms = [
-            { id: 'default_demo', meta: {categories:['General Demo']}, questions: demoQuestions },
-            ...Object.entries(forms || {})
-              .map(([id, val]) => ({ id, ...val }))
-              .sort((a,b) => (b.meta?.createdAt||0) - (a.meta?.createdAt||0))
-          ];
+  // Fetch Firebase forms AND selected questionnaire at the same time
+  const [forms, selectedData] = await Promise.all([
+    fetch(`${FIREBASE_DB_URL}/generated_quizzes.json`).then(r => r.json()),
+    fetch(`${FIREBASE_DB_URL}/selected_questionnaire.json`).then(r => r.json())
+  ]);
+  const firebaseSelectedId = selectedData?.id || 'default_demo';
 
-      if (!availableForms.length) {
-        document.getElementById('formsList').innerHTML = `<div style="color:#f32646;">No saved questionnaires found.</div>`;
-        document.getElementById('chooseFormFooter').style.display = 'none';
-        return;
-      }
+  availableForms = [
+    { id: 'default_demo', meta: { categories: ['General Demo'] }, questions: demoQuestions },
+    ...Object.entries(forms || {})
+      .map(([id, val]) => ({ id, ...val }))
+      .sort((a, b) => (b.meta?.createdAt || 0) - (a.meta?.createdAt || 0))
+  ];
 
-      document.getElementById('formsList').innerHTML = availableForms.map((q, i) => `
-        <label style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;background:${(q.id !== 'default_demo' && i===0) ? '#d9f6e260' : 'transparent'};border-radius:12px;padding:13px 16px;margin-bottom:10px;position:relative;">
-          <div style="flex-grow:1;display:flex;align-items:center;gap:10px;">
-            <input type="radio" name="selectedForm" value="${q.id}" style="transform:scale(1.2);margin-right:10px;" ${i===0?'checked':''}>
-            <span>
-              <b style="color:#23858b;">
-                ${q.id === 'default_demo'
-                  ? 'Default Demo Questionnaire'
-                  : (q.meta?.formName || q.id.replace('quiz_', 'Form #'))}
-              </b>
-              <span style="color:#a08ec7;margin-left:6px;font-size:0.96em;">
-                (${q.meta?.categories?.join(', ') || 'N/A'})
-              </span><br>
-              <span style="font-size:0.96em;color:#8371a1;">
-                ${q.questions?.length || 0} questions${q.meta?.createdAt ? ' • ' + new Date((q.meta.createdAt || 0) * 1000).toLocaleString() : ''}
-              </span>
+  if (!availableForms.length) {
+    document.getElementById('formsList').innerHTML = `<div style="color:#f32646;">No saved questionnaires found.</div>`;
+    document.getElementById('chooseFormFooter').style.display = 'none';
+    return;
+  }
+
+  // Render list and auto-select the Firebase value
+  document.getElementById('formsList').innerHTML = availableForms.map((q, i) => {
+    const checked = (q.id === firebaseSelectedId) ? 'checked' : '';
+    return `
+      <label style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;background:${(q.id !== 'default_demo' && i===0) ? '#d9f6e260' : 'transparent'};border-radius:12px;padding:13px 16px;margin-bottom:10px;position:relative;">
+        <div style="flex-grow:1;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="selectedForm" value="${q.id}" style="transform:scale(1.2);margin-right:10px;" ${checked}>
+          <span>
+            <b style="color:#23858b;">
+              ${q.id === 'default_demo'
+                ? 'Default Demo Questionnaire'
+                : (q.meta?.formName || q.id.replace('quiz_', 'Form #'))}
+            </b>
+            <span style="color:#a08ec7;margin-left:6px;font-size:0.96em;">
+              (${q.meta?.categories?.join(', ') || 'N/A'})
+            </span><br>
+            <span style="font-size:0.96em;color:#8371a1;">
+              ${q.questions?.length || 0} questions${q.meta?.createdAt ? ' • ' + new Date((q.meta.createdAt || 0) * 1000).toLocaleString() : ''}
             </span>
-          </div>
-          ${q.id === 'default_demo' ? '' : `
-            <button onclick="deleteForm('${q.id}')" title="Delete this form"
-              style="background:none;border:none;color:#ff7687;font-size:1.3em;font-weight:900;cursor:pointer;">
-              &times;
-            </button>
-          `}
-        </label>
-      `).join('');
-      selectedFormId = availableForms[0]?.id;
-      document.getElementById('chooseFormFooter').style.display = '';
-      // Listen for radio change
-      document.querySelectorAll('input[name=selectedForm]')
-                  .forEach(r => r.onchange = e => selectedFormId = e.target.value);
-    });
-    updateCurrentFormDisplay();
+          </span>
+        </div>
+        ${q.id === 'default_demo' ? '' : `
+          <button onclick="deleteForm('${q.id}')" title="Delete this form"
+            style="background:none;border:none;color:#ff7687;font-size:1.3em;font-weight:900;cursor:pointer;">
+            &times;
+          </button>
+        `}
+      </label>
+    `;
+  }).join('');
+  selectedFormId = firebaseSelectedId; // Set JS variable so "Use Selected" picks this by default
+  document.getElementById('chooseFormFooter').style.display = '';
 
+  // Listen for radio change
+  document.querySelectorAll('input[name=selectedForm]')
+    .forEach(r => r.onchange = e => selectedFormId = e.target.value);
+
+  updateCurrentFormDisplay();
 }
 
 function closeQuestionnaireModal() {

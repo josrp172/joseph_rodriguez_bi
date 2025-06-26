@@ -605,7 +605,33 @@
     margin: 6px 0 0 6px;
   }
 }
-
+#user-toast {
+  position: fixed;
+  top: 26px;
+  right: 32px;
+  z-index: 30000;
+  background: rgba(40,20,60,0.98);
+  color: #f6e26d;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 28px 13px 16px;
+  border-radius: 14px;
+  font-size: 1.16em;
+  box-shadow: 0 6px 32px #2e143299;
+  min-width: 200px;
+  max-width: 340px;
+  pointer-events: none;
+  animation: toast-fadein 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes toast-fadein {
+  from { opacity: 0; transform: translateY(-24px) scale(.95);}
+  to   { opacity: 1; transform: none;}
+}
+@media (max-width:600px){
+  #user-toast{right:10px;top:12px;padding:10px 14px 10px 8px;font-size:.99em;}
+  #user-toast img{width:28px;height:28px;}
+}
   </style>
 </head>
 <body>
@@ -649,6 +675,11 @@
     </div>
     <div id="waitingStatus">Hang tight! The host will start soon.</div>
   </div>
+
+   <div id="user-toast" style="display:none;">
+  <img src="/static/images/gif/party-blob.gif" alt="Info" style="width:38px;height:38px;border-radius:10px;margin-right:10px;"/>
+  <span id="user-toast-msg" style="font-weight:700;"></span>
+</div>
 
   <!-- (audio and scripts unchanged) -->
   <audio id="audioAvatarPicking" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_avatar_picking.wav" preload="auto"></audio>
@@ -752,7 +783,7 @@ socket.on('selected_questionnaire_updated', function(payload) {
       })
       .catch(() => renderQuizInfoCard(null));
 
-    alert('Quiz was updated by host. Please wait while we load the new quiz!');
+    showUserToast("Quiz was updated by host. Please wait while we load the new quiz!");
   }
 });
 
@@ -1207,7 +1238,21 @@ function fetchCurrentQuestionnaire() {
     });
 }
 
-
+function showUserToast(msg, gif) {
+  const toast = document.getElementById('user-toast');
+  const toastMsg = document.getElementById('user-toast-msg');
+  toastMsg.textContent = msg;
+  // Change GIF if provided (default = party-blob)
+  if (gif) toast.querySelector('img').src = gif;
+  else toast.querySelector('img').src = "/static/images/gif/party-blob.gif";
+  toast.style.display = 'flex';
+  toast.style.opacity = 1;
+  // Animate out after 5s
+  setTimeout(() => {
+    toast.style.opacity = 0;
+    setTimeout(() => { toast.style.display = 'none'; }, 400);
+  }, 5000);
+}
 // Initial UI
 renderAvatars();
 renderParticipants();

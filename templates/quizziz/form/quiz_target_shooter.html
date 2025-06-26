@@ -278,7 +278,7 @@ function buildTargets() {
 }
 
 // FEEDBACK/SCORING
-function showFeedback(timeoutMode) {
+function _showFeedback(timeoutMode) {
   answered = true;
   let allCorrect = true;
   let atLeastOne = false;
@@ -319,12 +319,12 @@ function showFeedback(timeoutMode) {
 
 function submitAnswer() {
   if (answered) return;
-  showFeedback(false);
+  _showFeedback(false);
 }
 
 // --- TIMEOUT FEEDBACK SUPPORT FOR QUIZFLOW ---
 window.showFeedback = function() {
-  showFeedback(true);
+  _showFeedback(true);
 };
 
 // ---- INIT QUIZ ENGINE ----

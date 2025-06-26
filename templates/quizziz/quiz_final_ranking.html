@@ -374,9 +374,30 @@
         .ranking-row { font-size: 1em; padding: 9px 5vw; min-height: 40px; }
         .rank-avatar, .rank-avatar img { width: 34px; height: 34px; border-radius: 8px;}
     }
+
+.quizseph-logo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 200px;
+  z-index: 1100;
+  margin: 10px 0 0 14px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px #0003);
+}
+@media (max-width: 600px) {
+  .quizseph-logo-overlay {
+    height: 36px;
+    max-width: 90px;
+    margin: 6px 0 0 6px;
+  }
+}
     </style>
 </head>
 <body>
+<img src="/static/images/logo/logo_200_100.png" alt="QUIZSEPH Logo" class="quizseph-logo-overlay" />
+
   <!-- Spline Embed -->
   <div class="spline-robot-container">
     <iframe src="https://my.spline.design/genkubgreetingrobot-8NWhFu34Nolgs3NHyJbHsODs/" frameborder="0" width="100%" height="100%"></iframe>
