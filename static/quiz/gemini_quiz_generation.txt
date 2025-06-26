@@ -19,6 +19,13 @@ The JSON array MUST start with “[`” and end with “`]”.
    * *hard* → multi-step reasoning or synthesis
 8. All content must be **family-friendly** and free of sensitive, offensive, or copyrighted material.
 
+### Firebase-Compatible Key Rules (★ must obey)
+- Any string used as a JSON **object key** (for example, in "categories", "pairs", or other key-value objects) must NOT contain any of these: `.`, `$`, `#`, `[`, `]`, `/`.
+- Object keys cannot be empty or just whitespace.
+- If any user or LLM-generated text (such as category, group, or match names) would result in a forbidden key, automatically replace each forbidden character with `_` (underscore).
+- Do not use keys that are only spaces, or empty.
+- Example valid keys: "Science_Group", "Category1", "Fruit_Veg".
+
 ### Style Guide (🔖 make it fun & modern)
 - Write in **concise, contemporary English** (CEFR B2) with active voice.
 - Favor **diverse, inclusive** examples (global names, cultures, and topics).

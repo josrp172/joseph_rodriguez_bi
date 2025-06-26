@@ -1,3 +1,5 @@
+import re
+
 import eventlet
 eventlet.monkey_patch()
 
@@ -85,7 +87,7 @@ def quiz_generate_auto():
     form_name = data.get('formName', '').strip()
     extra_notes = data.get('extraNotes', '').strip()
     categories = data.get('categories', [])
-    num_questions = data.get('numQuestions', 5)
+    num_questions = int(data.get('numQuestions', 5))  # Ensure integer!
     quiz_types = data.get('quizTypes', [])
     per_type_difficulties = data.get('perTypeDifficulties', {})
     timer = data.get('timer', 30)
@@ -125,6 +127,19 @@ def quiz_generate_auto():
         f"Return ONLY the JSON array."
     )
 
+    # Helper: Extract first JSON array
+    def extract_json_array_loose(text):
+        text = text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        if text.endswith("```"):
+            text = text[:-3]
+        start = text.find('[')
+        end = text.rfind(']')
+        if start != -1 and end != -1 and end > start:
+            return text[start:end + 1]
+        raise ValueError("No valid JSON array found.")
+
     # Call Gemini API
     try:
         response = client.models.generate_content(
@@ -132,15 +147,16 @@ def quiz_generate_auto():
             contents=prompt
         )
         content = response.text.strip()
-        # Remove markdown code fence if present
-        if content.startswith("```json"):
-            content = content[7:]
-        if content.endswith("```"):
-            content = content[:-3]
-        quiz_questions = json.loads(content)
+        json_str = extract_json_array_loose(content)
+        quiz_questions = json.loads(json_str)
+        # Validation: Must be a list, correct length
+        if not isinstance(quiz_questions, list):
+            raise ValueError("Quiz data is not a JSON array.")
+        if len(quiz_questions) != num_questions:
+            raise ValueError(f"Generated only {len(quiz_questions)} out of {num_questions} questions.")
     except Exception as e:
         print("Gemini/JSON error:", e)
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': f'Quiz generation error: {str(e)}'}), 500
 
     # Save to Firebase
     try:
@@ -163,7 +179,7 @@ def quiz_generate_auto():
         })
     except Exception as e:
         print("Firebase error:", e)
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({'success': False, 'error': f'Firebase error: {str(e)}'}), 500
 
     return jsonify({'success': True, 'quiz_id': quiz_id, 'questions': quiz_questions})
 
@@ -422,6 +438,10 @@ def broadcast_player_list():
             'progress': info.get('progress', 0)
         })
     emit('player_list', lst, broadcast=True)
+
+
+
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
