@@ -745,6 +745,11 @@ function fetchCurrentQuestionnaire() {
                 timer: formData.meta.timer || 30,
                 questions: formData.questions || [],
               });
+                 // **Update localStorage so the next page uses the right quiz**
+                if (formData.questions && formData.questions.length > 0) {
+                  localStorage.setItem('quiz::questions', JSON.stringify(formData.questions));
+                  localStorage.setItem('quiz::timer', formData.meta.timer || 30);
+                }
             } else {
               renderQuizInfoCard(null);
             }
@@ -775,7 +780,11 @@ socket.on('selected_questionnaire_updated', function(payload) {
             timer: formData.meta.timer || 30,
             questions: formData.questions || [],
           });
-          localStorage.setItem('quiz::timer', formData.meta.timer || 30);
+          // This is the fix:
+          if (formData.questions && formData.questions.length > 0) {
+            localStorage.setItem('quiz::questions', JSON.stringify(formData.questions));
+            localStorage.setItem('quiz::timer', formData.meta.timer || 30);
+          }
 
         } else {
           renderQuizInfoCard(null);
@@ -1207,36 +1216,7 @@ function renderQuizInfoCard(form) {
   infoDiv.style.display = "";
 }
 
-function fetchCurrentQuestionnaire() {
-  fetch(`${FIREBASE_DB_URL}/selected_questionnaire.json`)
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.id) {
-        fetch(`${FIREBASE_DB_URL}/generated_quizzes/${data.id}.json`)
-          .then(res => res.json())
-          .then(formData => {
-            if (formData && formData.meta) {
-              renderQuizInfoCard({
-                id: data.id,
-                title: formData.meta.formName || `Quiz ${data.id.replace('quiz_', '')}`,
-                categories: formData.meta.categories || [],
-                numQuestions: formData.meta.numQuestions || (formData.questions ? formData.questions.length : '?'),
-                timer: formData.meta.timer || 30,
-                questions: formData.questions || [],
-              });
-              localStorage.setItem('quiz::timer', formData.meta.timer || 30);
 
-            } else {
-              renderQuizInfoCard(null);
-            }
-          })
-          .catch(() => renderQuizInfoCard(null));
-
-      } else {
-        renderQuizInfoCard(null);
-      }
-    });
-}
 
 function showUserToast(msg, gif) {
   const toast = document.getElementById('user-toast');
