@@ -8,7 +8,16 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from google import genai
 import json
 from flask_socketio import SocketIO, emit
+import firebase_admin
+from firebase_admin import credentials, db as firebase_db
 
+
+FIREBASE_CRED_PATH = 'static/quiz/sephquiz-firebase-adminsdk-fbsvc-c9e3032997.json'
+FIREBASE_DB_URL = 'https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app'
+
+if not firebase_admin._apps:
+    cred = credentials.Certificate(FIREBASE_CRED_PATH)
+    firebase_admin.initialize_app(cred, {'databaseURL': FIREBASE_DB_URL})
 
 
 questions = [
@@ -42,6 +51,8 @@ except Exception as e:
     print("Error loading knowledge.json:", e)
     persona_context = ""
 
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -54,6 +65,111 @@ def projects_bi():
 def news():
     return render_template('news.html')
 
+
+@app.route('/quiz/generate_auto', methods=['POST'])
+def quiz_generate_auto():
+    data = request.get_json()
+    form_name = data.get('formName', '').strip()
+    extra_notes = data.get('extraNotes', '').strip()
+    categories = data.get('categories', [])
+    num_questions = data.get('numQuestions', 5)
+    quiz_types = data.get('quizTypes', [])
+    per_type_difficulties = data.get('perTypeDifficulties', {})
+    timer = data.get('timer', 30)
+    randomize = data.get('randomize', True)
+    allow_multiple_answers = data.get('allowMultipleAnswers', False)
+
+    # Load your Gemini prompt template
+    prompt_path = 'static/quiz/gemini_quiz_generation.txt'
+    with open(prompt_path, 'r', encoding='utf-8') as f:
+        prompt_template = f.read()
+
+    # Format the parameters for Gemini
+    param_lines = []
+    if form_name:
+        param_lines.append(f"- Form Name: {form_name}")
+    param_lines.append(f"- Categories: {', '.join(categories)}")
+    param_lines.append(f"- Number of Questions: {num_questions}")
+    param_lines.append(f"- Quiz Types: {', '.join(quiz_types)}")
+    param_lines.append(f"- Difficulty per Type:")
+    for k, v in per_type_difficulties.items():
+        param_lines.append(f"    - {k}: {v}")
+    param_lines.append(f"- Time per Question: {timer} seconds")
+    opt_line = "randomize order" if randomize else ""
+    opt_line += ", allow multiple answers" if allow_multiple_answers else ", do not allow multiple answers"
+    param_lines.append(f"- Options: {opt_line}")
+    if extra_notes:
+        param_lines.append(f"- Notes: {extra_notes}")
+
+    param_block = "\n".join(param_lines)
+
+    # Combine with your template (up to the parameter section)
+    before_params = prompt_template.split("Now, using the following parameters, generate a new quiz set:")[0]
+    prompt = (
+        f"{before_params}"
+        f"Now, using the following parameters, generate a new quiz set:\n{param_block}\n\n"
+        f"Each question should be creative, clear, and match the requested category, type, and difficulty.\n\n"
+        f"Return ONLY the JSON array."
+    )
+
+    # Call Gemini API
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
+        content = response.text.strip()
+        # Remove markdown code fence if present
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.endswith("```"):
+            content = content[:-3]
+        quiz_questions = json.loads(content)
+    except Exception as e:
+        print("Gemini/JSON error:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+    # Save to Firebase
+    try:
+        quiz_id = f"quiz_{int(time.time())}"
+        ref = firebase_db.reference(f"/generated_quizzes/{quiz_id}")
+        ref.set({
+            "meta": {
+                "formName": form_name,
+                "categories": categories,
+                "numQuestions": num_questions,
+                "quizTypes": quiz_types,
+                "perTypeDifficulties": per_type_difficulties,
+                "timer": timer,
+                "randomize": randomize,
+                "allowMultipleAnswers": allow_multiple_answers,
+                "createdAt": int(time.time()),
+                "extraNotes": extra_notes
+            },
+            "questions": quiz_questions
+        })
+    except Exception as e:
+        print("Firebase error:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+    return jsonify({'success': True, 'quiz_id': quiz_id, 'questions': quiz_questions})
+
+
+@app.route('/quiz/set_selected_questionnaire', methods=['POST'])
+def set_selected_questionnaire():
+    data = request.get_json()
+    questionnaire_id = data.get('questionnaire_id')
+    if not questionnaire_id:
+        return jsonify({'success': False, 'error': 'Missing questionnaire_id'}), 400
+    try:
+        ref = firebase_db.reference('/selected_questionnaire')
+        ref.set({'id': questionnaire_id, 'timestamp': int(time.time())})
+        # FIX: Just emit, do NOT include broadcast=True
+        socketio.emit('selected_questionnaire_updated', {'id': questionnaire_id})
+        return jsonify({'success': True})
+    except Exception as e:
+        print("Firebase set_selected_questionnaire error:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @app.route('/chat', methods=['POST'])
@@ -99,9 +215,16 @@ def quiz_countdown():
 def quiz_initial_ranking():
     return render_template('quizziz/quiz_initial_ranking.html')
 
+
+
 @app.route('/quiz/play')
 def quiz_play():
     return render_template('quizziz/quiz_questions.html')  # Or whatever the main game page is
+
+@app.route('/quiz/quiz_generate_form')
+def quiz_generate_form():
+    return render_template('quizziz/quiz_generate_form.html')
+
 
 @app.route('/quiz/waiting')
 def quiz_waiting():
@@ -121,7 +244,19 @@ def quiz_fill_in_blank():
 
 @app.route('/quiz/form/drag_drop')
 def quiz_drag_drop():
-    return render_template('quizziz/form/drag_drop.html')
+    return render_template('quizziz/form/quiz_reorder.html')
+
+@app.route('/quiz/form/categorize')
+def quiz_categorize():
+    return render_template('quizziz/form/quiz_categorize.html')
+
+@app.route('/quiz/form/target_shooter')
+def quiz_target_shooter():
+    return render_template('quizziz/form/quiz_target_shooter.html')
+
+@app.route('/quiz/form/memory_match')
+def quiz_memory_match():
+    return render_template('quizziz/form/quiz_memory_match.html')
 
 @app.route('/quiz/admin_lobby')
 def quiz_admin_lobby():

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Quiz Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    html,body { margin:0; padding:0; min-height:100vh; font-family:'Nunito',Arial,sans-serif; background: transparent; }
+    body { display:flex; justify-content:center; align-items:center; min-height:100vh; overflow:auto; }
+    .quiz-modal-bg {
+      position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(34,12,62,0.90); z-index:1;
+      display:flex; align-items:center; justify-content:center; animation:fadeInBg .5s;
+    }
+    @keyframes fadeInBg { from {opacity:0} to {opacity:1} }
+    .quiz-form-modal {
+      position:relative;
+      background:rgba(255,255,255,0.98);
+      border-radius:32px;
+      box-shadow:0 16px 64px #7e238540, 0 4px 24px #0002;
+      max-width:540px; width:98vw; padding:40px 36px 30px 36px;
+      animation:fadeUp .55s cubic-bezier(.41,1.3,.65,1.1);
+      font-family:'Nunito', Arial, sans-serif;
+      z-index:10;
+      max-height: 93vh;
+      overflow-y: auto;
+    }
+    @keyframes fadeUp { from {opacity:0;transform:translateY(40px) scale(0.98);} to {opacity:1;transform:none;} }
+    .quiz-form-modal h2 { font-family:'Montserrat',Arial,sans-serif; color:#7e2385; font-size:2.2em; margin-top:0; font-weight:900; text-align:center; letter-spacing:.03em;}
+    .quiz-form-modal label { font-weight:700; display:block; margin-top:20px; color:#32224b; }
+    .quiz-form-modal .form-section { margin-bottom:18px; }
+    .quiz-form-modal input, .quiz-form-modal select {
+      margin-top:7px; width:100%; font-size:1.10em; padding:12px 10px;
+      border-radius:11px; border:1.7px solid #ece2fa; background:#f7f5fd;
+      font-family:'Nunito',Arial,sans-serif; box-sizing:border-box; outline:none;
+      transition:border .19s;
+    }
+    .quiz-form-modal input:focus, .quiz-form-modal select:focus { border-color: #7e2385; }
+    .quiz-form-modal select[multiple] { height: 120px; }
+    .quiz-form-modal .game-types-group { display:flex; flex-wrap:wrap; gap:11px 16px; margin-top:9px;}
+    .quiz-form-modal .game-types-group label { font-weight:500; margin:0; color:#534e68; cursor:pointer;}
+    .quiz-form-modal .difficulty-types-table {
+      margin-top:10px; border-radius:10px; border:1px solid #eee; background:#faf8fc;
+      padding:12px 8px 8px 8px;
+    }
+    .quiz-form-modal .difficulty-types-table table { width:100%; border-collapse:collapse; }
+    .quiz-form-modal .difficulty-types-table th, .quiz-form-modal .difficulty-types-table td {
+      padding:7px 5px; text-align:center;
+    }
+    .quiz-form-modal .difficulty-types-table th {
+      color:#7e2385; font-weight:700; background:#f7f0ff;
+      border-bottom:1px solid #ece2fa;
+    }
+    .quiz-form-modal .difficulty-types-table tr:not(:last-child) td {
+      border-bottom:1px solid #f0e8fb;
+    }
+    .quiz-form-modal .options-row { margin-top:18px; }
+    .quiz-form-modal .checkbox-group { display:flex; flex-wrap:wrap; gap:13px; margin-top:5px;}
+    .quiz-form-modal .checkbox-group label { font-weight:500; margin:0; color:#534e68;}
+    .quiz-form-modal .form-footer {
+      display:flex; justify-content:flex-end; gap:13px; margin-top:32px;
+    }
+    .quiz-form-modal button {
+      font-size:1.07em; font-weight:800; letter-spacing:.01em;
+      border:none; border-radius:15px; padding:11px 34px; cursor:pointer;
+      background:linear-gradient(90deg,#7e2385 60%,#f6e26d 100%);
+      color:#fff; box-shadow:0 2px 14px #7e238533;
+      transition:background .14s,transform .11s;
+    }
+    .quiz-form-modal button:active { transform:scale(.97); }
+    .quiz-form-modal .close-btn {
+      position:absolute; top:14px; right:18px; background:transparent; color:#7e2385;
+      font-size:1.8em; border:none; cursor:pointer; font-family:inherit; font-weight:800; z-index:11;
+      transition:color .18s;
+    }
+    .quiz-form-modal .close-btn:hover { color:#f32646; }
+
+    .cat-tab-btn {font-size:1.05em;padding:7px 22px;border-radius:13px 13px 0 0;border:none;background:#f6e26d24;color:#7e2385;font-weight:700;transition:.18s;cursor:pointer;}
+    .cat-tab-btn.active, .cat-tab-btn:hover {background:#f6e26d;color:#7e2385;}
+    .cat-tab-content {margin-bottom:0;}
+    @media (max-width:600px){.quiz-form-modal{padding:15px 3vw 18px 3vw;}}
+  </style>
+</head>
+<body>
+  <div class="quiz-modal-bg">
+<form class="quiz-form-modal" id="generateQuizForm" autocomplete="off">
+  <button type="button" class="close-btn" onclick="window.close?.() || (window.location='quiz_admin_lobby.html')">&times;</button>
+  <h2>Generate Quiz</h2>
+
+  <!-- Form Name -->
+  <div class="form-section">
+    <label for="formName">Form Name</label>
+    <input type="text" id="formName" name="formName" maxlength="60" placeholder="Enter a quiz name (e.g. June Tech Quiz)" required>
+  </div>
+
+  <!-- Tabs for Category Types -->
+  <div class="form-section" style="margin-bottom:10px;">
+    <label>Categories</label>
+    <div style="display:flex;gap:10px;margin-bottom:7px;">
+      <button type="button" class="cat-tab-btn active" onclick="showCatTab(0)">General</button>
+      <button type="button" class="cat-tab-btn" onclick="showCatTab(1)">Roles</button>
+      <button type="button" class="cat-tab-btn" onclick="showCatTab(2)">Tech Topics</button>
+    </div>
+    <div id="catTab0" class="cat-tab-content">
+      <select id="categoryGeneral" name="categoryGeneral" multiple style="min-height:70px;width:100%;">
+        <option>General Knowledge</option>
+        <option>Science</option>
+        <option>Math</option>
+        <option>Geography</option>
+        <option>History</option>
+        <option>Pop Culture</option>
+        <option>Literature</option>
+        <option>Sports</option>
+        <option>Technology</option>
+        <option>Language</option>
+        <option>Other…</option>
+      </select>
+    </div>
+    <div id="catTab1" class="cat-tab-content" style="display:none;">
+      <select id="categoryRoles" name="categoryRoles" multiple style="min-height:70px;width:100%;">
+        <option>Power BI Developer</option>
+        <option>QA</option>
+        <option>Full Stack Developer</option>
+        <option>Project Manager</option>
+        <option>Data Analyst</option>
+        <option>BI Architect</option>
+        <option>Scrum Master</option>
+        <option>Other…</option>
+      </select>
+    </div>
+    <div id="catTab2" class="cat-tab-content" style="display:none;">
+      <select id="categoryTech" name="categoryTech" multiple style="min-height:70px;width:100%;">
+        <option>Power BI</option>
+        <option>SQL</option>
+        <option>DAX</option>
+        <option>Python</option>
+        <option>Tableau</option>
+        <option>Azure</option>
+        <option>Git</option>
+        <option>JavaScript</option>
+        <option>Databricks</option>
+        <option>Cloud Architecture</option>
+        <option>Other…</option>
+      </select>
+    </div>
+    <small style="color:#8371a1;">(Select from any tab. Hold Ctrl or ⌘ to multi-select.)</small>
+  </div>
+
+  <!-- Number of Questions -->
+  <div class="form-section">
+    <label for="numQuestions">Number of Questions</label>
+    <input type="number" min="1" max="50" id="numQuestions" name="numQuestions" placeholder="E.g. 10" required>
+  </div>
+
+  <!-- Game Types -->
+  <div class="form-section">
+    <label>Quiz Game Types</label>
+    <div class="game-types-group" id="gameTypesGroup">
+      <label><input type="checkbox" name="types" value="multiple_choice" checked> Multiple Choice</label>
+      <label><input type="checkbox" name="types" value="memory_match"> Memory Match</label>
+      <label><input type="checkbox" name="types" value="categorize"> Categorize</label>
+      <label><input type="checkbox" name="types" value="target_shooter"> Target Shooter</label>
+      <label><input type="checkbox" name="types" value="fill_in_blank"> Fill in the Blank</label>
+      <label><input type="checkbox" name="types" value="match"> Match</label>
+      <label><input type="checkbox" name="types" value="drag_and_drop"> Drag and Drop</label>
+    </div>
+  </div>
+
+  <!-- Per-Type Difficulty Selection -->
+  <div class="form-section difficulty-types-table" id="difficultyTypesTable" style="display:none;">
+    <div style="font-weight:700;color:#7e2385;text-align:left;margin-bottom:7px;">Difficulty per Quiz Type</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Quiz Type</th>
+          <th>Difficulty</th>
+        </tr>
+      </thead>
+      <tbody id="difficultyTableBody">
+        <!-- Rows are injected by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Timer -->
+  <div class="form-section">
+    <label for="timer">Time per Question (seconds)</label>
+    <input type="number" min="5" max="300" id="timer" name="timer" placeholder="E.g. 30" value="30" required>
+  </div>
+
+  <!-- Options -->
+  <div class="options-row">
+    <label>Options</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" name="randomize" value="1" checked> Randomize order</label>
+      <label><input type="checkbox" name="allowMultipleAnswers" value="1"> Allow multiple answers</label>
+    </div>
+  </div>
+
+  <!-- Optional Notes -->
+  <div class="form-section">
+    <label for="extraNotes">Notes (Optional)</label>
+    <textarea id="extraNotes" name="extraNotes" maxlength="500" rows="3" style="width:100%;border-radius:10px;padding:10px;resize:vertical;background:#f7f5fd;border:1.5px solid #ece2fa;font-family:'Nunito',Arial,sans-serif;" placeholder="Type extra instructions, specific topics, or guidelines for the LLM here..."></textarea>
+  </div>
+
+  <div class="form-footer">
+    <button type="submit" id="submitBtn">Generate</button>
+  </div>
+</form>
+  </div>
+  <script>
+    // -- CATEGORY TABS --
+    window.showCatTab = function(idx) {
+      document.querySelectorAll('.cat-tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+      });
+      document.querySelectorAll('.cat-tab-content').forEach((div, i) => {
+        div.style.display = (i === idx) ? '' : 'none';
+      });
+    };
+
+    // -- DIFFICULTY TABLE --
+    const quizTypeLabels = {
+      multiple_choice: 'Multiple Choice',
+      memory_match: 'Memory Match',
+      categorize: 'Categorize',
+      target_shooter: 'Target Shooter',
+      fill_in_blank: 'Fill in the Blank',
+      match: 'Match',
+      drag_and_drop: 'Drag and Drop'
+    };
+    const gameTypesGroup = document.getElementById('gameTypesGroup');
+    const difficultyTable = document.getElementById('difficultyTypesTable');
+    const difficultyTableBody = document.getElementById('difficultyTableBody');
+    function updateDifficultyTable() {
+      const selectedTypes = Array.from(gameTypesGroup.querySelectorAll('input[type=checkbox]:checked'))
+        .map(input => input.value);
+      if (selectedTypes.length === 0) {
+        difficultyTable.style.display = 'none';
+        difficultyTableBody.innerHTML = '';
+        return;
+      }
+      difficultyTable.style.display = '';
+      difficultyTableBody.innerHTML = selectedTypes.map(type =>
+        `<tr>
+          <td>${quizTypeLabels[type]}</td>
+          <td>
+            <select name="difficulty_${type}" required>
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </td>
+        </tr>`
+      ).join('');
+    }
+    gameTypesGroup.addEventListener('change', updateDifficultyTable);
+    updateDifficultyTable();
+
+    // -- FORM SUBMIT --
+    document.getElementById('generateQuizForm').onsubmit = function(e) {
+      e.preventDefault();
+      // Categories from all tabs
+      const categories = [
+        ...Array.from(document.getElementById('categoryGeneral').selectedOptions).map(o=>o.value),
+        ...Array.from(document.getElementById('categoryRoles').selectedOptions).map(o=>o.value),
+        ...Array.from(document.getElementById('categoryTech').selectedOptions).map(o=>o.value)
+      ];
+      const formName = document.getElementById('formName').value.trim();
+      const extraNotes = document.getElementById('extraNotes').value.trim();
+      const numQuestions = document.getElementById('numQuestions').value;
+      const timer = document.getElementById('timer').value;
+      const quizTypes = Array.from(gameTypesGroup.querySelectorAll('input[type=checkbox]:checked')).map(c=>c.value);
+
+      // Per-type difficulties
+      const perTypeDifficulties = {};
+      quizTypes.forEach(type => {
+        perTypeDifficulties[type] = document.querySelector(`[name="difficulty_${type}"]`).value;
+      });
+
+      // Options
+      const randomize = document.querySelector('input[name="randomize"]').checked;
+      const allowMultipleAnswers = document.querySelector('input[name="allowMultipleAnswers"]').checked;
+
+      // Compose data
+      const data = {
+        formName,
+        extraNotes,
+        categories,
+        numQuestions,
+        quizTypes,
+        perTypeDifficulties,
+        timer,
+        randomize,
+        allowMultipleAnswers
+      };
+
+      fetch('/quiz/generate_auto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert('Quiz generated and saved!\nQuiz ID: ' + res.quiz_id);
+        } else {
+          alert('Error: ' + (res.error || 'Failed to generate quiz'));
+        }
+      })
+      .catch(err => alert('Request failed: ' + err));
+    };
+  </script>
+</body>
+</html>

@@ -19,12 +19,16 @@ html, body {
   font-family: 'Nunito', Arial, sans-serif;
   background: transparent;
 }
-body {
-  min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  background: transparent;
-}
+    body {
+      min-height: 100vh;
+      background: #7e2385;
+      margin: 0;
+      font-family: 'Nunito', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 /* === Animated SVG Mesh BG & Blobs === */
 .bg-animated-mesh {
   position: fixed !important; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none; overflow:hidden;
@@ -873,29 +877,114 @@ body {
 .action-btn--danger{background:linear-gradient(90deg,#f32646 10%,#f6e26d 100%)}
 .action-btn:hover,.action-btn:focus{transform:scale(1.05);box-shadow:0 4px 22px #f6e26d55}
 
-.spline-robot-container iframe {
-  position: absolute;
-  bottom: -60px; /* shift content down so watermark goes out of view */
-  left: 0;
-  width: 100%;
-  height: calc(100% + 40px); /* extend height to avoid clipping top */
-  pointer-events: auto; /* optional: prevent interaction with iframe */
+.quiz-modal-bg {
+  display: none; /* Show via JS */
+  position: fixed;
+  z-index: 99999;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(36, 24, 61, 0.74); /* semi-transparent overlay */
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
 }
 
+.quiz-modal-bg.show {
+  display: flex !important;
+}
+
+.quiz-form-modal {
+  background: rgba(28,10,40,0.99);
+  border-radius: 26px;
+  box-shadow: 0 8px 40px #0007, 0 2px 12px #f6e26d11;
+  padding: 30px 32px 18px 32px;
+  color: #fff;
+  min-width: 340px;
+  max-width: 97vw;
+  width: 100%;
+  position: relative;
+  animation: modalPop 0.26s cubic-bezier(.47,1.64,.41,.8);
+}
+@keyframes modalPop { from {transform:scale(.95); opacity:0;} to {transform:none; opacity:1;} }
+
+.close-btn {
+  position: absolute; top: 14px; right: 18px;
+  background: transparent;
+  color: #f6e26d;
+  border: none;
+  font-size: 2.3em;
+  font-weight: 900;
+  cursor: pointer;
+  opacity: 0.82;
+  transition: color 0.18s;
+  z-index: 2;
+}
+.close-btn:hover { color: #ff5678; opacity: 1; }
 
 .spline-robot-container {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 750px;
-  height: 900px;
+  /* Desktop/Large: Almost as big as before */
+  width: 44vw;           /* 44% of viewport width (will max out) */
+  height: 72vh;          /* 72% of viewport height (will max out) */
+  max-width: 700px;      /* Never bigger than your old design */
+  max-height: 900px;     /* Never bigger than your old design */
+  min-width: 220px;
+  min-height: 180px;
   z-index: 99991;
   opacity: 1;
-  transform: translate(10px, 10px) scale(0.9);
-    overflow: hidden; /* hides anything that overflows */
-
-  pointer-events: none; /* Still block pointer on container */
+  overflow: hidden;
+  pointer-events: none;
+  transition: width 0.22s, height 0.22s;
 }
+
+.spline-robot-container iframe {
+  position: absolute;
+  bottom: -60px;    /* Like your original */
+  left: 0;
+  width: 100%;
+  height: calc(100% + 40px);
+  pointer-events: auto;
+  background: transparent;
+  border: none;
+}
+
+ /* On mid-size screens: robot stays large but never breaks layout */
+@media (max-width: 1200px) {
+  .spline-robot-container {
+    width: 58vw;
+    height: 52vh;
+    max-width: 520px;
+    max-height: 600px;
+  }
+}
+@media (max-width: 900px) {
+  .spline-robot-container {
+    width: 76vw;
+    height: 42vh;
+    max-width: 370px;
+    max-height: 390px;
+    right: 0;
+    bottom: 0;
+    transform: translate(0, 0);
+  }
+}
+@media (max-width: 700px) {
+  .spline-robot-container {
+    width: 96vw;
+    height: 23vh;
+    max-width: 97vw;
+    max-height: 170px;
+    min-height: 60px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    transform: none;
+  }
+}
+
+
 </style>
 
 </head>
@@ -943,8 +1032,14 @@ body {
   <div class="bg-bottom-blur"></div>
   <!-- Topbar -->
   <div class="topbar">
-    <span class="topbar-logo">QUIZSEPH</span>
-    <span class="topbar-title"><span class="admin-icon" aria-label="Admin">&#128100;</span> Admin Lobby</span>
+<img src="/static/images/logo/logo_98_65.png"
+     alt="QuizSeph Logo"
+     class="topbar-logo"
+     style="height:65px; width:98px; object-fit:fill; object-position:center; vertical-align:middle; margin-right:15px;">
+      <span class="topbar-title" style="display: flex; align-items: center; gap: 8px;">
+    <span class="admin-icon" aria-label="Admin">&#128100;</span>
+    Admin Lobby
+  </span>
   </div>
  <main class="admin-center-container">
   <!-- Join / Controls Card -->
@@ -955,15 +1050,36 @@ body {
       <b style="color:#f6e26d;font-size:1.09em;letter-spacing:.04em;">https://joseph-rodriguez-bi.onrender.com/quiz/start</b><br>
       on your device to join.
     </p>
+
+    <p id="currentFormDisplay" style="margin: 10px 0 16px; font-weight: 700; color: #f6e26d; font-size: 1.05em; text-align: center; user-select: none;">
+      Current Questionnaire: <span id="currentFormName" style="color:#a08ec7;">Loading...</span>
+    </p>
     <hr class="section-divider" />
 
     <div class="lobby-controls">
       <button id="generateFormsBtn" class="action-btn action-btn--generate" aria-label="Generate question forms">GENERATE FORMS</button>
+      <button id="chooseFormBtn" class="action-btn action-btn--generate" aria-label="Choose questionnaire form">CHOOSE QUESTIONNAIRE</button>
+
       <button id="startQuizBtn" class="action-btn action-btn--start" aria-label="Start the assessment">START QUIZ</button>
       <button id="resetScoresBtn" class="action-btn action-btn--reset" aria-label="Reset all scores">RESET SCORES</button>
       <button id="resetAllBtn" class="action-btn action-btn--danger" aria-label="Reset everything">RESET ALL</button>
     </div>
   </section>
+
+   <!-- Questionnaire Select Modal -->
+  <div id="questionnaireModal" class="quiz-modal-bg" style="display:none;">
+    <div class="quiz-form-modal" style="max-width:440px;">
+      <button type="button" class="close-btn" onclick="closeQuestionnaireModal()">&times;</button>
+      <h2>Select Questionnaire</h2>
+      <div id="formsList" style="margin-top:17px;margin-bottom:25px;">
+        <div class="loader"></div>
+        <div style="text-align:center;font-size:1.01em;color:#8371a1;margin-top:7px;">Loading forms from Firebase...</div>
+      </div>
+      <div class="form-footer" style="margin-top:14px;display:none;" id="chooseFormFooter">
+        <button id="confirmFormBtn" class="action-btn action-btn--start" style="padding:7px 19px;font-size:1em;border-radius:12px;">Use Selected</button>
+      </div>
+    </div>
+  </div>
 
   <!-- NAV TABS -->
   <div class="admin-tabs">
@@ -999,6 +1115,7 @@ const avatars = [
   `<img src="/static/images/avatar/wednesday.png" class="avatar-img" alt="Avatar: Wednesday" />`
 ];
 let totalQuestions = 0;
+ document.addEventListener('DOMContentLoaded', updateCurrentFormDisplay);
 
 // Fetch number of quiz questions dynamically
 async function fetchTotalQuestions() {
@@ -1221,7 +1338,165 @@ fetchTotalQuestions().then(() => {
     }, 700);
   }
 });
+document
+  .getElementById('generateFormsBtn')
+  .onclick = () =>
+    window.open(
+      '/quiz/quiz_generate_form',
+      'quizFormWindow',            // <- a name, not _blank
+      'width=480,height=700,resizable=yes'
+    );
 
+    const FIREBASE_DB_URL = "https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app";
+let availableForms = [];
+let selectedFormId = null;
+
+// Add to .lobby-controls
+document.getElementById('chooseFormBtn').onclick = openQuestionnaireModal;
+
+// Open modal and fetch forms
+async function openQuestionnaireModal() {
+  document.getElementById('questionnaireModal').classList.add('show');
+   document.getElementById('currentFormName').textContent = 'Loading…';
+
+  // Fetch default demo questionnaire first
+   let demoQuestions = [];
+      try {
+        const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+        demoQuestions = raw
+          .trim()
+          .split(/^---$/m)
+          .map(b => JSON.parse(b.replace(/\/\/.*$/gm, '')))
+          .filter(Boolean);
+      } catch {}
+
+  // Fetch Firebase forms
+ fetch(`${FIREBASE_DB_URL}/generated_quizzes.json`)
+        .then(r => r.json())
+        .then(forms => {
+          availableForms = [
+            { id: 'default_demo', meta: {categories:['General Demo']}, questions: demoQuestions },
+            ...Object.entries(forms || {})
+              .map(([id, val]) => ({ id, ...val }))
+              .sort((a,b) => (b.meta?.createdAt||0) - (a.meta?.createdAt||0))
+          ];
+
+      if (!availableForms.length) {
+        document.getElementById('formsList').innerHTML = `<div style="color:#f32646;">No saved questionnaires found.</div>`;
+        document.getElementById('chooseFormFooter').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('formsList').innerHTML = availableForms.map((q, i) => `
+        <label style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;background:${(q.id !== 'default_demo' && i===0) ? '#d9f6e260' : 'transparent'};border-radius:12px;padding:13px 16px;margin-bottom:10px;position:relative;">
+          <div style="flex-grow:1;display:flex;align-items:center;gap:10px;">
+            <input type="radio" name="selectedForm" value="${q.id}" style="transform:scale(1.2);margin-right:10px;" ${i===0?'checked':''}>
+            <span>
+              <b style="color:#23858b;">
+                ${q.id === 'default_demo'
+                  ? 'Default Demo Questionnaire'
+                  : (q.meta?.formName || q.id.replace('quiz_', 'Form #'))}
+              </b>
+              <span style="color:#a08ec7;margin-left:6px;font-size:0.96em;">
+                (${q.meta?.categories?.join(', ') || 'N/A'})
+              </span><br>
+              <span style="font-size:0.96em;color:#8371a1;">
+                ${q.questions?.length || 0} questions${q.meta?.createdAt ? ' • ' + new Date((q.meta.createdAt || 0) * 1000).toLocaleString() : ''}
+              </span>
+            </span>
+          </div>
+          ${q.id === 'default_demo' ? '' : `
+            <button onclick="deleteForm('${q.id}')" title="Delete this form"
+              style="background:none;border:none;color:#ff7687;font-size:1.3em;font-weight:900;cursor:pointer;">
+              &times;
+            </button>
+          `}
+        </label>
+      `).join('');
+      selectedFormId = availableForms[0]?.id;
+      document.getElementById('chooseFormFooter').style.display = '';
+      // Listen for radio change
+      document.querySelectorAll('input[name=selectedForm]')
+                  .forEach(r => r.onchange = e => selectedFormId = e.target.value);
+    });
+    updateCurrentFormDisplay();
+
+}
+
+function closeQuestionnaireModal() {
+  document.getElementById('questionnaireModal').classList.remove('show');
+}
+
+// When user confirms
+document.getElementById('confirmFormBtn').onclick = () => {
+  if (!selectedFormId) return alert("Please select a form.");
+  const selected = availableForms.find(q => q.id === selectedFormId);
+  if (selected && selected.questions) {
+    localStorage.setItem('quiz::questions', JSON.stringify(selected.questions));
+    localStorage.setItem('quiz::selectedForm', selectedFormId);
+    localStorage.setItem('quiz::currentIdx', '0');
+    localStorage.setItem('quiz::scores', '[]');
+    setSelectedQuestionnaire(selectedFormId);
+    closeQuestionnaireModal();
+    updateCurrentFormDisplay();
+    alert(`Form "${selected.id === 'default_demo' ? 'Default Demo Questionnaire' : selectedFormId}" is now active!`);
+  } else {
+    alert("Could not load form questions.");
+  }
+};
+
+function deleteForm(formId) {
+  if (!confirm("Delete this questionnaire? This cannot be undone.")) return;
+  fetch(`${FIREBASE_DB_URL}/generated_quizzes/${formId}.json`, {
+    method: 'DELETE'
+  })
+    .then(res => {
+      if (res.ok) {
+        // Remove from UI
+        openQuestionnaireModal(); // Reload list after deletion
+      } else {
+        alert("Failed to delete form.");
+      }
+    });
+}
+
+function updateCurrentFormDisplay() {
+  const currentFormId = localStorage.getItem('quiz::selectedForm');
+  if (!currentFormId || currentFormId === 'default_demo') {
+    document.getElementById('currentFormName').textContent = 'Default Demo Questionnaire';
+    return;
+  }
+  const form = availableForms.find(f => f.id === currentFormId);
+  if (!form) {
+    // Fallback: Show Default Demo as the name, not "Unknown"
+    document.getElementById('currentFormName').textContent = 'Default Demo Questionnaire';
+    return;
+  }
+  if (form.id === 'default_demo') {
+    document.getElementById('currentFormName').textContent = 'Default Demo Questionnaire';
+  } else {
+    const formName = form.meta?.formName || form.id.replace('quiz_', 'Form #');
+    document.getElementById('currentFormName').textContent =
+      `${formName} (${form.meta?.categories?.join(', ') || 'N/A'})`;
+  }
+}
+
+    function setSelectedQuestionnaire(selectedId) {
+      fetch('/quiz/set_selected_questionnaire', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questionnaire_id: selectedId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          // Optionally, show a toast or update admin UI
+          console.log('Selected questionnaire updated!');
+        } else {
+          alert('Failed to set questionnaire: ' + (data.error || 'Unknown error'));
+        }
+      });
+}
   </script>
 
 

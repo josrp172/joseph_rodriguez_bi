@@ -184,8 +184,6 @@
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
 <script>
-
-  // Get avatar and name from storage (replace with your actual system if needed)
   const avatarIdx = +(localStorage.getItem('quizPlayerAvatar') || 0);
   const avatarMap = [
     "eleven", "jesse", "Katniss", "leonard", "lisa",
@@ -197,18 +195,16 @@
   let questionData = {};
   let answered = false;
 
- quizFlow.initQuestion((question, number, total) => {
+  quizFlow.initQuestion((question, number, total) => {
     questionData = question;
     answered = false;
-
-
-    state = { selectedL: null, selectedR: null, links: {}, locked: false, draggingRight: null };
     document.getElementById('progressBar').style.width = `${(number/total)*100}%`;
     document.getElementById('progressLabel').innerText = `${number} / ${total}`;
     renderCard();
-});
+  });
 
   function renderCard() {
+    answered = false;
     const card = document.getElementById('quizCard');
     card.innerHTML = `
       <div class="user-bar">
@@ -222,14 +218,12 @@
         <button type="submit" class="fib-btn" id="fibBtn">Submit</button>
       </form>
       <div class="feedback" id="feedback" style="display:none"></div>
-      <button class="next-btn" id="nextBtn" style="display:none;">Next</button>
     `;
     document.getElementById('fibForm').onsubmit = (e) => {
       e.preventDefault();
       if (answered) return;
       checkAnswer();
     };
-    document.getElementById('nextBtn').onclick = () => location.reload();
     document.getElementById('fibInput').onkeydown = e => {
       if (e.key === "Enter") {
         e.preventDefault(); checkAnswer();
@@ -250,6 +244,7 @@
     showFeedback(correct);
   }
 
+  // Called by checkAnswer, and you may call this from quizFlow for timeouts!
   function showFeedback(correct) {
     // Play sound
     if (correct) {
@@ -266,13 +261,15 @@
     fb.innerHTML = correct ? "Correct! 🎉" : "Wrong. " + (questionData.explanation || "");
     if (!correct && questionData.explanation)
       fb.innerHTML += `<div class="exp" style="color:#fffbe7;font-size:0.98em;margin-top:8px;">${questionData.explanation}</div>`;
-    // Call quizFlow.finishQuestion to handle score, navigation, etc.
     setTimeout(() => {
-      quizFlow.finishQuestion(correct, parseInt(document.getElementById('quizTimer').textContent));
+      const secs = parseInt(document.getElementById('quizTimer').textContent);
+      quizFlow.finishQuestion(correct, isNaN(secs) ? 0 : secs);
     }, 1200);
   }
 
-
+  // OPTIONAL: If you want feedback on timeouts, add this in quick_flow.js:
+  // In startTimer, instead of directly calling finishQuestion(false, 0), you can do:
+  // if (secsLeft === 0) { if(window.showFeedback) window.showFeedback(false); else this.finishQuestion(false, 0); }
 </script>
 
 </body>

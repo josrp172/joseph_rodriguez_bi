@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz — Categorize</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <script src="/static/js/quick_flow.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:800,700,400|Nunito:700,400" rel="stylesheet">
+  <style>
+    html, body { background:#7e2385; margin:0; min-height:100vh; font-family:'Nunito',sans-serif; overflow-x:hidden; }
+    .quiz-bg-blobs { position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:0; }
+    .blob { position:absolute; border-radius:50%; filter:blur(64px); opacity:0.42; animation:moveBlobs 16s linear infinite alternate; }
+    .blob1 { width:360px; height:320px; background:#7e2385; left:2vw; top:7vh; }
+    .blob2 { width:250px; height:300px; background:#f6e26d; left:61vw; top:16vh; animation-delay:3s; }
+    .blob3 { width:320px; height:220px; background:#22d07a; left:22vw; top:67vh; animation-delay:7s; }
+    .blob4 { width:220px; height:220px; background:#fa9660; left:75vw; top:58vh; animation-delay:10s; }
+    @keyframes moveBlobs { 0%{transform:translateY(0) scale(1);}30%{transform:translateY(-22px) scale(1.05);}50%{transform:translateY(38px) scale(0.98);}80%{transform:translateY(-14px) scale(1.09);}100%{transform:translateY(0) scale(1);} }
+
+    .quiz-card { position:relative; z-index:2; max-width:950px; margin:7vh auto 0; background:rgba(40,20,60,0.89); padding:40px 3vw 36px; border-radius:32px; box-shadow:0 10px 38px #0007, 0 2px 16px #fff2 inset; color:#fff; text-align:center; }
+    .user-bar { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:18px; }
+    .avatar-quiz { width:54px; height:54px; border-radius:18px; background:#fff; overflow:hidden; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 18px #7e238520; }
+    .avatar-quiz img { width:100%; height:100%; object-fit:cover; border-radius:18px; }
+    .username-quiz { font-size:1.27em; font-weight:900; color:#fff; font-family:'Montserrat',sans-serif; text-shadow:0 1px 10px #2e143280; }
+    .quiz-timer { position:fixed; top:36px; right:54px; z-index:20; font-family:'Montserrat',sans-serif; font-weight:900; font-size:2.1em; color:#f6e26d; padding:13px 28px; border-radius:42px; background:rgba(56,33,72,0.81); box-shadow:0 2px 22px #7e238566, 0 1.5px 14px #f6e26d11; border:2.7px solid #f6e26d55; text-align:center; user-select:none;}
+    .quiz-timer.warning { color:#ff6961; background:rgba(255,190,76,0.83); border-color:#ff696199; box-shadow:0 0 14px 2px #fa966077; animation:timerPulse 0.8s infinite alternate; }
+    @keyframes timerPulse { 0%{box-shadow:0 0 14px 2px #fa966077;} 100%{box-shadow:0 0 24px 7px #ff696144;} }
+    .progress-bar-wrap { width:100%; max-width:900px; height:22px; margin:0 auto 22px; border-radius:17px; background:rgba(255,255,255,0.14); box-shadow:0 1px 8px #f6e26d26; overflow:hidden; position:relative; z-index:3;}
+    .progress-bar { height:100%; width:50%; background:linear-gradient(90deg,#f6e26d 60%,#22d07a 100%); transition:width 0.6s cubic-bezier(.8,0,.18,1);}
+    .progress-label { font-family:'Montserrat',sans-serif; font-weight:900; font-size:1em; color:#fff; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-shadow:0 1.5px 7px #7e2385c4; z-index:4; pointer-events:none; }
+    h2 { font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.45rem; margin-bottom:18px; color:#f6e26d; text-shadow:0 2px 16px #2e1432a0; letter-spacing:0.01em; line-height:1.31; }
+    .hint { color:#ffe97e; font-size:1.1em; margin-bottom:18px; }
+
+    /* Progress Indicator */
+    .progress-indicator {
+      font-size: 1.05em;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 700;
+      color: #22d07a;
+      margin-bottom: 18px;
+      text-align: center;
+      letter-spacing: 0.01em;
+      transition: color 0.18s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .progress-indicator strong {
+      color: #f6e26d;
+      font-weight: 800;
+      font-size: 1.13em;
+      margin: 0 3px;
+    }
+
+    /* Responsive neat grid for categories */
+    .categories-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 42px;
+      margin: 28px 0 0 0;
+      flex-wrap: wrap;
+      width: 100%;
+      min-height: 220px;
+    }
+    .category-box {
+      flex: 1 1 280px;
+      max-width: 400px;
+      min-width: 210px;
+      background: rgba(255,255,255,0.14);
+      border-radius: 20px;
+      padding: 24px 18px 22px 18px;
+      box-shadow: 0 2px 14px rgba(126,35,133,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 180px;
+      transition: box-shadow 0.18s, border 0.18s;
+      position: relative;
+    }
+    .category-label {
+      font-family:'Montserrat',sans-serif;
+      font-weight:800;
+      color:#22d07a;
+      font-size:1.19em;
+      margin-bottom:13px;
+      letter-spacing:0.03em;
+      text-align:center;
+      z-index:2;
+      pointer-events:none;
+    }
+    .dropzone {
+      min-height: 74px;
+      min-width: 100%;
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      border: 2.2px dashed #ffe97e55;
+      transition: background 0.15s, border 0.18s, box-shadow 0.18s;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: 12px 0;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+    .dropzone.active {
+      background: rgba(34,208,122,0.19);
+      border: 2.2px solid #22d07a;
+      box-shadow: 0 0 0 4px #22d07a33;
+      animation: drop-glow 0.45s cubic-bezier(.32,1.46,.62,.96);
+    }
+    @keyframes drop-glow {
+      0% { box-shadow: 0 0 0 0 #22d07a88;}
+      80% { box-shadow: 0 0 18px 7px #22d07a44;}
+      100% { box-shadow: 0 0 0 4px #22d07a33;}
+    }
+    .dropzone.success {
+      background: rgba(34,208,122,0.15);
+      border-color: #22d07a;
+      box-shadow: 0 0 18px 7px #22d07a44;
+      animation: drop-success 0.7s cubic-bezier(.37,1.5,.65,1) 1;
+    }
+    @keyframes drop-success {
+      0% { box-shadow: 0 0 0 0 #22d07a88;}
+      60% { box-shadow: 0 0 28px 9px #22d07a77;}
+      100% { box-shadow: 0 0 0 4px #22d07a33;}
+    }
+    /* --- Unassigned --- */
+    .unassigned-area {
+      margin: 42px auto 0 auto;
+      width: 75%;
+      max-width: 760px;
+      min-width: 220px;
+      background: rgba(255,255,255,0.10);
+      border-radius: 20px;
+      padding: 20px 16px 20px 16px;
+      box-shadow: 0 1px 8px rgba(34,208,122,0.10);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .unassigned-label {
+      font-size: 1.09em;
+      color: #fa9660;
+      margin-bottom: 7px;
+      text-align: left;
+      font-weight: 700;
+      padding-left: 4px;
+      letter-spacing: 0.01em;
+    }
+    .unassigned-area .dropzone {
+      background: rgba(255,255,255,0.08);
+      min-height: 56px;
+      padding: 11px 0;
+      border-radius: 12px;
+      border-style: dashed;
+      border-color: #fa966088;
+      gap: 9px;
+      margin-bottom: 0;
+    }
+    .draggable-item {
+      background: linear-gradient(98deg,rgba(126,35,133,0.97),rgba(34,208,122,0.93));
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 13px;
+      font-weight: 700;
+      font-size: 1.13em;
+      margin: 2px 0;
+      cursor: grab;
+      box-shadow: 0 2px 8px rgba(34,208,122,0.13),0 0 8px rgba(126,35,133,0.11);
+      user-select: none;
+      transition: transform 0.15s, background 0.14s;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: left;
+      border: none;
+      outline: none;
+    }
+    .draggable-item.dragging { opacity: 0.61; background: linear-gradient(90deg,#22d07a 60%,#f6e26d 100%);}
+    .draggable-item.correct { background: linear-gradient(90deg,#22d07a 60%,#f6e26d 100%); color: #161d14;}
+    .draggable-item.wrong { background: linear-gradient(90deg,#7e2385 60%,#fa9660 100%);}
+    .submit-btn { display:inline-block; margin-top:32px; padding:16px 60px; font-family:'Montserrat',sans-serif; font-weight:900; font-size:1.18em; background:linear-gradient(98deg,#7e2385 20%,#f6e26d 80%); color:#222; border:none; border-radius:18px; cursor:pointer; transition:background 0.13s, box-shadow 0.13s; box-shadow:0 3px 15px #0002,0 0px 8px #22d07a19; opacity:0.94;}
+    .submit-btn:active { background:#22d07a; color:#1a1d16; }
+    .feedback { margin-top:22px; font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.25em; color:#22d07a; opacity:0; transform:translateY(12px); animation:fadeInUp 0.38s 0.2s forwards; text-shadow:0 2px 8px #1c7c4a38; }
+    .feedback.wrong { color:#fa9660; text-shadow:0 1.5px 7px #f6e26d24; }
+    @keyframes fadeInUp { to { opacity:1; transform: none; } }
+    .footer { position:fixed; bottom:0; left:0; width:100vw; padding:12px 0; background:rgba(40,20,60,0.16); color:#f6e26d; font-family:'Montserrat',sans-serif; font-weight:700; text-align:center; backdrop-filter:blur(4px); pointer-events:none;}
+    @media (max-width:900px) {
+      .categories-wrap { flex-direction:column; gap:18px; align-items:stretch; }
+      .category-box { max-width:98vw; min-width:150px; margin:0 auto; }
+      .quiz-card { padding:24px 2vw 30px; }
+      .unassigned-area { width:96vw; padding:12px 6px 16px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+  <div class="quiz-timer" id="quizTimer">30</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+    <span class="progress-label" id="progressLabel"></span>
+  </div>
+  <div class="quiz-card" id="quizCard"></div>
+  <div class="footer">All rights reserved by Joseph 2025</div>
+  <!-- SFX -->
+  <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
+  <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
+  <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/mouse_click.wav" preload="auto"></audio>
+<script>
+  // PLAYER INFO
+  const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
+  const avatarMap = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
+  const avatar = `<img src="/static/images/avatar/${avatarMap[avatarIdx]}.png"/>`;
+  const userName = localStorage.getItem('quiz_username') || "Player";
+  const GLOBAL_TIMER = Number(localStorage.getItem('quiz::timer')) || 30;
+
+  // STATE
+  let questionData = {}, assignments = {}, answered = false, dragging = null;
+  let timerId = null, timeLeft = GLOBAL_TIMER;
+
+  function placedCount() {
+    return Object.keys(questionData.categories)
+      .reduce((acc, cat) => acc + assignments[cat].length, 0);
+  }
+
+  function resetAssignments() {
+    // Dynamically find all unique categories from the items list.
+    const uniqueCategories = [...new Set(questionData.items.map(item => item.category))];
+
+    // Initialize the main assignments object.
+    assignments = { "Unassigned": [...questionData.items] };
+
+    // Create an entry for each dynamically found category.
+    uniqueCategories.forEach(cat => {
+      assignments[cat] = [];
+    });
+
+    // For the UI to build correctly, create the categories object on the fly if it doesn't exist.
+    if (!questionData.categories) {
+      questionData.categories = {};
+      uniqueCategories.forEach(cat => {
+        questionData.categories[cat] = true; // The value doesn't matter, only the keys.
+      });
+    }
+  }
+
+  function renderCard() {
+    clearInterval(timerId);
+    timeLeft = GLOBAL_TIMER;
+    document.getElementById('quizTimer').textContent = timeLeft;
+    document.getElementById('quizTimer').classList.remove('warning');
+    timerId = setInterval(() => {
+      timeLeft--;
+      document.getElementById('quizTimer').textContent = timeLeft;
+      if (timeLeft <= 10) document.getElementById('quizTimer').classList.add('warning');
+      if (timeLeft <= 0 && !answered) submitAnswer();
+    }, 1000);
+
+    const card = document.getElementById('quizCard');
+    card.innerHTML = `
+      <div class="user-bar">
+        <span class="avatar-quiz">${avatar}</span>
+        <span class="username-quiz">${userName}</span>
+      </div>
+      <h2>${questionData.question}</h2>
+      ${questionData.hint ? `<div class="hint">💡 Hint: ${questionData.hint}</div>` : ""}
+      <div class="progress-indicator"><strong id="placedCount">${placedCount()}</strong> of <strong>${questionData.items.length}</strong> Items Placed</div>
+      <div class="categories-wrap">
+        ${Object.keys(questionData.categories).map(cat => `
+          <div class="category-box" data-cat="${cat}">
+            <div class="category-label">${cat}</div>
+            <div class="dropzone" data-cat="${cat}"></div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="unassigned-area">
+        <div class="unassigned-label">Unassigned</div>
+        <div class="dropzone" data-cat="Unassigned"></div>
+      </div>
+      <button class="submit-btn" id="submitBtn" style="display:none;">Submit</button>
+      <div class="feedback" id="feedback" style="display:none"></div>
+    `;
+    buildItems();
+    document.getElementById('submitBtn').onclick = submitAnswer;
+  }
+
+  function buildItems() {
+    document.getElementById('placedCount').textContent = placedCount();
+    document.querySelectorAll('.dropzone').forEach(zone => {
+      const cat = zone.dataset.cat;
+      zone.innerHTML = '';
+      assignments[cat].forEach((item, idx) => {
+        const d = document.createElement('div');
+        d.className = 'draggable-item';
+        d.innerText = item.text;
+        d.draggable = !answered;
+        d.ondragstart = e => {
+          dragging = { cat, idx };
+          d.classList.add('dragging');
+        };
+        d.ondragend = e => {
+          dragging = null;
+          d.classList.remove('dragging');
+        };
+        zone.appendChild(d);
+      });
+      // Drag and Drop feedback
+      zone.ondragover = e => { e.preventDefault(); zone.classList.add('active'); };
+      zone.ondragleave = e => { zone.classList.remove('active'); };
+      zone.ondrop = e => {
+        zone.classList.remove('active');
+        if (!dragging || answered) return;
+        document.getElementById('audio-click').currentTime = 0;
+        document.getElementById('audio-click').play();
+        const { cat: from, idx } = dragging;
+        const item = assignments[from][idx];
+        assignments[from].splice(idx, 1);
+        assignments[zone.dataset.cat].push(item);
+        buildItems();
+        document.getElementById('placedCount').textContent = placedCount();
+        // Visual feedback for drop success
+        zone.classList.add('success');
+        setTimeout(() => zone.classList.remove('success'), 450);
+        // Show submit only if all placed
+        const total = Object.keys(questionData.categories).reduce((a,c)=>a+assignments[c].length,0);
+        if (total === questionData.items.length)
+          document.getElementById('submitBtn').style.display = '';
+        else
+          document.getElementById('submitBtn').style.display = 'none';
+      };
+    });
+  }
+
+  function submitAnswer() {
+    answered = true;
+    clearInterval(timerId);
+    let correct = true;
+    Object.keys(questionData.categories).forEach(cat => {
+      assignments[cat].forEach(item => {
+        const correctCat = item.category;
+        const zones = document.querySelectorAll(`.category-box[data-cat="${cat}"] .draggable-item`);
+        for(let zone of zones){
+          if(cat === correctCat) zone.classList.add('correct');
+          else { zone.classList.add('wrong'); correct = false; }
+        }
+      });
+    });
+    if (correct) {
+      document.getElementById('audio-correct').currentTime = 0;
+      document.getElementById('audio-correct').play();
+      // Insert confetti code here if desired
+    } else {
+      document.getElementById('audio-wrong').currentTime = 0;
+      document.getElementById('audio-wrong').play();
+    }
+    const fb = document.getElementById('feedback');
+    fb.style.display = '';
+    fb.className = 'feedback' + (correct ? '' : ' wrong');
+    fb.innerText = correct ? 'Correct! 🎉' : 'Wrong. Review your categorization.';
+    document.getElementById('submitBtn').style.display = 'none';
+
+    // Use global quick_flow to finish and notify the server
+    setTimeout(() => {
+      const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
+      quizFlow.finishQuestion(correct, secs);
+    }, 1200);
+  }
+
+  function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+  // ---- INIT QUIZ ENGINE ----
+  document.addEventListener('DOMContentLoaded', () => {
+    quizFlow.initQuestion((q, idx, total) => {
+      // Only process if type is categorize
+      if (q.type !== 'categorize') {
+        // fallback routing to other types if misrouted
+        const routes = {
+          multiple_choice:  '/quiz/form/quiz_multiple_choice',
+          fill_in_blank:    '/quiz/form/quiz_fill_in_blank',
+          match:            '/quiz/form/quiz_match',
+          drag_and_drop:    '/quiz/form/drag_drop'
+        };
+        return location.replace(routes[q.type]);
+      }
+      questionData = JSON.parse(JSON.stringify(q)); // Deep copy to avoid shuffling master list
+      shuffleArray(questionData.items);             // SHUFFLE here
+      resetAssignments();
+      document.getElementById('progressBar').style.width = `${(idx/total)*100}%`;
+      document.getElementById('progressLabel').innerText = `${idx} / ${total}`;
+      renderCard();
+    });
+  });
+</script>
+
+
+
+</body>
+</html>

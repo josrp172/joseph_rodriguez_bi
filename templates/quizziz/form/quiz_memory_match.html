@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz — Memory Match (Fixed)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <script src="/static/js/quick_flow.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:800,700,400|Nunito:700,400" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    html,body {background:#7e2385;margin:0;min-height:100vh;font-family:'Nunito',sans-serif;overflow-x:hidden;}
+    .quiz-bg-blobs{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:0;}
+    .blob{position:absolute;border-radius:50%;filter:blur(64px);opacity:0.42;animation:moveBlobs 16s linear infinite alternate;}
+    .blob1{width:360px;height:320px;background:#7e2385;left:2vw;top:7vh;}
+    .blob2{width:250px;height:300px;background:#f6e26d;left:61vw;top:16vh;animation-delay:3s;}
+    .blob3{width:320px;height:220px;background:#22d07a;left:22vw;top:67vh;animation-delay:7s;}
+    .blob4{width:220px;height:220px;background:#fa9660;left:75vw;top:58vh;animation-delay:10s;}
+    @keyframes moveBlobs{0%{transform:translateY(0) scale(1);}30%{transform:translateY(-22px) scale(1.05);}50%{transform:translateY(38px) scale(0.98);}80%{transform:translateY(-14px) scale(1.09);}100%{transform:translateY(0) scale(1);}
+    }
+    .quiz-timer {
+      position:fixed;top:36px;right:54px;z-index:20;
+      font-family:'Montserrat',sans-serif;font-weight:900;
+      font-size:2.1em;color:#f6e26d;padding:13px 28px;
+      border-radius:42px;background:rgba(56,33,72,0.81);
+      box-shadow:0 2px 22px #7e238566,0 1.5px 14px #f6e26d11;
+      border:2.7px solid #f6e26d55;text-align:center;user-select:none;
+      transition:box-shadow 0.22s, color 0.16s;
+    }
+    .quiz-timer.warning{color:#ff6961;background:rgba(255,190,76,0.83);border-color:#ff696199;box-shadow:0 0 14px 2px #fa966077;animation:timerPulse 0.8s infinite alternate;}
+    @keyframes timerPulse{0%{box-shadow:0 0 14px 2px #fa966077;}100%{box-shadow:0 0 24px 7px #ff696144;}}
+    .quiz-card { position:relative; z-index:2; max-width:950px; margin:7vh auto 0; background:rgba(40,20,60,0.95); padding:38px 3vw 32px; border-radius:38px; box-shadow:0 0 48px 8px #22d07a33,0 10px 38px #0007,0 2px 16px #fff2 inset; color:#fff; text-align:center;}
+    .quiz-card::before {content:"";position:absolute;inset:-22px;border-radius:44px;z-index:-1;background: radial-gradient(ellipse at 50% 105%, #f6e26d55 0%, transparent 70%);pointer-events:none;filter: blur(16px) brightness(1.2);opacity:.65;box-shadow: 0 0 110px 0 #22d07a33;}
+    .user-bar { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:18px; }
+    .avatar-quiz { width:54px; height:54px; border-radius:18px; background:#fff; overflow:hidden; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 18px #7e238520;}
+    .avatar-quiz img { width:100%; height:100%; object-fit:cover; border-radius:18px; }
+    .username-quiz { font-size:1.27em; font-weight:900; color:#fff; font-family:'Montserrat',sans-serif; text-shadow:0 1px 10px #2e143280; }
+    .progress-bar-wrap{width:100%;max-width:900px;height:22px;margin:0 auto 22px;border-radius:17px;background:rgba(255,255,255,0.14);box-shadow:0 1px 8px #f6e26d26;overflow:hidden;position:relative;z-index:3;}
+    .progress-bar{height:100%;width:80%;background:linear-gradient(90deg,#f6e26d 60%,#22d07a 100%);transition:width 0.6s cubic-bezier(.8,0,.18,1);}
+    .progress-label{font-family:'Montserrat',sans-serif;font-weight:900;font-size:1em;color:#fff;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-shadow:0 1.5px 7px #7e2385c4;z-index:4;pointer-events:none;}
+    h2 { font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.45rem; margin-bottom:18px; color:#f6e26d; text-shadow:0 2px 16px #2e1432a0; letter-spacing:0.01em; line-height:1.31; }
+    .hint { color:#ffe97e; font-size:1.1em; margin-bottom:18px; }
+    .memory-grid-bg {
+      margin: 0 auto 32px auto;
+      padding: 30px 0 30px 0;
+      background: radial-gradient(ellipse at 55% 50%, #22d07a11 0%, #f6e26d11 60%, transparent 100%);
+      border-radius: 28px;
+      box-shadow: 0 2px 32px #22d07a18, 0 0 80px #fa966011 inset;
+      display: flex; justify-content: center;
+      transition: box-shadow 0.22s;
+    }
+    .memory-board {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 38px; /* bigger gap for flip effect */
+      justify-items: center; align-items: center;
+      min-width: 340px; max-width: 640px;
+      margin: 0 auto;
+    }
+    .memory-card {
+      width: 108px; height: 140px; perspective:1200px; position:relative; cursor:pointer;
+      box-shadow:0 10px 34px #2226,0 1px 16px #22d07a23;
+      border-radius: 22px;
+      background: none;
+      z-index: 2;
+      will-change: transform;
+      transition: box-shadow 0.18s, filter 0.2s, border 0.18s;
+    }
+    .memory-card.matched, .memory-card.matched .memory-inner { cursor: default !important; pointer-events: none !important;}
+    .memory-card:not(.flipped):not(.matched):hover {
+      box-shadow:0 2px 18px 0 #ffe97e77, 0 10px 32px #22d07a15;
+      border: 2.5px solid #ffe97e55;
+    }
+    .memory-inner {
+      width:100%;height:100%;
+      transform-style:preserve-3d;
+      position:relative;
+      transition: box-shadow 0.2s, border 0.16s;
+      border-radius:20px;
+    }
+    .memory-front, .memory-back {
+      position:absolute;width:100%;height:100%;backface-visibility:hidden;
+      border-radius:20px;
+      box-shadow:0 3px 16px #2225,0 1px 8px #f6e26d44;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.10em;font-weight:900;font-family:'Montserrat',sans-serif;text-shadow:0 2px 10px #2e143230;
+      background: linear-gradient(120deg,#a960ee 25%,#7e2385 80%,#22d07a 130%);
+      color:#fff;
+      transition: box-shadow 0.15s, background 0.24s, color 0.14s;
+      overflow: hidden;
+      padding: 0 8px;
+      white-space: pre-line;
+      text-align: center;
+    }
+    .memory-back {transform:rotateY(0deg);font-size:2.1em;background:linear-gradient(118deg,#7e2385 20%,#a960ee 80%);}
+    .memory-front {transform:rotateY(180deg);}
+    .memory-card.flipped:not(.matched) .memory-inner {}
+    /* Matched style (gradient fill, bright border, locked, readable text) */
+    .memory-card.matched .memory-inner,
+    .memory-card.matched .memory-front {
+      background: linear-gradient(120deg, #22d07a 60%, #f6e26d 120%) !important;
+      color: #191e0c !important;
+      text-shadow:0 1.5px 7px #fff9, 0 1.5px 7px #22d07a33;
+      box-shadow: 0 0 16px 2px #22d07a99, 0 3px 18px #22d07a22;
+      border: 3.5px solid #22d07a !important;
+      opacity: 1 !important;
+      filter: brightness(1.08) !important;
+    }
+    .memory-card.matched .memory-front {display:flex !important;}
+    .memory-card.matched .memory-back {display:none !important;}
+    .memory-card.matched .memory-inner { box-shadow: 0 0 16px 4px #f6e26d88 inset, 0 0 18px 7px #22d07a99; }
+    .memory-card.shake .memory-inner {
+      animation: shakeCard 0.46s cubic-bezier(.45,2.5,.4,.9) 1;
+    }
+    @keyframes shakeCard {
+      0%,100%{transform:translateX(0);}
+      15%{transform:translateX(-14px);}
+      30%{transform:translateX(12px);}
+      50%{transform:translateX(-9px);}
+      70%{transform:translateX(7px);}
+      85%{transform:translateX(-4px);}
+    }
+    .memory-card.incorrect .memory-inner {
+      border: 3px solid #ff6f61 !important;
+      box-shadow: 0 0 24px 6px #ff6f6166, 0 1px 8px #fff4 !important;
+      color:#fff;
+      background: linear-gradient(120deg,#a960ee 25%,#7e2385 80%,#22d07a 130%) !important;
+    }
+    .memory-card.correct .memory-inner {box-shadow:0 0 18px 8px #22d07aee,0 0 32px #22d07a55;}
+    .submit-btn { display:inline-block; margin-top:32px; padding:16px 60px; font-family:'Montserrat',sans-serif; font-weight:900; font-size:1.18em; background:linear-gradient(98deg,#7e2385 20%,#f6e26d 80%); color:#222; border:none; border-radius:18px; cursor:pointer; transition:background 0.13s, box-shadow 0.13s; box-shadow:0 3px 15px #0002,0 0px 8px #22d07a19; opacity:0.94;}
+    .submit-btn:active { background:#22d07a; color:#1a1d16; }
+    .feedback { margin-top:22px; font-family:'Montserrat',sans-serif; font-weight:800; font-size:1.25em; color:#22d07a; opacity:0; transform:translateY(12px); animation:fadeInUp 0.38s 0.2s forwards; text-shadow:0 2px 8px #1c7c4a38;}
+    .feedback.wrong { color:#fa9660; text-shadow:0 1.5px 7px #f6e26d24; }
+    @keyframes fadeInUp { to { opacity:1; transform: none; } }
+    .footer { position:fixed; bottom:0; left:0; width:100vw; padding:12px 0; background:rgba(40,20,60,0.16); color:#f6e26d; font-family:'Montserrat',sans-serif; font-weight:700; text-align:center; backdrop-filter:blur(4px); pointer-events:none;}
+    @media (max-width:900px) {.memory-board{grid-template-columns:repeat(3,1fr);gap:18px;min-width:240px;max-width:94vw;}}
+    @media (max-width:600px) {.memory-board{grid-template-columns:repeat(2,1fr);max-width:96vw;}.quiz-card{padding:16px 1vw 16px;}}
+  </style>
+</head>
+<body>
+  <div class="quiz-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="blob blob4"></div>
+  </div>
+  <div class="quiz-timer" id="quizTimer">60</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+    <span class="progress-label" id="progressLabel"></span>
+  </div>
+  <div class="quiz-card" id="quizCard"></div>
+  <div class="footer">All rights reserved by Joseph 2025</div>
+  <!-- SFX -->
+  <audio id="audio-flip" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/mouse_click.wav" preload="auto"></audio>
+  <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
+  <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
+
+  <script>
+// === USER/AVATAR INFO ===
+const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
+const avatarMap = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
+const avatar = `<img src="/static/images/avatar/${avatarMap[avatarIdx]}.png"/>`;
+const userName = localStorage.getItem('quiz_username') || "Player";
+
+// === STATE ===
+let questionData = {}, cards = [], flipped = [], matched = [], answered = false, tempWrong = [];
+
+function shuffleArray(array) {
+  let arr = array.slice(), n = arr.length, i;
+  for (i = n - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function prepareCards(pairs) {
+  let cardList = [];
+  pairs.forEach((pair, idx) => {
+    cardList.push({pair: idx, type: 'front', content: pair.front});
+    cardList.push({pair: idx, type: 'back',  content: pair.back});
+  });
+  return shuffleArray(cardList);
+}
+
+function renderCard() {
+  flipped = []; matched = []; answered = false; tempWrong = [];
+  document.getElementById('quizTimer').classList.remove('warning');
+
+  // Progress bar and label
+  if (window.quizQuestionIdx && window.quizTotalQuestions) {
+    const pct = ((window.quizQuestionIdx) / window.quizTotalQuestions * 100).toFixed(1) + '%';
+    document.getElementById('progressBar').style.width = pct;
+    document.getElementById('progressLabel').innerText = `${window.quizQuestionIdx} / ${window.quizTotalQuestions}`;
+  }
+
+  document.getElementById('quizCard').innerHTML = `
+    <div class="user-bar">
+      <span class="avatar-quiz">${avatar}</span>
+      <span class="username-quiz">${userName}</span>
+    </div>
+    <h2>${questionData.question || "Match each pair"}</h2>
+    ${questionData.hint ? `<div class="hint">${questionData.hint}</div>` : ""}
+    <div class="memory-grid-bg">
+      <div class="memory-board" id="memoryBoard"></div>
+    </div>
+    <div class="feedback" id="feedback" style="display:none"></div>
+    <button class="submit-btn" id="submitBtn" style="display:none;">Continue</button>
+  `;
+  buildBoard();
+  document.getElementById('submitBtn').onclick = () => {
+    const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
+    quizFlow.finishQuestion(matched.length === cards.length, secs);
+  };
+}
+
+function buildBoard() {
+  const board = document.getElementById('memoryBoard');
+  board.innerHTML = '';
+  cards.forEach((card, i) => {
+    let isFlipped = flipped.includes(i) || matched.includes(i) || tempWrong.includes(i);
+    let isMatched = matched.includes(i);
+    let cardDiv = document.createElement('div');
+    cardDiv.className = 'memory-card';
+    if (isMatched) cardDiv.classList.add('matched');
+    else if (flipped.includes(i)) cardDiv.classList.add('flipped');
+    if (tempWrong.includes(i)) cardDiv.classList.add('incorrect', 'flipped');
+    cardDiv.dataset.idx = i;
+    cardDiv.onclick = () => flipCard(i);
+
+    // Always show content if matched/flipped/tempWrong, otherwise show ?
+    let showFront = isMatched || flipped.includes(i) || tempWrong.includes(i);
+    cardDiv.innerHTML = `
+      <div class="memory-inner">
+        <div class="memory-front" style="display:${showFront?'flex':'none'};">${card.content}</div>
+        <div class="memory-back" style="display:${showFront?'none':'flex'};">?</div>
+      </div>
+    `;
+    board.appendChild(cardDiv);
+
+    // Animate matched
+    if (isMatched) {
+      gsap.fromTo(cardDiv, {boxShadow:'0 0 0 0 #22d07a00'}, {boxShadow:'0 0 24px 10px #22d07a77', duration:0.4, yoyo:true, repeat:1, ease:"power1.inOut"});
+    }
+  });
+  // Animate flip for newly flipped card (but not for matched)
+  board.querySelectorAll('.memory-card').forEach((cardDiv, idx) => {
+    if ((flipped.includes(idx) || tempWrong.includes(idx)) && !matched.includes(idx)) {
+      gsap.to(cardDiv.querySelector('.memory-inner'), {rotateY:180, duration:0.38, ease:"power2.inOut"});
+    } else if (!flipped.includes(idx) && !matched.includes(idx) && !tempWrong.includes(idx)) {
+      gsap.to(cardDiv.querySelector('.memory-inner'), {rotateY:0, duration:0.38, ease:"power2.inOut"});
+    } else if (matched.includes(idx)) {
+      gsap.set(cardDiv.querySelector('.memory-inner'), {rotateY:180});
+    }
+  });
+}
+
+function flipCard(idx) {
+  if (answered) return;
+  if (flipped.length === 2 || flipped.includes(idx) || matched.includes(idx) || tempWrong.length) return;
+  flipped.push(idx);
+  document.getElementById('audio-flip').currentTime = 0;
+  document.getElementById('audio-flip').play();
+  buildBoard();
+  if (flipped.length === 2) {
+    setTimeout(checkMatch, 350);
+  }
+}
+
+function checkMatch() {
+  const [i, j] = flipped;
+  let board = document.getElementById('memoryBoard');
+  let cardEls = board.querySelectorAll('.memory-card');
+  if (cards[i].pair === cards[j].pair && cards[i].type !== cards[j].type) {
+    matched.push(i, j);
+    [i,j].forEach(idx=>{
+      cardEls[idx].classList.add('matched','correct');
+      gsap.fromTo(cardEls[idx], {boxShadow:'0 0 0 0 #22d07a00'}, {boxShadow:'0 0 24px 10px #22d07a77', duration:0.4, yoyo:true, repeat:1, ease:"power1.inOut"});
+    });
+    document.getElementById('audio-correct').currentTime = 0;
+    document.getElementById('audio-correct').play();
+    flipped = [];
+    buildBoard();
+    if (matched.length === cards.length) {
+      setTimeout(()=>submitAnswer(true), 500);
+    }
+  } else {
+    tempWrong = [i,j];
+    buildBoard();
+    [i,j].forEach(idx=>{
+      cardEls[idx].classList.add('incorrect','shake');
+      gsap.fromTo(cardEls[idx].querySelector('.memory-inner'), {x:0}, {x:8, yoyo:true, repeat:3, duration:0.11, onComplete:()=>{
+        cardEls[idx].classList.remove('shake','incorrect');
+      }});
+    });
+    document.getElementById('audio-wrong').currentTime = 0;
+    document.getElementById('audio-wrong').play();
+    setTimeout(()=>{
+      tempWrong = [];
+      flipped = [];
+      buildBoard();
+    }, 550);
+  }
+}
+
+function submitAnswer(win) {
+  answered = true;
+  let msg = '';
+  if (win) {
+    msg = `<span style="color:#22d07a;">🎉 You won! All pairs matched in time.</span>`;
+  } else if (matched.length === cards.length) {
+    msg = `<span style="color:#22d07a;">🎉 You won! But out of time.</span>`;
+  } else {
+    msg = `<span style="color:#fa9660;">⏰ Game Over. Try again!</span>`;
+  }
+  let fb = document.getElementById('feedback');
+  fb.innerHTML = msg;
+  fb.style.display = '';
+  document.getElementById('submitBtn').style.display = '';
+  setTimeout(() => {
+    document.getElementById('submitBtn').style.display = '';
+    // For auto-next, call finishQuestion after delay:
+    const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
+    quizFlow.finishQuestion(matched.length === cards.length, isNaN(secs) ? 0 : secs);
+  }, 1200);
+}
+
+// For timeout feedback via quick_flow.js
+window.showFeedback = function(correct) { submitAnswer(false); };
+
+// === INIT QUIZ ENGINE ===
+document.addEventListener('DOMContentLoaded', () => {
+  quizFlow.initQuestion((q, idx, total) => {
+    if (q.type !== 'memory_match') {
+      // fallback to correct page
+      const routes = {
+        multiple_choice:  '/quiz/form/quiz_multiple_choice',
+        fill_in_blank:    '/quiz/form/quiz_fill_in_blank',
+        match:            '/quiz/form/quiz_match',
+        drag_and_drop:    '/quiz/form/drag_drop',
+        categorize:       '/quiz/form/categorize',
+        target_shooter:   '/quiz/form/target_shooter'
+      };
+      return location.replace(routes[q.type]);
+    }
+    window.quizQuestionIdx = idx;
+    window.quizTotalQuestions = total;
+    questionData = JSON.parse(JSON.stringify(q));
+    cards = prepareCards(questionData.pairs);
+    renderCard();
+  });
+});
+</script>
+</body>
+
+
+</html>

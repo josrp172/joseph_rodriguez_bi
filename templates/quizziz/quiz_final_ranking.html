@@ -15,6 +15,9 @@
   <!-- Fonts and Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics-compat.js"></script>
 
     <style>
       html, body {
@@ -400,16 +403,52 @@
 <audio id="audioCatchingUp" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/robot_voice_catching_up.wav" preload="auto"></audio>
 
 <script>
-    // =============== DATA AND SOCKET LOGIC ===============
+
+   // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyD4nunvXMRmcXybteTDioV1lUHoF4z3-JA",
+    authDomain: "sephquiz.firebaseapp.com",
+    databaseURL: "https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "sephquiz",
+    storageBucket: "sephquiz.firebasestorage.app",
+    messagingSenderId: "649697432760",
+    appId: "1:649697432760:web:0f8f6642fbfbda835d904d",
+    measurementId: "G-E49HMR7MWG"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+   function writeFinalScoresToFirebase(players) {
+    const gameId = Date.now(); // Or use a unique code
+    const updates = {};
+    players.forEach(p => {
+      updates[`/games/${gameId}/scores/${p.id}`] = {
+        name: p.name,
+        score: p.score || 0,
+        avatar: p.avatar,
+        progress: p.progress || 0
+      };
+    });
+
+    db.ref().update(updates)
+      .then(() => console.log("✅ Scores saved to Firebase"))
+      .catch(err => console.error("❌ Firebase error:", err));
+  }
+
+
+     // =============== DATA AND SOCKET LOGIC ===============
     const avatarKeys = [
-        "eleven", "jesse", "Katniss", "leonard",
-        "lisa", "morty", "rick", "sheldon",
-        "walter", "wednesday"
+        "eleven","jesse","Katniss","leonard",
+        "lisa","morty","rick","sheldon",
+        "walter","wednesday"
     ];
 
     const isDevMock = window.location.hash === "#devmock";
     let participants = [];
-    let initialAnimationDone = false; // To ensure animations run only once
+    let initialAnimationDone = false;  // ensures our entry animations only run once per data load
     const socket = window.quizSocket;
 
     let stageClearPlayed = false;
@@ -418,33 +457,34 @@
 
     function playCatchingUpOnce() {
         if (catchingUpPlayed || isAnyAudioPlaying) return;
-        let audioEl = document.getElementById("audioCatchingUp");
+        const audioEl = document.getElementById("audioCatchingUp");
         if (!audioEl) return;
         isAnyAudioPlaying = true;
         catchingUpPlayed = true;
         audioEl.currentTime = 0;
-        audioEl.play().catch(() => {});
-        setTimeout(() => { isAnyAudioPlaying = false; }, 3500); // Adjust to actual sound length
+        audioEl.play().catch(()=>{});
+        setTimeout(()=>{ isAnyAudioPlaying = false; }, 3500);
     }
 
     function playStageClearOnce() {
         if (stageClearPlayed || isAnyAudioPlaying) return;
-        let audioEl = document.getElementById("audioStageClear");
+        const audioEl = document.getElementById("audioStageClear");
         if (!audioEl) return;
         isAnyAudioPlaying = true;
         stageClearPlayed = true;
         audioEl.currentTime = 0;
-        audioEl.play().catch(() => {});
-        setTimeout(() => { isAnyAudioPlaying = false; }, 3200); // adjust for actual length
+        audioEl.play().catch(()=>{});
+        setTimeout(()=>{ isAnyAudioPlaying = false; }, 3200);
     }
 
     if (isDevMock) {
+        // ——— DEV-MOCK MODE ———
         const fakeNames = [
-          "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Robin", "Skyler", "Reese", "Riley",
-          "Quinn", "Drew", "Avery", "Parker", "Kai", "Emerson", "Hayden", "Rowan", "Sage", "Peyton",
-          "Finley", "Dakota", "Remy"
+          "Alex","Jamie","Taylor","Jordan","Morgan","Casey","Robin","Skyler","Reese","Riley",
+          "Quinn","Drew","Avery","Parker","Kai","Emerson","Hayden","Rowan","Sage","Peyton",
+          "Finley","Dakota","Remy"
         ];
-        const totalQuestions = 10; // Or whatever number you want
+        const totalQuestions = 10;
 
         const fakePlayers = Array.from({ length: 23 }, (_, i) => ({
           id:   "fake_" + i,
@@ -452,90 +492,91 @@
           avatar: i % avatarKeys.length,
           score: Math.floor(Math.random() * 1200) + 50,
           isMe: false,
-          // random progress for everyone (some finish, some not)
           progress: Math.floor(Math.random() * (totalQuestions + 1))
         }));
         const myPlayer = {
-            id: 'my_fake_id',
+            id:   'my_fake_id',
             name: 'Joseph',
-            avatar: 4, // lisa avatar
-            score: Math.floor(Math.random() * 500) + 800, // Score between 800-1300
+            avatar: 4,
+            score: Math.floor(Math.random() * 500) + 800,
             isMe: true,
-            progress: totalQuestions // always completed for you
+            progress: totalQuestions
         };
-        participants = [myPlayer, ...fakePlayers].sort((a, b) => b.score - a.score);
+        participants = [ myPlayer, ...fakePlayers ]
+                        .sort((a,b) => b.score - a.score);
 
-        // Use a DOMContentLoaded listener to ensure elements are ready before rendering.
+        // Render as soon as DOM is ready
         if (document.readyState === "complete" || document.readyState === "interactive") {
             renderAll();
         } else {
             window.addEventListener('DOMContentLoaded', renderAll);
         }
-    } else {
-        // Real data logic
-        // Listen for continuous player list updates
-        socket.on('player_list', (players) => {
-          fetchTotalQuestions().then(() => {
-              participants = players
-            .map(p => ({
-                id: p.id,
-                name: p.name,
-                avatar: p.avatar,
-                score: p.score != null ? p.score : p.total,
-                progress: typeof p.progress === "number" ? p.progress : 0, // <-- add this line
-                isMe: p.id === socket.id
-            }))
-            .sort((a, b) => (b.score || 0) - (a.score || 0)); // Sort by score
-            renderAll();
-           });
 
+    } else {
+        // ——— REAL-DATA MODE ———
+        // Show waiting UI immediately on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+        });
+        let firebaseScoresWritten = false;
+
+        socket.on('player_list', (players) => {
+            fetchTotalQuestions().then(() => {
+                participants = players
+                  .map(p => ({
+                    id:       p.id,
+                    name:     p.name,
+                    avatar:   p.avatar,
+                    score:    p.score != null ? p.score : p.total,
+                    progress: typeof p.progress === "number" ? p.progress : 0,
+                    isMe:     p.id === socket.id
+                  }))
+                  .sort((a,b) => (b.score||0) - (a.score||0));
+
+                // reset so entry animations & confetti run on the real data
+                initialAnimationDone = false;
+
+                renderAll();
+                // Only write to Firebase if everyone is finished, and only once
+                const allDone = participants.every(p => p.progress >= totalQuestions);
+                if (allDone && !firebaseScoresWritten) {
+                  writeFinalScoresToFirebase(participants);
+                  firebaseScoresWritten = true;
+                }
+
+            });
         });
 
-        // Request the initial list of players
+        // Ask the server for the player list right away
         socket.emit('admin_get_players');
 
-        // Fallback for single-player or slow connections
-        setTimeout(() => {
-            if (participants && participants.length === 0) {
-                const name = localStorage.getItem('quiz_username') || 'Player';
-                const avatar = +localStorage.getItem('quizPlayerAvatar') || 0;
-                const scores = JSON.parse(localStorage.getItem('quiz::scores') || '[0]');
-                const total = scores.reduce((a, b) => a + b, 0);
-
-                participants = [{
-                    id: "me",
-                    name,
-                    avatar,
-                    score: total,
-                    isMe: true
-                }];
-                renderAll();
-            }
-        }, 800);
+        // (The old 800 ms fallback has been removed)
     }
 
-    // Main function to render/update the entire display
+    // =============== RENDER & ANIMATION ===============
     function renderAll() {
         const waitingDiv = document.getElementById('waitingResults');
         if (!participants || participants.length === 0) {
-            if (waitingDiv) waitingDiv.style.display = 'block';
+            if (waitingDiv) {
+                waitingDiv.style.display = 'block';
+                startWaitingAnimation();
+            }
             document.getElementById('podiumRow').innerHTML = '';
             document.getElementById('finalLeaderboard').innerHTML = '';
             return;
         }
+        if (waitingDiv) {
+            waitingDiv.style.display = 'none';
+            stopWaitingAnimation();
+        }
 
-        if (waitingDiv) waitingDiv.style.display = 'none';
-
-        // Always re-render the HTML to show latest scores and ranks
         renderPodium(participants);
         renderLeaderboard(participants);
 
-        // But only trigger the entrance animations on the very first render
         if (!initialAnimationDone) {
             animatePodium();
             animateLeaderboard();
-            playStageClearOnce();      // <<---- ADD THIS LINE!
-            // Schedule catching up voice after 18 seconds
+            playStageClearOnce();
             setTimeout(playCatchingUpOnce, 18000);
             initialAnimationDone = true;
         }
@@ -543,28 +584,37 @@
 
     let totalQuestions = 0;
 
-    async function fetchTotalQuestions() {
-      try {
-        const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
-        const blocks = raw
-          .trim()
-          .split(/^---$/m)
-          .map(b => {
-            const sanitized = b.replace(/\/\/.*$/gm, '');
-            try {
-              return JSON.parse(sanitized);
-            } catch (e) {
-              return null;
-            }
-          })
-          .filter(Boolean);
-        totalQuestions = blocks.length;
-        window.totalQuizQuestions = totalQuestions;
-      } catch (e) {
-        totalQuestions = 0;
-        window.totalQuizQuestions = 0;
-      }
+async function fetchTotalQuestions() {
+  const Q_KEY = 'quiz::questions';
+  if (localStorage.getItem(Q_KEY)) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(Q_KEY));
+      totalQuestions = Array.isArray(arr) ? arr.length : 0;
+      window.totalQuizQuestions = totalQuestions;
+      return;
+    } catch (e) {
+      localStorage.removeItem(Q_KEY); // fallback if broken
     }
+  }
+  // fallback to txt file
+  try {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    const blocks = raw
+      .trim()
+      .split(/^---$/m)
+      .map(b => {
+        const sanitized = b.replace(/\/\/.*$/gm, '');
+        try { return JSON.parse(sanitized); }
+        catch { return null; }
+      })
+      .filter(Boolean);
+    totalQuestions = blocks.length;
+    window.totalQuizQuestions = totalQuestions;
+  } catch (e) {
+    totalQuestions = 0;
+    window.totalQuizQuestions = 0;
+  }
+}
 
 // Podium rendering with completion indicator
 function renderPodium(participants) {
@@ -651,14 +701,18 @@ function renderLeaderboard(participants) {
 }
 
 function animatePodium() {
-    const podiums = [
-        document.querySelector('.podium-1'),
-        document.querySelector('.podium-2'),
-        document.querySelector('.podium-3'),
-    ].filter(Boolean);
+    // Only animate podiums that have content (player)
+    const podiums = Array.from(document.querySelectorAll('.podium-place'))
+        .filter(el => el.querySelector('.podium-avatar')); // has player
 
-    // Entrance: Podium 2 (left), 3 (right), 1 (center) last
-    const entranceOrder = [podiums[1], podiums[2], podiums[0]];
+    let entranceOrder;
+    if (podiums.length === 1) {
+        entranceOrder = [podiums[0]];
+    } else if (podiums.length === 2) {
+        entranceOrder = podiums;
+    } else {
+        entranceOrder = [podiums[1], podiums[2], podiums[0]].filter(Boolean);
+    }
 
     gsap.set(podiums, { opacity: 0, y: -120, scale: 0.5, filter: "blur(12px)" });
 
@@ -671,22 +725,18 @@ function animatePodium() {
             ease: "elastic.out(1, 0.7)",
             delay: 0.15 * i,
             onComplete: () => {
-                // Special celebration for 1st place (center podium)
                 if (el.classList.contains("podium-1")) {
-                    // Big pulse/glow on arrival
                     gsap.fromTo(el,
                         { scale: 1, boxShadow: "0 0 0px #ffe97e90" },
                         { scale: 1.14, boxShadow: "0 0 80px #ffe97ecc", duration: 0.23, yoyo: true, repeat: 1, ease: "expo.inOut" }
                     );
-                    // Confetti burst
                     confettiBurst(el);
-
-
                 }
             }
         });
     });
 }
+
 
 function animateLeaderboard() {
     const rows = document.querySelectorAll('.ranking-row');
@@ -825,6 +875,10 @@ function renderAll() {
             });
         }
     }
+
+
+
+
 
 </script>
 

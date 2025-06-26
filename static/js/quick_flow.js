@@ -7,41 +7,53 @@
   const SCORE_KEY = 'quiz::scores';
 
   // HELPERS
-  async function loadBank() {
+async function loadBank() {
+  const Q_KEY = 'quiz::questions';
+  // 1. Prefer loaded form from localStorage (set by admin "Choose Questionnaire" modal)
+  if (localStorage.getItem(Q_KEY)) {
     try {
-  //    if (localStorage.getItem(Q_KEY))
-   //     return JSON.parse(localStorage.getItem(Q_KEY));
-      const raw = await fetch(TXT_URL).then(r => r.text());
-      // after — strip JS-style comments, then parse
-const blocks = raw
-  .trim()
-  .split(/^---$/m)
-  .map(b => {
-    // remove any // … comment at end of a line
-    const sanitized = b.replace(/\/\/.*$/gm, '');
-    try {
-      return JSON.parse(sanitized);
+      return JSON.parse(localStorage.getItem(Q_KEY));
     } catch (e) {
-      console.warn("Failed to parse block:", e);
-      return null;
-    }
-  })
-  .filter(Boolean);
-      localStorage.setItem(Q_KEY, JSON.stringify(blocks));
-      return blocks;
-    } catch (e) {
-      alert("Error loading questions."); location.replace('quiz_error.html');
-      return [];
+      // fallback if parsing fails, clear broken data
+      localStorage.removeItem(Q_KEY);
     }
   }
-  function nextPath(type) {
-    return ({
+  // 2. Fallback: load default quiz_questions.txt from server
+  try {
+    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+    // Support multiple blocks separated by "---", parse each one
+    const blocks = raw
+      .trim()
+      .split(/^---$/m)
+      .map(b => {
+        // Remove JS-style comments
+        const sanitized = b.replace(/\/\/.*$/gm, '');
+        try {
+          return JSON.parse(sanitized);
+        } catch (e) {
+          console.warn("Failed to parse block:", e, sanitized);
+          return null;
+        }
+      })
+      .filter(Boolean);
+    localStorage.setItem(Q_KEY, JSON.stringify(blocks));
+    return blocks;
+  } catch (e) {
+    alert("Error loading questions.");
+    return [];
+  }
+}
+function nextPath(type) {
+  return ({
     multiple_choice:    '/quiz/form/quiz_multiple_choice',
     fill_in_blank:      '/quiz/form/quiz_fill_in_blank',
     match:              '/quiz/form/quiz_match',
     drag_and_drop:      '/quiz/form/drag_drop',
-    })[type];
-  }
+    categorize:         '/quiz/form/categorize',
+    target_shooter:     '/quiz/form/target_shooter',
+    memory_match:       '/quiz/form/memory_match'
+  })[type];
+}
 
   // PUBLIC API
   window.quizFlow = {
@@ -51,14 +63,18 @@ const blocks = raw
       const q = bank[idx];
       if (!q) return location.replace('/quiz/initial_ranking');
       renderFn(q, idx + 1, bank.length);
-      this.startTimer(30, secsLeft => {
-        if (secsLeft === 0) this.finishQuestion(false, 0);
-        else if (secsLeft <= 10)
-          document.getElementById('quizTimer').classList.add('warning');
-      });
+      const globalTimer = Number(localStorage.getItem('quiz::timer')) || 30;
+        this.startTimer(globalTimer, secsLeft => {
+          if (secsLeft === 0) this.finishQuestion(false, 0);
+          else if (secsLeft <= 10)
+            document.getElementById('quizTimer').classList.add('warning');
+        });
     },
      finishQuestion: async function(correct, secsLeft) {
-      const score = correct ? 100 - (30 - secsLeft) * 2 : 0;
+     const totalTime = Number(localStorage.getItem('quiz::timer')) || 30;
+     const score = correct
+       ? Math.round(70 + (secsLeft / totalTime) * 30)
+       : 0;
       const scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
       scores.push(score);
       localStorage.setItem(SCORE_KEY, JSON.stringify(scores));

@@ -18,6 +18,28 @@
       justify-content: center;
       position: relative;
     }
+
+      .quizseph-logo-header {
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1001;
+      height: 68px;
+      background: rgba(40,20,60,0.97);
+      box-shadow: 0 2px 18px #2e143232;
+    }
+    .quizseph-logo-header img {
+      height: 56px;
+      width: auto;
+      max-width: 250px;
+      object-fit: contain;
+      margin: 0 14px;
+      transition: height 0.2s;
+    }
     .quiz-bg-blobs {
       position: fixed; top:0; left:0; width:100vw; height:100vh; z-index: 0; pointer-events: none;
     }
@@ -44,6 +66,8 @@
     .waiting-card {
       background: rgba(40,20,60,0.82);
       color: #fff;
+      position: relative;
+      overflow: visible;
       padding: 46px 44px 36px 44px;
       border-radius: 28px;
       text-align: center;
@@ -366,6 +390,50 @@
       gap: 10px 12px; /* adds vertical and horizontal spacing */
       margin-top: 10px; /* spacing from label */
     }
+.quiz-info-categories {
+  display: inline-block;
+  max-width: 190px;      /* adjust width as needed for your card */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  font-size: 0.88em;
+  color: #e6e0fa;
+  margin-left: 3px;
+  margin-right: 2px;
+  font-weight: 500;
+}
+.quiz-info-card {
+
+  box-sizing: border-box;
+  background: linear-gradient(90deg, #4b1859cc 85%, #f6e26d1a 100%);
+  border-radius: 13px;
+  box-shadow: 0 2px 12px #7e238528;
+  color: #fffde9;
+  font-size: 0.98em;
+}
+@keyframes fadeQuizCardIn { from { opacity: 0; transform: translateY(-16px);} to { opacity:1; transform:none;}}
+
+.quiz-info-card .quiz-label {
+  font-size: 1.02em;
+  font-weight: 700;
+  color: #f6e26d;
+  margin-bottom: 1px;
+  letter-spacing: 0.02em;
+}
+.quiz-info-card .quiz-meta {
+  font-size: 0.98em;
+  color: #faeabc;
+  margin-bottom: 2px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.quiz-info-card .quiz-timer {
+  font-size: 1.01em;
+  color: #22d07a;
+  font-weight: 700;
+  margin-top: 2px;
+}
 
 .spline-robot-container {
   position: fixed;
@@ -407,10 +475,144 @@
     opacity: 0.7;
   }
 }
+.waiting-card .quiz-info-card {
+  margin: 8px 0 10px 0;
+  padding: 7px 13px 7px 13px;
+  font-size: 0.99em;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #6a168644 85%, #faeabc22 100%);
+  box-shadow: 0 2px 6px #0001;
+  color: #fffde9;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  min-height: unset;
+  border: 1px solid #fff1;
+}
+
+
+
+.quiz-info-label {
+  color: #f6e26d;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+.quiz-info-details {
+  color: #fffde9;
+  font-weight: 500;
+  font-size: 0.99em;
+  margin-right: 8px;
+}
+
+.quiz-info-timer {
+  color: #22d07a;
+  font-weight: 700;
+  font-size: 1em;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+.quiz-info-timer:before {
+  content: "⏱";
+  margin-right: 3px;
+  font-size: 1.07em;
+}
+
+/* Tooltip styles */
+.quiz-info-tooltip-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 4px;
+}
+.quiz-info-icon {
+  cursor: pointer;
+  color: #ffd46d;
+  font-size: 1em;
+  margin-left: 2px;
+  transition: color 0.2s;
+  border-radius: 50%;
+  padding: 0 2px;
+  border: none;
+  outline: none;
+}
+.quiz-info-icon:hover,
+.quiz-info-icon:focus {
+  color: #ffe790;
+  background: #0002;
+}
+.quiz-info-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  max-width: 270px;
+  background: #26163c;
+  color: #fffde9;
+  text-align: left;
+  border-radius: 8px;
+  padding: 7px 13px;
+  position: absolute;
+  z-index: 10;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.98em;
+  font-weight: 500;
+  transition: opacity 0.18s;
+  box-shadow: 0 2px 9px #0002;
+  pointer-events: none;
+  white-space: pre-line;
+  line-height: 1.3;
+}
+.quiz-info-icon:hover + .quiz-info-tooltip,
+.quiz-info-icon:focus + .quiz-info-tooltip {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+.quiz-info-icon:active + .quiz-info-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+.quiz-info-card .quiz-info-timer:before {
+  content: "⏱";
+  margin-right: 3px;
+  font-size: 1.07em;
+}
+@media (max-width: 700px) {
+  .quiz-info-card { flex-direction: column; align-items: flex-start; min-width: 140px; padding: 7px 8vw; }
+  .quiz-info-card .quiz-info-details { margin-right: 6px; }
+}
+
+    .quizseph-logo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 200px;
+  z-index: 1100;
+  margin: 10px 0 0 14px;
+  pointer-events: none; /* Makes sure it never blocks clicks */
+  /* Optional: Add subtle drop shadow for readability */
+  filter: drop-shadow(0 2px 8px #0003);
+}
+
+@media (max-width: 600px) {
+  .quizseph-logo-overlay {
+    height: 36px;
+    max-width: 90px;
+    margin: 6px 0 0 6px;
+  }
+}
 
   </style>
 </head>
 <body>
+   <!-- QUIZSEPH Logo Header -->
+ <img src="/static/images/logo/logo_200_100.png" alt="QUIZSEPH Logo"
+     class="quizseph-logo-overlay" />
+
   <!-- Animated Blobs -->
   <div class="quiz-bg-blobs">
     <div class="blob blob1"></div>
@@ -423,11 +625,11 @@
   <div class="spline-robot-container">
     <iframe src="https://my.spline.design/genkubgreetingrobot-8NWhFu34Nolgs3NHyJbHsODs/" frameborder="0" width="100%" height="100%"></iframe>
   </div>
-  <!-- ...inside <body> ... -->
+
   <div class="waiting-card" id="mainCard">
     <h1>Hang tight! The host will start soon.</h1>
+    <div id="currentQuizInfo" class="quiz-info-card" style="display:none; margin: 0 auto 10px auto;"></div>
     <div class="avatar-section">
-      <!-- Your name & avatar at the top -->
       <div class="current-user-card" id="currentUserCard">
         <span id="myAvatar" class="avatar-top" aria-label="Your avatar"></span>
         <span id="myName" class="my-name"></span>
@@ -440,7 +642,6 @@
     </div>
     <div class="participants-meta" id="participantsMeta"></div>
     <div class="participants-list" id="participantsList"></div>
-    <!-- THE GIF PREVIEW IS NOW ABSOLUTE OVERLAY, NO GAP! -->
     <div class="main-gif-preview" id="mainGifPreview"></div>
     <div style="margin:17px 0 8px 0;">
       <div style="color:#fff; font-weight:500; font-size:1.08em; margin-bottom: 6px;">Send a GIF:</div>
@@ -449,11 +650,11 @@
     <div id="waitingStatus">Hang tight! The host will start soon.</div>
   </div>
 
-  <audio id="audioAvatarPicking" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_avatar_picking.wav" preload="auto"></audio> <!- 5 secs ->
-  <audio id="audioWaiting" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_waiting_2.wav" preload="auto"></audio> <!- 7 secs ->
-  <audio id="audioGifSend" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_send.wav" preload="auto"></audio> <!- 5 secs ->
-  <audio id="audioGifReceive" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_receive.wav" preload="auto"></audio>  <!- 6 secs ->
-  <!-- <audio id="robotAudio" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_1.wav" preload="auto"></audio> -->
+  <!-- (audio and scripts unchanged) -->
+  <audio id="audioAvatarPicking" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_avatar_picking.wav" preload="auto"></audio>
+  <audio id="audioWaiting" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_waiting_2.wav" preload="auto"></audio>
+  <audio id="audioGifSend" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_send.wav" preload="auto"></audio>
+  <audio id="audioGifReceive" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/lobby_robot_voice_gif_receive.wav" preload="auto"></audio>
 
 <script>
 const avatars = [
@@ -492,6 +693,74 @@ const audioDurations = {
 };
 
 let isAnyAudioPlaying = false;
+const FIREBASE_DB_URL = "https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app";
+const socket = io({ transports: ['websocket'] });
+
+// 1. Fetch current selected questionnaire from Firebase on load:
+function fetchCurrentQuestionnaire() {
+  fetch(`${FIREBASE_DB_URL}/selected_questionnaire.json`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.id) {
+        fetch(`${FIREBASE_DB_URL}/generated_quizzes/${data.id}.json`)
+          .then(res => res.json())
+          .then(formData => {
+            if (formData && formData.meta) {
+              renderQuizInfoCard({
+                id: data.id,
+                title: formData.meta.formName || `Quiz ${data.id.replace('quiz_', '')}`,
+                categories: formData.meta.categories || [],
+                numQuestions: formData.meta.numQuestions || (formData.questions ? formData.questions.length : '?'),
+                timer: formData.meta.timer || 30,
+                questions: formData.questions || [],
+              });
+            } else {
+              renderQuizInfoCard(null);
+            }
+          })
+          .catch(() => renderQuizInfoCard(null));
+      } else {
+        renderQuizInfoCard(null);
+      }
+    });
+}
+
+
+// (Reuse existing socket if already declared above)
+// You may already have this: `var socket = io({ ... });`
+// If so, use that one and just add this handler:
+
+socket.on('selected_questionnaire_updated', function(payload) {
+  if (payload && payload.id) {
+    fetch(`${FIREBASE_DB_URL}/generated_quizzes/${payload.id}.json`)
+      .then(res => res.json())
+      .then(formData => {
+        if (formData && formData.meta) {
+          renderQuizInfoCard({
+            id: payload.id,
+            title: formData.meta.formName || `Quiz ${payload.id.replace('quiz_', '')}`,
+            categories: formData.meta.categories || [],
+            numQuestions: formData.meta.numQuestions || (formData.questions ? formData.questions.length : '?'),
+            timer: formData.meta.timer || 30,
+            questions: formData.questions || [],
+          });
+          localStorage.setItem('quiz::timer', formData.meta.timer || 30);
+
+        } else {
+          renderQuizInfoCard(null);
+        }
+      })
+      .catch(() => renderQuizInfoCard(null));
+
+    alert('Quiz was updated by host. Please wait while we load the new quiz!');
+  }
+});
+
+window.addEventListener('DOMContentLoaded', fetchCurrentQuestionnaire);
+
+
+
+
 
 function playAudioOnce(type) {
   if (audioPlayed[type] || isAnyAudioPlaying) return;
@@ -540,7 +809,6 @@ function animateCurrentUserCard() {
 document.getElementById('myName').textContent = myName;
 document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
 
-var socket = io({ transports: ['websocket'] });
 let participants = [];
 
 // Redirect when quiz starts
@@ -875,6 +1143,70 @@ socket.on('force_leave', function() {
     playAudioOnce("waiting");
   }, 3000); // 5 seconds
 });
+
+
+
+function renderQuizInfoCard(form) {
+  const infoDiv = document.getElementById('currentQuizInfo');
+  if (!form) {
+    infoDiv.style.display = "none";
+    return;
+  }
+
+  const catList = (form.categories || []).join(', ') || 'N/A';
+
+  infoDiv.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="quiz-info-label">Quiz</span>
+      <span class="quiz-info-details">${form.title || form.formName || form.id || ''}</span>
+      <span style="margin-left:12px;display:flex;align-items:center;">
+        <span class="quiz-info-label">Categories</span>
+        <span class="quiz-info-tooltip-container">
+          <span class="quiz-info-icon" tabindex="0">&#9432;</span>
+          <span class="quiz-info-tooltip">${catList}</span>
+        </span>
+      </span>
+    </div>
+    <div style="margin-top:3px;display:flex;align-items:center;gap:20px;">
+      <span class="quiz-info-label">Q's</span>
+      <span class="quiz-info-details">${form.numQuestions || (form.questions ? form.questions.length : '?')}</span>
+      <span class="quiz-info-timer">${form.timer || 30}s</span>
+    </div>
+  `;
+  infoDiv.style.display = "";
+}
+
+function fetchCurrentQuestionnaire() {
+  fetch(`${FIREBASE_DB_URL}/selected_questionnaire.json`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.id) {
+        fetch(`${FIREBASE_DB_URL}/generated_quizzes/${data.id}.json`)
+          .then(res => res.json())
+          .then(formData => {
+            if (formData && formData.meta) {
+              renderQuizInfoCard({
+                id: data.id,
+                title: formData.meta.formName || `Quiz ${data.id.replace('quiz_', '')}`,
+                categories: formData.meta.categories || [],
+                numQuestions: formData.meta.numQuestions || (formData.questions ? formData.questions.length : '?'),
+                timer: formData.meta.timer || 30,
+                questions: formData.questions || [],
+              });
+              localStorage.setItem('quiz::timer', formData.meta.timer || 30);
+
+            } else {
+              renderQuizInfoCard(null);
+            }
+          })
+          .catch(() => renderQuizInfoCard(null));
+
+      } else {
+        renderQuizInfoCard(null);
+      }
+    });
+}
+
 
 // Initial UI
 renderAvatars();

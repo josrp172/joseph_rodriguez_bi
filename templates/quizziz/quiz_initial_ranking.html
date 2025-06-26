@@ -386,6 +386,18 @@ body, .leaderboard-main-container {
 
   let totalQuestions = 0;
 async function fetchTotalQuestions() {
+  const Q_KEY = 'quiz::questions';
+  if (localStorage.getItem(Q_KEY)) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(Q_KEY));
+      totalQuestions = Array.isArray(arr) ? arr.length : 0;
+      window.totalQuizQuestions = totalQuestions;
+      return;
+    } catch (e) {
+      localStorage.removeItem(Q_KEY); // fallback if broken
+    }
+  }
+  // fallback to txt file
   try {
     const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
     const blocks = raw
@@ -404,7 +416,6 @@ async function fetchTotalQuestions() {
     window.totalQuizQuestions = 0;
   }
 }
-
 
 
   // == GSAP ANIMATION LOGIC ==
@@ -583,32 +594,10 @@ async function renderRanking() {
     }
   })();
 
-  // == TIMER: 7s to next question ==
-  setTimeout(async () => {
-    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
-    const bank = raw
-      .trim()
-      .split(/^---$/m)
-      .map(block => {
-        const sanitized = block.replace(/\/\/.*$/gm, '');
-        try { return JSON.parse(sanitized); }
-        catch { return null; }
-      })
-      .filter(Boolean);
-
-    const idx = Number(sessionStorage.getItem('quiz::currentIdx') || 0);
-    const q   = bank[idx];
-    if (!q) return location.replace('/quiz/initial_ranking');
-
-    const routes = {
-      multiple_choice: '/quiz/form/quiz_multiple_choice',
-      fill_in_blank:   '/quiz/form/quiz_fill_in_blank',
-      match:           '/quiz/form/quiz_match',
-      drag_and_drop:   '/quiz/form/drag_drop',
-      categorize:      '/quiz/form/quiz_categorize'
-    };
-    location.replace(routes[q.type]);
-  }, 7000);
+// quiz_initial_ranking.html (NEW, CORRECTED CODE)
+// This code is already in your `quiz_initial_ranking.html` file, it just needs to be called.
+// It uses the quizFlow object which correctly loads from localStorage.
+window.quizFlow.initRanking();
 
   socket.on('force_leave', function() {
     localStorage.clear();
