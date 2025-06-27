@@ -12,6 +12,7 @@ import json
 from flask_socketio import SocketIO, emit
 import firebase_admin
 from firebase_admin import credentials, db as firebase_db
+import threading
 
 
 FIREBASE_SERVICE_ACCOUNT_JSON = """
@@ -42,6 +43,7 @@ questions = [
 player_scores = {}  # {username: score}
 participants = {}
 last_gif_time = {}
+disconnect_timers = {}  # sid: timer object
 
 app = Flask(__name__)
 
@@ -306,16 +308,29 @@ def on_join_waiting(data):
     avatar = data.get('avatar', 0)
     total = data.get('total', 0)
     progress = data.get('progress', 0)
-    for sid, p in list(participants.items()):
-        if p['name'] == name:
-            del participants[sid]
-    participants[request.sid] = {
-        'id': request.sid,
+    sid = request.sid
+
+    # Cancel pending disconnect removal if it exists
+    if sid in disconnect_timers:
+        # Eventlet tasks can't be "killed" so just drop reference (it will check sid later)
+        disconnect_timers.pop(sid, None)
+
+    # Remove any previous participants with the same name (de-duplication logic)
+    for old_sid, p in list(participants.items()):
+        if p['name'] == name and old_sid != sid:
+            # Also remove their pending timer if exists
+            disconnect_timers.pop(old_sid, None)
+            participants.pop(old_sid, None)
+
+    # Add or update this participant
+    participants[sid] = {
+        'id': sid,
         'name': name,
         'avatar': avatar,
-        'progress': progress    # <--- ADD THIS LINE
+        'progress': progress
     }
-    player_scores[request.sid] = total
+    player_scores[sid] = total
+
     broadcast_player_list()
 
 @app.route('/quiz/final_ranking')
@@ -339,12 +354,16 @@ def on_update_name(name):
 @socketio.on('disconnect')
 def on_disconnect():
     sid = request.sid
-    # wait 1 s – if they reconnect we’ll overwrite the old entry anyway
-    socketio.start_background_task(lambda: (
-        eventlet.sleep(1),
-        participants.pop(sid, None),
-        broadcast_player_list()
-    ))
+
+    # Start a delayed removal, but cancel if they reconnect
+    def delayed_remove():
+        eventlet.sleep(20)  # Wait 20 seconds before removal!
+        # Only remove if they haven't rejoined
+        if sid in participants:
+            participants.pop(sid, None)
+            broadcast_player_list()
+
+    disconnect_timers[sid] = socketio.start_background_task(delayed_remove)
 
 @socketio.on('submit_answer')
 def handle_answer(data):
