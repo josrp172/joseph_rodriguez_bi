@@ -354,12 +354,24 @@
     <div class="settings-card">
       <div class="settings-title">Settings</div>
       <div class="setting-row">
-        <span><span class="icon">📝</span> Show my score</span>
-        <input type="checkbox" id="readText" class="toggle-switch" aria-label="Show my score"/>
+        <span>
+          <span class="icon">📝</span>
+          Show my score
+          <span style="color:#ec788a;font-size:0.89em;margin-left:4px;font-style:italic;font-weight:400;opacity:0.78;">
+            *Required for Testing
+          </span>
+        </span>
+        <input type="checkbox" id="readText" class="toggle-switch" checked disabled aria-label="Show my score"/>
       </div>
       <div class="setting-row">
-        <span><span class="icon">🔊</span> Sound effects</span>
-        <input type="checkbox" id="soundFx" class="toggle-switch" checked aria-label="Sound effects"/>
+        <span>
+          <span class="icon">🔊</span>
+          Sound effects
+          <span style="color:#ec788a;font-size:0.89em;margin-left:4px;font-style:italic;font-weight:400;opacity:0.78;">
+            *Required for Testing
+          </span>
+        </span>
+        <input type="checkbox" id="soundFx" class="toggle-switch" checked disabled aria-label="Sound effects"/>
       </div>
     </div>
   </div>
@@ -381,21 +393,18 @@
     nameForm.onsubmit = function(e) {
       e.preventDefault();
       const username = document.getElementById('username').value.trim();
-      const readText = document.getElementById('readText').checked;
-      const soundFx = document.getElementById('soundFx').checked;
+      // Always true since toggles are fixed
+      const readText = true;
+      const soundFx = true;
       if (!username) return;
 
-      // Save to backend for admin retrieval
       socket.emit('register_user', {
         username: username,
         readText: readText,
         soundFx: soundFx
       });
 
-      // Save to localStorage for later
       localStorage.setItem('quiz_username', username);
-
-      // Redirect to waiting room (adjust URL as needed)
       window.location.href = "/quiz/user_lobby";
     };
 

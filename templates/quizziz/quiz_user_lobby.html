@@ -853,7 +853,7 @@ let participants = [];
 
 // Redirect when quiz starts
 socket.on('quiz_started', function() {
-  window.location.href = "/quiz/countdown";
+  window.location.href = "/quiz/loading_screen";
 });
 socket.on('connect', function() {
   socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
@@ -1236,6 +1236,20 @@ function showUserToast(msg, gif) {
 // Initial UI
 renderAvatars();
 renderParticipants();
+
+// Preload the loading video as a Blob and save the URL in sessionStorage
+(function(){
+  // Only preload if not already set
+  if (!sessionStorage.getItem('quiz::loading_video_url')) {
+    fetch('https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/loading_logo.mp4')
+      .then(res => res.blob())
+      .then(blob => {
+        // Create a Blob URL
+        const blobUrl = URL.createObjectURL(blob);
+        sessionStorage.setItem('quiz::loading_video_url', blobUrl);
+      });
+  }
+})();
 
 </script>
 </body>

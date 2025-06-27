@@ -232,6 +232,10 @@ def games():
 def quiz_start():
     return render_template('quizziz/quiz_user_initial.html')
 
+@app.route('/quiz/loading_screen')
+def quiz_loading_screen():
+    return render_template('quizziz/quiz_loading_screen.html')
+
 @app.route('/quiz/user_lobby')
 def quiz_user_lobby():
     return render_template('quizziz/quiz_user_lobby.html')

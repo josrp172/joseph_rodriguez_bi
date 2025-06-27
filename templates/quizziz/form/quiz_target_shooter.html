@@ -43,6 +43,38 @@
       opacity:.65;
       box-shadow: 0 0 110px 0 #22d07a33;
     }
+    .mistake-counter {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      z-index: 3;
+      background: rgba(255,105,97,0.80);
+      color: #fff;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 900;
+      font-size: 1.13em;
+      padding: 6px 20px 6px 12px;
+      border-radius: 32px;
+      box-shadow: 0 2px 12px #fa966044;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      opacity: 0.93;
+      transition: opacity 0.17s, box-shadow 0.2s;
+      pointer-events: none; /* non-interactive */
+    }
+    .mistake-counter:hover {
+      opacity: 1;
+      box-shadow: 0 2px 22px #fa966077;
+    }
+    @media (max-width: 600px) {
+      .mistake-counter {
+        top: 10px;
+        right: 10px;
+        font-size: 0.98em;
+        padding: 4px 13px 4px 8px;
+      }
+    }
     .user-bar {display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:18px;}
     .avatar-quiz {width:54px;height:54px;border-radius:18px;background:#fff;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 18px #7e238520;}
     .avatar-quiz img {width:100%;height:100%;object-fit:cover;border-radius:18px;}
@@ -55,8 +87,6 @@
     .progress-label{font-family:'Montserrat',sans-serif;font-weight:900;font-size:1em;color:#fff;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-shadow:0 1.5px 7px #7e2385c4;z-index:4;pointer-events:none;}
     h2 {font-family:'Montserrat',sans-serif;font-weight:800;font-size:1.45rem;margin-bottom:18px;color:#f6e26d;text-shadow:0 2px 16px #2e1432a0;letter-spacing:0.01em;line-height:1.31;}
     .hint {color:#ffe97e;font-size:1.1em;margin-bottom:18px;}
-
-    /* Moving Targets UI */
     .target-zone {
       position: relative;
       width: 100%;
@@ -71,30 +101,30 @@
       align-items: center;
       justify-content: center;
     }
- .target-btn {
-  position: absolute;
-  min-width: 90px; max-width: 180px; min-height: 50px;
-  padding: 12px 26px;
-  font-family: 'Montserrat',sans-serif;
-  font-weight: 800;
-  font-size: 1.01em;
-  color: #fff;
-  background: linear-gradient(120deg,#a960ee 30%,#7e2385 75%,#22d07a 130%);
-  border: none;
-  border-radius: 50px;
-  box-shadow:
-    0 6px 22px #7e238550,
-    0 2px 14px #22d07a15,
-    inset 0 1px 9px 1px #fff4,
-    inset 0 -2px 10px #15122222;
-  cursor: pointer;
-  outline: none;
-  opacity: 0.98;
-  transition: background 0.14s,box-shadow 0.16s,transform 0.14s,opacity 0.16s;
-  z-index: 2;
-  will-change: transform,box-shadow;
-  filter: drop-shadow(0 2px 14px #ffe97e36);
-}
+    .target-btn {
+      position: absolute;
+      min-width: 90px; max-width: 180px; min-height: 50px;
+      padding: 12px 26px;
+      font-family: 'Montserrat',sans-serif;
+      font-weight: 800;
+      font-size: 1.01em;
+      color: #fff;
+      background: linear-gradient(120deg,#a960ee 30%,#7e2385 75%,#22d07a 130%);
+      border: none;
+      border-radius: 50px;
+      box-shadow:
+        0 6px 22px #7e238550,
+        0 2px 14px #22d07a15,
+        inset 0 1px 9px 1px #fff4,
+        inset 0 -2px 10px #15122222;
+      cursor: pointer;
+      outline: none;
+      opacity: 0.98;
+      transition: background 0.14s,box-shadow 0.16s,transform 0.14s,opacity 0.16s;
+      z-index: 2;
+      will-change: transform,box-shadow;
+      filter: drop-shadow(0 2px 14px #ffe97e36);
+    }
     .target-btn:active {
       background: linear-gradient(120deg,#22d07a 60%,#f6e26d 140%);
       color: #7e2385;
@@ -113,23 +143,20 @@
       filter: drop-shadow(0 2px 16px #22d07a44);
       border-radius: 50px; /* fully oval */
     }
-
-.target-btn.clicked.incorrect {
-  background: linear-gradient(90deg,#ff6961 60%,#fa9660 100%);
-  color: #181a14;
-  box-shadow:
-    0 0 0 4px #ff696199,   /* red/orange outer glow */
-    0 1px 48px #fa9660bb,
-    0 2px 18px #fa966044;
-  border: none;
-  animation: wrongPop 0.29s cubic-bezier(.2,1.6,.7,1) 1;
-  filter: drop-shadow(0 2px 16px #fa966044);
-  border-radius: 50px;
-}
+    .target-btn.clicked.incorrect {
+      background: linear-gradient(90deg,#ff6961 60%,#fa9660 100%);
+      color: #181a14;
+      box-shadow:
+        0 0 0 4px #ff696199,   /* red/orange outer glow */
+        0 1px 48px #fa9660bb,
+        0 2px 18px #fa966044;
+      border: none;
+      animation: wrongPop 0.29s cubic-bezier(.2,1.6,.7,1) 1;
+      filter: drop-shadow(0 2px 16px #fa966044);
+      border-radius: 50px;
+    }
     @keyframes correctPop {0%{transform:scale(1);}30%{transform:scale(1.13);}100%{transform:scale(1);}}
     @keyframes wrongPop {0%{transform:scale(1);}50%{transform:scale(0.9);}100%{transform:scale(1);}}
-
-    /* Optionally, a subtle trailing effect for moving targets */
     .target-btn::after {
       content:"";
       position:absolute;z-index:-1;left:45%;top:44%;width:65%;height:62%;border-radius:90px;
@@ -163,12 +190,20 @@
     <div class="progress-bar" id="progressBar"></div>
     <span class="progress-label" id="progressLabel"></span>
   </div>
-  <div class="quiz-card" id="quizCard"></div>
+
+  <div class="quiz-card" id="quizCard">
+    <div class="mistake-counter" id="mistakeCounter">
+      <span style="font-size:1.25em;">❌</span>
+      <span id="mistakeCountNum">0</span>
+    </div>
+    <!-- The rest of your card content is injected by JS -->
+  </div>
   <div class="footer">All rights reserved by Joseph 2025</div>
   <!-- SFX -->
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
-  <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/mouse_click.wav" preload="auto"></audio>
+  <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/gun_shoot.wav" preload="auto"></audio>
+
 <script>
  // PLAYER INFO
 const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
@@ -178,6 +213,7 @@ const userName = localStorage.getItem('quiz_username') || "Player";
 
 // STATE
 let questionData = {}, selected = [], answered = false;
+let mistakeCount = 0;
 
 // SHUFFLE
 function shuffleArray(arr) {
@@ -225,6 +261,10 @@ function renderCard() {
   answered = false;
   const card = document.getElementById('quizCard');
   card.innerHTML = `
+    <div class="mistake-counter" id="mistakeCounter">
+      <span style="font-size:1.25em;">❌</span>
+      <span id="mistakeCountNum">${mistakeCount}</span>
+    </div>
     <div class="user-bar">
       <span class="avatar-quiz">${avatar}</span>
       <span class="username-quiz">${userName}</span>
@@ -235,9 +275,13 @@ function renderCard() {
     <button class="submit-btn" id="submitBtn" style="display:none;">Submit</button>
     <div class="feedback" id="feedback" style="display:none"></div>
   `;
+  mistakeCount = 0;
+  document.getElementById('mistakeCountNum').textContent = mistakeCount;
+
   buildTargets();
   document.getElementById('submitBtn').onclick = submitAnswer;
 }
+
 
 function buildTargets() {
   const zone = document.getElementById('targetZone');
@@ -254,14 +298,32 @@ function buildTargets() {
     btn.disabled = answered;
     btn.style.left = positions[i][0] + "px";
     btn.style.top = positions[i][1] + "px";
-    btn.onclick = e => {
-      if (answered) return;
-      document.getElementById('audio-click').currentTime = 0;
-      document.getElementById('audio-click').play();
-      selected[i] = !selected[i];
-      btn.classList.toggle('clicked');
-      if (selected[i]) {
+btn.onclick = e => {
+  if (answered) return;
+  document.getElementById('audio-click').currentTime = 0;
+  document.getElementById('audio-click').play();
+  selected[i] = !selected[i];
+  btn.classList.toggle('clicked');
+  if (selected[i]) {
         btn.classList.add(opt.correct ? 'correct' : 'incorrect');
+        // --- Mistake Detection ---
+        if (!opt.correct) {
+          mistakeCount++;
+          document.getElementById('mistakeCountNum').textContent = mistakeCount;
+          // Decrease timer by 2 seconds
+          let timer = document.getElementById('quizTimer');
+          let secs = Math.max(0, parseInt(timer.textContent, 10) - 2);
+          timer.textContent = secs;
+          // Optionally, add a flash/animation to mistakeCounter
+          const mc = document.getElementById('mistakeCounter');
+          mc.style.transform = 'scale(1.12)';
+          mc.style.background = 'rgba(255,105,97,1)';
+          setTimeout(() => {
+            mc.style.transform = '';
+            mc.style.background = 'rgba(255,105,97,0.85)';
+          }, 250);
+        }
+        // ---
       } else {
         btn.classList.remove('correct','incorrect');
       }

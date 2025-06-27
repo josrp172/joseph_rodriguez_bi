@@ -378,7 +378,6 @@ body, .leaderboard-main-container {
   const myName      = localStorage.getItem('quiz_username')     || 'Player';
   const myAvatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
   const isDevMock = window.location.hash === "#devmock";
-
   let participants  = [];
 
   // == Socket.IO (from quick_flow.js) ==
@@ -394,7 +393,9 @@ body, .leaderboard-main-container {
     audioEl.play().catch(() => {});
   }
 
+  // -- SOUND PLAYS AS SOON AS DATA ARRIVES --
   socket.once('player_list', players => {
+    playTadaOnce(); // Play sound as soon as we get the player list
     if (!isDevMock) {
         participants = players
           .map(p => ({ ...p, isMe: p.id === socket.id }))
@@ -407,43 +408,41 @@ body, .leaderboard-main-container {
   const total  = scores.reduce((a,b) => a + b, 0);
 
   let totalQuestions = 0;
-async function fetchTotalQuestions() {
-  const Q_KEY = 'quiz::questions';
-  if (localStorage.getItem(Q_KEY)) {
+  async function fetchTotalQuestions() {
+    const Q_KEY = 'quiz::questions';
+    if (localStorage.getItem(Q_KEY)) {
+      try {
+        const arr = JSON.parse(localStorage.getItem(Q_KEY));
+        totalQuestions = Array.isArray(arr) ? arr.length : 0;
+        window.totalQuizQuestions = totalQuestions;
+        return;
+      } catch (e) {
+        localStorage.removeItem(Q_KEY); // fallback if broken
+      }
+    }
+    // fallback to txt file
     try {
-      const arr = JSON.parse(localStorage.getItem(Q_KEY));
-      totalQuestions = Array.isArray(arr) ? arr.length : 0;
+      const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
+      const blocks = raw
+        .trim()
+        .split(/^---$/m)
+        .map(b => {
+          const sanitized = b.replace(/\/\/.*$/gm, '');
+          try { return JSON.parse(sanitized); }
+          catch { return null; }
+        })
+        .filter(Boolean);
+      totalQuestions = blocks.length;
       window.totalQuizQuestions = totalQuestions;
-      return;
     } catch (e) {
-      localStorage.removeItem(Q_KEY); // fallback if broken
+      totalQuestions = 0;
+      window.totalQuizQuestions = 0;
     }
   }
-  // fallback to txt file
-  try {
-    const raw = await fetch('/static/quiz/quiz_questions.txt').then(r => r.text());
-    const blocks = raw
-      .trim()
-      .split(/^---$/m)
-      .map(b => {
-        const sanitized = b.replace(/\/\/.*$/gm, '');
-        try { return JSON.parse(sanitized); }
-        catch { return null; }
-      })
-      .filter(Boolean);
-    totalQuestions = blocks.length;
-    window.totalQuizQuestions = totalQuestions;
-  } catch (e) {
-    totalQuestions = 0;
-    window.totalQuizQuestions = 0;
-  }
-}
-
 
   // == GSAP ANIMATION LOGIC ==
   function gsapLeaderboardAnimate(myRowIdx) {
-    // fire our “ta-da” sound
-    playTadaOnce();
+    // No more sound trigger here, sound is now played earlier!
 
     // Animate all rows entrance with stagger
     gsap.set('.ranking-row', {opacity:0, y:64, scale:0.95, rotateX:24});
@@ -470,7 +469,6 @@ async function fetchTotalQuestions() {
           // Bound scrollY to be at least 0 and no more than maxScroll
           const maxScroll = container.scrollHeight - container.clientHeight;
           const finalScroll = Math.max(0, Math.min(scrollY, maxScroll));
-
           gsap.to(container, {
             scrollTo: { y: finalScroll },
             duration: 1.8,
@@ -549,63 +547,64 @@ async function fetchTotalQuestions() {
   }
 
   // == LEADERBOARD RENDER ==
-async function renderRanking() {
-  await fetchTotalQuestions(); // ensure totalQuestions is up-to-date
+  async function renderRanking() {
+    playTadaOnce(); // Play sound as soon as ranking is rendered (in case socket event missed)
+    await fetchTotalQuestions(); // ensure totalQuestions is up-to-date
 
-  const leaderboard = document.getElementById('leaderboard');
-  if (!Array.isArray(participants) || participants.length === 0) {
-    leaderboard.innerHTML = `<div class="empty-state">Waiting for players…</div>`;
-    return;
-  }
-  const sorted = participants;
-  const avatarKeys = [
-    "eleven","jesse","Katniss","leonard",
-    "lisa","morty","rick","sheldon",
-    "walter","wednesday"
-  ];
-  const medalIcons = [
-    `<span class="rank-medal" title="1st Place">🥇</span>`,
-    `<span class="rank-medal" title="2nd Place">🥈</span>`,
-    `<span class="rank-medal" title="3rd Place">🥉</span>`
-  ];
-  let myRowIdx = sorted.findIndex(p => p.isMe);
-  leaderboard.innerHTML = sorted.map((p, i) => {
-    const key = avatarKeys[
-      (typeof p.avatar === 'number' && avatarKeys[p.avatar]) ? p.avatar : 0
-    ];
-    const medal = i < 3 ? medalIcons[i] : '';
-    let progressHtml = '';
-    if (typeof p.progress === "number") {
-      if (p.progress >= totalQuestions) {
-        progressHtml = `
-          <span class="completion-badge" title="Completed">
-            <span class="check">✓</span>
-          </span>`;
-      } else {
-        progressHtml = `
-          <span class="progress-badge" title="In progress">
-            ${p.progress}/${totalQuestions}
-          </span>`;
-      }
+    const leaderboard = document.getElementById('leaderboard');
+    if (!Array.isArray(participants) || participants.length === 0) {
+      leaderboard.innerHTML = `<div class="empty-state">Waiting for players…</div>`;
+      return;
     }
-    return `
-      <div class="ranking-row revealed${p.isMe ? ' highlight' : ''}" tabindex="0" id="ranking-row-${i}">
-        <span class="rank-num">${medal || (i + 1) + "."}</span>
-        <span class="rank-avatar">
-          <img src="/static/images/avatar/${key}.png" alt="Avatar of ${p.name}" />
-        </span>
-        <span class="rank-name">${p.name || 'Player'}</span>
-        <span class="score-badge-wrap">
-          <span class="rank-score">${p.score}</span>
-          ${progressHtml}
-        </span>
-      </div>
-    `;
-  }).join('');
+    const sorted = participants;
+    const avatarKeys = [
+      "eleven","jesse","Katniss","leonard",
+      "lisa","morty","rick","sheldon",
+      "walter","wednesday"
+    ];
+    const medalIcons = [
+      `<span class="rank-medal" title="1st Place">🥇</span>`,
+      `<span class="rank-medal" title="2nd Place">🥈</span>`,
+      `<span class="rank-medal" title="3rd Place">🥉</span>`
+    ];
+    let myRowIdx = sorted.findIndex(p => p.isMe);
+    leaderboard.innerHTML = sorted.map((p, i) => {
+      const key = avatarKeys[
+        (typeof p.avatar === 'number' && avatarKeys[p.avatar]) ? p.avatar : 0
+      ];
+      const medal = i < 3 ? medalIcons[i] : '';
+      let progressHtml = '';
+      if (typeof p.progress === "number") {
+        if (p.progress >= totalQuestions) {
+          progressHtml = `
+            <span class="completion-badge" title="Completed">
+              <span class="check">✓</span>
+            </span>`;
+        } else {
+          progressHtml = `
+            <span class="progress-badge" title="In progress">
+              ${p.progress}/${totalQuestions}
+            </span>`;
+        }
+      }
+      return `
+        <div class="ranking-row revealed${p.isMe ? ' highlight' : ''}" tabindex="0" id="ranking-row-${i}">
+          <span class="rank-num">${medal || (i + 1) + "."}</span>
+          <span class="rank-avatar">
+            <img src="/static/images/avatar/${key}.png" alt="Avatar of ${p.name}" />
+          </span>
+          <span class="rank-name">${p.name || 'Player'}</span>
+          <span class="score-badge-wrap">
+            <span class="rank-score">${p.score}</span>
+            ${progressHtml}
+          </span>
+        </div>
+      `;
+    }).join('');
 
-  // === Animate entrance with GSAP magic! ===
-  gsapLeaderboardAnimate(myRowIdx);
-}
+    // === Animate entrance with GSAP magic! ===
+    gsapLeaderboardAnimate(myRowIdx);
+  }
 
   // == STARTUP RESET ==
   (function initState(){
@@ -616,10 +615,10 @@ async function renderRanking() {
     }
   })();
 
-// quiz_initial_ranking.html (NEW, CORRECTED CODE)
-// This code is already in your `quiz_initial_ranking.html` file, it just needs to be called.
-// It uses the quizFlow object which correctly loads from localStorage.
-window.quizFlow.initRanking();
+  // quiz_initial_ranking.html (NEW, CORRECTED CODE)
+  // This code is already in your `quiz_initial_ranking.html` file, it just needs to be called.
+  // It uses the quizFlow object which correctly loads from localStorage.
+  window.quizFlow.initRanking();
 
   socket.on('force_leave', function() {
     localStorage.clear();
