@@ -345,18 +345,35 @@
   gap: 0;
 }
 
-    .spline-robot-container {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: 700px;
-      height: 700px;
-      z-index: 99991;
-      opacity: 0.85;
-      transform: translate(10px, 10px) scale(0.9);
-      overflow: hidden;
-      pointer-events: none;
-    }
+.spline-robot-container {
+  position: fixed;
+  bottom: 10px;
+
+  /* 1) Pin it to the right of your centered card:
+     50% = center of viewport
+     240px = half of your card’s 480px width
+     20px = gap between card + robot */
+  left: calc(50% + 240px + 60px);
+
+  /* 2) Make it up to 800px square, but:
+     – never wider than remaining viewport (so it won’t overflow)
+     – never taller than viewport minus 20px gutters */
+  width: min(
+    800px,
+    calc(100vw - (50% + 240px + 20px + 20px)),
+    calc(100vh - 20px)
+  );
+  aspect-ratio: 1 / 1;
+
+  /* 3) Anchor any transforms off its bottom-left corner */
+  transform-origin: bottom left;
+
+  z-index: 999;
+  opacity: 0.85;
+  pointer-events: none;
+  bottom: -60px;      /* pull it down 40px below the viewport so its own content covers the badge */
+
+}
     .spline-robot-container iframe {
       position: absolute;
       bottom: -60px;
