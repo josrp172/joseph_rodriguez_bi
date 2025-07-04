@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Review | QuizSeph</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 30%, #351857 0%, #23113A 100%);
+      color: #fff;
+      font-family: 'Nunito', Arial, sans-serif;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 680px;
+      margin: 48px auto 48px auto;
+      background: linear-gradient(120deg, #3b2462e8 80%, #482c7b 100%);
+      border-radius: 24px;
+      padding: 38px 22px 38px 22px;
+      box-shadow: 0 12px 48px #16093560;
+      position: relative;
+      z-index: 2;
+      animation: fadeIn 0.8s;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(30px);} to { opacity:1; transform:none;} }
+
+    .quiz-title {
+      text-align: center;
+      margin-bottom: 38px;
+      color: #ffe97e;
+      font-size: 2em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 3px 14px #faeabc26;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .q-item {
+      margin-bottom: 42px;
+      padding: 24px 20px 22px 20px;
+      border-radius: 15px;
+      background: linear-gradient(115deg,#3b2a56 75%,#ffe97e09 100%);
+      box-shadow: 0 2px 12px #11051c30;
+      position: relative;
+      animation: fadeQIn 1.2s;
+      transition: box-shadow 0.16s;
+    }
+    .q-item:hover {
+      box-shadow: 0 6px 28px #ffe97e18, 0 2px 12px #16093544;
+      transform: scale(1.013);
+    }
+    @keyframes fadeQIn { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:none;} }
+
+    .q-header {
+      font-size: 1.16em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: #ffe97e;
+      letter-spacing: 0.5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 13px 18px;
+    }
+    .type-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1em;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 900;
+      border-radius: 10px;
+      padding: 3.5px 13px;
+      margin-right: 11px;
+      background: #2d2050;
+      color: #ffe97e;
+      border: 2px solid #ffe97e55;
+      letter-spacing: 0.5px;
+      text-transform: capitalize;
+      box-shadow: 0 1px 8px #16093522;
+      margin-bottom: 3px;
+    }
+    /* Specific colors per type */
+    .type-multiple_choice    { background: #223e67; color: #92b6f9; border-color: #92b6f9; }
+    .type-fill_in_blank      { background: #2b6643; color: #5bebb6; border-color: #5bebb6; }
+    .type-match              { background: #47597b; color: #bcbff9; border-color: #bcbff9; }
+    .type-categorize         { background: #424d29; color: #ffe97e; border-color: #ffe97e; }
+    .type-memory_match       { background: #862d4a; color: #f395c1; border-color: #f395c1; }
+    .type-reorder            { background: #664d2b; color: #f6d07e; border-color: #f6d07e; }
+    .type-target_shooter     { background: #572c25; color: #fa9660; border-color: #fa9660; }
+
+    .score-box {
+      font-size: 1.08em;
+      color: #fffde9;
+      font-weight: 900;
+      background: #ffe97e2b;
+      border-radius: 9px;
+      padding: 5px 18px;
+      margin-left: auto;
+      margin-right: 2px;
+      letter-spacing: 0.2px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 15px 3.5px 15px;
+      border-radius: 12px;
+      font-weight: 900;
+      margin-left: 9px;
+      font-size: 1em;
+      vertical-align: middle;
+      box-shadow: 0 1.5px 8px #0001;
+      letter-spacing: 0.5px;
+      transition: background 0.16s;
+    }
+    .badge.correct    { background: #19c68b; color: #fff; }
+    .badge.incorrect  { background: #fa5a68; color: #fff; }
+    .badge.partial    { background: #ffe97e; color: #23113A; }
+    .badge.review     { background: #ae7cf2; color: #fff; }
+
+    .choices {
+      margin-top: 10px; margin-bottom: 6px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .choice {
+      display: flex;
+      align-items: center;
+      padding: 8px 18px 8px 18px;
+      border-radius: 10px;
+      font-size: 1.11em;
+      font-family: 'Nunito', Arial, sans-serif;
+      background: #fff2;
+      border: 2.5px solid transparent;
+      box-shadow: 0 1.5px 6px #ffe97e18;
+      margin-bottom: 0;
+      font-weight: 700;
+      color: #ffe97e;
+      transition: border 0.19s, background 0.18s, color 0.18s, font-weight 0.18s;
+      position: relative;
+      letter-spacing: 0.3px;
+    }
+    .choice.user {
+      border: 2.5px solid #fa9660;
+      background: #fa966022;
+      color: #fff;
+      font-weight: 900;
+      animation: popUserChoice 0.38s;
+    }
+    .choice.correct {
+      border: 2.5px solid #19c68b;
+      background: #19c68b22;
+      color: #fff;
+      font-weight: 900;
+      animation: popCorrect 0.48s;
+    }
+    .choice.user.incorrect {
+      border: 2.5px solid #fa5a68;
+      background: #fa5a6827;
+      color: #fff;
+      font-weight: 900;
+      animation: popWrong 0.44s;
+    }
+    .choice i {
+      margin-right: 13px;
+      font-size: 1.09em;
+    }
+    @keyframes popUserChoice { 0%{box-shadow:0 0 0 0 #fa966044;} 80%{box-shadow:0 0 12px 4px #fa966088;} 100%{box-shadow:0 0 0 0 #fa966044;}}
+    @keyframes popCorrect { 0%{box-shadow:0 0 0 0 #19c68b44;} 80%{box-shadow:0 0 14px 5px #19c68b99;} 100%{box-shadow:0 0 0 0 #19c68b44;}}
+    @keyframes popWrong { 0%{box-shadow:0 0 0 0 #fa5a6844;} 80%{box-shadow:0 0 18px 6px #fa5a68bb;} 100%{box-shadow:0 0 0 0 #fa5a6844;}}
+
+    .answers-label {
+      color: #ae7cf2;
+      font-weight: 800;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 1.04em;
+      letter-spacing: 0.2px;
+    }
+    .explanation {
+      color: #d2c2ff;
+      margin-top: 17px;
+      font-size: 1.04em;
+      font-weight: 600;
+      background: #fff1;
+      border-radius: 8px;
+      padding: 8px 15px;
+      line-height: 1.43;
+      box-shadow: 0 1.5px 4px #ae7cf211;
+    }
+    .q-footer {
+      display: flex; justify-content: flex-end; align-items: center;
+      margin-top: 10px; gap: 10px; min-height: 24px;
+    }
+    .icon-correct   { color: #19c68b; margin-right: 9px;}
+    .icon-incorrect { color: #fa5a68; margin-right: 9px;}
+    .icon-user      { color: #fa9660; margin-right: 9px;}
+    .icon-sep       { color: #fff1; margin: 0 8px;}
+    /* Table for mappings */
+    .mapping-table {
+      width: 100%; border-collapse: collapse;
+      margin: 10px 0 8px 0;
+    }
+    .mapping-table th, .mapping-table td {
+      border: 1.5px solid #53388c;
+      padding: 7px 12px;
+      border-radius: 4px;
+      background: #372a57;
+      color: #ffe97e;
+      font-family: 'Nunito', Arial, sans-serif;
+      font-size: 1em;
+      letter-spacing: 0.2px;
+    }
+    .mapping-table th {
+      background: #392573;
+      color: #c0b5ec;
+      font-size: 1.05em;
+      font-weight: 900;
+    }
+    .order-list, .pair-list {
+      display: flex; flex-wrap: wrap; gap: 9px 13px; margin: 8px 0 8px 0;
+    }
+    .order-item {
+      padding: 7px 18px;
+      background: #ffe97e18;
+      border-radius: 8px;
+      color: #ffe97e;
+      font-weight: 900;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 1.03em;
+      letter-spacing: 0.3px;
+      border: 2px solid #6a53a7;
+    }
+    .order-item.correct { background: #19c68b22; border-color: #19c68b; color: #19c68b; }
+    .order-item.wrong   { background: #fa5a6821; border-color: #fa5a68; color: #fa5a68; }
+    .order-label { font-size: 0.98em; font-weight: 800; color: #ae7cf2; margin-bottom: 3px; display:block;}
+    /* Responsive */
+    @media (max-width: 700px) {
+      .container { max-width: 98vw; padding: 11px 2vw 15vw 2vw;}
+      .q-item { padding: 14px 5vw 16px 5vw; }
+      .quiz-title { font-size: 1.25em;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="reviewContainer">
+    <h2 class="quiz-title"><i class="fa-solid fa-clipboard-list"></i>Quiz Review</h2>
+    <!-- Questions will be injected here -->
+  </div>
+<script>
+  // Mapping game types to label and icon/color
+  const GAME_TYPES = {
+    multiple_choice:   { label: "Multiple Choice", icon: "fa-list-ul", cls: "type-multiple_choice" },
+    fill_in_blank:     { label: "Fill in the Blank", icon: "fa-pen-line", cls: "type-fill_in_blank" },
+    match:             { label: "Matching", icon: "fa-link", cls: "type-match" },
+    categorize:        { label: "Categorize", icon: "fa-table-cells-large", cls: "type-categorize" },
+    memory_match:      { label: "Memory Match", icon: "fa-brain", cls: "type-memory_match" },
+    reorder:           { label: "Reorder", icon: "fa-sort-amount-down", cls: "type-reorder" },
+    target_shooter:    { label: "Target Shooter", icon: "fa-bullseye", cls: "type-target_shooter" }
+  };
+
+  // Confetti for perfect scores
+  function showConfetti() {
+    let colors = ["#ffe97e","#19c68b","#fa5a68","#ae7cf2","#22d07a","#fa9660"];
+    const c = document.querySelector('.container');
+    for(let i=0; i<42; i++) {
+      let conf = document.createElement('div');
+      conf.className = 'confetti-piece';
+      conf.style.left = (Math.random()*98+1)+"%";
+      conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+      conf.style.top = (Math.random()*25+2)+"px";
+      conf.style.transform = `rotate(${Math.random()*120-60}deg)`;
+      c.appendChild(conf);
+      setTimeout(()=>conf.remove(), 2200);
+    }
+  }
+
+  // Load all original questions for mapping choices/texts
+  let allQuestions = [];
+  try {
+    allQuestions = JSON.parse(localStorage.getItem('quiz::questions') || "[]");
+  } catch (e) {}
+
+  // Load user answers
+  let answers = [];
+  try {
+    answers = JSON.parse(localStorage.getItem('quiz::answers') || "[]");
+  } catch (e) {}
+
+  // For each answer, attach missing choices if needed
+  answers.forEach((item, i) => {
+    if (!item.choices || !Array.isArray(item.choices) || !item.choices.length) {
+      let q = allQuestions.find(qx => qx.question === item.question);
+      if (q && q.choices) item.choices = q.choices;
+    }
+  });
+
+  function formatAnswer(ans) {
+    if (ans == null) return "<i style='color:#fa5a68'>No answer</i>";
+    if (Array.isArray(ans)) return ans.join(', ');
+    if (typeof ans === "object") {
+      // Fill-in-the-blank like: {userAnswer, correctAnswer, explanation}
+      if (ans.userAnswer !== undefined || ans.correctAnswer !== undefined) {
+        return `
+          <div><b>Your Answer:</b> ${ans.userAnswer || "<i>No answer</i>"}</div>
+          <div><b>Correct Answer:</b> ${ans.correctAnswer || "<i>No answer</i>"}</div>
+        `;
+      }
+      // Drag/drop ordering
+      if (ans.userOrder && ans.correctOrder) {
+        return `
+          <div><b>Your Order:</b> ${ans.userOrder.join(" → ")}</div>
+          <div><b>Correct Order:</b> ${ans.correctOrder.join(" → ")}</div>
+        `;
+      }
+      // Otherwise fallback to JSON
+      return JSON.stringify(ans);
+    }
+    return ans;
+  }
+
+  let total = answers.length;
+  let correct = answers.filter(q=>q.isCorrect).length;
+  let points = answers.reduce((sum,q)=>sum+(q.score||0),0);
+
+  if (!answers.length) {
+    document.getElementById('reviewContainer').innerHTML = `<h3 style="color:#fa5a68; text-align:center;">No quiz data found.</h3>`;
+  } else {
+    const c = document.getElementById('reviewContainer');
+    c.innerHTML = `
+      <h2 class="quiz-title"><i class="fa-solid fa-clipboard-list"></i>Quiz Review</h2>
+      <div style="text-align:center;margin-bottom:30px;">
+        <span class="badge review" style="font-size:1.14em;letter-spacing:0.5px;">
+          <i class="fa-solid fa-star icon-correct"></i>
+          Score: <b style="color:#ffe97e;">${points} pts</b> — Correct: <b style="color:#19c68b;">${correct}</b> / <b>${total}</b>
+        </span>
+      </div>
+    `;
+    let allCorrect = (correct === total && total > 0);
+    if(allCorrect) setTimeout(showConfetti,400);
+
+    answers.forEach((item, i) => {
+      const typeMeta = GAME_TYPES[item.type] || { label: item.type || "Other", icon: "fa-question", cls: "" };
+      let html = `<div class="q-item">
+        <div class="q-header">
+          <span class="type-badge ${typeMeta.cls}"><i class="fa-solid ${typeMeta.icon}"></i>${typeMeta.label}</span>
+          Q${i+1}. ${item.question}
+          <span class="score-box">
+            <i class="fa-solid fa-coins"></i>+${item.score ?? 0} pts
+            <span class="badge ${item.isCorrect ? 'correct' : 'incorrect'}">
+              ${item.isCorrect
+                ? '<i class="fa-solid fa-check-circle"></i> Correct'
+                : '<i class="fa-solid fa-times-circle"></i> Incorrect'
+              }
+            </span>
+          </span>
+        </div>`;
+
+      // MULTIPLE CHOICE
+      if (item.type === "multiple_choice" && item.choices) {
+        html += `<div class="choices">`;
+        item.choices.forEach((ch, idx) => {
+          const isUser = Array.isArray(item.userAnswer)
+            ? item.userAnswer.includes(idx)
+            : item.userAnswer == idx;
+          const isCorrect = Array.isArray(item.correctAnswer)
+            ? item.correctAnswer.includes(idx)
+            : item.correctAnswer == idx;
+          let classNames = "choice";
+          let icon = "";
+          if (isCorrect && isUser) {
+            classNames += " correct user";
+            icon = `<i class="fa-solid fa-circle-check"></i>`;
+          } else if (isCorrect) {
+            classNames += " correct";
+            icon = `<i class="fa-solid fa-check"></i>`;
+          } else if (isUser && !isCorrect) {
+            classNames += " user incorrect";
+            icon = `<i class="fa-solid fa-arrow-right"></i>`;
+          }
+          html += `<span class="${classNames}">${icon}${ch}</span>`;
+        });
+        html += `</div>`;
+      }
+      // FILL IN BLANK
+      else if (item.type === "fill_in_blank") {
+        html += `<span class="answers-label">Your Answer:</span> <span>${typeof item.userAnswer === "object"
+          ? (item.userAnswer.userAnswer || "<i>No answer</i>")
+          : (item.userAnswer || "<i>No answer</i>")}</span><br>`;
+        html += `<span class="answers-label">Correct Answer:</span> <span>${typeof item.correctAnswer === "object"
+          ? (item.correctAnswer.correctAnswer || "<i>No answer</i>")
+          : (item.correctAnswer || "<i>No answer</i>")}</span>`;
+      }
+      // MATCHING
+      else if (item.type === "match" && item.userMapping && item.correctMapping) {
+        html += `<span class="answers-label">Your Matches:</span>`;
+        html += `<table class="mapping-table"><tr><th>Left</th><th>Your Match</th><th>Correct Match</th></tr>`;
+        Object.keys(item.correctMapping).forEach(k => {
+          let userV = (item.userMapping && item.userMapping[k]) || "";
+          let correctV = item.correctMapping[k];
+          let cls = userV === correctV ? "correct" : "wrong";
+          html += `<tr><td>${k}</td><td class="${cls}">${userV}</td><td>${correctV}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+      // CATEGORIZE
+      else if (item.type === "categorize" && item.userMapping && item.correctMapping) {
+        html += `<span class="answers-label">Your Categories:</span>`;
+        html += `<table class="mapping-table"><tr><th>Category</th><th>Your Items</th><th>Correct Items</th></tr>`;
+        Object.keys(item.correctMapping).forEach(cat => {
+          let userArr = (item.userMapping && item.userMapping[cat]) || [];
+          let correctArr = item.correctMapping[cat] || [];
+          let ok = Array.isArray(userArr) && Array.isArray(correctArr) && userArr.join() === correctArr.join();
+          let cls = ok ? "correct" : "wrong";
+          html += `<tr><td>${cat}</td><td class="${cls}">${userArr.join(', ')}</td><td>${correctArr.join(', ')}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+      // MEMORY MATCH
+      else if (item.type === "memory_match" && item.userPairs && item.correctPairs) {
+        html += `<span class="answers-label">Your Pairs:</span>`;
+        html += `<div class="pair-list">${item.userPairs.map(pair =>
+          `<span class="order-item${item.correctPairs.some(p=>p.front===pair.front&&p.back===pair.back) ? " correct" : " wrong"}">${pair.front} ⇆ ${pair.back}</span>`
+        ).join('')}</div>`;
+        html += `<span class="answers-label">Correct Pairs:</span>`;
+        html += `<div class="pair-list">${item.correctPairs.map(pair =>
+          `<span class="order-item">${pair.front} ⇆ ${pair.back}</span>`
+        ).join('')}</div>`;
+      }
+      // REORDER (drag/drop)
+      else if (item.type === "reorder" && item.userOrder && item.correctOrder) {
+        html += `<span class="order-label">Your Order:</span><div class="order-list">`;
+        item.userOrder.forEach((v, idx) => {
+          let correctPos = item.correctOrder[idx];
+          let cls = v === correctPos ? "correct" : "wrong";
+          html += `<span class="order-item ${cls}">${v}</span>`;
+        });
+        html += `</div><span class="order-label">Correct Order:</span><div class="order-list">`;
+        item.correctOrder.forEach(v =>
+          html += `<span class="order-item">${v}</span>`
+        );
+        html += `</div>`;
+      }
+      // TARGET SHOOTER
+      else if (item.type === "target_shooter" && item.options) {
+        html += `<div class="choices">`;
+        item.options.forEach((opt, idx) => {
+          let isCorrect = item.correctIdxs && item.correctIdxs.includes(idx);
+          let isUser = item.userShotIdxs && item.userShotIdxs.includes(idx);
+          let classNames = "choice";
+          let icon = "";
+          if (isCorrect && isUser) {
+            classNames += " correct user";
+            icon = `<i class="fa-solid fa-bullseye"></i>`;
+          } else if (isCorrect) {
+            classNames += " correct";
+            icon = `<i class="fa-solid fa-circle-dot"></i>`;
+          } else if (isUser && !isCorrect) {
+            classNames += " user incorrect";
+            icon = `<i class="fa-solid fa-crosshairs"></i>`;
+          }
+          html += `<span class="${classNames}">${icon}${opt}</span>`;
+        });
+        html += `</div>`;
+      }
+      // FALLBACK: show what we can
+      else {
+        if (typeof item.userAnswer === "object" && item.userAnswer !== null) {
+          if (item.userAnswer.userAnswer !== undefined || item.userAnswer.correctAnswer !== undefined) {
+            html += `<span class="answers-label">Your Answer:</span> <span>${item.userAnswer.userAnswer || "<i>No answer</i>"}</span><br>`;
+            html += `<span class="answers-label">Correct Answer:</span> <span>${item.userAnswer.correctAnswer || "<i>No answer</i>"}</span>`;
+          } else if (item.userAnswer.userOrder && item.userAnswer.correctOrder) {
+            html += `<span class="answers-label">Your Order:</span> <span>${item.userAnswer.userOrder.join(" → ")}</span><br>`;
+            html += `<span class="answers-label">Correct Order:</span> <span>${item.userAnswer.correctOrder.join(" → ")}</span>`;
+          } else {
+            html += `<span>${JSON.stringify(item.userAnswer)}</span>`;
+          }
+        } else {
+          html += `<span class="answers-label">Your Answer:</span> <span>${formatAnswer(item.userAnswer)}</span><br>`;
+          html += `<span class="answers-label">Correct:</span> <span>${formatAnswer(item.correctAnswer)}</span>`;
+        }
+      }
+
+      // ---- SINGLE EXPLANATION ONLY ----
+      let explanationText = null;
+      if (item.explanation) {
+        explanationText = item.explanation;
+      } else if (
+        typeof item.userAnswer === "object" &&
+        item.userAnswer !== null &&
+        item.userAnswer.explanation
+      ) {
+        explanationText = item.userAnswer.explanation;
+      }
+      if (explanationText) {
+        html += `<div class="explanation"><i class="fa-solid fa-circle-info"></i> ${explanationText}</div>`;
+      }
+
+      html += `</div>`;
+      c.innerHTML += html;
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1063,6 +1063,9 @@ html, body {
       <button id="startQuizBtn" class="action-btn action-btn--start" aria-label="Start the assessment">START QUIZ</button>
       <button id="resetScoresBtn" class="action-btn action-btn--reset" aria-label="Reset all scores">RESET SCORES</button>
       <button id="resetAllBtn" class="action-btn action-btn--danger" aria-label="Reset everything">RESET ALL</button>
+      <button id="openJsonModalBtn" class="action-btn action-btn--generate" aria-label="Upload JSON Quiz">
+        UPLOAD JSON QUIZ
+      </button>
     </div>
   </section>
 
@@ -1100,6 +1103,38 @@ html, body {
   <footer class="site-footer">
     © Joseph 2025. All rights reserved. Made with ❤️ for the quiz community.
   </footer>
+
+  <div id="jsonQuizModal" class="quiz-modal-bg" style="display:none;">
+  <div class="quiz-form-modal" style="max-width:440px;">
+    <button type="button" class="close-btn" onclick="closeJsonQuizModal()">&times;</button>
+    <h2 style="text-align:center;color:#f6e26d;margin-bottom:14px;">Upload Quiz JSON</h2>
+    <form id="jsonQuizForm" autocomplete="off">
+      <div style="margin-bottom:12px;">
+        <label style="font-weight:700;">Quiz Title</label>
+        <input type="text" id="jsonQuizTitle" maxlength="60" placeholder="Enter quiz name…" required style="width:100%;padding:10px;font-size:1.05em;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-weight:700;">Seconds per Question</label>
+        <input type="number" id="jsonQuizSeconds" min="5" max="300" value="30" required style="width:100%;padding:10px;font-size:1.05em;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-weight:700;">Paste Quiz JSON Array Here</label>
+        <textarea id="jsonQuizTextarea" rows="8" placeholder='[{"question":"...","choices":["..."],"answer":0}, ...]' style="width:100%;font-size:1.07em;border-radius:8px;padding:8px;"></textarea>
+        <div id="jsonQuizError" style="color:#ff6b6b;font-weight:700;display:none;margin-top:7px;"></div>
+      </div>
+      <div class="form-footer" style="margin-top:14px;justify-content:center;">
+        <button type="submit" class="action-btn action-btn--start" style="padding:8px 32px;font-size:1.04em;">Upload</button>
+      </div>
+    </form>
+
+    <div id="jsonQuizLoading" style="display:none;justify-content:center;align-items:center;position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(20,16,30,0.75);border-radius:26px;z-index:99;">
+  <div>
+    <div class="loader" style="margin:auto;width:40px;height:40px;border-width:4px;border-top:4px solid #f6e26d;"></div>
+    <div style="margin-top:11px;color:#f6e26d;font-weight:800;font-size:1.09em;text-align:center;letter-spacing:.03em;">Uploading...</div>
+  </div>
+</div>
+  </div>
+</div>
 <script>
 const avatars = [
   `<img src="/static/images/avatar/eleven.png" class="avatar-img" alt="Avatar: Eleven" />`,
@@ -1131,12 +1166,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderLeaderboard(players);
   });
 
-  document.getElementById('startQuizBtn').onclick = function() {
-    socket.emit('admin_start_quiz');
-  };
-  socket.on('quiz_started', function() {
+  document.getElementById('startQuizBtn').onclick = async function() {
+  // 1. Generate a unique gameId (timestamp-based)
+  const gameId = Date.now().toString();
+
+  // 2. Save gameId in localStorage for admin-side code and later pages
+  localStorage.setItem('quiz_game_id', gameId);
+
+  // 3. Initialize game node in Firebase
+  try {
+    await fetch(`${FIREBASE_DB_URL}/games/${gameId}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        createdAt: Date.now(),
+        status: "waiting"
+        // Add more metadata if needed
+      })
+    });
+
+    // 4. Notify all users via socket (now includes gameId)
+    socket.emit('admin_start_quiz', { gameId });
+
+    // 5. Optionally update the UI, disable button, etc.
     document.getElementById('startQuizBtn').textContent = "Started!";
     document.getElementById('startQuizBtn').disabled = true;
+
+  } catch (e) {
+    alert("Error creating game in Firebase: " + e.message);
+  }
+};
+
+  socket.on('quiz_started', function(data) {
+    if (data && data.gameId) {
+      // Store in localStorage (just in case)
+      localStorage.setItem('quiz_game_id', data.gameId);
+      // Optionally update UI, etc.
+      document.getElementById('startQuizBtn').textContent = "Started!";
+      document.getElementById('startQuizBtn').disabled = true;
+    }
   });
   socket.emit('admin_get_players');
 
@@ -1483,6 +1551,73 @@ async function setSelectedQuestionnaire(selectedId) {
     }
   });
 }
+
+  // --- JSON Quiz Modal Logic ---
+function openJsonQuizModal() {
+  document.getElementById('jsonQuizModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeJsonQuizModal() {
+  document.getElementById('jsonQuizModal').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('jsonQuizForm').reset();
+  document.getElementById('jsonQuizError').style.display = 'none';
+}
+
+document.getElementById('openJsonModalBtn').onclick = openJsonQuizModal;
+
+// Handle submit
+document.getElementById('jsonQuizForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const title = document.getElementById('jsonQuizTitle').value.trim();
+  const seconds = parseInt(document.getElementById('jsonQuizSeconds').value, 10);
+  const raw = document.getElementById('jsonQuizTextarea').value.trim();
+  let quizArray;
+  try {
+    quizArray = JSON.parse(raw);
+    if (!Array.isArray(quizArray) || quizArray.length === 0) throw new Error("Must be a non-empty JSON array.");
+    document.getElementById('jsonQuizError').style.display = 'none';
+  } catch (err) {
+    document.getElementById('jsonQuizError').innerText = "Invalid JSON: " + err.message;
+    document.getElementById('jsonQuizError').style.display = '';
+    return;
+  }
+
+  // Add metadata to each question, if needed
+  quizArray.forEach(q => { q.timer = seconds; });
+
+  // === Show loading overlay ===
+  document.getElementById('jsonQuizLoading').style.display = 'flex';
+
+  try {
+    const res = await fetch('/quiz/upload_json_form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        questions: quizArray,
+        meta: {
+          formName: title,
+          timer: seconds
+        }
+      })
+    });
+    const result = await res.json();
+    document.getElementById('jsonQuizLoading').style.display = 'none'; // Hide loading
+
+    if (result.success) {
+      alert('Quiz JSON uploaded!\nQuiz ID: ' + result.quiz_id);
+      closeJsonQuizModal();
+      // Optionally: reload forms or update UI here
+    } else {
+      document.getElementById('jsonQuizError').innerText = result.error || 'Failed to upload quiz';
+      document.getElementById('jsonQuizError').style.display = '';
+    }
+  } catch (err) {
+    document.getElementById('jsonQuizLoading').style.display = 'none'; // Hide loading
+    document.getElementById('jsonQuizError').innerText = "Request failed: " + err;
+    document.getElementById('jsonQuizError').style.display = '';
+  }
+};
 </script>
 
 

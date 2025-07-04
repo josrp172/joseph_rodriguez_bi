@@ -64,36 +64,125 @@ function nextPath(type) {
       if (!q) return location.replace('/quiz/initial_ranking');
       renderFn(q, idx + 1, bank.length);
       const globalTimer = Number(localStorage.getItem('quiz::timer')) || 30;
-        this.startTimer(globalTimer, secsLeft => {
-          if (secsLeft === 0) this.finishQuestion(false, 0);
-          else if (secsLeft <= 10)
-            document.getElementById('quizTimer').classList.add('warning');
+    this.startTimer(globalTimer, secsLeft => {
+      if (secsLeft === 0 && typeof window.showFeedback === 'function') {
+        window.showFeedback(false);  // <<=== This triggers the feedback flow for this page!
+      }
+      else if (secsLeft <= 10)
+        document.getElementById('quizTimer').classList.add('warning');
+    });
+    },
+finishQuestion: async function(correct, secsLeft, userAnswer = null) {
+  const totalTime = Number(localStorage.getItem('quiz::timer')) || 30;
+  const score = correct ? Math.round(70 + (secsLeft / totalTime) * 30) : 0;
+  const scores = JSON.parse(localStorage.getItem('quiz::scores') || '[]');
+  scores.push(score);
+  localStorage.setItem('quiz::scores', JSON.stringify(scores));
+
+  const answers = JSON.parse(localStorage.getItem('quiz::answers') || '[]');
+  const idx = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
+  const bank = await loadBank();
+  const questionObj = bank[idx];
+
+  // Prepare answerObj with adaptive logic per question type
+  let answerObj = {
+    question: questionObj.question,
+    type: questionObj.type,
+    isCorrect: correct,
+    score: score,
+    explanation: (userAnswer && userAnswer.explanation) || questionObj.explanation || null,
+    raw: questionObj
+  };
+
+  // Now store details per type
+  switch (questionObj.type) {
+    case 'multiple_choice':
+      answerObj.choices = (userAnswer && userAnswer.choices) || questionObj.choices || null;
+      answerObj.userAnswer = (userAnswer && userAnswer.userAnswer) || userAnswer || null;
+      answerObj.correctAnswer = (userAnswer && userAnswer.correctAnswer) || questionObj.answer || questionObj.correctAnswer || null;
+      break;
+
+    case 'fill_in_blank':
+      answerObj.userAnswer = (userAnswer && userAnswer.userAnswer) || userAnswer || null;
+      answerObj.correctAnswer = (userAnswer && userAnswer.correctAnswer) || questionObj.answer || questionObj.correctAnswer || null;
+      break;
+
+    case 'match':
+      answerObj.left = (userAnswer && userAnswer.left) || questionObj.left || null;
+      answerObj.right = (userAnswer && userAnswer.right) || questionObj.right || null;
+      answerObj.userMapping = (userAnswer && userAnswer.mapping) || null;
+      answerObj.correctMapping = (userAnswer && userAnswer.correctMapping) || questionObj.mapping || null;
+      break;
+
+    case 'categorize':
+      answerObj.categories = (userAnswer && userAnswer.categories) || Object.keys(questionObj.categories || {}) || null;
+      answerObj.items = (userAnswer && userAnswer.items) || (questionObj.items ? questionObj.items.map(i => i.text) : null);
+      answerObj.userMapping = (userAnswer && userAnswer.mapping) || null;
+      answerObj.correctMapping = (userAnswer && userAnswer.correctMapping) || null;
+      break;
+
+    case 'memory_match':
+      answerObj.userPairs = (userAnswer && userAnswer.userPairs) || null;
+      answerObj.correctPairs = (userAnswer && userAnswer.correctPairs) || null;
+      answerObj.totalCards = (userAnswer && userAnswer.totalCards) || null;
+      break;
+
+    case 'reorder':
+      answerObj.userOrder = (userAnswer && userAnswer.userOrder) || null;
+      answerObj.correctOrder = (userAnswer && userAnswer.correctOrder) || null;
+      break;
+
+    case 'target_shooter':
+      answerObj.options = (userAnswer && userAnswer.options) || (questionObj.options ? questionObj.options.map(opt => opt.text) : null);
+      answerObj.correctIdxs = (userAnswer && userAnswer.correctIdxs) || null;
+      answerObj.userShotIdxs = (userAnswer && userAnswer.userShotIdxs) || null;
+      answerObj.userSelections = (userAnswer && userAnswer.userSelections) || null;
+      break;
+
+    // fallback: store userAnswer and correctAnswer if provided
+    default:
+      answerObj.userAnswer = (userAnswer && userAnswer.userAnswer) || userAnswer || null;
+      answerObj.correctAnswer = (userAnswer && userAnswer.correctAnswer) || questionObj.answer || questionObj.correctAnswer || null;
+      break;
+  }
+
+  answers.push(answerObj);
+  localStorage.setItem('quiz::answers', JSON.stringify(answers));
+
+  // Score and progress emission (unchanged)
+  const total = scores.reduce((a,b) => a + b, 0);
+  window.quizSocket.emit('submit_score', { total, progress: idx });
+
+  sessionStorage.setItem(IDX_KEY, idx + 1);
+
+  window.quizGoNext = function() {
+      if (idx + 1 >= bank.length) {
+        const answers = JSON.parse(localStorage.getItem('quiz::answers') || '[]');
+        const userId = localStorage.getItem('quiz_permanent_user_id');
+        const gameId = localStorage.getItem('quiz_game_id');
+        console.log("About to emit submit_answers v21", { gameId, userId, answers });
+
+        window.quizSocket.emit('submit_answers', {
+          gameId: gameId,
+          userId: userId,
+          answers: answers
         });
-    },
-     finishQuestion: async function(correct, secsLeft) {
-     const totalTime = Number(localStorage.getItem('quiz::timer')) || 30;
-     const score = correct
-       ? Math.round(70 + (secsLeft / totalTime) * 30)
-       : 0;
-      const scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
-      scores.push(score);
-      localStorage.setItem(SCORE_KEY, JSON.stringify(scores));
 
-      // — NEW: tell the server my updated total —
-      const total = scores.reduce((a,b) => a + b, 0);
-      const progress = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
-      window.quizSocket.emit('submit_score', { total, progress });
+        window.quizSocket.once('answers_saved', (msg) => {
+          if (msg.status === 'ok') {
+            location.replace('/quiz/final_ranking');
+          } else {
+            alert('Failed to save answers. Please try again! ' + (msg.error || ''));
+          }
+        });
+      } else {
+        location.replace('/quiz/initial_ranking');
+      }
+    };
 
-      let idx = Number(sessionStorage.getItem(IDX_KEY) ?? 0);
-      sessionStorage.setItem(IDX_KEY, ++idx);
+}
 
-      const bank = await loadBank();
-     if (idx >= bank.length) {
-      location.replace('/quiz/final_ranking');
-    } else {
-      location.replace('/quiz/initial_ranking'); // Always visit initial_ranking before each question
-    }
-    },
+    ,
     async initRanking() {
       const scores = JSON.parse(localStorage.getItem(SCORE_KEY) || '[]');
       const total = scores.reduce((a, b) => a + b, 0);
@@ -127,6 +216,8 @@ function nextPath(type) {
   // will reuse the same socket on every page
   const socket = io({ transports: ['websocket'] });
   socket.on('connect', () => {
+      // Always update the current socket id as quiz_user_id
+
       const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
       const userName  = localStorage.getItem('quiz_username') || 'Player';
       const scores    = JSON.parse(localStorage.getItem('quiz::scores') || '[]');

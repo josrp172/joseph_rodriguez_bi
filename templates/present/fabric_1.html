@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Microsoft Fabric for Power BI Nerds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      background: #e4f9f6;
+      overflow: hidden;
+    }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      position: relative;
+    }
+    /* Animated gradient blobs background */
+    .blobs-bg {
+      pointer-events: none;
+      position: fixed;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.28;
+      filter: blur(12px);
+      will-change: transform, opacity;
+      animation: moveBlob 15s ease-in-out infinite alternate;
+      background: radial-gradient(circle at 70% 30%, #83fad2 60%, #50e4fa 100%);
+    }
+    .blob:nth-child(2) {
+      width: 440px; height: 380px;
+      left: 65vw; top: 58vh;
+      background: radial-gradient(circle at 50% 50%, #8efff7 60%, #bbffef 100%);
+      animation-duration: 18s; animation-delay: 1.3s;
+    }
+    .blob:nth-child(3) {
+      width: 330px; height: 290px;
+      left: 10vw; top: 60vh;
+      background: radial-gradient(circle at 60% 40%, #aefad2 40%, #b5fff7 100%);
+      animation-duration: 19s; animation-delay: 3.1s;
+    }
+    .blob:nth-child(4) {
+      width: 180px; height: 180px;
+      left: 77vw; top: 8vh;
+      background: radial-gradient(circle at 60% 40%, #61e8c8 40%, #c9ffe8 100%);
+      animation-duration: 16s; animation-delay: 2.1s;
+    }
+    @keyframes moveBlob {
+      0% { transform: translateY(0px) scale(1);}
+      100% { transform: translateY(-45px) scale(1.14);}
+    }
+    /* Slides Container */
+    .slides-container {
+      width: 100vw; height: 100vh;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide {
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s, transform 0.7s cubic-bezier(.2,1.2,.2,1);
+      transform: translateY(30px) scale(0.97);
+      background: none;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+      transform: none;
+      transition-delay: 0s;
+    }
+
+    /* Slide 1 (Hero) */
+    .hero-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.85);
+      border-radius: 2rem;
+      box-shadow: 0 12px 44px 0 rgba(51,185,160,0.08), 0 2px 10px rgba(35,143,143,0.06);
+      padding: 2.4em 3.2em 2.6em 3.2em;
+      max-width: 96vw;
+      min-width: 330px;
+      position: relative;
+    }
+    .hero-title {
+      font-size: clamp(2.1rem, 4vw, 3.7rem);
+      font-weight: 800;
+      color: #263347;
+      margin-bottom: 0.1em;
+      letter-spacing: -1.2px;
+      text-align: center;
+      line-height: 1.09;
+      text-shadow: 0 2px 6px rgba(102,192,192,0.07);
+      opacity: 0;
+      animation: fadeinup 0.7s 0.15s forwards;
+    }
+    .hero-subtitle {
+      font-size: clamp(1.2rem, 2.1vw, 2.1rem);
+      font-weight: 600;
+      color: #18b7b2;
+      margin-bottom: 1.1em;
+      text-align: center;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      animation: fadeinup 0.6s 0.36s forwards;
+    }
+    @keyframes fadeinup {
+      0% { opacity: 0; transform: translateY(45px);}
+      90% { opacity: 1;}
+      100% { opacity: 1; transform: none;}
+    }
+    .logo-img {
+      display: block;
+      width: clamp(120px, 13vw, 170px);
+      height: clamp(120px, 13vw, 170px);
+      object-fit: contain;
+      background: #fff;
+      border-radius: 1.5rem;
+      box-shadow: 0 6px 30px 0 rgba(40,160,140,0.10);
+      margin-bottom: 1.7em;
+      margin-top: 0.7em;
+      opacity: 0;
+      transform: scale(0.91);
+      animation: logoIn 0.7s 0.5s cubic-bezier(.18,1.1,.26,1) forwards;
+    }
+    @keyframes logoIn {
+      0% { opacity: 0; transform: scale(0.91);}
+      90% { opacity: 1;}
+      100% { opacity: 1; transform: scale(1);}
+    }
+    .start-btn {
+      font-size: 1.22rem;
+      font-weight: bold;
+      background: linear-gradient(90deg,#18ebba 0,#67daf7 100%);
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.89em 2.9em;
+      box-shadow: 0 2px 16px 0 rgba(46,192,185,0.13);
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      outline: none;
+      margin-top: 1.3em;
+      margin-bottom: 0.6em;
+      transition: background 0.17s, transform 0.11s, box-shadow 0.22s;
+      position: relative;
+      z-index: 2;
+      opacity: 1 !important;
+      transform: scale(1);
+      animation: fadeBtn 0.55s 0.85s forwards;
+      display: inline-block;
+    }
+    .start-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 0px 8px 0 rgba(46,192,185,0.18);
+    }
+    .start-btn::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 130%;
+      height: 170%;
+      border-radius: 2em;
+      background: radial-gradient(circle, #a7fbe4 0%, transparent 80%);
+      transform: translate(-50%, -50%);
+      opacity: 0.22;
+      z-index: -1;
+      animation: btnPulse 1.1s infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes btnPulse {
+      0% { opacity: 0.11; transform: translate(-50%, -50%) scale(1);}
+      100% { opacity: 0.27; transform: translate(-50%, -50%) scale(1.08);}
+    }
+    .slide-indicator {
+      display: block;
+      margin: 2em auto 0 auto;
+      color: #40b9b4;
+      font-size: clamp(1.08rem,1.4vw,1.2rem);
+      opacity: 0.85;
+      letter-spacing: 0.1em;
+      user-select: none;
+      pointer-events: none;
+      text-align: center;
+      animation: fadeinup 0.7s 1.2s backwards;
+    }
+
+    /* ============ SLIDE 2: AGENDA ============ */
+    .agenda-canvas {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0;
+      position: relative;
+      z-index: 3;
+      background: transparent;
+    }
+    .agenda-title {
+      text-align: center;
+      margin-bottom: 2vh;
+      margin-top: 4.2vh;
+    }
+    .agenda-title > span {
+      font-size: clamp(2.3rem, 4vw, 3.7rem);
+      color: #177f8c; font-weight: 800; letter-spacing: -1.2px;
+      display: block; margin-bottom: 0.23em;
+    }
+    .agenda-theme {
+      font-size: 1.32rem; color: #22baaa; font-weight: 700; margin-bottom: 0.2em;
+    }
+    .agenda-subtheme {
+      font-size: 1.11rem; color: #1d9ea1; font-weight: 500; margin-bottom: 1.6em;
+    }
+    .agenda-roadmap {
+      margin: 0 auto;
+      width: 98vw;
+      max-width: 1600px;
+      display: flex;
+      flex-direction: row;
+      gap: 3vw;
+      align-items: stretch;
+      justify-content: space-around;
+      flex: 1;
+      height: 68vh;
+    }
+    .agenda-act {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.98);
+      border-radius: 2.1em;
+      padding: 2.8em 2.4em 2.5em 2.4em;
+      box-shadow: 0 6px 22px #13b2b423;
+      min-width: 350px;
+      max-width: 450px;
+      width: 32vw;
+      height: 100%;
+      justify-content: flex-start;
+      position: relative;
+      opacity: 0;
+      transform: translateY(80px) scale(0.98);
+      animation: cardIn 1.1s forwards;
+    }
+    .agenda-act:nth-child(1){animation-delay: 0.22s;}
+    .agenda-act:nth-child(2){animation-delay: 0.42s;}
+    .agenda-act:nth-child(3){animation-delay: 0.64s;}
+    @keyframes cardIn {
+      0%{opacity:0;transform:translateY(80px) scale(0.98);}
+      85%{opacity:1;}
+      100%{opacity:1;transform:none;}
+    }
+    .agenda-dot {
+      width: 58px; height: 58px; margin-bottom: 1.1em;
+      border-radius: 20px;
+      background: #48ffc7;
+      box-shadow: 0 1px 14px #38e6c366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .agenda-dot img {
+      width: 38px; height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 8px #66e9e077);
+      animation: iconFloat 2.7s infinite alternate cubic-bezier(.5,1.2,.4,1.0);
+    }
+    .agenda-act-title {
+      font-size: 1.47rem;
+      font-weight: 800;
+      color: #2f8fa0;
+      margin-bottom: 0.32em;
+      letter-spacing: -0.04em;
+      text-align: center;
+    }
+    .agenda-act-desc ul {
+      margin: 0 0 0.5em 0; padding: 0; list-style: none;
+      font-size: 1.14rem;
+      text-align: left;
+    }
+    .agenda-act-desc li {
+      color: #245c67; line-height: 1.48;
+      margin-bottom: 0.34em;
+      margin-left: 0;
+      position: relative;
+      padding-left: 1.18em;
+    }
+    .agenda-act-desc li:before {
+      content: '•'; position: absolute; left: 0; color: #b3ede7; font-size: 1.2em; top: 0.12em;
+    }
+    .agenda-mute {
+      color: #7aaeb8; font-size: 0.97em; font-style: italic; font-weight: 400; margin-left: 0.25em;
+    }
+    .demo-canvas-next {
+      position: absolute;
+      right: 4vw;
+      bottom: 3vh;
+      background: linear-gradient(90deg,#18ebba 0,#67daf7 100%);
+      color: #fff;
+      font-size: 1.17rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.95em 2.7em;
+      box-shadow: 0 2px 16px 0 rgba(46,192,185,0.14);
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      outline: none;
+      z-index: 5;
+      transition: background 0.17s, transform 0.11s, box-shadow 0.22s;
+      opacity: 0.96;
+      animation: fadeinup 0.6s 1.2s forwards;
+    }
+    .demo-canvas-next:active {
+      transform: scale(0.97);
+      box-shadow: 0 0px 8px 0 rgba(46,192,185,0.17);
+    }
+    @media (max-width: 1200px) {
+      .agenda-roadmap { gap: 1.3vw;}
+      .agenda-act { min-width: 270px; max-width: 400px; width: 39vw;}
+    }
+    @media (max-width: 900px) {
+      .agenda-roadmap { flex-direction: column; align-items: stretch; gap: 3vh; height:auto;}
+      .agenda-act { width: 92vw; margin: 0 auto; min-height: 0;}
+      .demo-canvas-next {right: 4vw; bottom: 3vh;}
+    }
+
+    /* =========== SLIDE 3 =========== */
+    .universe-section {
+      position: relative;
+      width: 100vw; height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .universe-title {
+      color: #174e5b;
+      font-size: clamp(2.1rem, 3.5vw, 3.1rem);
+      font-weight: 800;
+      letter-spacing: -1.1px;
+      margin-bottom: 0.7em;
+      text-shadow: 0 4px 14px rgba(37,168,176,0.06);
+      text-align: center;
+      z-index: 3;
+    }
+    .universe-orbit {
+      position: relative;
+      width: min(80vw, 680px); height: min(80vw, 540px);
+      margin: 0 auto;
+      z-index: 2;
+      transition: filter 0.21s;
+    }
+    .universe-img {
+      position: absolute;
+      width: 110px; height: 110px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 1.2em;
+      box-shadow: 0 6px 30px 0 rgba(48,160,180,0.09);
+      animation: floaty 6s infinite alternate ease-in-out, rotator 11s infinite linear;
+      opacity: 0.92;
+      cursor: pointer;
+      transition: box-shadow 0.17s, filter 0.18s, transform 0.18s, opacity 0.18s;
+    }
+    .universe-img:hover, .universe-img.focused {
+      box-shadow: 0 10px 32px 0 rgba(51,205,190,0.22), 0 2px 18px rgba(51,205,190,0.15);
+      filter: brightness(1.09) drop-shadow(0 5px 30px #c4fff7) saturate(1.2);
+      transform: scale(1.13) translateY(-16px) rotate(-2deg);
+      z-index: 10;
+      opacity: 1;
+    }
+    .universe-img.unfocused {
+      opacity: 0.44 !important;
+      filter: grayscale(0.22) blur(1.1px);
+    }
+    .universe-img.i0 { left:50%; top:2%; transform:translate(-50%,0);}
+    .universe-img.i1 { left:7%; top:25%; animation-delay: 0.2s, 2.2s;}
+    .universe-img.i2 { left:75%; top:20%; animation-delay: 0.5s, 4.5s;}
+    .universe-img.i3 { left:18%; top:68%; animation-delay: 1.1s, 3.3s;}
+    .universe-img.i4 { left:60%; top:65%; animation-delay: 1.7s, 6.1s;}
+    .universe-img.i5 { left:83%; top:48%; animation-delay: 0.7s, 8.4s;}
+    .universe-img.i6 { left:35%; top:84%; animation-delay: 1.3s, 6.9s;}
+    .universe-img.i7 { left:43%; top:48%; animation-delay: 1.6s, 4.9s;}
+    @keyframes floaty {
+      0%   { transform: translateY(0) scale(1) rotate(-8deg);}
+      50%  { transform: translateY(-22px) scale(1.06) rotate(7deg);}
+      100% { transform: translateY(0) scale(1) rotate(-8deg);}
+    }
+    @keyframes rotator {
+      from { filter: hue-rotate(0deg);}
+      to   { filter: hue-rotate(18deg);}
+    }
+    @media (max-width: 900px) {
+      .universe-orbit { width: min(98vw, 410px); height: min(98vw, 340px);}
+      .universe-img { width: 62px; height: 62px;}
+    }
+    @media (max-width: 600px) {
+      .hero-card, .demo-section { min-width: 0; padding: 2em 0.7em;}
+      .logo-img { width: 85px; height: 85px;}
+      .universe-title { font-size: 1.3rem;}
+    }
+
+      .story-canvas {
+  width: 100vw; height: 100vh; min-height: 100vh; min-width: 100vw;
+  display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch;
+  box-sizing: border-box; padding: 0; position: relative; z-index: 3;
+  animation: fadeinup 1s;
+}
+.story-bg-title {
+  padding: 6vh 6vw 2vh 7vw;
+  display: flex; align-items: flex-end; justify-content: flex-start; gap: 4vw;
+  flex-wrap: wrap;
+}
+.story-main-title {
+  font-size: clamp(2.0rem, 4vw, 3.2rem);
+  font-weight: 900;
+  color: #157e8a;
+  line-height: 1.13;
+  letter-spacing: -1.3px;
+  text-shadow: 0 2px 18px rgba(51,205,190,0.07);
+  margin-bottom: 0.2em;
+  display: block;
+}
+.story-main-title span {
+  display: block;
+  font-size: 0.75em;
+  color: #1ecfc0;
+  font-weight: 700;
+  margin-top: 0.18em;
+}
+.story-theme {
+  font-size: 1.11rem;
+  color: #51a6c4;
+  font-weight: 500;
+  margin-left: 2vw;
+  margin-bottom: 1.2em;
+  opacity: 0.98;
+}
+.story-company {
+  display: flex; align-items: center; gap: 1em;
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.2em;
+  padding: 1.1em 2.2em;
+  box-shadow: 0 3px 18px rgba(34,199,196,0.08);
+  margin-left: 5vw;
+}
+.story-company img {
+  width: 54px; height: 54px; border-radius: 1em; object-fit: contain;
+  background: #fff; box-shadow: 0 2px 7px #c0fff9;
+}
+.company-name {
+  color: #12b0a2;
+  font-weight: 800;
+  font-size: 1.17em;
+  margin-right: 1.2em;
+}
+.company-desc {
+  color: #506a7c; font-size: 1em; font-weight: 400;
+  opacity: 0.94;
+  margin-left: 0.7em;
+}
+.story-roles {
+  display: flex; flex-direction: row; justify-content: center; align-items: flex-start;
+  gap: 3vw; margin: 2.2vh 0 2.7vh 0; flex-wrap: wrap;
+}
+.role-block {
+  background: rgba(255,255,255,0.97);
+  border-radius: 1.4em;
+  box-shadow: 0 3px 20px rgba(36,199,170,0.11);
+  padding: 1.5em 1.9em 1.5em 1.1em;
+  display: flex; align-items: center; gap: 1.2em;
+  min-width: 220px; max-width: 280px;
+  flex: 1 1 220px;
+  border-left: 6px solid var(--col,#18b7b2);
+  animation: fadeinup 1.4s;
+}
+.role-block img {
+  width: 56px; height: 56px; border-radius: 50%; object-fit: cover;
+  background: #fff; box-shadow: 0 2px 10px rgba(10,200,180,0.11);
+  animation: iconFloat 2.7s infinite alternate cubic-bezier(.5,1.2,.4,1.0);
+}
+.role-title {
+  font-weight: 800; font-size: 1.14em; color: var(--col,#18b7b2);
+  margin-bottom: 0.21em;
+}
+.role-title span {
+  display: inline-block; font-weight: 600; font-size: 0.92em; color: #748ea3; margin-left: 0.8em;
+}
+.role-desc {
+  font-size: 0.99em; color: #236071; opacity: 0.97;
+  margin-top: 0.1em;
+}
+.story-arc {
+  font-size: 1.21rem; color: #2b9c97; background: rgba(255,255,255,0.78);
+  padding: 1.1em 2.4em;
+  border-radius: 1.5em;
+  box-shadow: 0 2px 18px #7ff7ef11;
+  max-width: 700px;
+  margin: 2.6vh auto 0 auto;
+  text-align: center;
+}
+@media (max-width:1100px) {
+  .story-bg-title { flex-direction: column; align-items: flex-start; gap: 2vw;}
+  .story-company { margin-left: 0;}
+  .story-roles { gap: 1.2vw; }
+}
+@media (max-width:800px) {
+  .story-canvas { padding: 2vh 0vw;}
+  .story-bg-title { padding: 2vh 2vw 1vh 3vw;}
+  .story-roles { flex-direction: column; align-items: stretch;}
+  .role-block { min-width: 0; max-width: none; }
+}
+
+.maze-canvas {
+  display: flex; flex-direction: row; align-items: center; justify-content: center;
+  width: 100vw; height: 100vh; background: none;
+}
+.maze-left {
+  flex: 1.05; display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+  padding-right: 2vw; min-width: 320px;
+}
+.maze-title {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: #20334c;
+  margin-bottom: 1.5em;
+  letter-spacing: -0.03em;
+}
+.maze-quote {
+  color: #72777b;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 600;
+  text-align: right;
+  font-style: italic;
+  opacity: 0.93;
+  line-height: 1.18;
+}
+.maze-right {
+  flex: 1.4; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  position: relative; min-width: 460px;
+}
+.maze-slogan {
+  text-align: center;
+  font-size: 2.0rem;
+  font-weight: 700;
+  color: #2e5a81;
+  margin-bottom: 0.1em;
+  letter-spacing: 0.01em;
+}
+.maze-slogan span { color: #17d6ba; margin: 0 0.4em; font-weight: 900;}
+.maze-svg-container {
+  position: relative; width: 460px; height: 370px; margin-top: 0.3em; z-index: 2;
+}
+.maze-svg {
+  width: 460px; height: 370px;
+  position: absolute; left: 0; top: 0;
+  overflow: visible;
+}
+.maze-path {
+  stroke: url(#mazeGrad);
+  stroke-width: 4.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1600;
+  stroke-dashoffset: 1600;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 8px #7bd1e2aa);
+  animation: mazeDraw 2.2s cubic-bezier(.77,.13,.58,.93) forwards;
+  animation-delay: var(--delay,0s);
+}
+.maze-path:nth-child(2) { stroke-width: 5.2; opacity: 0.67;}
+.maze-path:nth-child(3) { stroke-width: 3.2; opacity: 0.92;}
+.maze-path:nth-child(4) { stroke-width: 6.3; opacity: 0.74;}
+.maze-path:nth-child(5) { stroke-width: 3.4; opacity: 0.9;}
+.maze-path:nth-child(6) { stroke-width: 4.6; opacity: 0.86;}
+.maze-path:nth-child(7) { stroke-width: 3.8; opacity: 0.79;}
+.maze-path:nth-child(8) { stroke-width: 4.9; opacity: 0.7;}
+@keyframes mazeDraw {
+  to { stroke-dashoffset: 0;}
+}
+.maze-icon {
+  position: absolute;
+  width: 49px; height: 49px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 1.3em;
+  box-shadow: 0 8px 22px 0 rgba(64,210,200,0.15);
+  animation: floatyIcon 2.7s infinite alternate cubic-bezier(.4,1.6,.5,1.0), mazePulse 2.7s infinite alternate;
+  z-index: 4;
+  opacity: 0.97;
+  transition: filter 0.16s, transform 0.17s;
+}
+.maze-icon:hover {
+  filter: drop-shadow(0 5px 19px #44f8f6cc) brightness(1.10);
+  transform: scale(1.12) rotate(-7deg);
+  z-index: 7;
+}
+@keyframes floatyIcon {
+  0% {transform: translateY(0);}
+  100% {transform: translateY(-16px);}
+}
+@keyframes mazePulse {
+  0% { box-shadow: 0 3px 10px #a0fff2; }
+  100% { box-shadow: 0 9px 24px #b0ffee; }
+}
+.full-maze-canvas {
+  width: 100vw; height: 100vh; display: flex;
+  justify-content: space-between; align-items: center;
+  padding: 0 0.5vw; box-sizing: border-box;
+  gap: 0;
+}
+.big-maze-left {
+  flex: 1.1; display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+  padding-right: 2vw; min-width: 340px; height: 90vh;
+  justify-content: center;
+}
+.big-maze-right {
+  flex: 1.7; display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  min-width: 640px; height: 95vh; position: relative;
+  /* border: 1px solid red;  */
+}
+.big-maze-svg-container {
+  position: relative; width: 640px; height: 580px; margin-top: 2.5vh;
+  background: none;
+}
+.big-maze-svg {
+  width: 640px; height: 580px;
+  position: absolute; left: 0; top: 0;
+  overflow: visible;
+}
+.maze-path {
+  stroke: url(#mazeGrad);
+  stroke-width: 5.7;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3600;
+  stroke-dashoffset: 3600;
+  opacity: 0.78;
+  filter: drop-shadow(0 2px 12px #6be1e2bb);
+  animation: mazeDraw 2.6s cubic-bezier(.77,.13,.58,.93) forwards;
+  animation-delay: var(--delay,0s);
+}
+@keyframes mazeDraw {
+  to { stroke-dashoffset: 0;}
+}
+.maze-icon {
+  position: absolute;
+  width: 64px; height: 64px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 1.4em;
+  box-shadow: 0 12px 26px 0 rgba(64,210,200,0.16);
+  animation: floatyIcon 2.9s infinite alternate cubic-bezier(.4,1.6,.5,1.0), mazePulse 2.9s infinite alternate;
+  z-index: 4;
+  opacity: 0.98;
+  transition: filter 0.16s, transform 0.17s;
+}
+.maze-icon:hover {
+  filter: drop-shadow(0 6px 22px #44f8f6cc) brightness(1.10);
+  transform: scale(1.15) rotate(-8deg);
+  z-index: 9;
+}
+@keyframes floatyIcon {
+  0% {transform: translateY(0);}
+  100% {transform: translateY(-18px);}
+}
+@keyframes mazePulse {
+  0% { box-shadow: 0 7px 20px #b0fff7; }
+  100% { box-shadow: 0 13px 38px #cbfff2; }
+}
+/* New positions for the larger, denser maze */
+.big-i0 { left:60px;  top:410px;}
+.big-i1 { left:190px; top:520px;}
+.big-i2 { left:400px; top:540px;}
+.big-i3 { left:570px; top:320px;}
+.big-i4 { left:80px;  top:120px;}
+.big-i5 { left:350px; top:35px;}
+.big-i6 { left:570px; top:90px;}
+.big-i7 { left:215px; top:310px;}
+.big-i8 { left:520px; top:470px;}
+.big-maze-btn { font-size:1.25rem; padding:1em 3em; border-radius:2em;}
+@media (max-width: 1100px) {
+  .big-maze-svg-container, .big-maze-svg { width: 94vw; max-width: 430px; height: 340px;}
+  .maze-icon { width: 39px; height: 39px;}
+  .big-i0 { left:25px;  top:245px;}
+  .big-i1 { left:110px; top:310px;}
+  .big-i2 { left:220px; top:300px;}
+  .big-i3 { left:320px; top:165px;}
+  .big-i4 { left:35px;  top:30px;}
+  .big-i5 { left:200px; top:17px;}
+  .big-i6 { left:350px; top:30px;}
+  .big-i7 { left:100px; top:140px;}
+  .big-i8 { left:330px; top:230px;}
+  .big-maze-left, .big-maze-right { min-width: 0;}
+}
+
+.fabric-new-canvas {
+  width: 100vw; height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start; padding: 0 0 0 0; box-sizing: border-box;
+}
+.fabric-new-title {
+  font-size: clamp(1.5rem, 2.6vw, 2.8rem);
+  color: #1a9ca0;
+  font-weight: 800;
+  margin: 5vh 0 1.5vh 0;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.fabric-new-table {
+  width: 90vw;
+  max-width: 1400px;
+  margin: 0 auto 2vh auto;
+  background: rgba(255,255,255,0.92);
+  border-radius: 1.7em;
+  box-shadow: 0 8px 42px #27edd010;
+  overflow-x: auto;
+  padding: 2.1em 1.5em 1.7em 1.5em;
+}
+.fabric-row {
+  display: flex; align-items: flex-start; border-bottom: 1px solid #e3f8f7;
+  padding: 0.55em 0;
+}
+.fabric-header {
+  font-weight: 800; font-size: 1.2em; background: none; border-bottom: 2.2px solid #40e6cc;
+  color: #156671; padding-bottom: 0.6em;
+}
+.fabric-col {
+  flex: 1 1 0; padding: 0.6em 1.1em; min-width: 160px;
+  font-size: 1.08em;
+  color: #285264;
+}
+.fabric-col.fabric-cap { min-width: 220px; font-weight: 700; color: #16778e; display: flex; align-items: center;}
+.fabric-col.fabric-old { color: #a77878; font-size: 1.03em;}
+.fabric-col.fabric-new { color: #14876a; font-size: 1.03em;}
+.fabric-icon {
+  width: 26px; height: 26px; margin-right: 0.63em; border-radius: 8px; background: #f9fffd; box-shadow: 0 1.5px 5px #66ffe711;
+  vertical-align: middle; object-fit: contain;
+}
+@media (max-width: 1100px) {
+  .fabric-new-table { max-width: 98vw; }
+  .fabric-col { font-size: 0.96em; min-width: 90px; padding: 0.5em 0.5em;}
+  .fabric-col.fabric-cap { min-width: 110px; }
+}
+@media (max-width: 900px) {
+  .fabric-new-title { font-size: 1.45rem;}
+  .fabric-new-table { padding: 1.1em 0.3em;}
+  .fabric-row { flex-direction: column; align-items: flex-start; border-bottom: 1.2px solid #d4efee;}
+}
+
+.universe-section {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.universe-title {
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 800;
+  color: #20334c;
+  margin-top: 7vh;
+  margin-bottom: 3vh;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.universe-canvas {
+  position: relative;
+  width: 88vw;
+  max-width: 1550px;
+  height: 67vh;
+  min-height: 430px;
+  margin: 0 auto;
+}
+
+.universe-icon {
+  position: absolute;
+  transition:
+    transform 0.27s cubic-bezier(.4,1.6,.5,1.0),
+    box-shadow 0.21s,
+    filter 0.21s,
+    opacity 0.31s;
+  opacity: 0.82;
+  filter: drop-shadow(0 4px 18px #c3f4f7);
+  border-radius: 20%;
+  background: rgba(255,255,255,0.72);
+  z-index: 2;
+  pointer-events: auto;
+  box-shadow: 0 8px 22px 0 rgba(64,210,200,0.11);
+  width: 82px;
+  height: 82px;
+  animation: iconFloat 6.7s infinite alternate;
+}
+.universe-icon:hover, .universe-icon:focus {
+  opacity: 1 !important;
+  transform: scale(1.17) rotate(-10deg) !important;
+  z-index: 10;
+  filter: drop-shadow(0 8px 34px #71fff7) brightness(1.07);
+}
+
+/* Central highlight icon */
+.icon-main {
+  left: 50.5%; top: 46%; width: 112px; height: 112px; opacity: 1;
+  z-index: 9; animation-delay: 0.1s;
+  transform: translate(-50%, -50%) scale(1.18) rotate(1deg);
+  box-shadow: 0 0 34px 0 #a5ffe2cc;
+}
+
+/* Scatter the icons—each icon#.icon-c gets a unique left/top/size/anim-delay */
+.icon1  { left:12%;  top:28%; width:70px; height:70px; animation-delay:.1s;}
+.icon2  { left:27%;  top:6%;  width:78px; height:78px; animation-delay:.3s;}
+.icon3  { left:66%;  top:11%; width:82px; height:82px; animation-delay:.8s;}
+.icon4  { left:84%;  top:37%; width:69px; height:69px; animation-delay:.5s;}
+.icon5  { left:74%;  top:67%; width:68px; height:68px; animation-delay:.6s;}
+.icon6  { left:58%;  top:80%; width:76px; height:76px; animation-delay:.2s;}
+.icon7  { left:37%;  top:83%; width:67px; height:67px; animation-delay:.7s;}
+.icon8  { left:11%;  top:63%; width:70px; height:70px; animation-delay:.6s;}
+.icon9  { left:8%;   top:46%; width:57px; height:57px; opacity:.61; animation-delay:.7s;}
+.icon10 { left:21%;  top:38%; width:68px; height:68px; opacity:.71; animation-delay:.2s;}
+.icon11 { left:20%;  top:76%; width:56px; height:56px; opacity:.61; animation-delay:.6s;}
+.icon12 { left:33%;  top:53%; width:62px; height:62px; opacity:.77; animation-delay:.3s;}
+.icon13 { left:57%;  top:20%; width:55px; height:55px; opacity:.69; animation-delay:.8s;}
+.icon14 { left:45%;  top:7%;  width:58px; height:58px; opacity:.63; animation-delay:.5s;}
+.icon15 { left:87%;  top:59%; width:57px; height:57px; opacity:.63; animation-delay:.9s;}
+.icon16 { left:71%;  top:33%; width:61px; height:61px; opacity:.71; animation-delay:.2s;}
+.icon17 { left:54%;  top:72%; width:66px; height:66px; opacity:.75; animation-delay:.4s;}
+.icon18 { left:40%;  top:23%; width:61px; height:61px; opacity:.68; animation-delay:.1s;}
+.icon19 { left:60%;  top:56%; width:63px; height:63px; opacity:.69; animation-delay:.5s;}
+.icon20 { left:79%;  top:47%; width:60px; height:60px; opacity:.62; animation-delay:.7s;}
+.icon21 { left:76%;  top:19%; width:61px; height:61px; opacity:.62; animation-delay:.3s;}
+.icon22 { left:66%;  top:88%; width:61px; height:61px; opacity:.68; animation-delay:.1s;}
+.icon23 { left:85%;  top:76%; width:63px; height:63px; opacity:.67; animation-delay:.6s;}
+.icon24 { left:13%;  top:13%; width:55px; height:55px; opacity:.67; animation-delay:.9s;}
+.icon25 { left:31%;  top:26%; width:58px; height:58px; opacity:.63; animation-delay:.4s;}
+.icon26 { left:92%;  top:32%; width:50px; height:50px; opacity:.53; animation-delay:.6s;}
+.icon27 { left:80%;  top:83%; width:59px; height:59px; opacity:.54; animation-delay:.7s;}
+.icon28 { left:41%;  top:74%; width:58px; height:58px; opacity:.60; animation-delay:.5s;}
+.icon29 { left:88%;  top:17%; width:56px; height:56px; opacity:.54; animation-delay:.4s;}
+.icon30 { left:30%;  top:91%; width:48px; height:48px; opacity:.48; animation-delay:.5s;}
+/* ...Add more for new icons, adjusting positions & animation! */
+
+@keyframes iconFloat {
+  0% { transform: translateY(0) scale(1) rotate(-4deg);}
+  100% { transform: translateY(-20px) scale(1.06) rotate(7deg);}
+}
+@media (max-width: 900px) {
+  .universe-canvas { width: 98vw; min-height: 220px;}
+  .universe-icon { width: 43px; height: 43px;}
+  .icon-main { width: 63px; height: 63px;}
+}
+  </style>
+</head>
+<body>
+  <div class="blobs-bg">
+    <div class="blob" style="width:370px; height:320px; left:13vw; top:9vh;"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+    <div class="blob"></div>
+  </div>
+  <div class="slides-container">
+    <!-- Slide 1: Hero -->
+    <section class="slide active" id="slide-1">
+      <div class="hero-card">
+        <div class="hero-title">Microsoft Fabric</div>
+        <div class="hero-subtitle">for Power BI Nerds</div>
+        <img class="logo-img" src="/static/images/fabric/fabric.png" alt="Fabric Logo">
+        <button class="start-btn next-slide" id="startBtn">Start</button>
+        <div class="slide-indicator" id="slideIndicator">1 / 5</div>
+      </div>
+    </section>
+    <!-- Slide 2: Agenda (with icons/animation) -->
+    <section class="slide" id="slide-2">
+      <div class="agenda-canvas">
+        <div class="agenda-title">
+          <span>Today's Journey</span>
+          <div class="agenda-theme">The Journey of Data: <b>From Raw Potential to Intelligent Action</b></div>
+          <div class="agenda-subtheme">Theme: <b>One Lake, One Team, Infinite Possibilities</b></div>
+        </div>
+        <div class="agenda-roadmap">
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#38e6c3">
+              <img src="/static/images/fabric/lakehouse.png" alt="Overture" />
+            </div>
+            <div>
+              <div class="agenda-act-title">Overture</div>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li><b>What is Microsoft Fabric?</b> <span class="agenda-mute">A high-level look at the platform and the “OneLake” concept.</span></li>
+                  <li><b>The Data Maze</b> <span class="agenda-mute">Why organizations struggle: silos, complexity, friction.</span></li>
+                  <li><b>The Fabric Revolution</b> <span class="agenda-mute">How Fabric unifies analytics, storage, and collaboration.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#53aaff">
+              <img src="/static/images/fabric/dashboard.png" alt="Demo Story" />
+            </div>
+            <div>
+              <div class="agenda-act-title">The Demo Story</div>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li><b>Meet the Team</b> <span class="agenda-mute">Diana (Engineer), Alex (Analyst), Sam (Scientist), Chloe (Consumer)</span></li>
+                  <li><b>Chapter 1: Engineer’s Journey</b> <span class="agenda-mute">Ingest, organize, and transform with Lakehouse, Data Pipelines, Dataflow.</span></li>
+                  <li><b>Chapter 2: Analyst’s Quest</b> <span class="agenda-mute">Model, visualize, and explore with Direct Lake and Power BI.</span></li>
+                  <li><b>Chapter 3: Scientist’s Leap</b> <span class="agenda-mute">ML/AI in Notebooks: build, track, and deploy predictive models with MLflow.</span></li>
+                  <li><b>Chapter 4: Consumer’s Action</b> <span class="agenda-mute">Real-time insights, business impact, and automation.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#fcba44">
+              <img src="/static/images/fabric/copilot.png" alt="Finale" />
+            </div>
+            <div>
+              <div class="agenda-act-title">Finale</div>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li><b>Why Fabric Wins</b> <span class="agenda-mute">Unified experience, collaboration, speed, AI, and action.</span></li>
+                  <li><b>Your Turn to Explore</b> <span class="agenda-mute">Start your journey (free trial, docs, QR code, Q&A).</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="demo-canvas-next next-slide" id="agendaNextBtn" style="bottom:3.2vh; right:4vw;">Next</button>
+        <div class="slide-indicator demo" style="left:2vw; bottom:2vw; position: absolute;">2 / 5</div>
+      </div>
+    </section>
+
+      <section class="slide" id="slide-5">
+  <div class="maze-canvas full-maze-canvas">
+    <div class="maze-left big-maze-left">
+      <div class="maze-title">The Data Maze</div>
+      <div class="maze-quote">
+        <span>“Too many tools. Too many silos.</span>
+        <br>
+        <span>Not enough insight, speed, or clarity.”</span>
+      </div>
+    </div>
+    <div class="maze-right big-maze-right">
+      <div class="maze-slogan">Silos <span>•</span> Friction <span>•</span> Delays</div>
+      <div class="maze-svg-container big-maze-svg-container">
+        <!-- Even bigger, more tangled SVG maze with gradient -->
+        <svg class="maze-svg big-maze-svg" viewBox="0 0 640 580" fill="none">
+          <defs>
+            <linearGradient id="mazeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#56f0e2"/>
+              <stop offset="55%" stop-color="#53aaff"/>
+              <stop offset="100%" stop-color="#18b7b2"/>
+            </linearGradient>
+          </defs>
+          <path d="M100,490 Q300,400 350,540 Q400,670 590,470" class="maze-path" style="--delay:.0s;" />
+          <path d="M620,170 Q580,350 360,250 Q120,80 150,380 Q180,580 540,420" class="maze-path" style="--delay:.2s;" />
+          <path d="M110,120 Q240,220 440,70 Q590,20 520,200 Q400,500 590,330" class="maze-path" style="--delay:.45s;" />
+          <path d="M200,570 Q280,400 460,480 Q670,400 610,170 Q520,40 300,180" class="maze-path" style="--delay:.65s;" />
+          <path d="M80,240 Q320,180 490,330 Q600,470 200,560 Q50,620 180,330" class="maze-path" style="--delay:.8s;" />
+          <path d="M590,470 Q570,300 470,320 Q330,340 300,90 Q340,35 570,70" class="maze-path" style="--delay:1s;" />
+          <path d="M470,140 Q370,340 100,170 Q40,140 230,70 Q470,10 570,60" class="maze-path" style="--delay:1.1s;" />
+          <path d="M350,390 Q550,380 610,250 Q640,170 390,60 Q110,10 110,170" class="maze-path" style="--delay:1.25s;" />
+          <path d="M260,510 Q200,310 320,430 Q420,500 430,310 Q420,110 330,260 Q220,440 570,400" class="maze-path" style="--delay:1.4s;" />
+        </svg>
+        <!-- 9 Icons, even larger, more "woven" positions -->
+        <img class="maze-icon big-i0" src="/static/images/fabric/data_warehouse.png" title="Database" />
+        <img class="maze-icon big-i1" src="/static/images/fabric/dataflow.png" title="Dataflow" />
+        <img class="maze-icon big-i2" src="/static/images/fabric/notebook.png" title="Notebook" />
+        <img class="maze-icon big-i3" src="/static/images/fabric/function.png" title="Function" />
+        <img class="maze-icon big-i4" src="/static/images/fabric/lakehouse.png" title="Lakehouse" />
+        <img class="maze-icon big-i5" src="/static/images/fabric/dashboard.png" title="Dashboard" />
+        <img class="maze-icon big-i6" src="/static/images/fabric/copilot.png" title="Copilot" />
+        <img class="maze-icon big-i7" src="/static/images/fabric/fabric.png" title="Fabric Core" />
+        <img class="maze-icon big-i8" src="/static/images/fabric/data_warehouse.png" title="Warehouse" />
+      </div>
+      <button class="demo-canvas-next next-slide big-maze-btn" style="bottom:5vh; right:2vw;">Next</button>
+      <div class="slide-indicator demo" style="left:2vw; bottom:5vh; position: absolute;">3 / 5</div>
+    </div>
+  </div>
+</section>
+ <section class="slide" id="slide-3">
+  <div class="universe-section">
+    <div class="universe-title">The Universe of Microsoft Fabric</div>
+    <div class="universe-canvas">
+      <!-- The following are all your icons; tweak src/alt as needed. -->
+      <img src="/static/images/fabric/fabric.png"           class="universe-icon icon-c icon-main" alt="Fabric">
+      <img src="/static/images/fabric/copilot.png"          class="universe-icon icon-c icon1" alt="Copilot">
+      <img src="/static/images/fabric/dashboard.png"        class="universe-icon icon-c icon2" alt="Dashboard">
+      <img src="/static/images/fabric/lakehouse.png"        class="universe-icon icon-c icon3" alt="Lakehouse">
+      <img src="/static/images/fabric/data_warehouse.png"   class="universe-icon icon-c icon4" alt="Data Warehouse">
+      <img src="/static/images/fabric/notebook.png"         class="universe-icon icon-c icon5" alt="Notebook">
+      <img src="/static/images/fabric/dataflow.png"         class="universe-icon icon-c icon6" alt="Dataflow">
+      <img src="/static/images/fabric/function_set.png"     class="universe-icon icon-c icon7" alt="Function Set">
+      <img src="/static/images/fabric/scorecard.png"        class="universe-icon icon-c icon8" alt="Scorecard">
+      <img src="/static/images/fabric/eventstream.png"      class="universe-icon icon-c icon9" alt="Eventstream">
+      <img src="/static/images/fabric/experiments.png"      class="universe-icon icon-c icon10" alt="Experiments">
+      <img src="/static/images/fabric/sql_database.png"     class="universe-icon icon-c icon11" alt="SQL Database">
+      <img src="/static/images/fabric/databases.png"        class="universe-icon icon-c icon12" alt="Databases">
+      <img src="/static/images/fabric/retail.png"           class="universe-icon icon-c icon13" alt="Retail">
+      <img src="/static/images/fabric/semantic_model.png"   class="universe-icon icon-c icon14" alt="Semantic Model">
+      <img src="/static/images/fabric/kql_database.png"     class="universe-icon icon-c icon15" alt="KQL Database">
+      <img src="/static/images/fabric/environment.png"      class="universe-icon icon-c icon16" alt="Environment">
+      <img src="/static/images/fabric/industry_solutions.png" class="universe-icon icon-c icon17" alt="Industry Solutions">
+      <img src="/static/images/fabric/links.png"            class="universe-icon icon-c icon18" alt="Links">
+      <img src="/static/images/fabric/real_time_dashboard.png" class="universe-icon icon-c icon19" alt="Real Time Dashboard">
+      <img src="/static/images/fabric/streaming_dataflow.png" class="universe-icon icon-c icon20" alt="Streaming Dataflow">
+      <img src="/static/images/fabric/variables.png"        class="universe-icon icon-c icon21" alt="Variables">
+      <img src="/static/images/fabric/paginated_report.png" class="universe-icon icon-c icon22" alt="Paginated Report">
+      <img src="/static/images/fabric/metric_sets.png"      class="universe-icon icon-c icon23" alt="Metric Sets">
+      <img src="/static/images/fabric/exploration.png"      class="universe-icon icon-c icon24" alt="Exploration">
+      <img src="/static/images/fabric/healthcare.png"       class="universe-icon icon-c icon25" alt="Healthcare">
+      <img src="/static/images/fabric/reflex_exp.png"       class="universe-icon icon-c icon26" alt="Reflex">
+      <img src="/static/images/fabric/event_house.png"      class="universe-icon icon-c icon27" alt="Event House">
+      <img src="/static/images/fabric/datamart.png"         class="universe-icon icon-c icon28" alt="Datamart">
+      <img src="/static/images/fabric/copy_job.png"         class="universe-icon icon-c icon29" alt="Copy Job">
+      <img src="/static/images/fabric/mirrored_generic_database.png" class="universe-icon icon-c icon30" alt="Mirrored DB">
+      <!-- Add more as needed -->
+    </div>
+    <button class="demo-canvas-next next-slide" style="bottom:3.2vh; right:4vw;">Next</button>
+    <div class="slide-indicator demo" style="left:2vw; bottom:2vw; position: absolute;">4 / 6</div>
+  </div>
+</section>
+
+
+    <section class="slide" id="slide-6">
+  <div class="fabric-new-canvas">
+    <div class="fabric-new-title">
+      <img src="/static/images/fabric/fabric.png" style="width:48px;height:48px;vertical-align:middle;margin-right:0.5em;">
+      <span>What's Truly New in Microsoft Fabric <span style="font-weight:400;font-size:0.75em;">(vs Before)</span></span>
+    </div>
+    <div class="fabric-new-table">
+      <div class="fabric-row fabric-header">
+        <div class="fabric-col fabric-cap"><span style="font-size:1.18em;">&#128161; Capability</span></div>
+        <div class="fabric-col fabric-old"><span>&#10060; Before</span></div>
+        <div class="fabric-col fabric-new"><span>&#9989; Fabric</span></div>
+      </div>
+
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/lakehouse.png" class="fabric-icon">Unified Storage</div>
+        <div class="fabric-col fabric-old">Data scattered across ADLS, SQL, Dataverse, Power BI datasets</div>
+        <div class="fabric-col fabric-new"><b>OneLake</b> — one governed data lake for all workloads</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dataflow.png" class="fabric-icon">Data Access in Power BI</div>
+        <div class="fabric-col fabric-old">Only <i>Import</i> or <i>DirectQuery</i> — trade-off between speed &amp; freshness</div>
+        <div class="fabric-col fabric-new"><b>DirectLake</b> — blazing-fast reads from Lakehouse, no refresh needed</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dashboard.png" class="fabric-icon">Developer Experience</div>
+        <div class="fabric-col fabric-old">Separate tools: Power BI, ADF, Synapse, ML Studio</div>
+        <div class="fabric-col fabric-new"><b>All-in-one SaaS UI</b> — Notebooks, Pipelines, BI, ML: one Fabric workspace</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/data_warehouse.png" class="fabric-icon">Data Architecture</div>
+        <div class="fabric-col fabric-old">No native Lakehouse; required Databricks or complex setup</div>
+        <div class="fabric-col fabric-new"><b>Lakehouse built-in</b> — Delta support, open &amp; transactional</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/function.png" class="fabric-icon">ETL &amp; Data Prep</div>
+        <div class="fabric-col fabric-old">Power Query for BI, ADF for ETL (separate)</div>
+        <div class="fabric-col fabric-new"><b>Dataflow Gen2 + Pipelines</b> — reusable, parameterized, write to Lakehouse</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/notebook.png" class="fabric-icon">AI &amp; ML Integration</div>
+        <div class="fabric-col fabric-old">Azure ML Studio was separate, setup-heavy</div>
+        <div class="fabric-col fabric-new"><b>Integrated Notebooks &amp; ML Models</b> — inside Fabric</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/copilot.png" class="fabric-icon">Security</div>
+        <div class="fabric-col fabric-old">RLS in Power BI, RBAC in SQL — fragmented</div>
+        <div class="fabric-col fabric-new"><b>OneSecurity</b> — centralized RLS/OLS for Lakehouse, Warehouse, Power BI</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dashboard.png" class="fabric-icon">Real-Time Data</div>
+        <div class="fabric-col fabric-old">Needed custom streaming (Power BI, Event Hubs)</div>
+        <div class="fabric-col fabric-new"><b>Eventstream + Real-Time Dashboards</b> — native, low-code streaming + live visuals</div>
+      </div>
+      <div class="fabric-row">
+        <div class="fabric-col fabric-cap"><img src="/static/images/fabric/fabric.png" class="fabric-icon">Versioning &amp; DevOps</div>
+        <div class="fabric-col fabric-old">PBIX files are binary, Git-integration manual</div>
+        <div class="fabric-col fabric-new"><b>Git-native support</b> for Notebooks, Pipelines, Models</div>
+      </div>
+    </div>
+    <button class="demo-canvas-next next-slide" style="right:3vw; bottom:3vh;">Next</button>
+    <div class="slide-indicator demo" style="left:2vw; bottom:2vw; position: absolute;">6 / 6</div>
+  </div>
+</section>
+
+
+      <!-- Slide 4: Meet the Team - Story Personas -->
+<section class="slide" id="slide-4">
+  <div class="story-canvas">
+    <div class="story-bg-title">
+      <span class="story-main-title">
+        The Journey of Data:<br>
+        <span>From Raw Potential to Intelligent Action</span>
+      </span>
+      <span class="story-theme">Theme: <b>One Lake, One Team, Infinite Possibilities</b></span>
+      <div class="story-company">
+        <img src="/static/images/fabric/dashboard.png" alt="RetroGrove Retail Logo">
+        <span class="company-name">RetroGrove Retail</span>
+        <span class="company-desc">
+          Fictional brand, real challenges.<br>
+          Can we predict, personalize, and optimize with data?
+        </span>
+      </div>
+    </div>
+    <div class="story-roles">
+      <div class="role-block" style="--col:#36d6b7;">
+        <img src="/static/images/avatar/data_engineer.png" alt="Diana" />
+        <div>
+          <div class="role-title">Diana <span>Data Engineer</span></div>
+          <div class="role-desc">The Architect<br>
+            Brings structure to chaos—ingests, transforms, and organizes raw data.
+          </div>
+        </div>
+      </div>
+      <div class="role-block" style="--col:#38c8f5;">
+        <img src="/static/images/avatar/bi_analyst.png" alt="Alex" />
+        <div>
+          <div class="role-title">Alex <span>BI Analyst</span></div>
+          <div class="role-desc">The Storyteller<br>
+            Finds insights, creates reports, and empowers decisions with data.
+          </div>
+        </div>
+      </div>
+      <div class="role-block" style="--col:#b986f9;">
+        <img src="/static/images/avatar/data_scientist.png" alt="Sam" />
+        <div>
+          <div class="role-title">Sam <span>Data Scientist</span></div>
+          <div class="role-desc">The Futurist<br>
+            Predicts what’s next—uses ML and AI to turn data into foresight.
+          </div>
+        </div>
+      </div>
+      <div class="role-block" style="--col:#ffaa52;">
+        <img src="/static/images/avatar/consumer.png" alt="Chloe" />
+        <div>
+          <div class="role-title">Chloe <span>Consumer</span></div>
+          <div class="role-desc">The Decision Maker<br>
+            Acts on insights—drives the business with intelligent action.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="story-arc">
+      <span>Our story: <b>Follow a dataset from raw chaos, through engineering, analysis, and AI, to intelligent business action—all in Microsoft Fabric.</b></span>
+    </div>
+    <button class="demo-canvas-next next-slide" style="bottom:3.2vh; right:4vw;">Next</button>
+    <div class="slide-indicator demo" style="left:2vw; bottom:2vw; position: absolute;">5 / 5</div>
+  </div>
+</section>
+
+
+
+
+  </div>
+  <script>
+    // Slide navigation logic (robust for all .next-slide buttons)
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let current = 0;
+
+    function showSlide(idx) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === idx);
+      });
+      current = idx;
+    }
+
+    // Attach event to all Next-like buttons
+    document.querySelectorAll('.next-slide').forEach(btn => {
+      btn.onclick = function() {
+        showSlide((current + 1) % totalSlides);
+      }
+    });
+
+    // Keyboard navigation (wraps)
+    document.addEventListener('keydown', e => {
+      if (['ArrowRight', ' ', 'Enter'].includes(e.key)) {
+        showSlide((current + 1) % totalSlides);
+      }
+      if (e.key === 'ArrowLeft') {
+        showSlide((current - 1 + totalSlides) % totalSlides);
+      }
+    });
+
+    // Slide 3: Orbit hover/focus effect
+    const orbit = document.getElementById('fabricOrbit');
+    if (orbit) {
+      orbit.querySelectorAll('.universe-img').forEach(img => {
+        img.addEventListener('mouseenter', function() {
+          orbit.querySelectorAll('.universe-img').forEach(el => el.classList.add('unfocused'));
+          this.classList.remove('unfocused');
+          this.classList.add('focused');
+        });
+        img.addEventListener('mouseleave', function() {
+          orbit.querySelectorAll('.universe-img').forEach(el => {
+            el.classList.remove('unfocused', 'focused');
+          });
+        });
+      });
+    }
+  </script>
+</body>
+</html>

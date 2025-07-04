@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Microsoft Fabric – Slide 2</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #eafcfb;
+      overflow: hidden;
+    }
+    .blobs-bg {
+      position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; z-index: 0;
+    }
+    .blob { position: absolute; border-radius: 50%; opacity: .16; background: #6decd9; filter: blur(40px);}
+    .blob:nth-child(1){width: 340px; height: 320px; left: 10vw; top: 8vh;}
+    .blob:nth-child(2){width: 210px; height: 140px; left: 63vw; top: 6vh; background: #f6b3ff;}
+    .blob:nth-child(3){width: 160px; height: 160px; left: 8vw; top: 70vh; background: #b9e9ff;}
+    .blob:nth-child(4){width: 240px; height: 180px; left: 62vw; top: 68vh; background: #ffefd7;}
+    .slides-container { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
+    .agenda-canvas {
+      width: 100vw; height: 100vh;
+      padding: 0; box-sizing: border-box;
+      display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: center;
+      position: relative;
+    }
+    .agenda-title span {
+      font-size: 4.2rem; font-weight: 900;
+      color: #184952; margin-bottom: 0.13em; letter-spacing: -1.5px; display: block; text-align: center;
+      text-shadow: 0 2px 12px #b4f0ec3c;
+    }
+    .agenda-theme,
+    .agenda-subtheme {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #229c95;
+      margin-bottom: 0.2em;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+    .agenda-theme b, .agenda-subtheme b { color: #174a5b; }
+    .agenda-roadmap {
+      width: 88vw;
+      max-width: 1720px;
+      display: flex; flex-direction: row; justify-content: center; align-items: stretch;
+      gap: 2vw; margin: 4vh auto 0 auto;
+      flex: 1;
+    }
+    .agenda-act {
+      flex: 1 1 0;
+      max-width: 480px; min-width: 330px;
+      background: white;
+      padding: 2.6em 2.2em 2.4em 2.2em;
+      border-radius: 2.5em;
+      box-shadow: 0 8px 48px 0 rgba(0,0,0,0.08), 0 1.5px 32px #66ebd311;
+      display: flex; flex-direction: column; align-items: center;
+      opacity: 0; transform: translateY(60px) scale(0.98);
+      cursor: pointer;
+      transition: box-shadow 0.16s, transform 0.16s;
+    }
+    .agenda-dot {
+      width: 76px; height: 76px;
+      margin-bottom: 1.4em;
+      border-radius: 2em;
+      background: #48ffc7;
+      box-shadow: 0 3px 22px #3ad0b222;
+      display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.19s, filter 0.17s;
+    }
+    .agenda-dot img {
+      width: 46px; height: 46px; object-fit: contain;
+      filter: drop-shadow(0 3px 18px #65e9e077);
+      transition: filter 0.18s, transform 0.18s;
+    }
+    .agenda-act-title {
+      font-size: 2.0rem; font-weight: 900; color: #17616c;
+      margin-bottom: 0.6em; letter-spacing: -0.7px; text-align: center;
+    }
+    .agenda-act-desc ul {
+      margin: 0 0 0.5em 0; padding: 0;
+      list-style: none;
+      font-size: 1.19rem;
+      text-align: left;
+    }
+    .agenda-act-desc li {
+      color: #29727d;
+      line-height: 1.56;
+      margin-bottom: 0.48em;
+      margin-left: 0; position: relative; padding-left: 1.24em;
+      font-size: 1.22rem;
+      font-weight: 500;
+    }
+    .agenda-act-desc li:before {
+      content: '•';
+      position: absolute; left: 0; color: #42b5bc; font-size: 1.32em; top: 0.11em;
+      font-weight: 800;
+    }
+    .agenda-mute {
+      color: #82bfc4;
+      font-size: 1.01rem;
+      font-style: italic;
+      font-weight: 400;
+      margin-left: 0.22em;
+      display: block;
+    }
+.demo-canvas-next {
+  position: absolute;
+  top: 2.3vh;
+  font-size: 1.08rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #17d6ba, #56c7ee);
+  color: white;
+  padding: 0.46em 1.5em;
+  border: none;
+  border-radius: 1.3em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+  opacity: 0;
+  transform: translateY(-10px);
+  letter-spacing: 0.03em;
+  z-index: 10;
+  transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+}
+.demo-canvas-next.prev { left: 2.7vw; }
+.demo-canvas-next.next { right: 2.7vw; }
+.demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+
+    .slide-indicator {
+      position: absolute; bottom: 2vh; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #2c9ca6;
+      letter-spacing: 0.03em;
+      opacity: 0.88;
+    }
+    @media (max-width: 1200px) {
+      .agenda-roadmap { gap: 1vw; }
+      .agenda-act { min-width: 230px; max-width: 340px; }
+      .agenda-title span { font-size: 2.7rem; }
+      .agenda-act-title { font-size: 1.2rem; }
+      .agenda-canvas { padding-top: 4vh; }
+    }
+    @media (max-width: 900px) {
+      .agenda-roadmap { flex-direction: column; align-items: stretch; gap: 3vh; width: 98vw;}
+      .agenda-act { width: 95vw; min-width: 0; max-width: 100vw; }
+      .demo-canvas-next { bottom: 2vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blobs-bg">
+    <div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
+  </div>
+  <div class="slides-container">
+    <section class="slide active" id="slide-2">
+      <div class="agenda-canvas">
+        <div class="agenda-title">
+          <span>Today's Journey</span>
+          <div class="agenda-theme">The Journey of Data: <b>From Raw Potential to Intelligent Action</b></div>
+          <div class="agenda-subtheme">Theme: <b>One Lake, One Team, Infinite Possibilities</b></div>
+        </div>
+        <div class="agenda-roadmap">
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#38e6c3;">
+              <img src="/static/images/fabric/lakehouse.png" alt="Overture">
+            </div>
+            <div class="agenda-act-title">Overture</div>
+            <div class="agenda-act-desc">
+              <ul>
+                <li><b>What is Microsoft Fabric?</b><span class="agenda-mute">A high-level look at the platform and the “OneLake” concept.</span></li>
+                <li><b>The Data Maze</b><span class="agenda-mute">Why organizations struggle: silos, complexity, friction.</span></li>
+                <li><b>The Fabric Revolution</b><span class="agenda-mute">How Fabric unifies analytics, storage, and collaboration.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#53aaff;">
+              <img src="/static/images/fabric/dashboard.png" alt="Demo Story">
+            </div>
+            <div class="agenda-act-title">The Demo Story</div>
+            <div class="agenda-act-desc">
+              <ul>
+                <li><b>Meet the Team</b><span class="agenda-mute">Diana (Engineer), Alex (Analyst), Sam (Scientist), Chloe (Consumer)</span></li>
+                <li><b>Engineer’s Journey</b><span class="agenda-mute">Ingest, organize, and transform with Lakehouse, Data Pipelines, Dataflow.</span></li>
+                <li><b>Analyst’s Quest</b><span class="agenda-mute">Model, visualize, and explore with Direct Lake and Power BI.</span></li>
+                <li><b>Scientist’s Leap</b><span class="agenda-mute">ML/AI in Notebooks: build, track, and deploy predictive models with MLflow.</span></li>
+                <li><b>Consumer’s Action</b><span class="agenda-mute">Real-time insights, business impact, and automation.</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="agenda-act">
+            <div class="agenda-dot" style="background:#fcba44;">
+              <img src="/static/images/fabric/copilot.png" alt="Finale">
+            </div>
+            <div class="agenda-act-title">Finale</div>
+            <div class="agenda-act-desc">
+              <ul>
+                <li><b>Why Fabric Wins</b><span class="agenda-mute">Unified experience, collaboration, speed, AI, and action.</span></li>
+                <li><b>Your Turn to Explore</b><span class="agenda-mute">Start your journey (free trial, docs, QR code, Q&A).</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <button class="demo-canvas-next prev" onclick="location.href='/present/slide-1'">Prev</button>
+        <button class="demo-canvas-next next" onclick="location.href='/present/slide-3'">Next</button>
+        <div class="slide-indicator">2 / 6</div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // Animate title and subheadings
+    gsap.from(".agenda-title span", { duration: 1, y: -50, opacity: 0, ease: "power2.out" });
+    gsap.from(".agenda-theme", { duration: 0.7, y: -20, opacity: 0, delay: 0.4 });
+    gsap.from(".agenda-subtheme", { duration: 0.7, y: -18, opacity: 0, delay: 0.6 });
+    // Animate cards entrance
+    gsap.to(".agenda-act", {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      stagger: 0.18,
+      duration: 0.78,
+      ease: "power3.out",
+      delay: 0.7
+    });
+    // Animate buttons
+gsap.to(".demo-canvas-next", {
+  opacity: 1,
+  y: 0,
+  duration: 0.7,
+  stagger: 0.18,
+  delay: 1.15,
+  ease: "power2.out"
+});
+
+    // GSAP hover for cards and icons
+    document.querySelectorAll('.agenda-act').forEach(card => {
+      const dot = card.querySelector('.agenda-dot');
+      const img = dot.querySelector('img');
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, { scale: 1.045, boxShadow: "0 12px 48px #41ffe677, 0 2px 18px #36a1ee22", duration: 0.32, ease: "power2.out" });
+        gsap.to(dot, { boxShadow: "0 4px 44px #13e7c7aa, 0 2px 18px #36a1ee33", duration: 0.26, ease: "power1.out" });
+        gsap.to(img, { filter: "drop-shadow(0 6px 22px #4aeedb) brightness(1.12)", scale: 1.18, duration: 0.23, ease: "power1.out" });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { scale: 1, boxShadow: "0 8px 48px 0 rgba(0,0,0,0.08), 0 1.5px 32px #66ebd311", duration: 0.27, ease: "power2.in" });
+        gsap.to(dot, { boxShadow: "0 3px 22px #3ad0b222", duration: 0.23, ease: "power1.in" });
+        gsap.to(img, { filter: "drop-shadow(0 3px 18px #65e9e077)", scale: 1, duration: 0.18, ease: "power1.in" });
+      });
+    });
+  </script>
+</body>
+</html>

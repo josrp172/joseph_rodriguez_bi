@@ -731,7 +731,8 @@ const audioDurations = {
 
 let isAnyAudioPlaying = false;
 const FIREBASE_DB_URL = "https://sephquiz-default-rtdb.asia-southeast1.firebasedatabase.app";
-const socket = io({ transports: ['websocket'] });
+  const socket = window.quizSocket ||
+                 (window.quizSocket = io({ transports: ['websocket'] }));
 
 // 1. Fetch current selected questionnaire from Firebase on load:
 function fetchCurrentQuestionnaire() {
@@ -858,12 +859,25 @@ document.getElementById('myAvatar').innerHTML = avatars[myAvatarIdx];
 let participants = [];
 
 // Redirect when quiz starts
-socket.on('quiz_started', function() {
-  window.location.href = "/quiz/loading_screen";
+socket.on('quiz_started', function(data) {
+  if (data && data.gameId) {
+    localStorage.setItem('quiz_game_id', data.gameId);
+    // Optional: auto-redirect to quiz screen if desired
+    // location.replace('/quiz/loading_screen');
+      location.replace('/quiz/loading_screen');
+
+  }
+  // Update UI or show status to user if you like
 });
 socket.on('connect', function() {
   socket.emit('join_waiting', { name: myName, avatar: myAvatarIdx });
+
+  localStorage.setItem('quiz_game_id', localStorage.getItem('selected_quiz_id') || 'CURRENT_GAME_ID');
+    localStorage.setItem('quiz_user_id', socket.id);
+
 });
+
+
 
 // Render avatars with tooltips and animation
 function renderAvatars() {
@@ -1256,6 +1270,17 @@ renderParticipants();
       });
   }
 })();
+
+    function getOrCreateUserId() {
+  let id = localStorage.getItem('quiz_permanent_user_id');
+  if (!id) {
+    id = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('quiz_permanent_user_id', id);
+  }
+  return id;
+}
+const permanentUserId = getOrCreateUserId();
+localStorage.setItem('quiz_user_id', permanentUserId); // update all your code to use this!
 
 </script>
 </body>

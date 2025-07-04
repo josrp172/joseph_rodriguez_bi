@@ -410,6 +410,40 @@
     margin: 6px 0 0 6px;
   }
 }
+
+      .review-btn-container {
+  position: fixed;
+  top: 30px;
+  right: 44px;
+  z-index: 2000;
+  margin: 0;
+  text-align: right;
+}
+#reviewAnswersBtn {
+  background: linear-gradient(90deg,#ffe97e,#fa9660);
+  color:#23113A;
+  font-family:'Montserrat',Arial,sans-serif;
+  font-weight:900;
+  font-size:1.16em;
+  padding: 15px 40px;
+  border:none;
+  border-radius: 13px;
+  box-shadow: 0 2px 12px #0002;
+  cursor:pointer;
+  transition: background 0.22s, box-shadow 0.22s;
+  margin:0;
+  display:none; /* toggled by JS */
+}
+@media (max-width: 600px) {
+  .review-btn-container {
+    top: 10px;
+    right: 8px;
+  }
+  #reviewAnswersBtn {
+    font-size: 0.95em;
+    padding: 12px 18px;
+  }
+}
     </style>
 </head>
 <body>
@@ -433,6 +467,12 @@
     <div id="finalLeaderboard" class="final-leaderboard-list">
       <!-- The rest of the leaderboard will be inserted here -->
     </div>
+    <div class="review-btn-container">
+  <button id="reviewAnswersBtn">
+    <i class="fas fa-clipboard-list" style="margin-right:11px"></i>
+    Review My Answers
+  </button>
+</div>
   </div>
 
 
@@ -454,27 +494,39 @@
     appId: "1:649697432760:web:0f8f6642fbfbda835d904d",
     measurementId: "G-E49HMR7MWG"
   };
+  if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+function writeFinalScoresToFirebase(players) {
+  const gameId = localStorage.getItem('quiz_game_id');
+  const permanentUserId = localStorage.getItem('quiz_permanent_user_id');
+  const localUserName = localStorage.getItem('quiz_username'); // Optional, for matching
 
-   function writeFinalScoresToFirebase(players) {
-    const gameId = Date.now(); // Or use a unique code
-    const updates = {};
-    players.forEach(p => {
-      updates[`/games/${gameId}/scores/${p.id}`] = {
-        name: p.name,
-        score: p.score || 0,
-        avatar: p.avatar,
-        progress: p.progress || 0
-      };
-    });
+  const updates = {};
 
-    db.ref().update(updates)
-      .then(() => console.log("✅ Scores saved to Firebase"))
-      .catch(err => console.error("❌ Firebase error:", err));
-  }
+  players.forEach(p => {
+    // For the local user, force the ID to permanentUserId
+    if (p.name === localUserName) {
+      p.id = permanentUserId;
+    }
+    updates[`/games/${gameId}/scores/${p.id}`] = {
+      name: p.name,
+      score: p.score || 0,
+      avatar: p.avatar,
+      progress: p.progress || 0
+    };
+  });
+
+  // Debug: See what is being sent
+  console.log("Saving to Firebase (permanent user id logic):", updates);
+
+  db.ref().update(updates)
+    .then(() => console.log("✅ Scores saved to Firebase under gameId", gameId))
+    .catch(err => console.error("❌ Firebase error:", err));
+}
 
 
      // =============== DATA AND SOCKET LOGIC ===============
@@ -914,7 +966,26 @@ function renderAll() {
         }
     }
 
+document.addEventListener('DOMContentLoaded', function() {
+  // Only show to the current user (the "highlight" row or the one with local permanent userId)
+  const permanentUserId = localStorage.getItem('quiz_permanent_user_id');
+  const localUserName = localStorage.getItem('quiz_username');
+  const reviewBtn = document.getElementById('reviewAnswersBtn');
 
+  // Option 1: Always show to everyone (uncomment to allow all)
+  // reviewBtn.style.display = 'inline-block';
+
+  // Option 2: Show only if user has answers in localStorage
+  const hasAnswers = !!localStorage.getItem('quiz::answers');
+  if (hasAnswers) {
+    reviewBtn.style.display = 'inline-block';
+  }
+
+  reviewBtn.onclick = function() {
+    // Open review page in a new tab or as a modal
+    window.open('/quiz/review', '_blank');
+  };
+});
 
 
 

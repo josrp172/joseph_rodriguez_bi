@@ -250,7 +250,9 @@ def quiz_countdown():
 def quiz_initial_ranking():
     return render_template('quizziz/quiz_initial_ranking.html')
 
-
+@app.route('/quiz/review')
+def quiz_review():
+    return render_template('quizziz/quiz_review.html')
 
 @app.route('/quiz/play')
 def quiz_play():
@@ -405,9 +407,10 @@ def handle_admin_get_players():
 
 
 @socketio.on('admin_start_quiz')
-def handle_admin_start_quiz():
-    emit('quiz_started', broadcast=True)
-    # Optionally: emit to a "room" only
+def admin_start_quiz(data):
+    game_id = data.get('gameId') or str(int(time.time()))
+    # Optionally, you can add any backend game setup logic here
+    emit('quiz_started', {'gameId': game_id}, broadcast=True)
 
 # Clear players when server restarts, or add a /reset route for dev/demo
 
@@ -450,6 +453,24 @@ def on_score(data):
         participants[request.sid]['progress'] = data.get('progress', participants[request.sid].get('progress', 0))
     broadcast_player_list()
 
+@socketio.on('submit_answers')
+def handle_submit_answers(data):
+    game_id = data.get('gameId')
+    user_id = data.get('userId')
+    answers = data.get('answers')
+    print(f"[submit_answers] game_id={game_id} user_id={user_id} answers={answers}")
+
+    try:
+        if game_id and user_id and answers is not None:
+            ref = firebase_db.reference(f'games/{game_id}/users/{user_id}/answers')
+            ref.set(answers)
+            emit('answers_saved', {'status': 'ok'})
+        else:
+            emit('answers_saved', {'status': 'error', 'error': 'Missing data'})
+    except Exception as e:
+        emit('answers_saved', {'status': 'error', 'error': str(e)})
+
+
 def broadcast_player_list():
     lst = []
     for sid, info in participants.items():
@@ -462,9 +483,61 @@ def broadcast_player_list():
         })
     emit('player_list', lst, broadcast=True)
 
+@app.route('/quiz/upload_json_form', methods=['POST'])
+def quiz_upload_json_form():
+    data = request.get_json()
+    questions = data.get('questions')
+    meta = data.get('meta', {})
+    if not isinstance(questions, list) or not questions:
+        return jsonify({'success': False, 'error': 'Invalid or empty questions array'}), 400
+
+    try:
+        quiz_id = f"quiz_{int(time.time())}"
+        ref = firebase_db.reference(f"/generated_quizzes/{quiz_id}")
+        ref.set({
+            "meta": {
+                "formName": meta.get("formName") or f"Manual JSON ({quiz_id})",
+                "numQuestions": len(questions),
+                "createdAt": int(time.time()),
+                "timer": meta.get("timer", 30),
+                "source": "json_upload"
+            },
+            "questions": questions
+        })
+    except Exception as e:
+        print("Firebase error (JSON upload):", e)
+        return jsonify({'success': False, 'error': f'Firebase error: {str(e)}'}), 500
+
+    return jsonify({'success': True, 'quiz_id': quiz_id, 'questions': questions})
 
 
+@app.route('/present/fabric_1')
+def fabric_1():
+    return render_template('present/fabric_1.html')
 
+@app.route('/present/slide-1')
+def slide_1():
+    return render_template('present/slide-1.html')
+
+@app.route('/present/slide-2')
+def slide_2():
+    return render_template('present/slide-2.html')
+
+@app.route('/present/slide-3')
+def slide_3():
+    return render_template('present/slide-3.html')
+
+@app.route('/present/slide-4')
+def slide_4():
+    return render_template('present/slide-4.html')
+
+@app.route('/present/slide-5')
+def slide_5():
+    return render_template('present/slide-5.html')
+
+@app.route('/present/slide-6')
+def slide_6():
+    return render_template('present/slide-6.html')
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

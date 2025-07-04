@@ -235,7 +235,7 @@
   <audio id="audio-click"   src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/gun_shoot.wav" preload="auto"></audio>
 
 <script>
-// PLAYER INFO
+  // PLAYER INFO
 const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
 const avatarMap = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
 const avatar = `<img src="/static/images/avatar/${avatarMap[avatarIdx]}.png"/>`;
@@ -243,7 +243,7 @@ const userName = localStorage.getItem('quiz_username') || "Player";
 
 // STATE
 let questionData = {}, selected = [], answered = false;
-let mistakeCount = 0;
+let mistakeCount = 0, maxMistakes = 0;
 
 // SHUFFLE
 function shuffleArray(arr) {
@@ -303,7 +303,7 @@ function updateMistakeHearts() {
 function renderCard() {
   answered = false;
   // Dynamically set maxMistakes as number of wrong options
-  window.maxMistakes = questionData.options.filter(opt => !opt.correct).length;
+  maxMistakes = questionData.options.filter(opt => !opt.correct).length;
   const card = document.getElementById('quizCard');
   card.innerHTML = `
     <div class="mistake-counter" id="mistakeCounter">
@@ -326,7 +326,6 @@ function renderCard() {
   document.getElementById('submitBtn').onclick = submitAnswer;
 }
 
-
 function buildTargets() {
   const zone = document.getElementById('targetZone');
   zone.innerHTML = '';
@@ -339,70 +338,68 @@ function buildTargets() {
     const btn = document.createElement('button');
     btn.className = 'target-btn' + (selected[i] ? ' clicked' : '');
     btn.innerHTML = opt.text;
-    btn.disabled = answered;
+    btn.disabled = answered || selected[i];
     btn.style.left = positions[i][0] + "px";
     btn.style.top = positions[i][1] + "px";
-  btn.onclick = e => {
-  if (answered || btn.disabled) return; // Already answered or shot
-  document.getElementById('audio-click').currentTime = 0;
-  document.getElementById('audio-click').play();
-  selected[i] = true;
-  btn.classList.add('clicked');
-  btn.disabled = true; // Disable after shooting
+    btn.onclick = e => {
+      if (answered || btn.disabled) return;
+      document.getElementById('audio-click').currentTime = 0;
+      document.getElementById('audio-click').play();
+      selected[i] = true;
+      btn.classList.add('clicked');
+      btn.disabled = true;
 
-  // Floating score animation: Only for wrong
-  if (!opt.correct) {
-    const scoreSpan = document.createElement('span');
-    scoreSpan.className = 'floating-score negative';
-    scoreSpan.innerText = '–5';
-    btn.appendChild(scoreSpan);
-    setTimeout(() => btn.removeChild(scoreSpan), 900);
-  }
+      // Floating score animation: Only for wrong
+      if (!opt.correct) {
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'floating-score negative';
+        scoreSpan.innerText = '–5';
+        btn.appendChild(scoreSpan);
+        setTimeout(() => btn.removeChild(scoreSpan), 900);
+      }
 
-  if (opt.correct) {
-    btn.classList.add('correct');
-  } else {
-    btn.classList.add('incorrect');
-    // --- Mistake Detection ---
-    mistakeCount++;
-    updateMistakeHearts();
-    // Vibration (if supported)
-    if (window.navigator && navigator.vibrate) navigator.vibrate(110);
-    // Decrease timer by 5 seconds (updated)
-    let timer = document.getElementById('quizTimer');
-    let secs = Math.max(0, parseInt(timer.textContent, 10) - 5);
-    timer.textContent = secs;
-    // Mistake animation
-    const mc = document.getElementById('mistakeCounter');
-    mc.style.transform = 'scale(1.13)';
-    mc.style.background = 'rgba(255,105,97,1)';
-    setTimeout(() => {
-      mc.style.transform = '';
-      mc.style.background = 'rgba(255,105,97,0.85)';
-    }, 250);
+      if (opt.correct) {
+        btn.classList.add('correct');
+      } else {
+        btn.classList.add('incorrect');
+        mistakeCount++;
+        updateMistakeHearts();
+        // Vibration (if supported)
+        if (window.navigator && navigator.vibrate) navigator.vibrate(110);
+        // Decrease timer by 5 seconds (updated)
+        let timer = document.getElementById('quizTimer');
+        let secs = Math.max(0, parseInt(timer.textContent, 10) - 5);
+        timer.textContent = secs;
+        // Mistake animation
+        const mc = document.getElementById('mistakeCounter');
+        mc.style.transform = 'scale(1.13)';
+        mc.style.background = 'rgba(255,105,97,1)';
+        setTimeout(() => {
+          mc.style.transform = '';
+          mc.style.background = 'rgba(255,105,97,0.85)';
+        }, 250);
 
-    // ---- CHECK IF ALL WRONGS ARE SHOT ----
-    const allWrongShot = questionData.options
-      .map((op, idx) => (!op.correct ? selected[idx] : null))
-      .filter(x => x !== null)
-      .every(Boolean);
+        // ---- CHECK IF ALL WRONGS ARE SHOT ----
+        const allWrongShot = questionData.options
+          .map((op, idx) => (!op.correct ? selected[idx] : null))
+          .filter(x => x !== null)
+          .every(Boolean);
 
-    if (allWrongShot) {
-      // Set timer to 0 and show feedback as "wrong"
-      timer.textContent = 0;
-      answered = true;
-      _showFeedback(true); // trigger as timeout (always wrong)
-      return; // exit, no further code
-    }
-    // ----
-  }
+        if (allWrongShot) {
+          // Set timer to 0 and show feedback as "wrong"
+          timer.textContent = 0;
+          answered = true;
+          _showFeedback(true); // trigger as timeout (always wrong)
+          return;
+        }
+      }
 
-  // Show submit button if at least one shot
-  if (selected.filter(Boolean).length > 0)
-    document.getElementById('submitBtn').style.display = '';
-  else
-    document.getElementById('submitBtn').style.display = 'none';
-};
+      // Show submit button if at least one shot
+      if (selected.filter(Boolean).length > 0)
+        document.getElementById('submitBtn').style.display = '';
+      else
+        document.getElementById('submitBtn').style.display = 'none';
+    };
     zone.appendChild(btn);
     let vx = (Math.random() > 0.5 ? 1 : -1) * (1.0 + Math.random() * 1.2);
     let vy = (Math.random() > 0.5 ? 1 : -1) * (0.8 + Math.random() * 1.1);
@@ -430,10 +427,11 @@ function _showFeedback(timeoutMode) {
   });
   let fb = document.getElementById('feedback');
   fb.style.display = '';
-  fb.className = 'feedback' + (allCorrect && atLeastOne ? '' : ' wrong');
+  fb.className = 'feedback' + (allCorrect && atLeastOne && !timeoutMode ? '' : ' wrong');
   fb.innerHTML = allCorrect && atLeastOne && !timeoutMode
     ? 'Correct! 🎉'
     : 'Wrong. Review your choices!';
+
   if (allCorrect && atLeastOne && !timeoutMode) {
     document.getElementById('audio-correct').currentTime = 0;
     document.getElementById('audio-correct').play();
@@ -441,12 +439,36 @@ function _showFeedback(timeoutMode) {
     document.getElementById('audio-wrong').currentTime = 0;
     document.getElementById('audio-wrong').play();
   }
+
   document.getElementById('submitBtn').style.display = 'none';
 
   setTimeout(() => {
     const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
-    // If this was triggered by timeout, always mark as incorrect
-    quizFlow.finishQuestion((allCorrect && atLeastOne && !timeoutMode), secs);
+
+    // Gather all option info
+    const userSelections = selected.map((v, i) => v); // true/false for each option
+    const correctIdxs = questionData.options
+      .map((opt, idx) => opt.correct ? idx : null)
+      .filter(idx => idx !== null);
+    const userShotIdxs = selected
+      .map((v, i) => v ? i : null)
+      .filter(idx => idx !== null);
+
+    quizFlow.finishQuestion(
+      (allCorrect && atLeastOne && !timeoutMode),
+      secs,
+      {
+        options: questionData.options.map(opt => opt.text),
+        correctIdxs: correctIdxs,
+        userShotIdxs: userShotIdxs,
+        userSelections: userSelections,
+        explanation: questionData.explanation || null
+      }
+    );
+    // Always auto-advance after feedback (1200ms)
+    setTimeout(() => {
+      if (window.quizGoNext) window.quizGoNext();
+    }, 1200);
   }, 1200);
 }
 

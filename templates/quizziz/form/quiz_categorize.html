@@ -339,45 +339,82 @@
     });
   }
 
-  function submitAnswer() {
-    answered = true;
-    clearInterval(timerId);
-    let correct = true;
+function submitAnswer() {
+  if (answered) return;
+  answered = true;
+  if (timerId) clearInterval(timerId);
+
+  // Check if ALL items are assigned to categories (not left in Unassigned)
+  const allAssigned = Object.keys(questionData.categories)
+    .reduce((acc, cat) => acc + assignments[cat].length, 0) === questionData.items.length;
+
+  let correct = true;
+  if (!allAssigned) correct = false;
+
+  // Check each assigned item for correctness (only if all items are placed)
+  if (allAssigned) {
     Object.keys(questionData.categories).forEach(cat => {
       assignments[cat].forEach(item => {
         const correctCat = item.category;
         const zones = document.querySelectorAll(`.category-box[data-cat="${cat}"] .draggable-item`);
-        for(let zone of zones){
-          if(cat === correctCat) zone.classList.add('correct');
+        for (let zone of zones) {
+          if (cat === correctCat) zone.classList.add('correct');
           else { zone.classList.add('wrong'); correct = false; }
         }
       });
     });
-    if (correct) {
-      document.getElementById('audio-correct').currentTime = 0;
-      document.getElementById('audio-correct').play();
-      // Insert confetti code here if desired
-    } else {
-      document.getElementById('audio-wrong').currentTime = 0;
-      document.getElementById('audio-wrong').play();
-    }
-    const fb = document.getElementById('feedback');
-    fb.style.display = '';
-    fb.className = 'feedback' + (correct ? '' : ' wrong');
-    fb.innerText = correct ? 'Correct! 🎉' : 'Wrong. Review your categorization.';
-    document.getElementById('submitBtn').style.display = 'none';
-
-    // Use global quick_flow to finish and notify the server
-    setTimeout(() => {
-      const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
-      quizFlow.finishQuestion(correct, secs);
-    }, 1200);
   }
 
-  function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
+  if (correct) {
+    document.getElementById('audio-correct').currentTime = 0;
+    document.getElementById('audio-correct').play();
+    // Insert confetti code here if desired
+  } else {
+    document.getElementById('audio-wrong').currentTime = 0;
+    document.getElementById('audio-wrong').play();
+  }
+  const fb = document.getElementById('feedback');
+  fb.style.display = '';
+  fb.className = 'feedback' + (correct ? '' : ' wrong');
+  fb.innerText = correct
+    ? 'Correct! 🎉'
+    : (!allAssigned
+        ? 'Not all items are categorized. Please place all items!' + (questionData.explanation ? `\n${questionData.explanation}` : '')
+        : 'Wrong. Review your categorization.' + (questionData.explanation ? `\n${questionData.explanation}` : '')
+      );
+  document.getElementById('submitBtn').style.display = 'none';
+
+  // Store full mapping for review!
+  setTimeout(() => {
+    const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
+
+    const userMapping = {};
+    Object.keys(questionData.categories).forEach(cat => {
+      userMapping[cat] = assignments[cat].map(item => item.text);
+    });
+
+    const correctMapping = {};
+    Object.keys(questionData.categories).forEach(cat => {
+      correctMapping[cat] = questionData.items.filter(item => item.category === cat).map(item => item.text);
+    });
+
+    quizFlow.finishQuestion(correct, secs, {
+      mapping: userMapping,
+      items: questionData.items.map(item => item.text),
+      categories: Object.keys(questionData.categories),
+      correctMapping: correctMapping
+    });
+
+    // Defer navigation until feedback is shown (1200ms)
+    setTimeout(() => {
+      if (window.quizGoNext) window.quizGoNext();
+    }, 1200);
+  }, 1200);
+}
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 

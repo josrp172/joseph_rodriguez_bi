@@ -210,14 +210,25 @@ function buildDragItems() {
 function submitAnswer() {
   if (state.locked) return;
   state.locked = true;
+
   let correct = true;
+
+  // Check if the user's current order matches the correct order
+  // But also: If time ran out and they never moved anything, they should not get credit.
+  // Let's check if they ever interacted: if state.items equals original order, assume no action.
+  const madeMove = state.items.some((v, i) => v !== questionData.items[i]);
+  correct = state.items.every((v, i) => v === questionData.items[i]) && madeMove;
+
   const feedbacks = document.getElementById('feedback');
-  // check order
+  // Visual feedback for each item
   questionData.items.forEach((ans, i) => {
     const el = document.querySelectorAll('.dragitem')[i];
-    if(state.items[i] === ans) el.classList.add('correct'); else { el.classList.add('wrong'); correct = false; }
+    if(state.items[i] === ans && madeMove) el.classList.add('correct');
+    else if (!madeMove) el.classList.remove('correct', 'wrong');
+    else { el.classList.add('wrong'); correct = false; }
   });
-  if(correct) confetti();
+
+  if (correct) confetti();
 
   // Play sound
   if (correct) {
@@ -227,13 +238,27 @@ function submitAnswer() {
     document.getElementById('audio-wrong').currentTime = 0;
     document.getElementById('audio-wrong').play();
   }
+
   feedbacks.style.display = '';
   feedbacks.className = 'feedback' + (correct ? '' : ' wrong');
-  feedbacks.innerHTML = correct ? 'Correct! 🎉' : 'Wrong. ' + (questionData.explanation||'');
+  feedbacks.innerHTML = correct
+    ? 'Correct! 🎉'
+    : (!madeMove
+        ? 'You did not reorder any items. Please drag and drop to change the order!'
+        : 'Wrong. ' + (questionData.explanation||'')
+      );
 
   setTimeout(() => {
     const secsLeft = parseInt(document.getElementById('quizTimer').textContent, 10);
-    quizFlow.finishQuestion(correct, secsLeft);
+    quizFlow.finishQuestion(correct, secsLeft, {
+      userOrder: state.items.slice(),
+      correctOrder: questionData.items.slice(),
+      explanation: questionData.explanation || null
+    });
+    // Defer navigation until feedback is shown (another 1200ms, or adjust as desired)
+    setTimeout(() => {
+      if (window.quizGoNext) window.quizGoNext();
+    }, 1200);
   }, 1200);
 }
 

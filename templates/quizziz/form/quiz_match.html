@@ -304,7 +304,10 @@ function drawLinks(){
 // ─── SUBMIT & AUTO-ADVANCE ──────────────────────────────────────────
 function submitAnswer(){
   state.locked = true;
-  let correctFlag = true;
+  // 1. Only allow "correct" if the user made ALL connections
+  const allMatched = Object.keys(state.links).length === left.length;
+  let correctFlag = allMatched;
+
   Object.entries(state.links).forEach(([l,r])=>{
     const q = left[l], a = right[r];
     const qEl = document.querySelectorAll('.match-q')[l];
@@ -316,7 +319,7 @@ function submitAnswer(){
       correctFlag = false;
     }
   });
-  if(correctFlag) confetti();
+  if(correctFlag && allMatched) confetti();
 
   // Play sound
   if (correctFlag) {
@@ -332,13 +335,40 @@ function submitAnswer(){
   fb.className = 'feedback'+(correctFlag?'':' wrong');
   fb.innerHTML = correctFlag
     ? 'Correct! 🎉'
-    : 'Wrong. '+(questionData.explanation||'');
+    : (!allMatched
+        ? 'You did not connect all pairs. Please complete all matches!'
+        : 'Wrong. ' + (questionData.explanation||'')
+      );
 
-  setTimeout(()=>{
+   setTimeout(()=>{
     const secs = parseInt(document.getElementById('quizTimer').textContent,10);
-    quizFlow.finishQuestion(correctFlag, secs);
+
+    // Build the user's mapping (what the user connected)
+    let userMapping = {};
+    Object.entries(state.links).forEach(([l, r]) => {
+      userMapping[left[l]] = right[r];
+    });
+
+    // Build the correct mapping
+    let correctMapping = {};
+    Object.entries(questionData.pairs).forEach(([k, v]) => {
+      correctMapping[k] = v;
+    });
+
+    quizFlow.finishQuestion(correctFlag, secs, {
+      mapping: userMapping,             // user's actual matchings
+      correctMapping: correctMapping,   // the true mapping
+      left: left.slice(),               // list of left-side items
+      right: right.slice(),             // list of right-side items (shuffled for this user)
+      explanation: questionData.explanation || null
+    });
+    // NEW: Defer navigation until feedback is shown (another 1200ms, or adjust as desired)
+    setTimeout(() => {
+      if (window.quizGoNext) window.quizGoNext();
+    }, 1200);
   }, 1200);
 }
+
 
 // For timeout feedback via quick_flow.js
 window.showFeedback = function(correct) { submitAnswer(); };

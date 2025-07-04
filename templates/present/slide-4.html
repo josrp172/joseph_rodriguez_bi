@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Microsoft Fabric – Slide 4</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    body {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;background:#f9fcff;}
+    .blobs-bg {position:fixed;width:100vw;height:100vh;left:0;top:0;z-index:0;}
+    .blob {position:absolute;border-radius:50%;opacity:.18;background:#6decd9;filter:blur(40px);}
+    .blob:nth-child(1){width:370px;height:320px;left:13vw;top:9vh;}
+    .blob:nth-child(2){width:220px;height:160px;left:65vw;top:7vh;background:#f6b3ff;}
+    .blob:nth-child(3){width:150px;height:160px;left:8vw;top:62vh;background:#b9e9ff;}
+    .blob:nth-child(4){width:280px;height:200px;left:61vw;top:65vh;background:#ffefd7;}
+    .slides-container{width:100vw;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
+    .universe-section {width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;}
+    .universe-title {font-size:clamp(2.6rem,4vw,3.6rem);font-weight:900;color:#20334c;margin-top:7vh;margin-bottom:3vh;text-align:center;letter-spacing:-0.02em;}
+    .universe-canvas {position:relative;width:88vw;max-width:1550px;height:67vh;min-height:430px;margin:0 auto;}
+    .universe-icon {position:absolute;transition:transform 0.27s cubic-bezier(.4,1.6,.5,1.0),box-shadow 0.21s,filter 0.21s,opacity 0.31s;opacity:0.82;filter:drop-shadow(0 4px 18px #c3f4f7);border-radius:20%;background:rgba(255,255,255,0.72);z-index:2;pointer-events:auto;box-shadow:0 8px 22px 0 rgba(64,210,200,0.11);width:82px;height:82px;}
+    .universe-icon.floater {animation:iconFloat 6.7s infinite alternate;}
+    .universe-icon:hover, .universe-icon:focus {opacity:1 !important;transform:scale(1.17) rotate(-10deg) !important;z-index:10;filter:drop-shadow(0 8px 34px #71fff7) brightness(1.07);}
+    .icon-main {left:50.5%;top:46%;width:112px;height:112px;opacity:1;z-index:9;transform:translate(-50%, -50%) scale(1.18) rotate(1deg);box-shadow:0 0 34px 0 #a5ffe2cc;}
+    /* Scattered icon positions (expand for more as needed!) */
+    .icon1  {left:12%;  top:28%; width:70px; height:70px;}
+    .icon2  {left:27%;  top:6%;  width:78px; height:78px;}
+    .icon3  {left:66%;  top:11%; width:82px; height:82px;}
+    .icon4  {left:84%;  top:37%; width:69px; height:69px;}
+    .icon5  {left:74%;  top:67%; width:68px; height:68px;}
+    .icon6  {left:58%;  top:80%; width:76px; height:76px;}
+    .icon7  {left:37%;  top:83%; width:67px; height:67px;}
+    .icon8  {left:11%;  top:63%; width:70px; height:70px;}
+    .icon9  {left:8%;   top:46%; width:57px; height:57px; opacity:.61;}
+    .icon10 {left:21%;  top:38%; width:68px; height:68px; opacity:.71;}
+    .icon11 {left:20%;  top:76%; width:56px; height:56px; opacity:.61;}
+    .icon12 {left:33%;  top:53%; width:62px; height:62px; opacity:.77;}
+    .icon13 {left:57%;  top:20%; width:55px; height:55px; opacity:.69;}
+    .icon14 {left:45%;  top:7%;  width:58px; height:58px; opacity:.63;}
+    .icon15 {left:87%;  top:59%; width:57px; height:57px; opacity:.63;}
+    .icon16 {left:71%;  top:33%; width:61px; height:61px; opacity:.71;}
+    .icon17 {left:54%;  top:72%; width:66px; height:66px; opacity:.75;}
+    .icon18 {left:40%;  top:23%; width:61px; height:61px; opacity:.68;}
+    .icon19 {left:60%;  top:56%; width:63px; height:63px; opacity:.69;}
+    .icon20 {left:79%;  top:47%; width:60px; height:60px; opacity:.62;}
+    .icon21 {left:76%;  top:19%; width:61px; height:61px; opacity:.62;}
+    .icon22 {left:66%;  top:88%; width:61px; height:61px; opacity:.68;}
+    .icon23 {left:85%;  top:76%; width:63px; height:63px; opacity:.67;}
+    .icon24 {left:13%;  top:13%; width:55px; height:55px; opacity:.67;}
+    .icon25 {left:31%;  top:26%; width:58px; height:58px; opacity:.63;}
+    .icon26 {left:92%;  top:32%; width:50px; height:50px; opacity:.53;}
+    .icon27 {left:80%;  top:83%; width:59px; height:59px; opacity:.54;}
+    .icon28 {left:41%;  top:74%; width:58px; height:58px; opacity:.60;}
+    .icon29 {left:88%;  top:17%; width:56px; height:56px; opacity:.54;}
+    .icon30 {left:30%;  top:91%; width:48px; height:48px; opacity:.48;}
+    @keyframes iconFloat {0%{transform:translateY(0) scale(1) rotate(-4deg);}100%{transform:translateY(-20px) scale(1.06) rotate(7deg);}}
+    @media (max-width: 900px) {.universe-canvas {width:98vw;min-height:220px;}.universe-icon {width:43px;height:43px;}.icon-main{width:63px;height:63px;}}
+    .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+    .slide-indicator.demo {
+      text-align:center;
+      font-weight:bold;
+      font-size: 1.35rem;
+      color: #2c9ca6;
+      opacity: 0.90;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 2.2vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="blobs-bg">
+    <div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
+  </div>
+  <div class="slides-container">
+    <section class="slide active" id="slide-4">
+      <!-- Top nav small buttons -->
+      <button class="demo-canvas-next prev" onclick="location.href='/present/slide-3'">‹ Prev</button>
+      <button class="demo-canvas-next next" onclick="location.href='/present/slide-5'">Next ›</button>
+      <div class="universe-section">
+        <div class="universe-title">The Universe of Microsoft Fabric</div>
+        <div class="universe-canvas">
+          <!-- Your icons (as before) -->
+          <img src="/static/images/fabric/fabric.png"           class="universe-icon icon-main" alt="Fabric">
+          <img src="/static/images/fabric/copilot.png"          class="universe-icon icon1" alt="Copilot">
+          <img src="/static/images/fabric/dashboard.png"        class="universe-icon icon2" alt="Dashboard">
+          <img src="/static/images/fabric/lakehouse.png"        class="universe-icon icon3" alt="Lakehouse">
+          <img src="/static/images/fabric/data_warehouse.png"   class="universe-icon icon4" alt="Data Warehouse">
+          <img src="/static/images/fabric/notebook.png"         class="universe-icon icon5" alt="Notebook">
+          <img src="/static/images/fabric/dataflow.png"         class="universe-icon icon6" alt="Dataflow">
+          <img src="/static/images/fabric/function_set.png"     class="universe-icon icon7" alt="Function Set">
+          <img src="/static/images/fabric/scorecard.png"        class="universe-icon icon8" alt="Scorecard">
+          <img src="/static/images/fabric/eventstream.png"      class="universe-icon icon9" alt="Eventstream">
+          <img src="/static/images/fabric/experiments.png"      class="universe-icon icon10" alt="Experiments">
+          <img src="/static/images/fabric/sql_database.png"     class="universe-icon icon11" alt="SQL Database">
+          <img src="/static/images/fabric/databases.png"        class="universe-icon icon12" alt="Databases">
+          <img src="/static/images/fabric/retail.png"           class="universe-icon icon13" alt="Retail">
+          <img src="/static/images/fabric/semantic_model.png"   class="universe-icon icon14" alt="Semantic Model">
+          <img src="/static/images/fabric/kql_database.png"     class="universe-icon icon15" alt="KQL Database">
+          <img src="/static/images/fabric/environment.png"      class="universe-icon icon16" alt="Environment">
+          <img src="/static/images/fabric/industry_solutions.png" class="universe-icon icon17" alt="Industry Solutions">
+          <img src="/static/images/fabric/links.png"            class="universe-icon icon18" alt="Links">
+          <img src="/static/images/fabric/real_time_dashboard.png" class="universe-icon icon19" alt="Real Time Dashboard">
+          <img src="/static/images/fabric/streaming_dataflow.png" class="universe-icon icon20" alt="Streaming Dataflow">
+          <img src="/static/images/fabric/variables.png"        class="universe-icon icon21" alt="Variables">
+          <img src="/static/images/fabric/paginated_report.png" class="universe-icon icon22" alt="Paginated Report">
+          <img src="/static/images/fabric/metric_sets.png"      class="universe-icon icon23" alt="Metric Sets">
+          <img src="/static/images/fabric/exploration.png"      class="universe-icon icon24" alt="Exploration">
+          <img src="/static/images/fabric/healthcare.png"       class="universe-icon icon25" alt="Healthcare">
+          <img src="/static/images/fabric/reflex_exp.png"       class="universe-icon icon26" alt="Reflex">
+          <img src="/static/images/fabric/event_house.png"      class="universe-icon icon27" alt="Event House">
+          <img src="/static/images/fabric/datamart.png"         class="universe-icon icon28" alt="Datamart">
+          <img src="/static/images/fabric/copy_job.png"         class="universe-icon icon29" alt="Copy Job">
+          <img src="/static/images/fabric/mirrored_generic_database.png" class="universe-icon icon30" alt="Mirrored DB">
+        </div>
+        <div class="slide-indicator demo">4 / 6</div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // Animate in navigation buttons
+    gsap.to(".demo-canvas-next", {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      stagger: 0.18,
+      delay: 1.2,
+      ease: "power2.out"
+    });
+
+    // Animate in the universe title
+    gsap.from(".universe-title", {
+      y: -40,
+      opacity: 0,
+      duration: 0.7,
+      delay: 0.5,
+      ease: "power3.out"
+    });
+
+    // Animate the icons scattering from the center outwards
+    function getIconOriginalPos(img) {
+      // Get the left and top from computed styles as % or px, return pixel positions relative to .universe-canvas
+      const style = window.getComputedStyle(img);
+      let left = style.left, top = style.top;
+      let leftPx = 0, topPx = 0;
+
+      // Get container size
+      const parent = img.parentElement;
+      const pw = parent.offsetWidth, ph = parent.offsetHeight;
+
+      if (left.includes('%')) leftPx = parseFloat(left)/100 * pw;
+      else leftPx = parseFloat(left);
+
+      if (top.includes('%')) topPx = parseFloat(top)/100 * ph;
+      else topPx = parseFloat(top);
+
+      return {left: leftPx, top: topPx};
+    }
+
+    function animateUniverseIcons() {
+      const icons = Array.from(document.querySelectorAll('.universe-icon'));
+      const canvas = document.querySelector('.universe-canvas');
+      const cx = canvas.offsetWidth / 2;
+      const cy = canvas.offsetHeight / 2;
+
+      // Set all icons to center first and opacity 0
+      icons.forEach(icon => {
+        const {left, top} = getIconOriginalPos(icon);
+        icon.setAttribute('data-orig-left', left);
+        icon.setAttribute('data-orig-top', top);
+
+        icon.style.left = `${cx}px`;
+        icon.style.top = `${cy}px`;
+        icon.style.opacity = 0;
+      });
+
+      // Animate them out to their universe spots
+      setTimeout(() => {
+        icons.forEach((icon, i) => {
+          // Remove any floating class to prevent double animation
+          icon.classList.remove('floater');
+          const origLeft = icon.getAttribute('data-orig-left');
+          const origTop = icon.getAttribute('data-orig-top');
+          gsap.to(icon, {
+            left: `${origLeft}px`,
+            top: `${origTop}px`,
+            opacity: 0.84,
+            scale: 1.08,
+            duration: 1.2 + 0.04 * i,
+            delay: 0.2 + 0.017 * i,
+            ease: "expo.out",
+            onComplete: () => {
+              icon.classList.add('floater'); // re-activate float after anim
+              gsap.to(icon, {scale: 1, duration: 0.32, ease: "elastic.out(1,0.75)"});
+            }
+          });
+        });
+      }, 250);
+    }
+
+    window.addEventListener('DOMContentLoaded', animateUniverseIcons);
+
+  </script>
+</body>
+</html>

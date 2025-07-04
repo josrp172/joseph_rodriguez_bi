@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Microsoft Fabric – Slide 5</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    body {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;background:#f9fcff;}
+    .blobs-bg {position:fixed;width:100vw;height:100vh;left:0;top:0;z-index:0;}
+    .blob {position:absolute;border-radius:50%;opacity:.18;background:#6decd9;filter:blur(40px);}
+    .blob:nth-child(1){width:370px;height:320px;left:13vw;top:9vh;}
+    .blob:nth-child(2){width:220px;height:160px;left:65vw;top:7vh;background:#f6b3ff;}
+    .blob:nth-child(3){width:150px;height:160px;left:8vw;top:62vh;background:#b9e9ff;}
+    .blob:nth-child(4){width:280px;height:200px;left:61vw;top:65vh;background:#ffefd7;}
+    .slides-container{ width:100vw; min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative; z-index:2;}
+    .fabric-new-canvas {width: 100vw; height: 100vh; display: flex; flex-direction: column;align-items: center; justify-content: flex-start; padding: 0; box-sizing: border-box;}
+    .fabric-new-title {font-size: clamp(1.5rem, 2.6vw, 2.8rem);color: #1a9ca0;font-weight: 800;margin: 5vh 0 1.5vh 0;letter-spacing: -0.02em;text-align: center;}
+    .fabric-new-table {width: 90vw;max-width: 1400px;margin: 0 auto 2vh auto;background: rgba(255,255,255,0.92);border-radius: 1.7em;box-shadow: 0 8px 42px #27edd010;overflow-x: auto;padding: 2.1em 1.5em 1.7em 1.5em;}
+    .fabric-row {display: flex; align-items: flex-start; border-bottom: 1px solid #e3f8f7;padding: 0.55em 0;}
+    .fabric-header {font-weight: 800; font-size: 1.2em; background: none; border-bottom: 2.2px solid #40e6cc;color: #156671; padding-bottom: 0.6em;}
+    .fabric-col {flex: 1 1 0; padding: 0.6em 1.1em; min-width: 160px;font-size: 1.08em;color: #285264;}
+    .fabric-col.fabric-cap { min-width: 220px; font-weight: 700; color: #16778e; display: flex; align-items: center;}
+    .fabric-col.fabric-old { color: #a77878; font-size: 1.03em;}
+    .fabric-col.fabric-new { color: #14876a; font-size: 1.03em;}
+    .fabric-icon {width: 26px; height: 26px; margin-right: 0.63em; border-radius: 8px; background: #f9fffd; box-shadow: 0 1.5px 5px #66ffe711;vertical-align: middle; object-fit: contain; position:relative;}
+    .fabric-icon.floater { animation:iconFloat 6.7s infinite alternate;}
+    @keyframes iconFloat {0%{transform:translateY(0) scale(1) rotate(-4deg);}100%{transform:translateY(-10px) scale(1.09) rotate(7deg);}}
+    @media (max-width: 1100px) {.fabric-new-table { max-width: 98vw; }.fabric-col { font-size: 0.96em; min-width: 90px; padding: 0.5em 0.5em;}.fabric-col.fabric-cap { min-width: 110px; }}
+    @media (max-width: 900px) {.fabric-new-title { font-size: 1.45rem;}.fabric-new-table { padding: 1.1em 0.3em;}.fabric-row { flex-direction: column; align-items: flex-start; border-bottom: 1.2px solid #d4efee;}}
+
+    .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+    .slide-indicator.demo {
+      text-align:center;
+      font-weight:bold;
+      font-size: 1.35rem;
+      color: #2c9ca6;
+      opacity: 0.90;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 2.2vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="blobs-bg">
+    <div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
+  </div>
+  <div class="slides-container">
+    <section class="slide active" id="slide-6">
+      <!-- Top nav small buttons -->
+      <button class="demo-canvas-next prev" onclick="location.href='/present/slide-4'">‹ Prev</button>
+      <button class="demo-canvas-next next" onclick="location.href='/present/slide-6'">Next ›</button>
+      <div class="fabric-new-canvas">
+        <div class="fabric-new-title">
+          <img src="/static/images/fabric/fabric.png" style="width:48px;height:48px;vertical-align:middle;margin-right:0.5em;">
+          <span>What's Truly New in Microsoft Fabric <span style="font-weight:400;font-size:0.75em;">(vs Before)</span></span>
+        </div>
+        <div class="fabric-new-table">
+          <div class="fabric-row fabric-header">
+            <div class="fabric-col fabric-cap"><span style="font-size:1.18em;">&#128161; Capability</span></div>
+            <div class="fabric-col fabric-old"><span>&#10060; Before</span></div>
+            <div class="fabric-col fabric-new"><span>&#9989; Fabric</span></div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/lakehouse.png" class="fabric-icon">Unified Storage</div>
+            <div class="fabric-col fabric-old">Data scattered across ADLS, SQL, Dataverse, Power BI datasets</div>
+            <div class="fabric-col fabric-new"><b>OneLake</b> — one governed data lake for all workloads</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dataflow.png" class="fabric-icon">Data Access in Power BI</div>
+            <div class="fabric-col fabric-old">Only <i>Import</i> or <i>DirectQuery</i> — trade-off between speed &amp; freshness</div>
+            <div class="fabric-col fabric-new"><b>DirectLake</b> — blazing-fast reads from Lakehouse, no refresh needed</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dashboard.png" class="fabric-icon">Developer Experience</div>
+            <div class="fabric-col fabric-old">Separate tools: Power BI, ADF, Synapse, ML Studio</div>
+            <div class="fabric-col fabric-new"><b>All-in-one SaaS UI</b> — Notebooks, Pipelines, BI, ML: one Fabric workspace</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/data_warehouse.png" class="fabric-icon">Data Architecture</div>
+            <div class="fabric-col fabric-old">No native Lakehouse; required Databricks or complex setup</div>
+            <div class="fabric-col fabric-new"><b>Lakehouse built-in</b> — Delta support, open &amp; transactional</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/function.png" class="fabric-icon">ETL &amp; Data Prep</div>
+            <div class="fabric-col fabric-old">Power Query for BI, ADF for ETL (separate)</div>
+            <div class="fabric-col fabric-new"><b>Dataflow Gen2 + Pipelines</b> — reusable, parameterized, write to Lakehouse</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/notebook.png" class="fabric-icon">AI &amp; ML Integration</div>
+            <div class="fabric-col fabric-old">Azure ML Studio was separate, setup-heavy</div>
+            <div class="fabric-col fabric-new"><b>Integrated Notebooks &amp; ML Models</b> — inside Fabric</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/copilot.png" class="fabric-icon">Security</div>
+            <div class="fabric-col fabric-old">RLS in Power BI, RBAC in SQL — fragmented</div>
+            <div class="fabric-col fabric-new"><b>OneSecurity</b> — centralized RLS/OLS for Lakehouse, Warehouse, Power BI</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/dashboard.png" class="fabric-icon">Real-Time Data</div>
+            <div class="fabric-col fabric-old">Needed custom streaming (Power BI, Event Hubs)</div>
+            <div class="fabric-col fabric-new"><b>Eventstream + Real-Time Dashboards</b> — native, low-code streaming + live visuals</div>
+          </div>
+          <div class="fabric-row">
+            <div class="fabric-col fabric-cap"><img src="/static/images/fabric/fabric.png" class="fabric-icon">Versioning &amp; DevOps</div>
+            <div class="fabric-col fabric-old">PBIX files are binary, Git-integration manual</div>
+            <div class="fabric-col fabric-new"><b>Git-native support</b> for Notebooks, Pipelines, Models</div>
+          </div>
+        </div>
+        <div class="slide-indicator demo">5 / 6</div>
+      </div>
+    </section>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  // Animate in navigation buttons
+  gsap.to(".demo-canvas-next", {
+    opacity: 1,
+    y: 0,
+    duration: 0.7,
+    stagger: 0.18,
+    delay: 0.5,
+    ease: "power2.out"
+  });
+
+  // Animate in the title
+  gsap.from(".fabric-new-title", {
+    y: -40,
+    opacity: 0,
+    duration: 0.7,
+    delay: 0.4,
+    ease: "power3.out"
+  });
+
+  // Animate rows as if being inserted
+  window.addEventListener('DOMContentLoaded', () => {
+    const rows = Array.from(document.querySelectorAll('.fabric-row'));
+    rows.forEach((row, i) => {
+      row.style.transformOrigin = "top center";
+      row.style.opacity = 0;
+      row.style.height = '0px';
+      row.style.overflow = 'hidden';
+      gsap.to(row, {
+        height: row.scrollHeight + 'px',
+        opacity: 1,
+        scaleY: 1,
+        boxShadow: "0 8px 28px #2ef0e325",
+        background: "rgba(34,255,222,0.09)",
+        duration: 0.48 + 0.04 * i,
+        delay: 0.65 + i * 0.13,
+        ease: "back.out(1.3)",
+        onStart: () => {
+          row.style.display = '';
+        },
+        onComplete: () => {
+          row.style.height = '';
+          row.style.overflow = '';
+          gsap.to(row, {
+            boxShadow: "0 1.5px 7px #66ffe711",
+            background: "",
+            duration: 0.48,
+            ease: "power1.in"
+          });
+          // Animate icons in this row after row appears
+          setTimeout(() => {
+            const icons = row.querySelectorAll('.fabric-icon');
+            icons.forEach((icon, idx) => {
+              icon.classList.remove('floater');
+              gsap.fromTo(icon,
+                { y: 18, opacity: 0, scale: 0.7 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  scale: 1,
+                  duration: 0.42 + 0.05 * idx,
+                  delay: 0.01 * idx,
+                  ease: "back.out(1.7)",
+                  onComplete: () => icon.classList.add('floater')
+                }
+              );
+            });
+          }, 60);
+        }
+      });
+    });
+
+    // Row hover GSAP
+    rows.forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        gsap.to(row, {
+          scale: 1.027,
+          background: "rgba(64,239,214,0.15)",
+          boxShadow: "0 8px 38px #2ee4e23b",
+          duration: 0.26,
+          ease: "power1.out"
+        });
+      });
+      row.addEventListener('mouseleave', () => {
+        gsap.to(row, {
+          scale: 1,
+          background: "",
+          boxShadow: "0 1.5px 7px #66ffe711",
+          duration: 0.34,
+          ease: "power2.out"
+        });
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

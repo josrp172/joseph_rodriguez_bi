@@ -261,10 +261,21 @@
     fb.innerHTML = correct ? "Correct! 🎉" : "Wrong. " + (questionData.explanation || "");
     if (!correct && questionData.explanation)
       fb.innerHTML += `<div class="exp" style="color:#fffbe7;font-size:0.98em;margin-top:8px;">${questionData.explanation}</div>`;
-    setTimeout(() => {
-      const secs = parseInt(document.getElementById('quizTimer').textContent);
-      quizFlow.finishQuestion(correct, isNaN(secs) ? 0 : secs);
-    }, 1200);
+      setTimeout(() => {
+        const secs = parseInt(document.getElementById('quizTimer').textContent);
+        const input = document.getElementById('fibInput');
+        let userValue = input ? input.value.trim() : "";
+
+        quizFlow.finishQuestion(correct, isNaN(secs) ? 0 : secs, {
+          userAnswer: userValue,
+          correctAnswer: questionData.answer,
+          explanation: questionData.explanation || null
+        });
+        // NEW: Defer navigation until feedback is shown (another 1200ms, or adjust as desired)
+        setTimeout(() => {
+          if (window.quizGoNext) window.quizGoNext();
+        }, 1200);
+      }, 1200);
   }
 
   // OPTIONAL: If you want feedback on timeouts, add this in quick_flow.js:

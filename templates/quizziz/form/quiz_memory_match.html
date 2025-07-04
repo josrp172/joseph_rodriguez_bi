@@ -154,7 +154,7 @@
   <audio id="audio-correct" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/correct_sound.wav" preload="auto"></audio>
   <audio id="audio-wrong" src="https://cdn.jsdelivr.net/gh/josrp172/seph_audio@main/wrong_sound.wav" preload="auto"></audio>
 
-  <script>
+<script>
 // === USER/AVATAR INFO ===
 const avatarIdx = +localStorage.getItem('quizPlayerAvatar') || 0;
 const avatarMap = ["eleven","jesse","Katniss","leonard","lisa","morty","rick","sheldon","walter","wednesday"];
@@ -315,12 +315,51 @@ function submitAnswer(win) {
   let fb = document.getElementById('feedback');
   fb.innerHTML = msg;
   fb.style.display = '';
-  document.getElementById('submitBtn').style.display = '';
+  const isTimeout = !win && matched.length !== cards.length;
+
+  // Show Continue only if user finished, not on timeout+not finished
+  document.getElementById('submitBtn').style.display = isTimeout ? 'none' : '';
+
   setTimeout(() => {
-    document.getElementById('submitBtn').style.display = '';
-    // For auto-next, call finishQuestion after delay:
     const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
-    quizFlow.finishQuestion(matched.length === cards.length, isNaN(secs) ? 0 : secs);
+
+    // Build the user's matched pairs (array of objects)
+    let userPairs = [];
+    for (let i = 0; i < matched.length; i += 2) {
+      const idxA = matched[i];
+      const idxB = matched[i + 1];
+      if (cards[idxA] && cards[idxB]) {
+        let front = cards[idxA].type === 'front' ? cards[idxA].content : cards[idxB].content;
+        let back  = cards[idxA].type === 'back'  ? cards[idxA].content : cards[idxB].content;
+        userPairs.push({ front, back });
+      }
+    }
+
+    let correctPairs = [];
+    if (questionData.pairs && Array.isArray(questionData.pairs)) {
+      correctPairs = questionData.pairs.map(pair => ({
+        front: pair.front,
+        back: pair.back
+      }));
+    }
+
+    quizFlow.finishQuestion(
+      matched.length === cards.length,
+      isNaN(secs) ? 0 : secs,
+      {
+        userPairs: userPairs,
+        correctPairs: correctPairs,
+        totalCards: cards.length,
+        explanation: questionData.explanation || null
+      }
+    );
+
+    // If timeout and not finished, auto-advance
+    if (isTimeout) {
+      setTimeout(() => {
+        if (window.quizGoNext) window.quizGoNext();
+      }, 1200);
+    }
   }, 1200);
 }
 
@@ -331,7 +370,6 @@ window.showFeedback = function(correct) { submitAnswer(false); };
 document.addEventListener('DOMContentLoaded', () => {
   quizFlow.initQuestion((q, idx, total) => {
     if (q.type !== 'memory_match') {
-      // fallback to correct page
       const routes = {
         multiple_choice:  '/quiz/form/quiz_multiple_choice',
         fill_in_blank:    '/quiz/form/quiz_fill_in_blank',
@@ -350,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
+
 </body>
 
 
