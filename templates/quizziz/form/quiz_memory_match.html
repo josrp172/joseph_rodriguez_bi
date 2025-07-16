@@ -204,13 +204,8 @@ function renderCard() {
       <div class="memory-board" id="memoryBoard"></div>
     </div>
     <div class="feedback" id="feedback" style="display:none"></div>
-    <button class="submit-btn" id="submitBtn" style="display:none;">Continue</button>
   `;
   buildBoard();
-  document.getElementById('submitBtn').onclick = () => {
-    const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
-    quizFlow.finishQuestion(matched.length === cards.length, secs);
-  };
 }
 
 function buildBoard() {
@@ -302,6 +297,7 @@ function checkMatch() {
   }
 }
 
+// === MAIN AUTO-PROCEED LOGIC ===
 function submitAnswer(win) {
   answered = true;
   let msg = '';
@@ -315,11 +311,7 @@ function submitAnswer(win) {
   let fb = document.getElementById('feedback');
   fb.innerHTML = msg;
   fb.style.display = '';
-  const isTimeout = !win && matched.length !== cards.length;
-
-  // Show Continue only if user finished, not on timeout+not finished
-  document.getElementById('submitBtn').style.display = isTimeout ? 'none' : '';
-
+  // --- Always auto-advance after feedback, just like Multiple Choice ---
   setTimeout(() => {
     const secs = parseInt(document.getElementById('quizTimer').textContent, 10);
 
@@ -354,12 +346,10 @@ function submitAnswer(win) {
       }
     );
 
-    // If timeout and not finished, auto-advance
-    if (isTimeout) {
-      setTimeout(() => {
-        if (window.quizGoNext) window.quizGoNext();
-      }, 1200);
-    }
+    // After feedback, always auto-advance (matches Multiple Choice flow)
+    setTimeout(() => {
+      if (window.quizGoNext) window.quizGoNext();
+    }, 1200);
   }, 1200);
 }
 

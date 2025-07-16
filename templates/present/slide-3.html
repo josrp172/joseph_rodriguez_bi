@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Microsoft Fabric – Slide 3</title>
+  <title>Microsoft Fabric – Slide 3 with Professional Icons</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     body {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;background:#f9fcff;}
@@ -24,19 +24,51 @@
     .big-maze-svg {width: 640px; height: 580px;position: absolute; left: 0; top: 0;overflow: visible;}
     .maze-path {stroke: url(#mazeGrad);stroke-width: 5.7;fill: none;stroke-linecap: round;stroke-linejoin: round;stroke-dasharray: 3600;stroke-dashoffset: 3600;opacity: 0.78;filter: drop-shadow(0 2px 12px #6be1e2bb);animation: mazeDraw 2.6s cubic-bezier(.77,.13,.58,.93) forwards;animation-delay: var(--delay,0s);}
     @keyframes mazeDraw {to { stroke-dashoffset: 0;}}
-    .maze-icon {position: absolute;width: 64px; height: 64px;object-fit: contain;background: #fff;border-radius: 1.4em;box-shadow: 0 12px 26px 0 rgba(64,210,200,0.16);animation: floatyIcon 2.9s infinite alternate cubic-bezier(.4,1.6,.5,1.0), mazePulse 2.9s infinite alternate;z-index: 4;opacity: 0.98;transition: filter 0.16s, transform 0.17s;}
+
+    .maze-item-wrapper {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateX(-50%);
+    }
+    .maze-item-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e3a56;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      text-shadow: 0 0 6px #fff;
+    }
+    .maze-icon {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 1.4em;
+        box-shadow: 0 12px 26px 0 rgba(64, 210, 200, 0.16);
+        animation: floatyIcon 2.9s infinite alternate cubic-bezier(.4, 1.6, .5, 1.0), mazePulse 2.9s infinite alternate;
+        z-index: 4;
+        opacity: 0.98;
+        transition: filter 0.16s, transform 0.17s;
+        box-sizing: border-box;
+        /* Removed padding to allow SVGs to fill the space */
+    }
     .maze-icon:hover {filter: drop-shadow(0 6px 22px #44f8f6cc) brightness(1.10);transform: scale(1.13) rotate(-8deg);z-index: 9;}
-    @keyframes floatyIcon {0% {transform: translateY(0);}100% {transform: translateY(-18px);}}
+
+    @keyframes floatyIcon {0% {transform: translateY(0);}100% {transform: translateY(-10px);}}
     @keyframes mazePulse {0% { box-shadow: 0 7px 20px #b0fff7; }100% { box-shadow: 0 13px 38px #cbfff2; }}
-    .big-i0 { left:60px;  top:410px;}
-    .big-i1 { left:190px; top:520px;}
-    .big-i2 { left:400px; top:540px;}
-    .big-i3 { left:570px; top:320px;}
-    .big-i4 { left:80px;  top:120px;}
-    .big-i5 { left:350px; top:35px;}
-    .big-i6 { left:570px; top:90px;}
-    .big-i7 { left:215px; top:310px;}
-    .big-i8 { left:520px; top:470px;}
+
+    .big-i0 { left:90px;  top:410px;}
+    .big-i1 { left:220px; top:520px;}
+    .big-i2 { left:430px; top:540px;}
+    .big-i3 { left:600px; top:320px;}
+    .big-i4 { left:110px;  top:120px;}
+    .big-i5 { left:380px; top:35px;}
+    .big-i6 { left:600px; top:90px;}
+    .big-i7 { left:245px; top:310px;}
+    .big-i8 { left:550px; top:470px;}
+
     .demo-canvas-next {
       position: absolute;
       top: 2.3vh;
@@ -72,16 +104,19 @@
     }
     @media (max-width: 1100px) {
       .big-maze-svg-container, .big-maze-svg { width: 94vw; max-width: 430px; height: 340px;}
-      .maze-icon { width: 39px; height: 39px;}
-      .big-i0 { left:25px;  top:245px;}
-      .big-i1 { left:110px; top:310px;}
-      .big-i2 { left:220px; top:300px;}
-      .big-i3 { left:320px; top:165px;}
-      .big-i4 { left:35px;  top:30px;}
-      .big-i5 { left:200px; top:17px;}
-      .big-i6 { left:350px; top:30px;}
-      .big-i7 { left:100px; top:140px;}
-      .big-i8 { left:330px; top:230px;}
+      .maze-icon { width: 44px; height: 44px; }
+      .maze-item-label { font-size: 0.6rem; margin-bottom: 5px; }
+
+      .big-i0 { left:45px;  top:245px;}
+      .big-i1 { left:130px; top:310px;}
+      .big-i2 { left:240px; top:300px;}
+      .big-i3 { left:340px; top:165px;}
+      .big-i4 { left:55px;  top:30px;}
+      .big-i5 { left:220px; top:17px;}
+      .big-i6 { left:370px; top:30px;}
+      .big-i7 { left:120px; top:140px;}
+      .big-i8 { left:350px; top:230px;}
+
       .big-maze-left, .big-maze-right { min-width: 0;}
       .slide-indicator.demo { font-size: 1.05rem; }
     }
@@ -93,7 +128,6 @@
   </div>
   <div class="slides-container">
     <section class="slide active" id="slide-3">
-      <!-- Top small navigation -->
       <button class="demo-canvas-next prev" onclick="location.href='/present/slide-2'">‹ Prev</button>
       <button class="demo-canvas-next next" onclick="location.href='/present/slide-4'">Next ›</button>
       <div class="maze-canvas full-maze-canvas">
@@ -126,47 +160,62 @@
               <path d="M350,390 Q550,380 610,250 Q640,170 390,60 Q110,10 110,170" class="maze-path" style="--delay:1.25s;" />
               <path d="M260,510 Q200,310 320,430 Q420,500 430,310 Q420,110 330,260 Q220,440 570,400" class="maze-path" style="--delay:1.4s;" />
             </svg>
-            <img class="maze-icon big-i0" src="/static/images/fabric/data_warehouse.png" title="Database" />
-            <img class="maze-icon big-i1" src="/static/images/fabric/dataflow.png" title="Dataflow" />
-            <img class="maze-icon big-i2" src="/static/images/fabric/notebook.png" title="Notebook" />
-            <img class="maze-icon big-i3" src="/static/images/fabric/function_set.png" title="Function" />
-            <img class="maze-icon big-i4" src="/static/images/fabric/lakehouse.png" title="Lakehouse" />
-            <img class="maze-icon big-i5" src="/static/images/fabric/dashboard.png" title="Dashboard" />
-            <img class="maze-icon big-i6" src="/static/images/fabric/copilot.png" title="Copilot" />
-            <img class="maze-icon big-i7" src="/static/images/fabric/fabric.png" title="Fabric Core" />
-            <img class="maze-icon big-i8" src="/static/images/fabric/data_warehouse.png" title="Warehouse" />
+
+            <div class="maze-item-wrapper big-i0">
+              <div class="maze-item-label">Isolated File</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Isolated File</title><path d="M42,2H16c-2.2,0-4,1.8-4,4v52c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V14L42,2z" fill="#FFCA28"/><path d="M52,14H42c-2.2,0-4-1.8-4-4V2" fill="#FFEA00"/><rect x="20" y="30" width="24" height="4" rx="1" fill="#455A64"/><rect x="20" y="40" width="16" height="4" rx="1" fill="#455A64" opacity=".7"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i1">
+              <div class="maze-item-label">Duplicated Files</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Duplicated Files</title><path d="M38 10H18c-2.2 0-4 1.8-4 4v36c0 2.2 1.8 4 4 4h20c2.2 0 4-1.8 4-4V14c0-2.2-1.8-4-4-4z" fill="#FFCA28" opacity=".6"/><path d="M46 6H26c-2.2 0-4 1.8-4 4v36c0 2.2 1.8 4 4 4h20c2.2 0 4-1.8 4-4V10c0-2.2-1.8-4-4-4z" fill="#FFCA28"/><path d="M48 10v-.1A4.1 4.1 0 0046 6H26a4.1 4.1 0 00-4 3.9V10h-2v36c0 3.3 2.7 6 6 6h20c3.3 0 6-2.7 6-6V10h-2z" fill="#FFEA00"/><path d="M34 26h4v8h-4zM40 22h4v12h-4zM34 40h10v4H34z" fill="#455A64"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i2">
+              <div class="maze-item-label">Broken Pipeline</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Broken Pipeline</title><path d="M15 15c0-4.4 3.6-8 8-8s8 3.6 8 8v34c0 4.4-3.6 8-8 8s-8-3.6-8-8V15z" fill="#90A4AE"/><ellipse cx="23" cy="15" rx="8" ry="4" fill="#B0BEC5"/><path d="M36 31h4l-2 4 10-1-2 4 4-1v4l-4 1 2 4-10-1 2 4h-4l2-4-10 1-2-4 10 1-2-4z" fill="#E57373" opacity=".9"/><path d="M57 52H43c-1.1 0-2-.9-2-2V22c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v28c0 1.1-.9 2-2 2z" fill="#4FC3F7"/><path d="M47 46h8v2h-8zM47 38h10v2H47zM47 30h6v2h-6z" fill="#E1F5FE"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i3">
+              <div class="maze-item-label">Manual Updates</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Manual Updates</title><path d="M50 16H14c-1.1 0-2 .9-2 2v28c0 1.1.9 2 2 2h36c1.1 0 2-.9 2-2V18c0-1.1-.9-2-2-2z" fill="#CFD8DC"/><path d="M26.2 24.5c-1.4-1.1-3.5-.8-4.5.7l-5.1 6.8c-1 1.4-.8 3.5.7 4.5l3.5 2.6V52h16V40.2l-1.5-1c-1.6-.9-2-3-.9-4.5l5-7.3c1-1.6.6-3.8-.9-4.7l-5.6-3.2z" fill="#81D4FA"/><path d="M40 32a6 6 0 100-12 6 6 0 000 12z" fill="#26C6DA"/><path d="M40 30a4 4 0 100-8 4 4 0 000 8z" fill="#E0F7FA"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i4">
+              <div class="maze-item-label">Scattered Logic</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Scattered Logic</title><g fill="#26C6DA"><path d="M25 15H9c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V17c0-1.1-.9-2-2-2zm-5.4 12L16 24.4l-3.6 2.6v-2.4L16 22l-3.6-2.6v-2.4l3.6 2.6L16 17l3.6 2.6v2.4L16 24.6l3.6 2.4z"/><path d="M55 35H39c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V37c0-1.1-.9-2-2-2zm-5.4 12L46 44.4l-3.6 2.6v-2.4L46 42l-3.6-2.6v-2.4l3.6 2.6L46 37l3.6 2.6v2.4L46 44.6l3.6 2.4z"/></g><path d="M12 47h16v10H12z" fill="#81D4FA" opacity=".7"/><path d="M38 8h16v10H38z" fill="#81D4FA" opacity=".7"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i5">
+              <div class="maze-item-label">Repeated Logic</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Repeated Logic</title><path d="M22 17h20v6H22z" fill="#455A64"/><path d="M20 23h24v24H20z" fill="#CFD8DC"/><path d="M28 39l-4-4 4-4h8v8h-8z" fill="#455A64"/><path d="M51 28.5c0-1.2-1.2-2.1-2.5-1.9l-7.7 1.3V14c0-2.2-1.8-4-4-4H18c-2.2 0-4 1.8-4 4v36c0 2.2 1.8 4 4 4h18.1c1.2 0 2.2-1.3 1.9-2.5l-1.3-7.7H50c2.2 0 4-1.8 4-4v-7.8z" fill="none" stroke="#26C6DA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i6">
+              <div class="maze-item-label">Spreading Bugs</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Spreading Bugs</title><path d="M45.5 29.5a13 13 0 11-25.2-4.1l-6.8-6.8a2 2 0 010-2.8l2.8-2.8a2 2 0 012.8 0l6.8 6.8a13 13 0 0119.6 9.7z" fill="#F06292"/><circle cx="32.5" cy="32.5" r="7.5" fill="#F8BBD0"/><path d="M14 43l-4 4M53 11l-4 4M20 12l-5-5M47 48l5-5" stroke="#F06292" stroke-width="4" stroke-linecap="round"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i7">
+              <div class="maze-item-label">The Data Maze</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>The Data Maze</title><path d="M15 15h34v34H15z" fill="#4FC3F7"/><path fill="#E1F5FE" d="M19 19h2v10h-2zM43 19h2v10h-2zM19 35h2v14h-2zM43 35h2v14h-2zM25 19h14v2H25zM25 47h14v2H25zM25 25h2v14h-2zM37 25h2v14h-2zM31 25h2v2h-2zM31 41h2v2h-2z"/></svg>
+            </div>
+
+            <div class="maze-item-wrapper big-i8">
+              <div class="maze-item-label">Data Silo</div>
+              <svg class="maze-icon" viewBox="0 0 64 64"><title>Data Silo</title><path d="M52 12H12c-2.2 0-4 1.8-4 4v32c0 2.2 1.8 4 4 4h40c2.2 0 4-1.8 4-4V16c0-2.2-1.8-4-4-4z" fill="#90A4AE"/><path d="M52 18H12V16c0-2.2 1.8-4 4-4h32c2.2 0 4 1.8 4 4v2z" fill="#B0BEC5"/><path d="M24 28h16v20H24zm2 2v16h12V30z" fill="#455A64"/><path d="M36 24a4 4 0 100-8 4 4 0 000 8zm-8 0a4 4 0 100-8 4 4 0 000 8z" fill="#CFD8DC"/></svg>
+            </div>
+
           </div>
-          <div class="slide-indicator demo">3 / 6</div>
         </div>
       </div>
     </section>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script>
-    // GSAP animate in the top nav buttons
-    gsap.to(".demo-canvas-next", {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.18,
-      delay: 0.8,
-      ease: "power2.out"
-    });
-    // Animate the left and right sections (slide in)
-    gsap.from(".big-maze-left", {
-      x: -90,
-      opacity: 0,
-      duration: 0.85,
-      delay: 0.22,
-      ease: "power3.out"
-    });
-    gsap.from(".big-maze-right", {
-      x: 90,
-      opacity: 0,
-      duration: 0.85,
-      delay: 0.32,
-      ease: "power3.out"
-    });
+    gsap.to(".demo-canvas-next", { opacity: 1, y: 0, duration: 0.7, stagger: 0.18, delay: 0.8, ease: "power2.out" });
+    gsap.from(".big-maze-left", { x: -90, opacity: 0, duration: 0.85, delay: 0.22, ease: "power3.out" });
+    gsap.from(".big-maze-right", { x: 90, opacity: 0, duration: 0.85, delay: 0.32, ease: "power3.out" });
   </script>
 </body>
 </html>

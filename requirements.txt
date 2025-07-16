@@ -12,4 +12,5 @@ google-genai
 Flask-SocketIO~=5.5.1
 eventlet
 firebase-admin
+lucide
 

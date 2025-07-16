@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fabric Data Journey — All Roles at a Glance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(110deg, #fafdff 70%, #f4fcff 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #167985;
+      margin: 0; padding: 0; min-height: 100vh;
+      letter-spacing: 0.01em;
+      overflow-x: hidden;
+    }
+    .header {
+      text-align: center;
+      margin: 2.2em 0 1.1em 0;
+    }
+    .header-title {
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: #147985;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 16px #c9e5f922;
+      margin-bottom: 0.1em;
+    }
+    .header-desc {
+      font-size: 1.11rem;
+      color: #3896b1;
+      font-weight: 500;
+      margin-bottom: 2.2em;
+      opacity: 0.86;
+    }
+    .journey-grid {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2.4em;
+      margin: 0 auto 2.2em auto;
+      max-width: 1800px;
+      width: 100%;
+      padding: 0 2.8em;
+      position: relative;
+      z-index: 1;
+    }
+    .step-col {
+      display: flex; flex-direction: column;
+      align-items: center;
+      min-width: 180px; max-width: 220px; width: 100%;
+      position: relative;
+    }
+    .step-col.label-col {
+      min-width: 180px;
+      max-width: 200px;
+    }
+    .step-label-cell {
+      display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+      min-height: 80px; height: 80px; width: 100%;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+    .tool-label-main {
+      font-size: 1.17em;
+      font-weight: 700;
+      color: #148ca3;
+      padding: 10px 16px 10px 0;
+      border-radius: 10px;
+      margin-bottom: 2px;
+      margin-top: 2px;
+      letter-spacing: 0.01em;
+      background: none;
+      box-shadow: none;
+      cursor: pointer;
+      transition: background 0.16s, color 0.12s, box-shadow 0.13s;
+      text-align: right;
+      opacity: 0.89;
+      min-width: 100px;
+    }
+    .tool-label-main.active {
+      color: #fff;
+      background: linear-gradient(90deg, #42e6e3 40%, #15c3db 100%);
+      box-shadow: 0 0 18px #30f0e8a0;
+      opacity: 1;
+    }
+    /* Persona columns */
+    .persona-col {
+      background: #fafdfffe;
+      border-radius: 30px;
+      box-shadow: 0 4px 48px #d4f4ff36, 0 1.5px 8px #97ebf244;
+      padding: 0 0 24px 0;
+      margin-bottom: 0.5em;
+      min-width: 210px; max-width: 250px;
+      width: 100%;
+      transition: box-shadow 0.17s;
+      position: relative;
+      z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      border: 1.5px solid #e5f8fa;
+    }
+    .persona-header-cell {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 110px; height: 110px;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+    .lane-avatar {
+      width: 54px; height: 54px; border-radius: 50%;
+      object-fit: cover; border: 2.2px solid #e7f6fc;
+      margin-bottom: 0.5em;
+      background: #fff;
+      box-shadow: 0 2px 7px #23e7d81b;
+    }
+    .lane-label {
+      font-weight: 900;
+      font-size: 1.11em;
+      color: #1b8bb1;
+      letter-spacing: 0.01em;
+      margin-bottom: 2px;
+    }
+    .lane-title {
+      font-weight: 400; font-size: 0.98em; opacity: 0.62;
+    }
+    .steps-list {
+      width: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
+      position: relative;
+    }
+    /* Step cell */
+    .step-cell {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; min-height: 80px; height: 80px; width: 100%;
+      z-index: 2;
+    }
+    .step-bubble {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.78em; font-weight: 900;
+      margin-bottom: 3px;
+      margin-top: 0;
+      cursor: pointer;
+      box-shadow: 0 0 0 0 #c9fff0;
+      transition: box-shadow 0.17s, filter 0.15s, background 0.19s, transform 0.15s;
+      z-index: 3;
+      border: 2.5px solid transparent;
+      background: #fff;
+    }
+    .step-bubble.active {
+      color: var(--coltxt, #1796b1);
+      background: linear-gradient(120deg, var(--col1,#eaf6fb) 60%, var(--col2,#f5fdff) 100%);
+      border: 2.5px solid #b7f0fa;
+      filter: drop-shadow(0 0 7px #15e7e1c8);
+      animation: iconPulse 2.1s infinite alternate;
+    }
+    .step-bubble.inactive {
+      color: #cfd5d7;
+      background: linear-gradient(120deg, #ebf0f6 80%, #f5f6fa 100%);
+      border: 2.5px solid #e3e7ea;
+      filter: none;
+      animation: none;
+      opacity: 0.43;
+    }
+    @keyframes iconPulse {
+      0% { box-shadow: 0 0 0 0 #bbfff79e;}
+      60% { box-shadow: 0 0 0 9px #b2fff411;}
+      100% { box-shadow: 0 0 0 4px #72f3ed18;}
+    }
+    /* Connector line */
+    .step-cell:not(:last-child)::after {
+      content: "";
+      width: 7px;
+      height: 48px;
+      border-radius: 6px;
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: 50px;
+      z-index: 1;
+      opacity: 0.99;
+      background: linear-gradient(to bottom, #3cdde4 35%, #b1f9fa 98%);
+      box-shadow: 0 0 12px 3px #8af4f3a8;
+      animation: linePulse 2s infinite alternate;
+      transition: background 0.13s, box-shadow 0.13s;
+    }
+    .step-cell.inactive::after,
+    .step-bubble.inactive ~ .step-title.inactive {
+      background: linear-gradient(to bottom, #e5e9ee 80%, #f3f6fa 100%)!important;
+      box-shadow: none!important;
+      opacity: 0.33;
+      animation: none!important;
+    }
+    @keyframes linePulse {
+      0% { box-shadow: 0 0 6px 2px #bcf4ff70;}
+      100% { box-shadow: 0 0 14px 8px #6ae7f652;}
+    }
+    /* SVG overlay for connector lines */
+    .connector-svg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+    .connector-label {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 1.05em;
+      font-weight: 700;
+      text-shadow: 0 1px 12px #fff8;
+      paint-order: stroke;
+      stroke: #fff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+    /* Pagination + navigation */
+    .page-nav {
+      width: 100vw;
+      display: flex; justify-content: space-between; align-items: center;
+      position: absolute; left: 0; top: 0; z-index: 9; pointer-events: none;
+      padding: 32px 30px 0 30px;
+      box-sizing: border-box;
+    }
+    .page-btn {
+      background: linear-gradient(90deg, #3beae1 50%, #13d0e0 100%);
+      color: #fff; font-weight: 700;
+      border: none; border-radius: 100px;
+      font-size: 1.15em; padding: 9px 32px;
+      box-shadow: 0 2px 15px #20dbe34d;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: filter 0.14s, background 0.14s;
+    }
+    .page-btn:active { filter: brightness(0.87);}
+    .page-indicator {
+      font-weight: 700; font-size: 1.12em;
+      color: #3cb2b7;
+      background: #fafdff;
+      border-radius: 11px;
+      padding: 6px 18px;
+      margin: 0 auto 0 auto;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 12px #51e3ea19;
+      pointer-events: auto;
+      position: absolute; left: 50%; bottom: -68px; transform: translateX(-50%);
+    }
+    @media (max-width: 1300px) {.journey-grid{max-width:1150px; gap:1.3em;}}
+    @media (max-width: 1050px)  {.journey-grid{max-width:98vw; gap:0.3em;} .persona-col{min-width:120px;}}
+    @media (max-width: 700px) {
+      .journey-grid{flex-direction:column; align-items:center; gap:0.2em; min-width:0;}
+      .step-col{max-width:100vw;}
+      .persona-col { min-width:0; max-width:100vw;}
+      .connector-svg {display: none;}
+    }
+    .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-title">Fabric Data Journey — All Roles at a Glance</div>
+    <div class="header-desc">
+      Who does what? See the complete step-by-step journey and each persona’s touchpoints.
+    </div>
+  </div>
+  <div class="journey-grid" id="journey-grid"></div>
+  <svg class="connector-svg" id="connector-svg"></svg>
+    <button class="demo-canvas-next prev" onclick="location.href='/present/slide-6'">‹ Prev</button>
+  <button class="demo-canvas-next next" onclick="location.href='/present/slide-8'">Next ›</button>
+  <script>
+    // Step definitions (in order, vertical axis)
+    const allSteps = [
+      { icon: "📍", title: "Data Pipeline", key:"pipeline", col:["#f6fefa","#e7f2ea","#34bb97"] },
+      { icon: "📓", title: "Notebook", key:"notebook", col:["#edefff","#f3f6ff","#7083fa"] },
+      { icon: "🧼", title: "Dataflow Gen2", key:"dataflow", col:["#eaf9f6","#d8fcf1","#16b995"] },
+      { icon: "🏞️", title: "Lakehouse", key:"lakehouse", col:["#ecf5fd","#d6ebfc","#3287d4"] },
+      { icon: "📦", title: "Semantic Model", key:"semantic", col:["#f3faea","#f2f9ea","#32cf61"] },
+      { icon: "📊", title: "Power BI Report", key:"report", col:["#fefcea","#fffbe8","#e0c53b"] },
+      { icon: "⚙️", title: "User Data Function", key:"udf", col:["#f5f5f5","#e8e8e8","#999999"] },
+      { icon: "📝", title: "Writeback", key:"writeback", col:["#fbe7f2","#fff6fa","#ef7fc6"] }
+    ];
+    // Personas (columns)
+    const personas = [
+      {
+        label: "Diana", title: "Data Engineer",
+        avatar: "https://cdn.jsdelivr.net/gh/jph00/openai-images@main/data_engineer.png",
+        steps: ["pipeline", "notebook", "dataflow", "lakehouse"]
+      },
+      {
+        label: "Sam", title: "Data Scientist",
+        avatar: "https://cdn.jsdelivr.net/gh/jph00/openai-images@main/data_scientist.png",
+        steps: ["lakehouse","notebook"]
+      },
+      {
+        label: "Alex", title: "BI Analyst",
+        avatar: "https://cdn.jsdelivr.net/gh/jph00/openai-images@main/bi_analyst.png",
+        steps: ["lakehouse","semantic","report", "udf"]
+      },
+      {
+        label: "Chloe", title: "Consumer",
+        avatar: "https://cdn.jsdelivr.net/gh/jph00/openai-images@main/consumer.png",
+        steps: ["report", "writeback"]
+      }
+    ];
+
+  gsap.to(".demo-canvas-next", {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      stagger: 0.18,
+      delay: 1.15,
+      ease: "power2.out"
+    });
+
+    // Render the vertical grid
+    function renderJourneyGrid() {
+      const grid = document.getElementById("journey-grid");
+      // 1st col: tool names
+      let html = `<div class="step-col label-col">`;
+      html += `<div class="persona-header-cell"></div>`;
+      for (let s = 0; s < allSteps.length; ++s) {
+        html += `<div class="step-label-cell">
+          <div class="tool-label-main" id="tool-label-${s}">${allSteps[s].title}</div>
+        </div>`;
+      }
+      html += `</div>`;
+      // Persona swimlanes
+      for (let p = 0; p < personas.length; ++p) {
+        const persona = personas[p];
+        html += `<div class="persona-col" id="persona-col-${p}">`;
+        html += `<div class="persona-header-cell">
+          <img src="${persona.avatar}" class="lane-avatar">
+          <div class="lane-label">${persona.label}</div>
+          <div class="lane-title">${persona.title}</div>
+        </div>`;
+        html += `<div class="steps-list" id="steps-list-${p}">`;
+        for (let s = 0; s < allSteps.length; ++s) {
+          const step = allSteps[s];
+          const active = persona.steps.includes(step.key);
+          html += `<div class="step-cell${active?'':' inactive'}" id="step-${p}-${s}">` +
+            `<div class="step-bubble${active?' active':' inactive'}"
+              style="--col1:${step.col[0]};--col2:${step.col[1]};--coltxt:${step.col[2]};">${active ? step.icon : ""}</div>` +
+            `</div>`;
+        }
+        html += `</div></div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    // GSAP hover: hover tool name to highlight row
+    function addGSAPHovers() {
+      allSteps.forEach((step, idx) => {
+        // Tool label hover
+        const label = document.getElementById(`tool-label-${idx}`);
+        if (!label) return;
+        label.addEventListener("mouseenter", () => {
+          label.classList.add("active");
+          // Glow bubbles for this row (step) across all lanes
+          document.querySelectorAll(`.persona-col .steps-list .step-cell:nth-child(${idx+1}) .step-bubble.active`).forEach(bub => {
+            gsap.to(bub, {scale:1.18, boxShadow:"0 0 18px 10px #2bfaf6b7", filter:"brightness(1.28)", duration:0.22, ease:"power2.out"});
+          });
+        });
+        label.addEventListener("mouseleave", () => {
+          label.classList.remove("active");
+          document.querySelectorAll(`.persona-col .steps-list .step-cell:nth-child(${idx+1}) .step-bubble.active`).forEach(bub => {
+            gsap.to(bub, {scale:1, boxShadow:"0 0 0 0 #c9fff0", filter:"brightness(1)", duration:0.22});
+          });
+        });
+      });
+    }
+
+    // Draw the broken (dashed) connector lines with SVG
+    function drawConnectorLines() {
+      setTimeout(() => {
+        const svg = document.getElementById("connector-svg");
+        svg.innerHTML = "";
+        if(window.innerWidth < 700) return;
+
+        const getBubbleCenter = (colIdx, stepIdx) => {
+          const step = document.getElementById(`step-${colIdx}-${stepIdx}`);
+          if (!step) return null;
+          const bubble = step.querySelector('.step-bubble');
+          if (!bubble) return null;
+          const rect = bubble.getBoundingClientRect();
+          const gridRect = document.getElementById('journey-grid').getBoundingClientRect();
+          return {
+            x: rect.left + rect.width/2 - gridRect.left,
+            y: rect.top + rect.height/2 - gridRect.top
+          };
+        };
+
+        svg.setAttribute("width", document.getElementById('journey-grid').offsetWidth);
+        svg.setAttribute("height", document.getElementById('journey-grid').offsetHeight);
+
+        // --- DirectLake Line (Alex): Lakehouse -> Semantic Model ---
+        const directLakeFrom = getBubbleCenter(2, 6); // Alex, Lakehouse (Index 3)
+        const directLakeTo = getBubbleCenter(2, 7);   // Alex, Semantic Model (Index 4)
+        if (directLakeFrom && directLakeTo) {
+            const xOffset = 100, lineShift = 40;
+            const path = [
+              `M${directLakeFrom.x + lineShift},${directLakeFrom.y}`,
+              `C${directLakeFrom.x + xOffset + lineShift},${directLakeFrom.y}`,
+              `${directLakeTo.x + xOffset + lineShift},${directLakeTo.y}`,
+              `${directLakeTo.x + lineShift},${directLakeTo.y}`
+            ].join(" ");
+            drawArrow(svg, path, "DirectLake", {
+                color: "#22c0ea",
+                labelColor: "#199fd8",
+                labelPos: { x: 12, y: -12 }
+            });
+        }
+
+      }, 250);
+    }
+
+    function drawArrow(svg, pathData, labelText, options) {
+        // Dashed arc
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", pathData);
+        p.setAttribute("stroke", options.color);
+        p.setAttribute("stroke-width", "6");
+        p.setAttribute("stroke-dasharray", "14 11");
+        p.setAttribute("fill", "none");
+        p.setAttribute("filter", `drop-shadow(0px 2px 14px ${options.color}99)`);
+        svg.appendChild(p);
+
+        // Arrowhead
+        const totalLength = p.getTotalLength();
+        const arrowT = 0.99;
+        const arrowLen = 32;
+        const arrowWidth = 20;
+        const arrowPos = p.getPointAtLength(totalLength * arrowT);
+        const prevPos = p.getPointAtLength(totalLength * (arrowT - 0.008));
+        const arrowAngle = Math.atan2(arrowPos.y - prevPos.y, arrowPos.x - prevPos.x);
+
+        const ax = arrowPos.x, ay = arrowPos.y;
+        const bx = ax - Math.cos(arrowAngle) * arrowLen;
+        const by = ay - Math.sin(arrowAngle) * arrowLen;
+        const perp = Math.PI/2;
+        const cx1 = bx + Math.cos(arrowAngle + perp) * (arrowWidth/2);
+        const cy1 = by + Math.sin(arrowAngle + perp) * (arrowWidth/2);
+        const cx2 = bx + Math.cos(arrowAngle - perp) * (arrowWidth/2);
+        const cy2 = by + Math.sin(arrowAngle - perp) * (arrowWidth/2);
+
+        const arrow = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        arrow.setAttribute("points", `${ax},${ay} ${cx1},${cy1} ${cx2},${cy2}`);
+        arrow.setAttribute("fill", options.color);
+        arrow.setAttribute("stroke", "#ffffff");
+        arrow.setAttribute("stroke-width", "2.5");
+        arrow.setAttribute("opacity", "0.98");
+        arrow.setAttribute("filter", "drop-shadow(0px 0px 6px #fff)");
+        svg.appendChild(arrow);
+
+        // Label on arc
+        const labelPos = p.getPointAtLength(totalLength * 0.50);
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", labelPos.x + (options.labelPos.x || 0));
+        label.setAttribute("y", labelPos.y + (options.labelPos.y || 0));
+        label.setAttribute("class", "connector-label");
+        label.setAttribute("style", `fill: ${options.labelColor}`);
+        label.setAttribute("text-anchor", options.labelAnchor || "start");
+        label.textContent = labelText;
+        svg.appendChild(label);
+    }
+
+
+    renderJourneyGrid();
+    addGSAPHovers();
+    window.addEventListener('resize', drawConnectorLines);
+    drawConnectorLines(); // Initial draw
+
+  </script>
+</body>
+</html>

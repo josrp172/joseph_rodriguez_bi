@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enhanced Microsoft Fabric Demo Flow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(107deg, #fafdff 70%, #eafcf6 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0 0 4em 0;
+      color: #167985;
+      overflow-x: hidden;
+    }
+    .header-title {
+      text-align: center;
+      font-size: clamp(2.2rem, 4vw, 3.3rem);
+      font-weight: 900;
+      color: #129db0;
+      margin-top: 2.3em;
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 16px #c9e5f91b;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    .header-obj {
+      text-align: center;
+      color: #259aa5;
+      font-size: 1.16em;
+      margin: 1.4em auto 2.1em auto;
+      max-width: 700px;
+      background: #eafcfa;
+      border-radius: 14px;
+      padding: 1.3em 2.3em;
+      box-shadow: 0 2px 20px #c8f0ec11;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    /* NEW: Quick Navigation Buttons Container */
+    .quick-nav-container {
+      text-align: center;
+      margin: -1em auto 3.5em auto;
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+      flex-wrap: wrap;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    /* NEW: Quick Navigation Button Styling */
+    .quick-nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6em;
+      background: linear-gradient(120deg, #fdfeff, #f0fdf9);
+      color: #1887a8;
+      padding: 0.6em 1.2em;
+      border-radius: 1em;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05em;
+      border: 1px solid #d4f8f3;
+      box-shadow: 0 2px 10px #2ae9c91a;
+      transition: all 0.2s ease-out;
+    }
+    .quick-nav-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px #23f7c82e;
+      color: #109ca6;
+      border-color: #b6f5ea;
+    }
+    .quick-nav-button svg {
+      width: 20px;
+      height: 20px;
+      opacity: 0.8;
+    }
+    .role-process-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3.7em;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 2em auto 0 auto;
+      width: 100%;
+      max-width: 1580px;
+    }
+    .role-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 2.3em;
+      width: 100%;
+      min-width: 0;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    .role-card {
+      background: #fafdff;
+      border-radius: 1.4em;
+      box-shadow: 0 2px 20px #10e9de0c, 0 1.5px 7px #79f9e34c;
+      padding: 2.1em 2em 2.1em 1.5em;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 230px;
+      max-width: 310px;
+      position: relative;
+      z-index: 3;
+      border-left: 6px solid #18b7b2;
+    }
+    .role-avatar {
+      width: 59px; height: 59px;
+      border-radius: 50%; object-fit: cover;
+      box-shadow: 0 2px 14px #c0fff92b;
+      margin-bottom: 0.9em;
+      background: #fff;
+    }
+    .role-name {
+      font-weight: 900; font-size: 1.22em; color: #109ca6;
+      margin-bottom: 0.09em;
+      letter-spacing: 0.01em;
+    }
+    .role-title {
+      font-weight: 400; font-size: 0.98em; opacity: 0.69;
+      margin-bottom: 0.7em;
+    }
+    .role-obj {
+      font-size: 1.06em; color: #207e8e; opacity: 0.89;
+      margin-bottom: 0.3em;
+    }
+    .process-track {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0;
+      width: 100%;
+      min-width: 0;
+      padding-top: 0.3em;
+      position: relative;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #b0eae9 #eafcf6;
+    }
+    .step-card {
+      background: linear-gradient(120deg,#f8ffff 80%,#ecfaf7 100%);
+      border-radius: 1.3em;
+      box-shadow: 0 1px 8px #2ae9c919;
+      padding: 2.13em 1.55em 2.15em 1.5em;
+      min-width: 218px;
+      min-height: 135px;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      cursor: pointer;
+      z-index: 3;
+      outline: none;
+      margin-right: 0;
+      margin-left: 0;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    .step-number {
+      position: absolute;
+      top: 0.79em;
+      left: 1em;
+      background: #13c5d6;
+      color: #fff;
+      font-size: 1.03em;
+      font-weight: 900;
+      border-radius: 40% 50% 48% 52%;
+      padding: 0.21em 0.68em 0.13em 0.63em;
+      box-shadow: 0 2px 7px #23e7d861;
+      z-index: 5;
+      letter-spacing: -0.02em;
+    }
+    .step-icon {
+      font-size: 1.61em;
+      margin-bottom: 0.12em;
+      filter: drop-shadow(0 2px 7px #23e7d861);
+      margin-top: 0.1em;
+      transition: transform 0.2s ease-out;
+    }
+    .step-title {
+      font-weight: 700; color: #1887a8; font-size: 1.15em; margin-bottom: 0.1em;
+      letter-spacing: 0.01em;
+    }
+    .step-desc {
+      font-size: 1.04em; color: #288299; opacity: 0.91;
+      margin-bottom: 0.05em; line-height: 1.36;
+    }
+    /* ARROW connector */
+    .arrow-connector {
+      width: 48px; min-width: 48px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2; /* Lower than step card */
+      position: relative;
+      margin-left: -5px;
+      margin-right: -5px;
+      pointer-events: none;
+      opacity: 0; /* Initially hidden for animation */
+    }
+    .arrow-connector svg {
+      width: 44px; height: 22px;
+      overflow: visible;
+      background: transparent;
+    }
+    .arrow-connector .arrow-path {
+      stroke: #18e3e1;
+      stroke-width: 3.5;
+      fill: none;
+      filter: drop-shadow(0 0 7px #38f7ff);
+    }
+    .arrow-connector .arrow-head {
+      fill: #18e3e1;
+      filter: drop-shadow(0 0 5px #38f7ff);
+    }
+    /* Role color overrides */
+    .role-card.engineer { border-left-color: #18b7b2; }
+    .role-card.scientist { border-left-color: #7e7ffd; }
+    .role-card.analyst { border-left-color: #13c5d6; }
+    .role-card.decision { border-left-color: #ffaa52; }
+
+    /* Responsive tweaks */
+    @media (max-width: 1200px) {.role-process-container{max-width:98vw;}}
+    @media (max-width: 900px) {
+      .role-row{flex-direction:column;align-items:flex-start;}
+      .process-track{flex-wrap:wrap;}
+      .role-card{max-width:96vw;}
+      .step-card{min-width:180px;}
+      .arrow-connector{width:30px;min-width:30px;}
+    }
+    @media (max-width: 600px) {
+      .role-row{gap:1.1em;}
+      .role-card{padding:1.1em 0.4em 1.13em 0.7em;}
+      .step-card{padding:1.1em 0.6em 1.1em 0.9em;}
+      .quick-nav-container {gap: 0.5em;}
+      .quick-nav-button {font-size: 0.95em; padding: 0.5em 1em;}
+    }
+       .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+  </style>
+</head>
+<body>
+       <button class="demo-canvas-next prev" onclick="location.href='/present/slide-7'">‹ Prev</button>
+      <button class="demo-canvas-next next" onclick="location.href='/present/slide-9'">Next ›</button>
+  <div class="header-title">Microsoft Fabric Demo Flow</div>
+  <div class="header-obj">
+    This flow demonstrates the end-to-end journey of data in Microsoft Fabric: from raw data ingestion via Notebook, through transformation and AI, to an interactive Power BI dashboard with writeback, all automated by a Pipeline.
+  </div>
+
+  <div class="quick-nav-container">
+    <a href="/present/slide-9" class="quick-nav-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.17l-3.59-3.59L9.83 10l2.17 2.17 5.59-5.59L19 8.17l-7 7z" opacity=".3"/><path d="M12 4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-1-7.83l-3.59 3.59L6 12l3.83-3.83 1.41 1.41L9.83 11l2.17-2.17 1.41 1.41-3.58 3.59z"/></svg>
+      Lakehouse
+    </a>
+    <a href="/present/slide-10" class="quick-nav-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+      Dataflow
+    </a>
+    <a href="/present/slide-11" class="quick-nav-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+      Notebook
+    </a>
+    <a href="/present/slide-12" class="quick-nav-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 13h-4V2h-2v11h-4V2H2v11H0v2h2v2H0v2h2v2h10v-2h4v2h2v-2h4v-2h-4v-2h4v-2zM8 6h2v3H8V6zm0 5h2v3H8v-2zm-4 0h2v3H4v-3zm0-5h2v3H4V6z"/></svg>
+      Pipeline
+    </a>
+  </div>
+
+
+  <div class="role-process-container" id="role-process-container"></div>
+
+  <div id="step-modal" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;align-items:center;justify-content:center;">
+    <div id="modal-bg" style="position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(26,42,50,0.41);backdrop-filter:blur(4px);opacity:0;" onclick="closeStepModal()"></div>
+    <div id="step-modal-content" style="background:#fff;border-radius:1.6em;max-width:410px;width:92vw;padding:2.3em 2em 2em 2em;box-shadow:0 12px 60px #1fcad428,0 3px 24px #85e7dd18;text-align:center;position:relative;z-index:10;">
+      <button onclick="closeStepModal()" style="position:absolute;top:1.0em;right:1.1em;background:none;border:none;color:#29c3ad;font-size:2.1em;cursor:pointer;font-weight:800;">×</button>
+      <div id="modal-step-title" style="font-weight:900;font-size:1.23em;color:#1ab0a1;margin-bottom:1.1em;"></div>
+      <div id="modal-step-desc" style="font-size:1.12em;color:#1d8292;margin-bottom:1.1em;"></div>
+      <div id="modal-step-talk" style="font-size:1.09em;color:#1c8c6d;opacity:0.91;margin-bottom:0.13em;"></div>
+    </div>
+  </div>
+  <script>
+    // 1. DATA
+    const ROLES = [
+      { key:"engineer", name:"Diana", title:"Data Engineer", avatar:"https://cdn.jsdelivr.net/gh/jph00/openai-images@main/data_engineer.png", obj: "Builds the foundation—ingests, cleans, structures, and automates the data flow for the team." },
+      { key:"scientist", name:"Sam", title:"Data Scientist", avatar:"https://cdn.jsdelivr.net/gh/jph00/openai-images@main/data_scientist.png", obj: "Transforms data into predictions—applies machine learning to turn insights into foresight." },
+      { key:"analyst", name:"Alex", title:"BI Analyst", avatar:"https://cdn.jsdelivr.net/gh/jph00/openai-images@main/bi_analyst.png", obj: "Drives understanding—models, visualizes, and enables interactive, data-driven decisions." },
+      { key:"decision", name:"Chloe", title:"Decision Maker", avatar:"https://cdn.jsdelivr.net/gh/jph00/openai-images@main/consumer.png", obj: "Turns insight into action—monitors analytics and provides direct feedback within the reports." }
+    ];
+    const STEPS = [
+      { icon:"📓", name:"Notebook: Ingest Data", input:"Kaggle API dataset", output:"Raw data file in Lakehouse", obj:"Stage raw data centrally from an API.", actions:{ engineer:"Ingest Kaggle data using a Notebook.", }, talk:"Our journey starts by ingesting data from the Kaggle API with a Notebook, landing it directly in OneLake." },
+      { icon:"🧼", name:"Dataflow Gen2: Create Tables", input:"Raw data file from Lakehouse", output:"Cleaned tables (tech, non-tech) in Lakehouse", obj:"Transform and model data for analytics.", actions:{ engineer:"Build Dataflow to clean and structure data.", analyst:"Define business logic & transformations.", }, talk:"We're using Dataflow Gen2 to transform the raw file into clean, structured tables ready for analysis." },
+      { icon:"🗄️", name:"Lakehouse Tables + SQL", input:"Cleaned tables", output:"Queryable tables, sample data", obj:"Preview and explore data using SQL.", actions:{ engineer:"Verify data in Lakehouse tables.", analyst:"Run SQL queries to validate metrics.", }, talk:"Fabric lets you explore data as files or query them instantly with a SQL endpoint—all in one place." },
+      { icon:"🤖", name:"Notebook: Predict Salary", input:"Clean data from Lakehouse", output:"Table with predicted salaries", obj:"Use AI to add predictive insights.", actions:{ scientist:"Train ML model in a Notebook to generate salary predictions.", }, talk:"We used a RandomForest model in a Fabric Notebook to predict salaries, saving the results back to the Lakehouse." },
+      { icon:"⚡", name:"Semantic Model (DirectLake)", input:"All Lakehouse tables", output:"Live semantic model", obj:"Build a live, fast analytical layer.", actions:{ analyst:"Create semantic model using DirectLake mode.", }, talk:"DirectLake gives sub-second performance without scheduled refreshes—it's always up-to-date." },
+      { icon:"📊", name:"Power BI Report", input:"Semantic model (DirectLake)", output:"Live dashboard", obj:"Visualize insights to empower users.", actions:{ analyst:"Build live visuals on the semantic model.", decision:"Consume the report for insights." }, talk:"These visuals are driven live from our Lakehouse data—no delay, no import." },
+      { icon:"✍️", name:"Implement Writeback", input:"Power BI Report", output:"Interactive comment submission", obj:"Allow users to provide feedback in the report.", actions:{ analyst:"Configure User Data Function and add button to report.", decision:"Submit comments on industry data." }, talk:"The report is now a two-way street. Users can submit comments that are saved instantly to a database." },
+      { icon:"⚙️", name:"Data Pipeline: Automate All", input:"Notebooks, Dataflow, Semantic Model", output:"Automated, scheduled end-to-end process", obj:"Orchestrate the entire workflow.", actions:{ engineer:"Build and schedule the pipeline to run all steps.", }, talk:"We’ve built everything. Now the Data Pipeline runs it all automatically, from ingestion to report refresh." }
+    ];
+
+    // 2. ROLE PROCESS RENDERING (with IDs for animation)
+    function renderRoleProcess() {
+      const ctr = document.getElementById("role-process-container");
+      let html = "";
+      ROLES.forEach((role, i) => {
+        let mySteps = STEPS.map((step, index) => ({...step, originalIndex: index}))
+                           .filter(step => step.actions[role.key])
+                           .map(step => ({...step, action: step.actions[role.key]}));
+
+        html += `<div class="role-row" id="role-row-${i}">
+          <div class="role-card ${role.key}">
+            <img src="${role.avatar}" class="role-avatar">
+            <div class="role-name">${role.name}</div>
+            <div class="role-title">${role.title}</div>
+            <div class="role-obj">${role.obj}</div>
+          </div>
+          <div class="process-track">`;
+
+        mySteps.forEach((step, s) => {
+          const stepId = `step-${i}-${s}`;
+          html += `
+            <div class="step-card" id="${stepId}" tabindex="0" onclick="showStepModal('${step.name.replace(/'/g, "\\'")}', '${step.action.replace(/'/g, "\\'")}', '${step.talk.replace(/'/g, "\\'")}', '${step.input.replace(/'/g, "\\'")}', '${step.output.replace(/'/g, "\\'")}', '${step.obj.replace(/'/g, "\\'")}')">
+              <div class="step-number">${s + 1}</div>
+              <span class="step-icon">${step.icon}</span>
+              <div class="step-title">${step.name}</div>
+              <div class="step-desc">${step.action}</div>
+            </div>`;
+
+          if (s < mySteps.length - 1) {
+            const arrowId = `arrow-${i}-${s}`;
+            html += `<div class="arrow-connector" id="${arrowId}">
+                       <svg viewBox="0 0 44 22">
+                         <path class="arrow-path" d="M2 11 Q22 2 42 11" />
+                         <path class="arrow-path" d="M2 11 Q22 22 42 11" />
+                         <polygon class="arrow-head" points="43,11 36,8 36,14" />
+                       </svg>
+                     </div>`;
+          }
+        });
+        html += `</div></div>`;
+      });
+      ctr.innerHTML = html;
+    }
+
+    // 3. MODAL LOGIC (with enhanced animation)
+    window.showStepModal = function(name, action, talk, input, output, obj) {
+      document.getElementById("modal-step-title").innerHTML = name;
+      document.getElementById("modal-step-desc").innerHTML =
+        `<b>What you do:</b> ${action}<br><b>Input:</b> ${input}<br><b>Output:</b> ${output}<br><b>Step objective:</b> ${obj}`;
+      document.getElementById("modal-step-talk").innerHTML = talk;
+      const modal = document.getElementById("step-modal");
+      modal.style.display = "flex";
+
+      const tl = gsap.timeline();
+      tl.to("#modal-bg", { opacity: 1, duration: 0.3 })
+        .fromTo("#step-modal-content",
+          { opacity: 0, scale: 0.93, y: 40 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.44, ease: "back.out(1.5)" },
+          "-=0.2")
+        .fromTo("#step-modal-content > div",
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.1, ease: "power2.out" },
+          "-=0.2");
+    };
+    window.closeStepModal = function() {
+      gsap.to("#step-modal-content", {
+        opacity: 0, scale: 0.9, y: 40, duration: 0.23, ease: "power2.in", onComplete: () => {
+          document.getElementById("step-modal").style.display = "none";
+          gsap.set("#modal-bg", { opacity: 0 }); // Reset background
+      }});
+    };
+
+    // 4. GSAP ANIMATIONS
+    function addHoverInteractions() {
+      gsap.utils.toArray(".step-card").forEach(card => {
+        const icon = card.querySelector(".step-icon");
+        const cardIdParts = card.id.split('-'); // e.g., ['step', '0', '1']
+        const prevArrow = document.getElementById(`arrow-${cardIdParts[1]}-${parseInt(cardIdParts[2]) - 1}`);
+        const nextArrow = document.getElementById(`arrow-${cardIdParts[1]}-${cardIdParts[2]}`);
+
+        const tl = gsap.timeline({ paused: true });
+        tl.to(card, { y: -8, scale: 1.04, ease: "back.out(2)", duration: 0.25 })
+          .to(icon, { y: -3, scale: 1.1, ease: "back.out(3)", duration: 0.2 }, 0)
+          .to(card, { boxShadow: '0 9px 25px #23f7c828', duration: 0.25 }, 0);
+
+        if (prevArrow) {
+          tl.to(prevArrow.querySelectorAll('.arrow-path, .arrow-head'),
+            { stroke: '#2afff0', fill: '#2afff0', filter: 'drop-shadow(0 0 12px #2afff0)', duration: 0.2 }, 0);
+        }
+        if (nextArrow) {
+          tl.to(nextArrow.querySelectorAll('.arrow-path, .arrow-head'),
+            { stroke: '#2afff0', fill: '#2afff0', filter: 'drop-shadow(0 0 12px #2afff0)', duration: 0.2 }, 0);
+        }
+
+        card.addEventListener("mouseenter", () => tl.play());
+        card.addEventListener("mouseleave", () => tl.reverse());
+      });
+    }
+
+    function animatePageLoad() {
+      const masterTl = gsap.timeline({ delay: 0.2 });
+
+      masterTl.to(".header-title", { opacity: 1, y: -20, duration: 0.7, ease: "power3.out" })
+              .to(".header-obj", { opacity: 1, y: -10, duration: 0.6, ease: "power3.out" }, "-=0.4")
+              // NEW: Animate the quick nav buttons
+              .to(".quick-nav-container", { opacity: 1, y: -10, duration: 0.5, ease: "power3.out" }, "-=0.3");
+
+      gsap.utils.toArray(".role-row").forEach((row, i) => {
+        const steps = row.querySelectorAll('.step-card');
+        const arrows = row.querySelectorAll('.arrow-connector');
+        const arrowPaths = row.querySelectorAll('.arrow-path');
+
+        const rowTl = gsap.timeline();
+        rowTl.to(row, { opacity: 1, y: -20, duration: 0.7, ease: "back.out(1.3)" })
+             .to(steps, {
+                opacity: 1,
+                scale: 1,
+                x: 0,
+                duration: 0.5,
+                stagger: 0.15,
+                ease: "back.out(1.4)"
+             }, "-=0.4")
+             .to(arrows, { opacity: 1, stagger: 0.15, duration: 0.3 }, "<")
+             .from(arrowPaths, {
+                strokeDasharray: 70,
+                strokeDashoffset: 70,
+                duration: 0.7,
+                stagger: 0.15,
+                ease: "power2.out"
+             }, "<");
+
+        masterTl.add(rowTl, i * 0.2); // Adjusted timing slightly for a smoother flow
+      });
+    }
+
+    // --- Main Execution ---
+    document.addEventListener("DOMContentLoaded", () => {
+      renderRoleProcess();
+      animatePageLoad();
+      addHoverInteractions();
+
+        // Animate navigation buttons just like previous slides
+      gsap.to(".demo-canvas-next", {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.18,
+        delay: 1.15,
+        ease: "power2.out"
+      });
+    });
+
+  </script>
+</body>
+</html>

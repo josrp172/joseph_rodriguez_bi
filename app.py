@@ -539,5 +539,29 @@ def slide_5():
 def slide_6():
     return render_template('present/slide-6.html')
 
+@app.route('/present/slide-7')
+def slide_7():
+    return render_template('present/slide-7.html')
+
+@app.route('/present/slide-8')
+def slide_8():
+    return render_template('present/slide-8.html')
+
+@app.route('/present/slide-9')
+def slide_9():
+    return render_template('present/slide-9-lakehouse.html')
+
+@app.route('/present/slide-10')
+def slide_10():
+    return render_template('present/slide-10-dataflow.html')
+
+@app.route('/present/slide-11')
+def slide_11():
+    return render_template('present/slide-11-notebook.html')
+
+@app.route('/present/slide-12')
+def slide_12():
+    return render_template('present/slide-12-pipeline.html')
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

@@ -2,288 +2,467 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Microsoft Fabric – Slide 6</title>
+  <title>Microsoft Fabric – Enhanced Slide 6</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  width: 100vw;
-  background: #f9fcff;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-body {
-  min-height: 100vh;
-  min-width: 100vw;
-  overflow: hidden;
-}
-.blobs-bg {position:fixed;width:100vw;height:100vh;left:0;top:0;z-index:0;}
-.blob {position:absolute;border-radius:50%;opacity:.18;background:#6decd9;filter:blur(40px);}
-.blob:nth-child(1){width:370px;height:320px;left:13vw;top:9vh;}
-.blob:nth-child(2){width:220px;height:160px;left:65vw;top:7vh;background:#f6b3ff;}
-.blob:nth-child(3){width:150px;height:160px;left:8vw;top:62vh;background:#b9e9ff;}
-.blob:nth-child(4){width:280px;height:200px;left:61vw;top:65vh;background:#ffefd7;}
-.slides-container {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-}
-.story-canvas {
-  width: 100vw;
-  height: 100vh;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0;
-  position: relative;
-  z-index: 3;
-  overflow: hidden;
-}
-.story-bg-title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 2.8vh;          /* Increased gap between all children */
-  padding: 5.5vh 0 0 0;
-  margin-bottom: 2.2vh; /* More margin below the block */
-  width: 100vw;
-  max-width: 100vw;
-  box-sizing: border-box;
-}
-
-.story-main-title {
-  font-size: clamp(2.5rem, 4vw, 4.4rem);
-  font-weight: 900;
-  color: #157e8a;
-  line-height: 1.15;     /* More space below the main title line */
-  letter-spacing: -1.3px;
-  text-shadow: 0 2px 18px rgba(51,205,190,0.07);
-  margin-bottom: 0.10em; /* Slightly more below title */
-  text-align: center;
-  display: block;
-  width: 100vw;
-  max-width: 100vw;
-  overflow: hidden;
-  white-space: pre-line;
-}
-.story-main-title span {
-  display: block;
-  font-size: 0.88em;
-  color: #18e9c0;
-  font-weight: 700;
-  margin-top: 0.09em;
-}
-.story-theme {
-  font-size: 1.17rem;
-  color: #36b5de;
-  font-weight: 700;
-  opacity: 0.98;
-  text-align: center;
-  width: 100vw;
-  max-width: 100vw;
-  overflow: hidden;
-  margin-bottom: 1.7vh; /* << Add this line */
-}
-.story-company {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2em;
-  background: rgba(255,255,255,0.93);
-  border-radius: 1.6em;
-  padding: 1.15em 3vw 1.15em 1.8em;
-  box-shadow: 0 3px 22px rgba(34,199,196,0.11);
-  margin: 0 auto 2vh auto;
-  position: relative;
-  min-width: 270px;
-  max-width: 65vw;
-  width: auto;
-}
-.story-company img {
-  width: 56px;
-  height: 56px;
-  border-radius: 1.1em;
-  object-fit: contain;
-  background: #fff;
-  box-shadow: 0 2px 7px #c0fff9;
-  position: relative;
-}
-.company-name {
-  color: #14a198;
-  font-weight: 800;
-  font-size: 1.22em;
-  margin-right: 1.1em;
-}
-.company-desc {
-  color: #507a96;
-  font-size: 1.13em;
-  font-weight: 400;
-  opacity: 0.94;
-  margin-left: 0.8em;
-  line-height: 1.18;
-  max-width: 30vw;
-}
-.story-roles {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: stretch;
-  gap: 2.5vw;
-  margin: 2.3vh 0 1.1vh 0;
-  width: 100vw;
-  max-width: 100vw;
-  flex-wrap: nowrap;
-  padding: 0 2vw;
-  overflow: hidden;
-}
-.role-block {
-  background: rgba(255,255,255,0.98);
-  border-radius: 1.45em;
-  box-shadow: 0 3px 28px rgba(36,199,170,0.10);
-  padding: 1.4em 1.7em 1.4em 1.2em;
-  display: flex;
-  align-items: center;
-  gap: 1.1em;
-  min-width: 220px;
-  max-width: 370px;
-  width: 100%;
-  flex: 1 1 0;
-  border-left: 8px solid var(--col,#18b7b2);
-  font-size: 1.18em;
-  margin: 0;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-.role-block img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(10,200,180,0.11);
-  position: relative;
-}
-.role-title {
-  font-weight: 900;
-  font-size: 1.1em;
-  color: #13b6a7;
-  margin-bottom: 0.07em;
-}
-.role-title span {
-  color: #888;
-  font-weight: 700;
-  font-size: .83em;
-  margin-left: 0.36em;
-}
-.role-desc {
-  font-size: .97em;
-  color: #395c70;
-  font-weight: 400;
-  margin-top: 0.12em;
-}
-.story-arc {
-  text-align: center;
-  color: #1177a6;
-  font-weight: 800;
-  margin-top: 3.2vh;
-  margin-bottom: 0.7em;
-  font-size: 1.19em;
-  letter-spacing: 0.01em;
-  width: 100vw;
-  max-width: 100vw;
-  overflow: hidden;
-}
-.demo-canvas-next {
-  position: absolute;
-  top: 2.3vh;
-  font-size: 1.08rem;
-  font-weight: 600;
-  background: linear-gradient(90deg, #17d6ba, #56c7ee);
-  color: white;
-  padding: 0.46em 1.5em;
-  border: none;
-  border-radius: 1.3em;
-  cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
-  opacity: 0;
-  transform: translateY(-10px);
-  letter-spacing: 0.03em;
-  z-index: 10;
-  transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
-}
-.demo-canvas-next.prev { left: 2.7vw; }
-.demo-canvas-next.next { right: 2.7vw; }
-.demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
-.slide-indicator.demo {
-  text-align:center;
-  font-weight:bold;
-  font-size: 1.15rem;
-  color: #2c9ca6;
-  opacity: 0.90;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 2.2vh;
-  width: 100vw;
-  max-width: 100vw;
-  overflow: hidden;
-}
-@media (max-width:1400px) {
-  .role-block{max-width: 290px; font-size:1em;}
-  .story-company{max-width: 93vw;}
-  .company-desc{max-width: 42vw;}
-}
-@media (max-width:1050px) {
-  .story-bg-title{padding:3vh 1vw 2vh 1vw;}
-  .story-roles{flex-direction:column;gap:1.5vh;align-items:center;}
-  .role-block{max-width:98vw;width:98vw;}
-  .company-desc{max-width: 64vw;}
-}
-@media (max-width:750px) {
-  .story-main-title{font-size:1.15em;}
-  .story-arc{font-size:0.97em;}
-  .story-company{padding:1.0em 0.7em;}
-}
-
-#team-hierarchy-line {
-  margin-bottom: -2.5em;
-  margin-top: 0.2em;
-  width: 96vw;
-  max-width: 1200px;
-  height: 56px;
-  z-index: 2;
-  pointer-events: none;
-  user-select: none;
-  transition: filter 0.25s;
-}
-@media (max-width:1050px) {
-  #team-hierarchy-line { display:none; }
-}
-
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      width: 100vw;
+      background: #f9fcff;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      overflow: hidden;
+    }
+    .blobs-bg {position:fixed;width:100vw;height:100vh;left:0;top:0;z-index:0;pointer-events:none;}
+    .blob {position:absolute;border-radius:50%;opacity:.18;background:#6decd9;filter:blur(40px);}
+    .blob:nth-child(1){width:370px;height:320px;left:13vw;top:9vh;}
+    .blob:nth-child(2){width:220px;height:160px;left:65vw;top:7vh;background:#f6b3ff;}
+    .blob:nth-child(3){width:150px;height:160px;left:8vw;top:62vh;background:#b9e9ff;}
+    .blob:nth-child(4){width:280px;height:200px;left:61vw;top:65vh;background:#ffefd7;}
+    .slides-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .story-canvas {
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0;
+      position: relative;
+      z-index: 3;
+      overflow: hidden;
+    }
+    .story-bg-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 2.8vh;
+      padding: 5.5vh 0 0 0;
+      margin-bottom: 2.2vh;
+      width: 100vw;
+      max-width: 100vw;
+      box-sizing: border-box;
+    }
+    .story-main-title {
+      font-size: clamp(2.5rem, 4vw, 4.4rem);
+      font-weight: 900;
+      color: #157e8a;
+      line-height: 1.15;
+      letter-spacing: -1.3px;
+      text-shadow: 0 2px 18px rgba(51,205,190,0.07);
+      margin-bottom: 0.10em;
+      text-align: center;
+      display: block;
+      width: 100vw;
+      max-width: 100vw;
+      overflow: hidden;
+      white-space: pre-line;
+    }
+    .story-main-title span {
+      display: block;
+      font-size: 0.88em;
+      color: #F765A3; /* Refined accent color */
+      font-weight: 700;
+      margin-top: 0.1em;
+      text-shadow: 0 1px 12px rgba(247, 101, 163, 0.2);
+    }
+    .story-theme {
+      font-size: 1.17rem;
+      color: #36b5de;
+      font-weight: 700;
+      opacity: 0.98;
+      text-align: center;
+      width: 100vw;
+      max-width: 100vw;
+      overflow: hidden;
+      margin-bottom: 1.7vh;
+    }
+    .story-company {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2em;
+      background: rgba(255,255,255,0.93);
+      border-radius: 1.6em;
+      padding: 1.15em 3vw 1.15em 1.8em;
+      box-shadow: 0 3px 22px rgba(34,199,196,0.11);
+      margin: 0 auto 2vh auto;
+      position: relative;
+      min-width: 270px;
+      max-width: 65vw;
+      width: auto;
+    }
+    .story-company img {
+      width: 56px;
+      height: 56px;
+      border-radius: 1.1em;
+      object-fit: contain;
+      background: #fff;
+      box-shadow: 0 2px 7px #c0fff9;
+      position: relative;
+    }
+    .company-name {
+      color: #14a198;
+      font-weight: 800;
+      font-size: 1.22em;
+      margin-right: 1.1em;
+    }
+    .company-desc {
+      color: #507a96;
+      font-size: 1.13em;
+      font-weight: 400;
+      opacity: 0.94;
+      margin-left: 0.8em;
+      line-height: 1.18;
+      max-width: 30vw;
+    }
+    .story-roles {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: stretch;
+      gap: 2.5vw;
+      margin: 2.3vh 0 1.1vh 0;
+      width: 100vw;
+      max-width: 100vw;
+      flex-wrap: nowrap;
+      padding: 0 2vw;
+      overflow: hidden;
+    }
+    .role-block {
+      background: rgba(255,255,255,0.98);
+      border-radius: 1.45em;
+      box-shadow: 0 3px 28px rgba(36,199,170,0.10);
+      padding: 1.4em 1.7em 1.4em 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 1.1em;
+      min-width: 220px;
+      max-width: 370px;
+      width: 100%;
+      flex: 1 1 0;
+      border-left: 8px solid var(--col,#18b7b2);
+      font-size: 1.18em;
+      margin: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: box-shadow 0.18s, background 0.19s, border 0.18s, transform 0.2s;
+    }
+    .role-block img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(10,200,180,0.11);
+      position: relative;
+    }
+    .role-title {
+      font-weight: 900;
+      font-size: 1.1em;
+      color: #13b6a7;
+      margin-bottom: 0.07em;
+    }
+    .role-title span {
+      color: #888;
+      font-weight: 700;
+      font-size: .83em;
+      margin-left: 0.36em;
+    }
+    .role-desc {
+      font-size: .97em;
+      color: #395c70;
+      font-weight: 400;
+      margin-top: 0.12em;
+    }
+    .story-arc {
+      text-align: center;
+      color: #1177a6;
+      font-weight: 800;
+      margin-top: 3.2vh;
+      margin-bottom: 0.7em;
+      font-size: 1.19em;
+      letter-spacing: 0.01em;
+      width: 100vw;
+      max-width: 100vw;
+      overflow: hidden;
+    }
+    .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+    .slide-indicator.demo {
+      text-align:center;
+      font-weight:bold;
+      font-size: 1.15rem;
+      color: #2c9ca6;
+      opacity: 0.90;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 2.2vh;
+      width: 100vw;
+      max-width: 100vw;
+      overflow: hidden;
+    }
+    #persona-modal {position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;display:none;align-items:center;justify-content:center;}
+    .modal-backdrop {position:fixed;left:0;top:0;width:100vw;height:100vh;background:rgba(32,58,64,0.38);backdrop-filter:blur(4px);}
+    .modal-content {
+      background:#fff;
+      border-radius:1.7em;
+      max-width:410px;
+      width:92vw;
+      padding:2.7em 2.1em 2.2em 2.1em;
+      box-shadow:0 12px 60px #1fcad428,0 3px 24px #85e7dd18;
+      text-align:center;
+      position:relative;
+      z-index:10;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      animation: modal-in 0.45s cubic-bezier(.63,-0.04,.32,1.19);
+    }
+    .modal-close {
+      position:absolute;top:1.0em;right:1.1em;
+      background:none;border:none;color:#29c3ad;
+      font-size:2.1em;cursor:pointer;font-weight:800;z-index:10;
+      transition:color 0.19s;
+    }
+    .modal-close:hover {color:#129d90;}
+    .modal-avatar img {width:70px;height:70px;border-radius:50%;margin-bottom:1.1em;box-shadow:0 2px 18px #55eed66b;}
+    .modal-title {font-weight:900;font-size:1.27em;color:#138690;margin-bottom:0.71em;}
+    .modal-flow {font-size:1.18em;text-align:left;}
+    .modal-flow-step {margin:0.82em 0;padding-left:1.4em;position:relative;}
+    .modal-flow-step:before {
+      content:"";
+      position:absolute;left:0.1em;top:0.34em;
+      width:1.14em;height:1.14em;border-radius:50%;
+      background:#ecfaf7;border:2px solid #13d8b6;
+      box-shadow:0 0 0 2px #17e1ea14;
+    }
+    .modal-flow-step strong {color:#17bfb2;font-weight:800;}
+    @keyframes modal-in {
+      0%{opacity:0;transform:scale(.86) translateY(60px);}
+      100%{opacity:1;transform:scale(1) translateY(0);}
+    }
+    @media (max-width:650px){
+      .modal-content{max-width:96vw;padding:1.1em 0.3em 1.5em 0.7em;}
+      .modal-title{font-size:1.09em;}
+      .modal-flow{font-size:1.04em;}
+    }
+    @media (max-width:1400px) {
+      .role-block{max-width: 290px; font-size:1em;}
+      .story-company{max-width: 93vw;}
+      .company-desc{max-width: 42vw;}
+    }
+    @media (max-width:1050px) {
+      .story-bg-title{padding:3vh 1vw 2vh 1vw;}
+      .story-roles{flex-direction:column;gap:1.5vh;align-items:center;}
+      .role-block{max-width:98vw;width:98vw;}
+      .company-desc{max-width: 64vw;}
+    }
+    @media (max-width:750px) {
+      .story-main-title{font-size:1.15em;}
+      .story-arc{font-size:0.97em;}
+      .story-company{padding:1.0em 0.7em;}
+    }
     #team-bracket {
-  width: 100vw;
-  max-width: 1200px;
-  height: 90px;
-  margin: 0 auto -2.2em auto;
-  z-index: 1;
-  pointer-events: none;
-  user-select: none;
-  display: block;
-}
-
-
+      width: 100vw;
+      max-width: 1200px;
+      height: auto; /* Changed for flexibility */
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      min-height: 250px;
+      z-index: -1; /* Placed behind role blocks */
+      pointer-events: none;
+      user-select: none;
+      display: block;
+      overflow: visible;
+    }
+    .process-modal {
+      max-width: 570px;
+      min-width: 380px;
+      width: 95vw;
+      padding: 2.6em 2.3em 2.5em 2.3em;
+      box-shadow: 0 12px 70px #1fcad458,0 3px 24px #85e7dd20;
+      background: linear-gradient(135deg,#f7fcff 65%,#eafcf6 100%);
+    }
+    .process-modal {
+      max-width: 540px;
+      min-width: 320px;
+      width: 96vw;
+      padding: 2.4em 2em 2.1em 2em;
+      background: linear-gradient(127deg,#fafdff 70%,#e5fdf6 100%);
+      border-radius: 2em;
+      box-shadow: 0 12px 70px #1fcad428,0 3px 24px #85e7dd20;
+      text-align: center;
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      animation: modal-in 0.45s cubic-bezier(.63,-0.04,.32,1.19);
+    }
+    @keyframes modal-in {
+      0%{opacity:0;transform:scale(.91) translateY(60px);}
+      100%{opacity:1;transform:scale(1) translateY(0);}
+    }
+    .modal-close {
+      position: absolute; top: 1.0em; right: 1.15em;
+      background: none; border: none; color: #29c3ad;
+      font-size: 2.2em; cursor: pointer; font-weight: 900; z-index: 10;
+      transition: color 0.17s;
+    }
+    .modal-close:hover { color: #139e90; }
+    .modal-avatar img {
+      width: 78px; height: 78px; border-radius: 50%;
+      margin-bottom: 1.08em; box-shadow: 0 2px 18px #55eed66b;
+      border: 4px solid #ebfaf8;
+      object-fit: cover;
+    }
+    .modal-title {
+      font-weight: 900;
+      font-size: 1.22em;
+      color: #138690;
+      margin-bottom: 1.05em;
+    }
+    .process-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      margin: 0 auto;
+      margin-top: 0.18em;
+      position: relative;
+    }
+    .process-step-row {
+      display: flex; align-items: flex-start; width: 100%;
+      min-height: 76px; position: relative; margin-bottom: 0.1em;
+      opacity: 0; transform: translateY(22px);
+    }
+    .process-step-icon {
+      z-index: 2; margin-right: 1.25em; margin-left: 0.7em;
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 56px; position: relative;
+    }
+    .process-step-bubble {
+      width: 50px; height: 50px; min-width: 50px; min-height: 50px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 2em; font-weight: 800;
+      box-shadow: 0 3px 18px #33e7e739, 0 0 0 7px #fff;
+      border: 3px solid #b8ffff;
+      color: var(--coltxt, #19b6b6);
+      background: linear-gradient(130deg, var(--col1,#4ee7e6) 70%, var(--col2,#b4f0ff) 100%);
+      margin-bottom: 2px; transition: box-shadow 0.2s;
+      animation: bubbleGlow 1.4s infinite alternate;
+      position: relative;
+      z-index: 2;
+    }
+    @keyframes bubbleGlow {
+      0% { box-shadow: 0 3px 14px #33e7e72a, 0 0 0 7px #fff; }
+      100% { box-shadow: 0 10px 24px #8df5f9cc, 0 0 0 12px #e5ffff70; }
+    }
+    .process-step-row:last-child .process-step-connector { display: none; }
+    .process-step-connector {
+      width: 10px;
+      flex: 0 0 10px;
+      height: calc(100% - 50px);
+      margin: 0 auto;
+      background: linear-gradient(to bottom, #29e7e7 12%, #e5fafc 90%);
+      border-radius: 12px;
+      margin-top: -3px; margin-bottom: -3px;
+      z-index: 1;
+      filter: drop-shadow(0 0 14px #66f9f9bb);
+      position: absolute; left: 50%; top: 50px; transform: translateX(-50%);
+      animation: flow-glow 2.2s infinite alternate;
+      opacity: 0.77;
+    }
+    @keyframes flow-glow {
+      0% { filter: drop-shadow(0 0 10px #56f9f9cc);}
+      100% { filter: drop-shadow(0 0 22px #77e5ff);}
+    }
+    .process-step-details {
+      flex: 1 1 0;
+      margin-top: 0.24em;
+      font-size: 1.17em;
+      color: #158292;
+      line-height: 1.42;
+      background: none;
+      padding-top: 0.07em;
+      font-weight: 400;
+    }
+    .process-step-details strong {
+      font-weight: 900;
+      color: #1ec1c6;
+      font-size: 1.13em;
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 700px) {
+      .process-modal {padding: 1.1em 0.1em 1.7em 0.1em; min-width: 1px;}
+      .modal-title {font-size:1em;}
+      .modal-avatar img {width:62px;height:62px;}
+      .process-flow {min-height:0;}
+      .process-step-bubble {font-size:1.17em; width:36px; height:36px;}
+      .process-step-icon {min-width:30px;}
+      .process-step-details {font-size:0.96em;}
+    }
+       .demo-canvas-next {
+      position: absolute;
+      top: 2.3vh;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: white;
+      padding: 0.46em 1.5em;
+      border: none;
+      border-radius: 1.3em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
+      opacity: 0;
+      transform: translateY(-10px);
+      letter-spacing: 0.03em;
+      z-index: 10;
+      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+    }
+    .demo-canvas-next.prev { left: 2.7vw; }
+    .demo-canvas-next.next { right: 2.7vw; }
+    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
   </style>
 </head>
 <body>
@@ -292,296 +471,259 @@ body {
   </div>
   <div class="slides-container">
     <section class="slide active" id="slide-6">
-      <!-- Top nav small buttons -->
       <button class="demo-canvas-next prev" onclick="location.href='/present/slide-5'">‹ Prev</button>
-      <button class="demo-canvas-next next" onclick="location.href='/present/slide-1'">Next ›</button>
+      <button class="demo-canvas-next next" onclick="location.href='/present/slide-7'">Next ›</button>
       <div class="story-canvas">
+        <svg id="team-bracket">
+          <defs>
+            <filter id="orgGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="glow"/>
+              <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+        </svg>
         <div class="story-bg-title">
-          <span class="story-main-title">The Journey of Data:<br><span>From Raw Potential to Intelligent Action</span></span>
-          <span class="story-theme">Theme: <b>One Lake, One Team, Infinite Possibilities</b></span>
+          <span class="story-main-title">A Blueprint for Our Data:<br><span>From Source Systems to a Single Truth</span></span>
+          <span class="story-theme">Our Goal: <b>Unify Data, Eliminate Silos, and Deliver Real Insights</b></span>
           <div class="story-company">
-            <img src="/static/images/fabric/dashboard.png" alt="RetroGrove Retail Logo" class="company-img">
-            <span class="company-name">RetroGrove Retail</span>
-            <span class="company-desc">Fictional brand, real challenges.<br>
-              Can we predict, personalize, and optimize with data?</span>
+            <img src="/static/images/fabric/dashboard.png" alt="Company Logo" class="company-img">
+            <span class="company-name">Our Project</span>
+            <span class="company-desc">Build an end-to-end analytics solution—from raw Kaggle data to a predictive Power BI report with writeback capabilities.</span>
           </div>
         </div>
-<svg id="team-bracket" width="100%" height="220" style="display:block;overflow:visible;pointer-events:none;margin-bottom:-2.2em;min-height:150px;">
-  <defs>
-    <filter id="orgGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="5" result="glow"/>
-      <feMerge>
-        <feMergeNode in="glow"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  <!-- The lines will be drawn dynamically by JavaScript! -->
-</svg>
         <div class="story-roles">
-          <div class="role-block" style="--col:#36d6b7;">
-            <img src="/static/images/avatar/data_engineer.png" alt="Diana" class="avatar-img"/>
+          <div class="role-block" data-role="diana" style="--col:#36d6b7;">
+            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/data-flow-6528033-5376510.png" alt="Diana - Data Engineer Icon" class="avatar-img"/>
             <div>
               <div class="role-title">Diana <span>Data Engineer</span></div>
-              <div class="role-desc">The Architect<br>
-                Brings structure to chaos—ingests, transforms, and organizes raw data.
-              </div>
+              <div class="role-desc">Her mission is to ingest raw data from Kaggle, transform it, and build a reusable pipeline for the entire team.</div>
             </div>
           </div>
-          <div class="role-block" style="--col:#38c8f5;">
-            <img src="/static/images/avatar/bi_analyst.png" alt="Alex" class="avatar-img"/>
+          <div class="role-block" data-role="alex" style="--col:#38c8f5;">
+            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/business-analysis-5503444-4598175.png" alt="Alex - BI Developer Icon" class="avatar-img"/>
             <div>
-              <div class="role-title">Alex <span>BI Analyst</span></div>
-              <div class="role-desc">The Storyteller<br>
-                Finds insights, creates reports, and empowers decisions with data.
-              </div>
+              <div class="role-title">Alex <span>BI Developer</span></div>
+              <div class="role-desc">He needs to build a fast, reliable Power BI report using DirectLake and implement interactive writeback for user comments.</div>
             </div>
           </div>
-          <div class="role-block" style="--col:#b986f9;">
-            <img src="/static/images/avatar/data_scientist.png" alt="Sam" class="avatar-img"/>
+          <div class="role-block" data-role="sam" style="--col:#b986f9;">
+            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/data-analysis-3994383-3307559.png" alt="Sam - Data Scientist Icon" class="avatar-img"/>
             <div>
               <div class="role-title">Sam <span>Data Scientist</span></div>
-              <div class="role-desc">The Futurist<br>
-                Predicts what’s next—uses ML and AI to turn data into foresight.
-              </div>
+              <div class="role-desc">With clean data ready, he can finally build the salary prediction model and save the results back to the Lakehouse.</div>
             </div>
           </div>
-          <div class="role-block" style="--col:#ffaa52;">
-            <img src="/static/images/avatar/consumer.png" alt="Chloe" class="avatar-img"/>
+          <div class="role-block" data-role="chloe" style="--col:#ffaa52;">
+            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/business-woman-8769342-7144709.png" alt="Chloe - Business Lead Icon" class="avatar-img"/>
             <div>
-              <div class="role-title">Chloe <span>Consumer</span></div>
-              <div class="role-desc">The Decision Maker<br>
-                Acts on insights—drives the business with intelligent action.
-              </div>
+              <div class="role-title">Chloe <span>Business Lead</span></div>
+              <div class="role-desc">She needs trusted, forward-looking insights and wants to provide feedback directly within the report.</div>
             </div>
           </div>
         </div>
         <div class="story-arc">
-          <span>Our story: <b>Follow a dataset from raw chaos, through engineering, analysis, and AI, to intelligent business action—all in Microsoft Fabric.</b></span>
+          <span>Our story: <b>Let's see how our team can solve this challenge from end-to-end inside Microsoft Fabric.</b></span>
         </div>
-        <div class="slide-indicator demo">6 / 6</div>
+      </div>
+      <div id="persona-modal" style="display:none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content process-modal animated-stepper">
+          <button class="modal-close" onclick="closePersonaModal()">×</button>
+          <div class="modal-avatar"><img src="" id="modal-avatar-img" alt="Persona"></div>
+          <div class="modal-title" id="modal-title"></div>
+          <div class="process-flow" id="modal-flow"></div>
+        </div>
       </div>
     </section>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    gsap.to(".demo-canvas-next", { opacity: 1, y: 0, duration: 0.7, stagger: 0.18, delay: 0.5, ease: "power2.out" });
+    gsap.from(".story-main-title, .story-theme", { y: -35, opacity: 0, duration: 0.7, stagger: 0.12, delay: 0.38, ease: "power3.out" });
+    gsap.from(".company-img", { scale: 0.4, opacity: 0, y: 30, filter: "blur(7px)", duration: 0.62, delay: 0.8, ease: "back.out(1.5)" });
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script>
-function drawTeamBracket() {
-  const svg = document.getElementById('team-bracket');
-  if (!svg) return;
-
-  // Remove old lines if re-drawing
-  while (svg.children.length > 1) svg.removeChild(svg.lastChild);
-
-  // Find company block (center above roles)
-  const companyBlock = document.querySelector('.story-company');
-  const personaBlocks = Array.from(document.querySelectorAll('.role-block'));
-
-  if (!companyBlock || personaBlocks.length === 0) return;
-
-  const svgRect = svg.getBoundingClientRect();
-  const companyRect = companyBlock.getBoundingClientRect();
-
-  // Find the bottom center of company
-  const cx = companyRect.left + companyRect.width / 2 - svgRect.left;
-  const cy = companyRect.bottom - svgRect.top;
-
-  // Find the top center of each persona card
-  const forks = personaBlocks.map(block => {
-    const rect = block.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2 - svgRect.left,
-      y: rect.top - svgRect.top
-    }
-  });
-
-  // Get span for horizontal line
-  const minX = Math.min(...forks.map(f => f.x));
-  const maxX = Math.max(...forks.map(f => f.x));
-  const forkY = forks[0].y;
-
-  // Draw main vertical down
-  const down = document.createElementNS("http://www.w3.org/2000/svg","path");
-  down.setAttribute("id", "org-down");
-  down.setAttribute("d", `M${cx},${cy} L${cx},${forkY-25}`);
-  down.setAttribute("stroke","#18e9c0");
-  down.setAttribute("stroke-width","4.5");
-  down.setAttribute("filter","url(#orgGlow)");
-  down.setAttribute("fill","none");
-  down.setAttribute("opacity","0.75");
-  svg.appendChild(down);
-
-  // Draw horizontal
-  const horiz = document.createElementNS("http://www.w3.org/2000/svg","path");
-  horiz.setAttribute("id", "org-horiz");
-  horiz.setAttribute("d", `M${minX},${forkY-25} L${maxX},${forkY-25}`);
-  horiz.setAttribute("stroke","#18e9c0");
-  horiz.setAttribute("stroke-width","4.5");
-  horiz.setAttribute("filter","url(#orgGlow)");
-  horiz.setAttribute("fill","none");
-  horiz.setAttribute("opacity","0.75");
-  svg.appendChild(horiz);
-
-  // Draw forks to each persona
-  forks.forEach((f, i) => {
-    const fork = document.createElementNS("http://www.w3.org/2000/svg","path");
-    fork.setAttribute("class","org-fork");
-    fork.setAttribute("id",`fork${i}`);
-    fork.setAttribute("d", `M${f.x},${forkY-25} L${f.x},${f.y}`);
-    fork.setAttribute("stroke","#18e9c0");
-    fork.setAttribute("stroke-width","4.5");
-    fork.setAttribute("filter","url(#orgGlow)");
-    fork.setAttribute("fill","none");
-    fork.setAttribute("opacity","0.75");
-    svg.appendChild(fork);
-  });
-
-  // Animate them (same as before)
-  setTimeout(() => {
-    [down, horiz, ...svg.querySelectorAll('.org-fork')].forEach(path => {
-      const len = path.getTotalLength();
-      path.style.strokeDasharray = len;
-      path.style.strokeDashoffset = len;
-    });
-    gsap.to(down, {
-      strokeDashoffset: 0,
-      duration: 0.5,
-      delay: 1,
-      ease: "power2.in"
-    });
-    gsap.to(horiz, {
-      strokeDashoffset: 0,
-      duration: 0.6,
-      delay: 1.4,
-      ease: "power2.inOut"
-    });
-    Array.from(svg.querySelectorAll('.org-fork')).forEach((f, i) => {
-      gsap.to(f, {
-        strokeDashoffset: 0,
-        duration: 0.37,
-        delay: 1.8 + i*0.09,
-        ease: "power2.out"
-      });
-    });
-    gsap.fromTo("#team-bracket path", {filter:'url(#orgGlow)'}, {
-      filter:'url(#orgGlow)', repeat:1, yoyo:true,
-      duration:0.45, delay:2.2, ease:'sine.inOut'
-    });
-  }, 150); // after DOM paint
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  // Animate nav buttons
-  gsap.to(".demo-canvas-next", {
-    opacity: 1,
-    y: 0,
-    duration: 0.7,
-    stagger: 0.18,
-    delay: 0.5,
-    ease: "power2.out"
-  });
-
-  // Animate title & theme
-  gsap.from(".story-main-title, .story-theme", {
-    y: -35,
-    opacity: 0,
-    duration: 0.7,
-    stagger: 0.12,
-    delay: 0.38,
-    ease: "power3.out"
-  });
-
-  // Animate company image
-  gsap.from(".company-img", {
-    scale: 0.4,
-    opacity: 0,
-    y: 30,
-    filter: "blur(7px)",
-    duration: 0.62,
-    delay: 0.8,
-    ease: "back.out(1.5)"
-  });
-
-  // Animate persona cards row-by-row, then draw org lines after last card
-  const blocks = Array.from(document.querySelectorAll('.role-block'));
-  let blocksDone = 0;
-
-  blocks.forEach((block, i) => {
-    block.style.transformOrigin = "top center";
-    block.style.opacity = 0;
-    block.style.height = '0px';
-    block.style.overflow = 'hidden';
-    gsap.to(block, {
-      height: block.scrollHeight + 'px',
-      opacity: 1,
-      scaleY: 1,
-      boxShadow: "0 8px 28px #2ef0e325",
-      background: "rgba(34,255,222,0.09)",
-      duration: 0.5 + 0.04 * i,
-      delay: 1.08 + i * 0.15,
-      ease: "back.out(1.32)",
-      onStart: () => { block.style.display = ''; },
-      onComplete: () => {
-        block.style.height = '';
-        block.style.overflow = '';
-        gsap.to(block, {
-          boxShadow: "0 3px 20px rgba(36,199,170,0.11)",
-          background: "",
-          duration: 0.45,
-          ease: "power1.in"
-        });
-        // Animate avatar in this block after block appears
-        setTimeout(() => {
-          const avatar = block.querySelector('img.avatar-img');
-          if (avatar) {
-            gsap.fromTo(avatar,
-              { y: 22, opacity: 0, scale: 0.7 },
-              {
-                y: 0,
-                opacity: 1,
-                scale: 1,
-                duration: 0.44,
-                ease: "back.out(1.6)"
-              }
-            );
+    const blocks = Array.from(document.querySelectorAll('.role-block'));
+    let blocksDone = 0;
+    blocks.forEach((block, i) => {
+      block.style.transformOrigin = "top center";
+      block.style.opacity = 0;
+      block.style.height = '0px';
+      block.style.overflow = 'hidden';
+      gsap.to(block, {
+        height: block.scrollHeight + 'px',
+        opacity: 1,
+        scaleY: 1,
+        boxShadow: "0 8px 28px #2ef0e325",
+        background: "rgba(34,255,222,0.09)",
+        duration: 0.5 + 0.04 * i,
+        delay: 1.08 + i * 0.15,
+        ease: "back.out(1.32)",
+        onStart: () => { block.style.display = 'flex'; },
+        onComplete: () => {
+          block.style.height = '';
+          block.style.overflow = '';
+          gsap.to(block, { boxShadow: "0 3px 20px rgba(36,199,170,0.11)", background: "", duration: 0.45, ease: "power1.in" });
+          setTimeout(() => {
+            const avatar = block.querySelector('img.avatar-img');
+            if (avatar) {
+              gsap.fromTo(avatar, { y: 22, opacity: 0, scale: 0.7 }, { y: 0, opacity: 1, scale: 1, duration: 0.44, ease: "back.out(1.6)" });
+            }
+          }, 50);
+          blocksDone++;
+          if (blocksDone === blocks.length) {
+            setTimeout(drawTeamBracket, 120);
           }
-        }, 50);
-
-        // --------- DRAW THE ORG LINES AFTER THE LAST CARD IS VISIBLE ---------
-        blocksDone++;
-        if (blocksDone === blocks.length) {
-          setTimeout(drawTeamBracket, 120);
         }
+      });
+      block.addEventListener('mouseenter', () => {
+        gsap.to(block, {
+            y: -8,
+            scale: 1.032,
+            background: "rgba(247, 101, 163, 0.08)",
+            boxShadow: "0 18px 50px rgba(247, 101, 163, 0.25)",
+            duration: 0.26,
+            ease: "power1.out"
+        });
+      });
+      block.addEventListener('mouseleave', () => {
+        gsap.to(block, {
+            y: 0,
+            scale: 1,
+            background: "",
+            boxShadow: "0 3px 20px rgba(36,199,170,0.11)",
+            duration: 0.33,
+            ease: "power2.out"
+        });
+      });
+      block.addEventListener('click', function() { showPersonaModal(this.getAttribute('data-role')); });
+    });
+
+    window.addEventListener('resize', () => setTimeout(drawTeamBracket, 200));
+
+    const personaFlows = {
+      "diana": {
+        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/data-flow-6528033-5376510.png",
+        title: "Diana — The Data Engineering Workflow",
+        flow: [
+          { icon: "📥", text: "<strong>Ingest Data:</strong> Uses a <strong>Notebook</strong> to pull raw job market data directly from the Kaggle API into the Lakehouse." },
+          { icon: "✨", text: "<strong>Transform Data:</strong> Builds a <strong>Dataflow Gen2</strong> to clean the raw files, creating structured tables for tech and non-tech roles." },
+          { icon: "⚙️", text: "<strong>Automate:</strong> Creates a <strong>Data Pipeline</strong> to orchestrate the entire workflow, from ingestion to transformation, automatically." },
+          { icon: "✔️", text: "<strong>Publish:</strong> Her pipeline populates clean, reliable tables in the <strong>Lakehouse</strong>, creating a single source of truth for the team." },
+        ]
+      },
+      "alex": {
+        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/business-analysis-5503444-4598175.png",
+        title: "Alex — The BI Development Workflow",
+        flow: [
+          { icon: "🔗", text: "<strong>Connect to Data:</strong> Connects to Diana's Lakehouse tables using <strong>DirectLake</strong> mode for maximum performance without data duplication." },
+          { icon: "📦", text: "<strong>Build Semantic Model:</strong> Creates a central Power BI dataset, defining key metrics and relationships once for everyone to use." },
+          { icon: "✍️", text: "<strong>Enable Writeback:</strong> Implements the <strong>Data function</strong> feature, adding a button for users to submit comments from the report to a SQL Database." },
+          { icon: "📊", text: "<strong>Deliver Report:</strong> Publishes a fast, interactive Power BI report that includes Sam's predictions and Chloe's feedback." },
+        ]
+      },
+      "sam": {
+        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/data-analysis-3994383-3307559.png",
+        title: "Sam — The Data Science Workflow",
+        flow: [
+          { icon: "💡", text: "<strong>Access Clean Data:</strong> Instantly accesses the same trusted Lakehouse data Diana prepared. No more waiting for data extracts!" },
+          { icon: "🐍", text: "<strong>Train ML Model:</strong> Uses a <strong>Notebook</strong> with Python and a RandomForest model to predict future salaries based on job trends." },
+          { icon: "📈", text: "<strong>Evaluate Model:</strong> Measures the model's accuracy using R-squared to ensure the predictions are reliable." },
+          { icon: "💾", text: "<strong>Save Predictions:</strong> Writes the salary predictions back to a new table in the <strong>Lakehouse</strong>, making them available for Alex's report." },
+        ]
+      },
+      "chloe": {
+        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/business-woman-8769342-7144709.png",
+        title: "Chloe — The Business Workflow",
+        flow: [
+          { icon: "🎯", text: "<strong>Analyze Insights:</strong> Views the unified Power BI report, which now includes both historical data and Sam's forward-looking salary predictions." },
+          { icon: "💬", text: "<strong>Provide Feedback:</strong> Uses the <strong>Writeback</strong> button created by Alex to leave comments on specific industries directly in the report." },
+          { icon: "🔔", text: "<strong>Stay Updated:</strong> Receives an automatic email notification from the <strong>Data Pipeline</strong> once the entire process is complete and the report has fresh data." },
+        ]
       }
-    });
+    };
 
-    // GSAP hover effect for each role block
-    block.addEventListener('mouseenter', () => {
-      gsap.to(block, {
-        scale: 1.032,
-        background: "rgba(64,239,214,0.16)",
-        boxShadow: "0 12px 46px #26f4e24c",
-        duration: 0.26,
-        ease: "power1.out"
-      });
-    });
-    block.addEventListener('mouseleave', () => {
-      gsap.to(block, {
-        scale: 1,
-        background: "",
-        boxShadow: "0 3px 20px rgba(36,199,170,0.11)",
-        duration: 0.33,
-        ease: "power2.out"
-      });
-    });
-  });
-});
+    const personaStepColors = { "diana": [["#39e3f7","#57cfff"], ["#ff44a5","#ffd0f3"], ["#44f7c7","#a9f0ff"], ["#63a2f7","#c9eaff"]], "sam": [["#63a2f7","#c9eaff"], ["#aa7cff","#f5cfff"], ["#b5de62","#e1ff9d"]], "alex": [["#63a2f7","#c9eaff"], ["#5bf7be","#b4f0c1"], ["#ffe56f","#fffacc"]], "chloe": [["#ffe56f","#fffacc"], ["#ff447a","#ffd0d7"]] };
 
-// On resize, always redraw the bracket after a brief pause
-window.addEventListener('resize', () => setTimeout(drawTeamBracket, 200));
-</script>
+    function showPersonaModal(role) {
+      const modal = document.getElementById("persona-modal");
+      const data = personaFlows[role];
+      if (!data) return;
+      document.getElementById("modal-avatar-img").src = data.avatar;
+      document.getElementById("modal-title").textContent = data.title;
+      const steps = data.flow;
+      const colors = personaStepColors[role] || [];
+      document.getElementById("modal-flow").innerHTML = steps.map((step, i) =>
+        `<div class="process-step-row">
+           <div class="process-step-icon">
+             <div class="process-step-bubble" style="--col1:${colors[i]?.[0]||'#4ee7e6'};--col2:${colors[i]?.[1]||'#b4f0ff'};">${step.icon}</div>
+             ${i < steps.length - 1 ? '<div class="process-step-connector"></div>' : ''}
+           </div>
+           <div class="process-step-details">${step.text}</div>
+         </div>`
+      ).join('');
+      modal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+      gsap.fromTo(".process-modal", { opacity: 0, scale: 0.93, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: 0.42, ease: "back.out(1.7)" });
+      gsap.utils.toArray(".process-step-row").forEach((el, idx) => gsap.to(el, { opacity: 1, y: 0, delay: 0.14 + 0.10 * idx, duration: 0.43, ease: "power3.out" }));
+    }
 
+    function closePersonaModal() {
+      const modal = document.getElementById("persona-modal");
+      gsap.to(".modal-content", { opacity: 0, scale: 0.88, y: 60, duration: 0.32, ease: "power2.in", onComplete: () => { modal.style.display = "none"; document.body.style.overflow = ""; } });
+    }
+    document.addEventListener('keydown', function(e){ if (e.key === "Escape") closePersonaModal(); });
+    document.addEventListener("DOMContentLoaded", function(){ document.querySelector("#persona-modal .modal-backdrop").addEventListener("click", closePersonaModal); });
 
+    function drawTeamBracket() {
+        const svg = document.getElementById('team-bracket');
+        if (!svg) return;
+        while (svg.children.length > 1) { // Keep defs
+            svg.removeChild(svg.lastChild);
+        }
+        const companyBlock = document.querySelector('.story-company');
+        const personaBlocks = Array.from(document.querySelectorAll('.role-block'));
+        if (!companyBlock || personaBlocks.length === 0) return;
+
+        const svgRect = svg.getBoundingClientRect();
+        const companyRect = companyBlock.getBoundingClientRect();
+
+        const startX = companyRect.left + companyRect.width / 2 - svgRect.left;
+        const startY = companyRect.bottom - svgRect.top + 10; // Start slightly below the box
+
+        personaBlocks.forEach((block, i) => {
+            const blockRect = block.getBoundingClientRect();
+            const endX = blockRect.left + blockRect.width / 2 - svgRect.left;
+            const endY = blockRect.top - svgRect.top;
+
+            // Control points for a cubic Bezier curve
+            const ctrlX1 = startX;
+            const ctrlY1 = startY + (endY - startY) * 0.3;
+            const ctrlX2 = endX;
+            const ctrlY2 = endY - (endY - startY) * 0.7;
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", `M ${startX} ${startY} C ${ctrlX1} ${ctrlY1}, ${ctrlX2} ${ctrlY2}, ${endX} ${endY}`);
+            path.setAttribute("stroke", "#F765A3");
+            path.setAttribute("stroke-width", "5");
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("fill", "none");
+            path.setAttribute("filter", "url(#orgGlow)");
+            path.setAttribute("opacity", "0.85");
+            svg.appendChild(path);
+
+            const len = path.getTotalLength();
+            path.style.strokeDasharray = len;
+            path.style.strokeDashoffset = len;
+            gsap.to(path, {
+                strokeDashoffset: 0,
+                duration: 0.8,
+                delay: 1.5 + i * 0.15,
+                ease: "power2.out"
+            });
+        });
+    }
+  </script>
 </body>
 </html>

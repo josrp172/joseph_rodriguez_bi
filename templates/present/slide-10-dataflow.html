@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dataflow Gen 2 in Microsoft Fabric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+:root {
+  --primary: #0078d4; /* A Microsoft Blue */
+  --secondary: #fafdff;
+  --accent: #e85d1c;
+  --bg: #fafdff;
+  --text: #1a5b8e;
+  --shadow: 0 12px 48px #0078d422, 0 4px 24px #a3d4ff1a;
+  --pill-shadow: 0 2px 9px #0078d422;
+  --feature-bg: linear-gradient(100deg,#f0f7ff 70%,#eaf3fc 100%);
+  --halo: radial-gradient(circle at 50% 40%, #e6f2ff 0%, #fff 70%);
+  --pill-border: #b1d9ff;
+  --pill-border-hover: #0078d4;
+  --tooltip-bg: #fff;
+  --tooltip-text: #1a5b8e;
+}
+html, body {
+  height: 100%;
+  margin: 0; padding: 0;
+  overflow: hidden;
+}
+body {
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  background: var(--bg);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: var(--text);
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+.lakehouse-header {
+  width: 100vw;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7em;
+}
+.lakehouse-topicon {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  margin-bottom: -6px;
+}
+.lakehouse-topicon img {
+  filter: drop-shadow(0 2px 16px #0078d42a);
+  height: 64px;
+}
+h1 {
+  font-size: 2.7em;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--primary);
+  margin: 0 0 0.13em 0;
+  line-height: 1.13;
+  text-align: center;
+}
+.tagline {
+  font-size: 1.18em;
+  color: var(--text);
+  opacity: 0.88;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.flow-row {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw; /* Reduced gap */
+  margin-top: 38px;
+  margin-bottom: 14px;
+  position: relative;
+}
+.flow-step {
+  min-width: 200px;
+  max-width: 320px;
+  min-height: 160px;
+  background: var(--feature-bg);
+  border-radius: 1.3em;
+  box-shadow: 0 6px 32px #0078d423;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.4em 0.7em 1.2em 0.7em;
+  position: relative;
+  z-index: 2;
+  transition: box-shadow 0.2s, background 0.14s;
+  font-size: 1.18em;
+}
+.flow-step.hero {
+  background: var(--halo);
+  border: 2.5px solid var(--primary);
+  box-shadow: 0 12px 32px #0078d42a;
+  min-width: 260px;
+  max-width: 390px;
+  z-index: 3;
+}
+.flow-step .step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75em;
+  margin-top: -0.05em;
+  width: 3.2em;
+  height: 3.2em;
+  border-radius: 0.8em;
+  background: linear-gradient(120deg,#dbe9f9 60%,#c6ddee 100%);
+  box-shadow: 0 2px 10px #0078d411;
+}
+.flow-step.hero .step-icon {
+  width: 3.6em;
+  height: 3.6em;
+  background: linear-gradient(125deg,#d6e6fa 70%,#bce4ff 100%);
+  box-shadow: 0 2px 12px #0078d42c;
+}
+.flow-step .step-icon svg {
+  width: 2.2em !important;
+  height: 2.2em !important;
+}
+.flow-step.hero .step-icon svg {
+  width: 2.5em !important;
+  height: 2.5em !important;
+}
+.flow-step .step-title {
+  font-size: 1.35em;
+  font-weight: 900;
+  margin-bottom: 0.09em;
+  letter-spacing: 0.01em;
+}
+.flow-step.hero .step-title { font-size: 1.52em; }
+.flow-step .step-desc {
+  font-size: 1em;
+  color: #5496be;
+  opacity: 0.95;
+  margin-bottom: -0.12em;
+}
+.arrow-container {
+    position: relative;
+    width: 100px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.arrow-flow {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block;
+  position: absolute;
+}
+.flow-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translateX(-50px); /* Start off-screen left */
+}
+.legend {
+  display: flex;
+  gap: 2.3em;
+  margin: 1.5em auto 0.45em auto;
+  font-size: 1.1em;
+  color: #62a8c6;
+  font-weight: 700;
+  justify-content: center;
+  opacity: 0.95;
+  letter-spacing: 0.02em;
+}
+.legend .dot {
+  width: 1em; height: 1em;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.19em;
+  vertical-align: middle;
+}
+.legend .dot.connect { background: #0078D4; } /* Blue */
+.legend .dot.transform { background: #8E44AD; } /* Purple */
+.legend .dot.integrate { background: #e85d1c; } /* Orange */
+
+.features-grid {
+  margin: 0.7em auto 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5em 1.5em;
+  width: 92vw;
+  max-width: 1700px;
+  justify-content: center;
+  align-items: stretch;
+}
+.feature-card {
+  background: var(--feature-bg);
+  color: var(--text);
+  border-radius: 1.15em;
+  box-shadow: var(--pill-shadow);
+  border: 2.3px solid var(--pill-border);
+  display: flex;
+  align-items: center;
+  gap: 0.70em;
+  font-weight: 700;
+  font-size: 1.13em;
+  padding: 1.4em 0.7em 1.3em 1.3em;
+  min-width: 0;
+  min-height: 86px;
+  max-width: 340px;
+  flex-shrink: 1;
+  cursor: pointer;
+  transition: box-shadow 0.18s, background 0.16s, border 0.13s, color 0.15s, transform 0.18s;
+  position: relative;
+  outline: none;
+  z-index: 10;
+}
+.feature-card[data-cat="connect"] { border-left: 5px solid #0078D4; }
+.feature-card[data-cat="transform"]  { border-left: 5px solid #8E44AD; }
+.feature-card[data-cat="integrate"] { border-left: 5px solid #e85d1c; }
+.feature-card:hover,
+.feature-card:focus {
+  background: #e0f2fa;
+  color: var(--primary);
+  border-color: var(--pill-border-hover);
+  box-shadow: 0 4px 16px #0078d445;
+  transform: scale(1.035) translateY(-7px);
+  z-index: 11; /* Ensure hovered card is on top */
+}
+.feature-card .card-icon {
+  width: 1.55em; height: 1.55em;
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-right: 0.32em;
+  filter: drop-shadow(0 2.5px 6px #0078d412);
+}
+.feature-card .card-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.18s, visibility 0.18s;
+  position: absolute;
+  bottom: 110%; /* Position above the card */
+  left: 50%;
+  transform: translateX(-50%); /* Center the tooltip */
+  z-index: 9999; /* High z-index to be on top */
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
+  font-size: 0.9em;
+  padding: 0.5em 0.9em;
+  border-radius: 0.7em;
+  box-shadow: 0 4px 15px #0078d44a;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.feature-card:hover .card-tooltip,
+.feature-card:focus .card-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+.footer-note {
+  text-align: center;
+  margin: 1em 0 0.7em 0;
+  color: var(--primary);
+  font-size: 1.04em;
+  opacity: 0.91;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  max-width: 900px;
+  margin-top: 50px;
+}
+
+/* Responsive Design */
+@media (max-width: 1500px) {
+  .features-grid { grid-template-columns: repeat(4, 1fr);}
+}
+@media (max-width: 1200px) {
+  .features-grid { grid-template-columns: repeat(3, 1fr);}
+  .flow-step, .flow-step.hero { min-width: 140px; max-width: 220px;}
+  h1 { font-size: 2em;}
+}
+@media (max-width: 900px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr);}
+  .flow-row { gap: 3vw;}
+  .flow-step, .flow-step.hero { min-width: 120px; max-width: 160px;}
+  h1 { font-size: 1.2em;}
+  .lakehouse-header { margin-top: 18px;}
+}
+@media (max-width: 650px) {
+  .features-grid { grid-template-columns: 1fr;}
+  .flow-row { flex-direction: column; gap: 1em;}
+  .arrow-container { transform: rotate(90deg); margin: -10px 0;}
+  .flow-step, .flow-step.hero { width: 98vw; min-width: 95vw; max-width: 99vw;}
+  h1 { font-size: 1.05em;}
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="lakehouse-topicon">
+      <img src="/static/images/fabric/dataflow.png" alt="Dataflow Gen 2 Icon">
+    </div>
+    <header class="lakehouse-header">
+      <h1>Dataflow Gen 2 in Microsoft Fabric</h1>
+      <div class="tagline">Powerful, low-code data preparation at enterprise scale.</div>
+    </header>
+
+    <div class="flow-row">
+      <div class="flow-step" tabindex="0">
+        <div class="step-icon" id="icon-connect"></div>
+        <div class="step-title">Connect</div>
+        <div class="step-desc">Cloud & On-Prem Sources</div>
+      </div>
+
+      <div class="arrow-container">
+          <div class="flow-dot"></div>
+          <svg class="arrow-flow" viewBox="0 0 100 40">
+            <line x1="10" y1="20" x2="90" y2="20" stroke="#0078d4" stroke-width="4" marker-end="url(#arrowhead)"/>
+            <defs>
+              <marker id="arrowhead" markerWidth="12" markerHeight="13" refX="12" refY="6.5" orient="auto">
+                <polygon points="0 0, 12 6.5, 0 13" fill="#0078d4"/>
+              </marker>
+            </defs>
+          </svg>
+      </div>
+
+      <div class="flow-step hero" tabindex="0">
+        <div class="step-icon" id="icon-transform"></div>
+        <div class="step-title">Transform</div>
+        <div class="step-desc">Power Query Engine</div>
+      </div>
+
+      <div class="arrow-container">
+          <div class="flow-dot"></div>
+           <svg class="arrow-flow" viewBox="0 0 100 40">
+            <line x1="10" y1="20" x2="90" y2="20" stroke="#0078d4" stroke-width="4" marker-end="url(#arrowhead)"/>
+          </svg>
+      </div>
+
+      <div class="flow-step" tabindex="0">
+        <div class="step-icon" id="icon-load"></div>
+        <div class="step-title">Load</div>
+        <div class="step-desc">Lakehouse, Warehouse & More</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><span class="dot connect"></span> Connectivity</span>
+      <span><span class="dot transform"></span> Transformation</span>
+      <span><span class="dot integrate"></span> Integration & Scale</span>
+    </div>
+
+    <div class="features-grid">
+      <a class="feature-card" data-cat="connect" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-connectors"></span>
+        150+ Out-of-the-Box Connectors
+        <span class="card-tooltip">From SaaS to on-prem databases, get data from anywhere.</span>
+      </a>
+      <a class="feature-card" data-cat="connect" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-getdata"></span>
+        Familiar 'Get Data' UX
+        <span class="card-tooltip">The same intuitive Power Platform experience you already know.</span>
+      </a>
+       <a class="feature-card" data-cat="transform" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-pq"></span>
+        Low-Code Power Query UI
+        <span class="card-tooltip">Visually build complex data wrangling steps with over 300 transformations.</span>
+      </a>
+      <a class="feature-card" data-cat="transform" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-ai"></span>
+        AI-Powered Transformations
+        <span class="card-tooltip">Leverage AI for tasks like fuzzy matching and data profiling.</span>
+      </a>
+      <a class="feature-card" data-cat="integrate" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-scale"></span>
+        High-Scale Compute Engine
+        <span class="card-tooltip">Go beyond memory limits for heavy-duty data preparation jobs.</span>
+      </a>
+      <a class="feature-card" data-cat="integrate" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-destination"></span>
+        Write to Any Destination
+        <span class="card-tooltip">Load clean data directly to Lakehouses, Warehouses, and more.</span>
+      </a>
+      <a class="feature-card" data-cat="integrate" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-pipeline"></span>
+        Native Pipeline Integration
+        <span class="card-tooltip">Orchestrate and schedule your dataflows as part of a larger process.</span>
+      </a>
+       <a class="feature-card" data-cat="transform" tabindex="0" href="#" onclick="return false;">
+        <span class="card-icon" id="icon-directquery"></span>
+        DirectQuery for Mashups
+        <span class="card-tooltip">Query other Fabric items directly without importing data first.</span>
+      </a>
+    </div>
+   <div class="footer-note">
+      Ingest and transform data from any source, and load it anywhere in Fabric with a scalable, low-code experience.
+    </div>
+  </div>
+  <script>
+    // --- Icon Loading ---
+    function setupIcons() {
+        lucide.createIcons({
+            icons: {
+                "plug-zap": lucide.PlugZap, "wand-2": lucide.Wand2, "database-zap": lucide.DatabaseZap,
+                "link": lucide.Link, "puzzle": lucide.Puzzle, "sparkles": lucide.Sparkles,
+                "rocket": lucide.Rocket, "container": lucide.Container, "workflow": lucide.Workflow,
+                "git-merge": lucide.GitMerge
+            }
+        });
+
+        function icon(elemId, lucideIcon, color, size = 64) {
+            const elem = document.getElementById(elemId);
+            if (elem) {
+                elem.innerHTML = "";
+                elem.appendChild(lucide.createElement(lucide.icons[lucideIcon], { color, size }));
+            }
+        }
+
+        // Render all icons
+        icon('icon-connect', "PlugZap", "#0078d4", 80);
+        icon('icon-transform', "Wand2", "#0078d4", 92);
+        icon('icon-load', "DatabaseZap", "#0078d4", 80);
+        icon('icon-connectors', "Link", "#0078D4", 70);
+        icon('icon-getdata', "Puzzle", "#0078D4", 70);
+        icon('icon-pq', "Wand2", "#8E44AD", 70);
+        icon('icon-ai', "Sparkles", "#8E44AD", 70);
+        icon('icon-scale', "Rocket", "#e85d1c", 70);
+        icon('icon-destination', "Container", "#e85d1c", 70);
+        icon('icon-pipeline', "Workflow", "#e85d1c", 70);
+        icon('icon-directquery', "GitMerge", "#8E44AD", 70);
+    }
+
+    // --- Animations ---
+    function setupAnimations() {
+        // Animate the flowing dots in the arrows
+        gsap.to(".flow-dot", {
+            x: 50, // Move to the end of the container
+            duration: 2.5,
+            ease: "power1.inOut",
+            repeat: -1,
+            repeatDelay: 0.8,
+            stagger: {
+                each: 1.5, // Start the next dot animation after a delay
+                from: "start"
+            },
+            // Fade in at the start, fade out at the end
+            keyframes: [
+                { opacity: 1, offset: 0.1 },
+                { opacity: 1, offset: 0.9 },
+                { opacity: 0, offset: 1 }
+            ]
+        });
+
+        // Master timeline for entrance animations
+        const tl = gsap.timeline({delay: 0.2});
+        tl.from(".lakehouse-topicon", {opacity: 0, scale: 0.5, y: -50, ease: "back.out(1.7)", duration: 0.6})
+          .from(".lakehouse-header h1, .lakehouse-header .tagline", {opacity: 0, y: 30, stagger: 0.15, ease: "power2.out", duration: 0.7}, "-=0.3")
+          .from(".flow-step", {opacity:0, y:50, scale:0.9, stagger:0.2, duration:0.7, ease:"back.out(1.6)"}, "-=0.4")
+          .from(".arrow-container", {opacity: 0, scale: 0.5, stagger: 0.2, duration: 0.5, ease: "power2.out"}, "<")
+          .from(".legend", {opacity: 0, y: 30, duration: 0.5, ease: "power2.out"}, "-=0.5")
+          .from(".feature-card", {opacity:0, y:40, stagger:0.07, duration:0.6, ease:"back.out(1.4)"}, "-=0.3")
+          .from(".footer-note", {opacity: 0, y: 20, duration: 0.6, ease: "power2.out"}, "-=0.4");
+    }
+
+    // --- Main Execution ---
+    document.addEventListener("DOMContentLoaded", () => {
+        setupIcons();
+        setupAnimations();
+    });
+
+  </script>
+</body>
+</html>

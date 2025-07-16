@@ -2,25 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Microsoft Fabric – Slide 4</title>
+  <title>Microsoft Fabric - Dynamic Universe</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    body {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;background:#f9fcff;}
-    .blobs-bg {position:fixed;width:100vw;height:100vh;left:0;top:0;z-index:0;}
-    .blob {position:absolute;border-radius:50%;opacity:.18;background:#6decd9;filter:blur(40px);}
-    .blob:nth-child(1){width:370px;height:320px;left:13vw;top:9vh;}
-    .blob:nth-child(2){width:220px;height:160px;left:65vw;top:7vh;background:#f6b3ff;}
-    .blob:nth-child(3){width:150px;height:160px;left:8vw;top:62vh;background:#b9e9ff;}
-    .blob:nth-child(4){width:280px;height:200px;left:61vw;top:65vh;background:#ffefd7;}
-    .slides-container{width:100vw;min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
-    .universe-section {width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;position:relative;}
-    .universe-title {font-size:clamp(2.6rem,4vw,3.6rem);font-weight:900;color:#20334c;margin-top:7vh;margin-bottom:3vh;text-align:center;letter-spacing:-0.02em;}
-    .universe-canvas {position:relative;width:88vw;max-width:1550px;height:67vh;min-height:430px;margin:0 auto;}
-    .universe-icon {position:absolute;transition:transform 0.27s cubic-bezier(.4,1.6,.5,1.0),box-shadow 0.21s,filter 0.21s,opacity 0.31s;opacity:0.82;filter:drop-shadow(0 4px 18px #c3f4f7);border-radius:20%;background:rgba(255,255,255,0.72);z-index:2;pointer-events:auto;box-shadow:0 8px 22px 0 rgba(64,210,200,0.11);width:82px;height:82px;}
-    .universe-icon.floater {animation:iconFloat 6.7s infinite alternate;}
-    .universe-icon:hover, .universe-icon:focus {opacity:1 !important;transform:scale(1.17) rotate(-10deg) !important;z-index:10;filter:drop-shadow(0 8px 34px #71fff7) brightness(1.07);}
-    .icon-main {left:50.5%;top:46%;width:112px;height:112px;opacity:1;z-index:9;transform:translate(-50%, -50%) scale(1.18) rotate(1deg);box-shadow:0 0 34px 0 #a5ffe2cc;}
-    /* Scattered icon positions (expand for more as needed!) */
+    body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f0f7ff;
+        overflow: hidden;
+    }
+
+    .svg-bg {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        z-index: 0;
+    }
+
+    .slides-container {
+        width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .universe-section {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+    }
+
+    .universe-title {
+        font-size: clamp(2.8rem, 4.5vw, 4rem);
+        font-weight: 900;
+        color: #1a2b4c;
+        margin-top: 8vh;
+        margin-bottom: 4vh;
+        text-align: center;
+        letter-spacing: -0.03em;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .universe-canvas {
+        position: relative;
+        width: 90vw;
+        max-width: 1600px;
+        height: 70vh;
+        min-height: 450px;
+        margin: 0 auto;
+    }
+
+    .universe-icon {
+        position: absolute;
+        transition: transform 0.3s cubic-bezier(0.2, 1.5, 0.4, 1), box-shadow 0.2s, filter 0.2s, opacity 0.3s;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 22%;
+        z-index: 2;
+        cursor: pointer;
+        box-shadow: 0 10px 25px 0 rgba(0, 180, 200, 0.15);
+        filter: drop-shadow(0 5px 15px rgba(0, 200, 220, 0.1));
+        width: 82px;
+        height: 82px;
+        visibility: hidden;
+    }
+
+    .universe-icon:hover,
+    .universe-icon:focus {
+        opacity: 1 !important;
+        transform: scale(1.2) rotate(-8deg) !important;
+        z-index: 10;
+        filter: drop-shadow(0 15px 40px rgba(0, 220, 255, 0.6)) brightness(1.1);
+        box-shadow: 0 15px 35px 0 rgba(0, 180, 200, 0.25);
+    }
+
+    .icon-main {
+        left: 50.5%;
+        top: 48%;
+        width: 115px;
+        height: 115px;
+        z-index: 9;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 40px 0 rgba(100, 255, 230, 0.8);
+        visibility: hidden;
+    }
+
     .icon1  {left:12%;  top:28%; width:70px; height:70px;}
     .icon2  {left:27%;  top:6%;  width:78px; height:78px;}
     .icon3  {left:66%;  top:11%; width:82px; height:82px;}
@@ -51,59 +131,88 @@
     .icon28 {left:41%;  top:74%; width:58px; height:58px; opacity:.60;}
     .icon29 {left:88%;  top:17%; width:56px; height:56px; opacity:.54;}
     .icon30 {left:30%;  top:91%; width:48px; height:48px; opacity:.48;}
-    @keyframes iconFloat {0%{transform:translateY(0) scale(1) rotate(-4deg);}100%{transform:translateY(-20px) scale(1.06) rotate(7deg);}}
-    @media (max-width: 900px) {.universe-canvas {width:98vw;min-height:220px;}.universe-icon {width:43px;height:43px;}.icon-main{width:63px;height:63px;}}
+
     .demo-canvas-next {
-      position: absolute;
-      top: 2.3vh;
-      font-size: 1.08rem;
-      font-weight: 600;
-      background: linear-gradient(90deg, #17d6ba, #56c7ee);
-      color: white;
-      padding: 0.46em 1.5em;
-      border: none;
-      border-radius: 1.3em;
-      cursor: pointer;
-      box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
-      opacity: 0;
-      transform: translateY(-10px);
-      letter-spacing: 0.03em;
-      z-index: 10;
-      transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
+        position: absolute;
+        top: 3vh;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: linear-gradient(95deg, #10c6a8, #4ab5e0);
+        color: white;
+        padding: 0.5em 1.6em;
+        border: none;
+        border-radius: 1.5em;
+        cursor: pointer;
+        box-shadow: 0 4px 15px 0 rgba(0, 200, 180, 0.2);
+        letter-spacing: 0.04em;
+        z-index: 10;
+        transition: all 0.2s ease-in-out;
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    .demo-canvas-next.prev { left: 2.7vw; }
-    .demo-canvas-next.next { right: 2.7vw; }
-    .demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
-    .slide-indicator.demo {
-      text-align:center;
-      font-weight:bold;
-      font-size: 1.35rem;
-      color: #2c9ca6;
-      opacity: 0.90;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 2.2vh;
+    .demo-canvas-next.prev { left: 3vw; }
+    .demo-canvas-next.next { right: 3vw; }
+    .demo-canvas-next:hover {
+        filter: brightness(1.15);
+        transform: translateY(-23px) scale(1.05);
+        box-shadow: 0 8px 25px 0 rgba(0, 200, 180, 0.3);
     }
+
+.fabric-glow {
+  box-shadow:
+    0 0 0 4px #fff,                   /* subtle white inner border for pop */
+    0 0 18px 4px #12e7f6,             /* bright outer glow */
+    0 0 40px 9px #29b6f6;             /* soft blue far glow */
+  border: 3px solid #00d1ff;
+  transition: box-shadow 0.2s, border 0.2s;
+  z-index: 100 !important;
+}
+
+    @media (max-width: 900px) {.universe-canvas {width:98vw;min-height:220px;}.universe-icon {width:43px;height:43px;}.icon-main{width:63px;height:63px;}}
   </style>
 </head>
 <body>
-  <div class="blobs-bg">
-    <div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
-  </div>
+
+  <svg class="svg-bg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 100 100">
+      <defs>
+          <radialGradient id="Gradient1" cx="50%" cy="50%" fx="10%" fy="50%" r=".5">
+              <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite" />
+              <stop offset="0%" stop-color="#89f7fe" />
+              <stop offset="100%" stop-color="#89f7fe00" />
+          </radialGradient>
+          <radialGradient id="Gradient2" cx="50%" cy="50%" fx="10%" fy="50%" r=".5">
+              <animate attributeName="fx" dur="23.5s" values="-3%;3%;-3%" repeatCount="indefinite" />
+              <stop offset="0%" stop-color="#a6c1ee" />
+              <stop offset="100%" stop-color="#a6c1ee00" />
+          </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="100%" height="100%" fill="url(#Gradient1)">
+          <animate attributeName="x" dur="20s" values="0%;-25%;0%" repeatCount="indefinite" />
+          <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite" />
+          <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="100s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="0" width="100%" height="100%" fill="url(#Gradient2)">
+          <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite" />
+          <animate attributeName="y" dur="24s" values="25%;0%;25%" repeatCount="indefinite" />
+          <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="120s" repeatCount="indefinite" />
+      </rect>
+  </svg>
+
   <div class="slides-container">
     <section class="slide active" id="slide-4">
-      <!-- Top nav small buttons -->
       <button class="demo-canvas-next prev" onclick="location.href='/present/slide-3'">‹ Prev</button>
       <button class="demo-canvas-next next" onclick="location.href='/present/slide-5'">Next ›</button>
       <div class="universe-section">
         <div class="universe-title">The Universe of Microsoft Fabric</div>
+          <button id="highlight-fabric-stack"
+          style="position: absolute; right: 4vw; top: 7vh; z-index: 20; font-size: 1.08rem; font-weight: 600; background:linear-gradient(90deg,#173b62,#27d6cb);color:white;padding:0.5em 2.1em;border:none;border-radius:1.5em;box-shadow:0 3px 13px 0 rgba(0,180,200,0.13);letter-spacing:0.04em;cursor:pointer;transition:all 0.15s;">
+          Core Tools
+        </button>
         <div class="universe-canvas">
-          <!-- Your icons (as before) -->
           <img src="/static/images/fabric/fabric.png"           class="universe-icon icon-main" alt="Fabric">
           <img src="/static/images/fabric/copilot.png"          class="universe-icon icon1" alt="Copilot">
           <img src="/static/images/fabric/dashboard.png"        class="universe-icon icon2" alt="Dashboard">
-          <img src="/static/images/fabric/lakehouse.png"        class="universe-icon icon3" alt="Lakehouse">
+          <img src="/static/images/fabric/1_lakehouse.png"        class="universe-icon icon3" alt="Lakehouse">
           <img src="/static/images/fabric/data_warehouse.png"   class="universe-icon icon4" alt="Data Warehouse">
           <img src="/static/images/fabric/notebook.png"         class="universe-icon icon5" alt="Notebook">
           <img src="/static/images/fabric/dataflow.png"         class="universe-icon icon6" alt="Dataflow">
@@ -130,95 +239,103 @@
           <img src="/static/images/fabric/event_house.png"      class="universe-icon icon27" alt="Event House">
           <img src="/static/images/fabric/datamart.png"         class="universe-icon icon28" alt="Datamart">
           <img src="/static/images/fabric/copy_job.png"         class="universe-icon icon29" alt="Copy Job">
-          <img src="/static/images/fabric/mirrored_generic_database.png" class="universe-icon icon30" alt="Mirrored DB">
+          <img src="/static/images/fabric/pipeline.png" class="universe-icon icon30" alt="Pipeline">
         </div>
-        <div class="slide-indicator demo">4 / 6</div>
       </div>
     </section>
   </div>
   <script>
-    // Animate in navigation buttons
-    gsap.to(".demo-canvas-next", {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.18,
-      delay: 1.2,
-      ease: "power2.out"
+    document.addEventListener('DOMContentLoaded', () => {
+
+        gsap.to(".universe-title", { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power3.out" });
+        gsap.to(".demo-canvas-next", { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, delay: 1.2, ease: "power3.out" });
+
+        const icons = document.querySelectorAll('.universe-icon');
+        const mainIcon = document.querySelector('.icon-main');
+
+        // ✨ NEW: Function to add a continuous floating animation
+        function addContinuousAnimation(element) {
+            gsap.to(element, {
+                y: `+=${gsap.utils.random(5, 12)}`, // Move up and down by a random amount
+                x: `+=${gsap.utils.random(-8, 8)}`, // Move left and right by a random amount
+                rotation: `+=${gsap.utils.random(-5, 5)}`, // Slightly rotate
+                duration: gsap.utils.random(3, 5), // Random duration for each cycle
+                ease: "sine.inOut",
+                repeat: -1, // Loop forever
+                yoyo: true // Animate back and forth smoothly
+            });
+        }
+
+        function animateUniverseIcons() {
+            // Animate the main icon
+            gsap.fromTo(mainIcon,
+                { scale: 0.3, rotation: -180, autoAlpha: 0 },
+                {
+                    scale: 1,
+                    rotation: 0,
+                    autoAlpha: 1,
+                    duration: 1.2,
+                    delay: 0.5,
+                    ease: "power3.inOut",
+                    onComplete: () => addContinuousAnimation(mainIcon) // ✨ NEW: Start floating after entrance
+                }
+            );
+
+            // Animate the surrounding icons
+            icons.forEach((icon, i) => {
+                if (icon === mainIcon) return; // Skip the main icon, it's already handled
+
+                gsap.fromTo(icon,
+                    { // FROM
+                        x: (mainIcon.offsetLeft - icon.offsetLeft) + (Math.random() - 0.5) * 60,
+                        y: (mainIcon.offsetTop - icon.offsetTop) + (Math.random() - 0.5) * 60,
+                        scale: 0.1,
+                        rotation: gsap.utils.random(-270, 270),
+                        autoAlpha: 0,
+                    },
+                    { // TO
+                        x: 0,
+                        y: 0,
+                        scale: 1,
+                        rotation: 0,
+                        autoAlpha: 1,
+                        duration: 1.6,
+                        delay: 0.8 + i * 0.03,
+                        ease: "elastic.out(1, 0.75)",
+                        onComplete: () => addContinuousAnimation(icon) // ✨ NEW: Start floating after entrance
+                    }
+                );
+            });
+        }
+
+        animateUniverseIcons();
     });
 
-    // Animate in the universe title
-    gsap.from(".universe-title", {
-      y: -40,
-      opacity: 0,
-      duration: 0.7,
-      delay: 0.5,
-      ease: "power3.out"
-    });
+const highlightIcons = [
+  ".icon3",  // Lakehouse
+  ".icon5",  // Notebook
+  ".icon6",  // Dataflow
+  ".icon30", // Pipeline
+  ".icon7",  // Function Set (Data function)
+  ".icon11"  // SQL Database
+];
 
-    // Animate the icons scattering from the center outwards
-    function getIconOriginalPos(img) {
-      // Get the left and top from computed styles as % or px, return pixel positions relative to .universe-canvas
-      const style = window.getComputedStyle(img);
-      let left = style.left, top = style.top;
-      let leftPx = 0, topPx = 0;
+let highlighted = false;
 
-      // Get container size
-      const parent = img.parentElement;
-      const pw = parent.offsetWidth, ph = parent.offsetHeight;
-
-      if (left.includes('%')) leftPx = parseFloat(left)/100 * pw;
-      else leftPx = parseFloat(left);
-
-      if (top.includes('%')) topPx = parseFloat(top)/100 * ph;
-      else topPx = parseFloat(top);
-
-      return {left: leftPx, top: topPx};
+document.getElementById('highlight-fabric-stack').onclick = function() {
+  highlighted = !highlighted;
+  highlightIcons.forEach(selector => {
+    const el = document.querySelector(selector);
+    if (!el) return;
+    if (highlighted) {
+      el.classList.add('fabric-glow');
+    } else {
+      el.classList.remove('fabric-glow');
     }
-
-    function animateUniverseIcons() {
-      const icons = Array.from(document.querySelectorAll('.universe-icon'));
-      const canvas = document.querySelector('.universe-canvas');
-      const cx = canvas.offsetWidth / 2;
-      const cy = canvas.offsetHeight / 2;
-
-      // Set all icons to center first and opacity 0
-      icons.forEach(icon => {
-        const {left, top} = getIconOriginalPos(icon);
-        icon.setAttribute('data-orig-left', left);
-        icon.setAttribute('data-orig-top', top);
-
-        icon.style.left = `${cx}px`;
-        icon.style.top = `${cy}px`;
-        icon.style.opacity = 0;
-      });
-
-      // Animate them out to their universe spots
-      setTimeout(() => {
-        icons.forEach((icon, i) => {
-          // Remove any floating class to prevent double animation
-          icon.classList.remove('floater');
-          const origLeft = icon.getAttribute('data-orig-left');
-          const origTop = icon.getAttribute('data-orig-top');
-          gsap.to(icon, {
-            left: `${origLeft}px`,
-            top: `${origTop}px`,
-            opacity: 0.84,
-            scale: 1.08,
-            duration: 1.2 + 0.04 * i,
-            delay: 0.2 + 0.017 * i,
-            ease: "expo.out",
-            onComplete: () => {
-              icon.classList.add('floater'); // re-activate float after anim
-              gsap.to(icon, {scale: 1, duration: 0.32, ease: "elastic.out(1,0.75)"});
-            }
-          });
-        });
-      }, 250);
-    }
-
-    window.addEventListener('DOMContentLoaded', animateUniverseIcons);
-
+  });
+  // Optional: Change button text to indicate toggle state
+  this.textContent = highlighted ? "Unhighlight Core Tools" : "Highlight Core Tools";
+};
   </script>
 </body>
 </html>

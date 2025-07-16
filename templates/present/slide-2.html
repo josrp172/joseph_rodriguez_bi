@@ -2,256 +2,612 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Microsoft Fabric – Slide 2</title>
+  <title>Microsoft Fabric – Today's Agenda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
-    body {
-      margin: 0; padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #eafcfb;
+    :root {
+      --clr-bg: #f7fbfc;
+      --clr-card: #fff;
+      --clr-txt1: #156671;
+      --clr-txt2: #285264;
+      --clr-border: #e2e8f0;
+      --clr-accent-g: #25e9ae;
+      --clr-accent-b: #1db3c9;
+      --clr-accent-y: #f5a623;
+      --clr-card1: #e8fbf5;
+      --clr-card2: #eaf5fa;
+      --clr-card3: #fef8ed;
+      --clr-shadow1: rgba(37,233,174,0.18);
+      --clr-shadow2: rgba(29,179,201,0.13);
+      --clr-shadow3: rgba(245,166,35,0.14);
+      --clr-glow1: rgba(37, 233, 174, 0.23);
+      --clr-glow2: rgba(29, 179, 201, 0.19);
+      --clr-glow3: rgba(245, 166, 35, 0.21);
+
+      --radius: 20px;
+      --card-gap: 2.6rem;
+      --card-pad: 2.3em;
+      --shadow-size: 0 7px 42px;
+      --shadow-layer: 0 2px 16px;
+      --svg-stroke: 6;
+      --nav-pad: 0.65em 2.2em;
+      --nav-radius: 3em;
+      --nav-shadow: 0 4px 14px 0 rgba(24,233,214,0.12);
+      --anim-fast: .28s;
+      --anim-mid: .45s;
+      --anim-slow: .7s;
+    }
+
+    html, body {
+      width: 100vw; height: 100vh; margin: 0; padding: 0;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: var(--clr-bg);
       overflow: hidden;
+      color: var(--clr-txt1);
+      box-sizing: border-box;
+      transition: background .4s, color .4s;
     }
-    .blobs-bg {
-      position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; z-index: 0;
+    .slides-container {
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
     }
-    .blob { position: absolute; border-radius: 50%; opacity: .16; background: #6decd9; filter: blur(40px);}
-    .blob:nth-child(1){width: 340px; height: 320px; left: 10vw; top: 8vh;}
-    .blob:nth-child(2){width: 210px; height: 140px; left: 63vw; top: 6vh; background: #f6b3ff;}
-    .blob:nth-child(3){width: 160px; height: 160px; left: 8vw; top: 70vh; background: #b9e9ff;}
-    .blob:nth-child(4){width: 240px; height: 180px; left: 62vw; top: 68vh; background: #ffefd7;}
-    .slides-container { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
     .agenda-canvas {
       width: 100vw; height: 100vh;
-      padding: 0; box-sizing: border-box;
+      padding: 4vh 2vw;
+      box-sizing: border-box;
       display: flex; flex-direction: column;
       justify-content: flex-start; align-items: center;
       position: relative;
+      z-index: 2;
+      overflow: visible;
     }
-    .agenda-title span {
-      font-size: 4.2rem; font-weight: 900;
-      color: #184952; margin-bottom: 0.13em; letter-spacing: -1.5px; display: block; text-align: center;
-      text-shadow: 0 2px 12px #b4f0ec3c;
+    .bg-parallax-glow {
+      position: absolute; inset:0; z-index:0;
+      pointer-events:none;
+      will-change: transform, opacity;
     }
-    .agenda-theme,
-    .agenda-subtheme {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #229c95;
-      margin-bottom: 0.2em;
-      text-align: center;
+    .particles-layer {
+      position: absolute; inset:0; z-index:1;
+      pointer-events:none;
+      will-change: opacity;
+      filter: blur(0.5px) brightness(1.1);
+      opacity:.26;
+    }
+
+    .agenda-header { text-align: center; margin-bottom: 4.5vh; z-index: 2; position:relative; }
+    .agenda-header .title {
+      font-size: 3.6rem; font-weight: 900;
+      color: var(--clr-txt1);
+      margin-bottom: 0.13em;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      transition: color .4s;
+      text-shadow: 0 4px 16px rgba(40,200,183,0.10);
+    }
+    .agenda-header .subtitle {
+      font-size: 1.4rem; font-weight: 500;
+      color: var(--clr-txt2);
       letter-spacing: -0.5px;
+      transition: color .4s;
+      margin-bottom: 0.3em;
     }
-    .agenda-theme b, .agenda-subtheme b { color: #174a5b; }
+
+    /* ---- Cards layout ---- */
     .agenda-roadmap {
-      width: 88vw;
-      max-width: 1720px;
+      width: 95vw; max-width: 1600px;
       display: flex; flex-direction: row; justify-content: center; align-items: stretch;
-      gap: 2vw; margin: 4vh auto 0 auto;
-      flex: 1;
+      gap: var(--card-gap);
+      transition: gap .4s;
     }
-    .agenda-act {
+    .card-wrapper {
+      position: relative;
       flex: 1 1 0;
-      max-width: 480px; min-width: 330px;
-      background: white;
-      padding: 2.6em 2.2em 2.4em 2.2em;
-      border-radius: 2.5em;
-      box-shadow: 0 8px 48px 0 rgba(0,0,0,0.08), 0 1.5px 32px #66ebd311;
+      max-width: 440px; min-width: 260px;
       display: flex; flex-direction: column; align-items: center;
-      opacity: 0; transform: translateY(60px) scale(0.98);
-      cursor: pointer;
-      transition: box-shadow 0.16s, transform 0.16s;
+      z-index: 2;
+      min-height: 320px;
+      transition: filter .3s, transform .2s;
+      will-change: filter, transform, opacity;
     }
-    .agenda-dot {
-      width: 76px; height: 76px;
-      margin-bottom: 1.4em;
-      border-radius: 2em;
-      background: #48ffc7;
-      box-shadow: 0 3px 22px #3ad0b222;
+    .card-glow {
+      pointer-events: none;
+      position: absolute; inset: -15px 0 0 -15px; left: 0; top: 0; right: 0; bottom: 0;
+      width: calc(100% + 30px); height: calc(100% + 30px);
+      z-index: 0;
+      border-radius: 36px;
+      opacity: 0.82;
+      filter: blur(18px);
+      transition: opacity .18s;
+    }
+    .wrapper-1 .card-glow { background: var(--clr-glow1); }
+    .wrapper-2 .card-glow { background: var(--clr-glow2); }
+    .wrapper-3 .card-glow { background: var(--clr-glow3); }
+
+    .agenda-act {
+      width: 100%; min-height: 320px;
+      background: var(--clr-card);
+      padding: var(--card-pad);
+      border-radius: var(--radius);
+      border: 1.2px solid var(--clr-border);
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; z-index: 2;
+      box-shadow:
+        var(--shadow-size) var(--clr-shadow1),
+        var(--shadow-layer) var(--clr-shadow2),
+        var(--shadow-layer) var(--clr-shadow3);
+      transition: box-shadow .28s, background .38s, border-color .38s;
+      will-change: filter, box-shadow, background, border-color;
+      outline: none;
+    }
+    .wrapper-1 .agenda-act { box-shadow: var(--shadow-size) var(--clr-shadow1); }
+    .wrapper-2 .agenda-act { box-shadow: var(--shadow-size) var(--clr-shadow2); }
+    .wrapper-3 .agenda-act { box-shadow: var(--shadow-size) var(--clr-shadow3); }
+    .agenda-act:focus-visible { outline: 3px solid var(--clr-accent-b);}
+    /* -- Arrow paths -- */
+    .roadmap-arrow {
+      flex-shrink: 0;
+      width: 120px; height: 52px;
+      stroke: #aad5e2;
+      stroke-width: 5;
+      stroke-linecap: round;
+      fill: none;
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
+      margin-top: 48px;
+      filter: drop-shadow(0 4px 16px #1db3c980);
+      will-change: stroke-dashoffset, filter;
+    }
+    /* Agenda card contents */
+    .agenda-icon {
+      width: 53px; height: 53px; margin-bottom: 1.3em; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      transition: box-shadow 0.19s, filter 0.17s;
-    }
-    .agenda-dot img {
-      width: 46px; height: 46px; object-fit: contain;
-      filter: drop-shadow(0 3px 18px #65e9e077);
-      transition: filter 0.18s, transform 0.18s;
     }
     .agenda-act-title {
-      font-size: 2.0rem; font-weight: 900; color: #17616c;
-      margin-bottom: 0.6em; letter-spacing: -0.7px; text-align: center;
+      font-size: 1.62rem; font-weight: 700; color: var(--clr-txt1);
+      margin-bottom: 1.05em; text-align: center; letter-spacing: -0.8px;
+      transition: color .4s;
     }
-    .agenda-act-desc ul {
-      margin: 0 0 0.5em 0; padding: 0;
-      list-style: none;
-      font-size: 1.19rem;
-      text-align: left;
-    }
+    .agenda-act-desc ul { margin: 0; padding: 0; list-style: none; width: 100%; }
     .agenda-act-desc li {
-      color: #29727d;
-      line-height: 1.56;
-      margin-bottom: 0.48em;
-      margin-left: 0; position: relative; padding-left: 1.24em;
-      font-size: 1.22rem;
-      font-weight: 500;
-    }
-    .agenda-act-desc li:before {
-      content: '•';
-      position: absolute; left: 0; color: #42b5bc; font-size: 1.32em; top: 0.11em;
-      font-weight: 800;
-    }
-    .agenda-mute {
-      color: #82bfc4;
-      font-size: 1.01rem;
-      font-style: italic;
+      color: var(--clr-txt2);
+      line-height: 1.63;
+      margin-bottom: 1.14em;
+      font-size: 1.08rem;
       font-weight: 400;
-      margin-left: 0.22em;
-      display: block;
+      text-align: left;
+      padding-left: 0.7em;
+      border-left: 4px solid transparent;
+      background: none;
+      border-radius: 5px;
+      transition: background .23s, border-color .23s, color .18s, filter .23s;
+      will-change: transform, color, background, border-color, filter;
+      cursor: pointer;
+      position: relative;
+      outline: none;
     }
-.demo-canvas-next {
-  position: absolute;
-  top: 2.3vh;
-  font-size: 1.08rem;
-  font-weight: 600;
-  background: linear-gradient(90deg, #17d6ba, #56c7ee);
-  color: white;
-  padding: 0.46em 1.5em;
-  border: none;
-  border-radius: 1.3em;
-  cursor: pointer;
-  box-shadow: 0 2px 8px 0 rgba(0, 214, 185, 0.09);
-  opacity: 0;
-  transform: translateY(-10px);
-  letter-spacing: 0.03em;
-  z-index: 10;
-  transition: background 0.13s, filter 0.13s, box-shadow 0.16s, transform 0.16s;
-}
-.demo-canvas-next.prev { left: 2.7vw; }
-.demo-canvas-next.next { right: 2.7vw; }
-.demo-canvas-next:hover { filter: brightness(1.12); background: linear-gradient(90deg, #1ae2b4, #73d7ee);}
+    .agenda-act-desc li:focus-visible {
+      outline: 2px solid var(--clr-accent-b);
+      background: rgba(37,233,174,0.11);
+    }
+    .agenda-act-desc b {
+      font-weight: 700;
+      color: var(--clr-txt1);
+      display: inline-block;
+      margin-right: 0.25em;
+      letter-spacing: -0.2px;
+      transition: color .35s;
+    }
+    .agenda-act-desc .word {
+      display: inline-block;
+      white-space: pre;
+      transition: color .18s, filter .18s;
+    }
+    /* --- Micro-interactions --- */
+    .card-wrapper.dimmed, .agenda-act-desc li.dimmed { opacity: 0.41 !important; filter: grayscale(0.15) blur(0.3px);}
+    .card-wrapper.active, .agenda-act-desc li.active {
+      z-index:3;
+      opacity:1 !important;
+      filter: none;
+      transition: filter var(--anim-fast), opacity var(--anim-fast);
+    }
+    .card-wrapper.active .agenda-act { box-shadow: 0 8px 46px 0 var(--clr-shadow2), 0 2px 22px 0 var(--clr-shadow3); }
+    .card-wrapper:not(.active) .agenda-act { filter: blur(0.5px) brightness(0.98);}
+    .agenda-act-desc li.active {
+      color: var(--clr-accent-b);
+      background: linear-gradient(90deg,rgba(27,236,202,0.07) 0%,rgba(255,255,255,0.0) 100%);
+      border-left: 4px solid var(--clr-accent-b);
+      transform: translateX(5px) scale(1.027);
+      font-weight: 500;
+      box-shadow: 0 2px 6px -2px var(--clr-shadow2);
+    }
+    .agenda-act-desc li .bullet-accent {
+      display: block; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 8px;
+      background: linear-gradient(180deg, var(--clr-accent-b) 0%, var(--clr-accent-g) 100%);
+      opacity: 0; transition: opacity .21s;
+    }
+    .agenda-act-desc li.active .bullet-accent { opacity: 1; }
+    .agenda-act-desc li .word, .agenda-act-desc li b {
+      transition: color .16s, filter .16s;
+    }
+    .agenda-act-desc li.active .word, .agenda-act-desc li.active b {
+      color: var(--clr-accent-b);
+      filter: brightness(1.11) drop-shadow(0 1px 3px var(--clr-shadow2));
+    }
 
-    .slide-indicator {
-      position: absolute; bottom: 2vh; left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #2c9ca6;
-      letter-spacing: 0.03em;
-      opacity: 0.88;
+    /* --- Navigation buttons --- */
+    .nav-button {
+      position: absolute; top: 2.5vh;
+      font-size: 1.08rem; font-weight: 600;
+      background: linear-gradient(90deg, #17d6ba, #56c7ee);
+      color: #fff; letter-spacing: 0.2px;
+      padding: var(--nav-pad);
+      border: none; border-radius: var(--nav-radius); cursor: pointer;
+      box-shadow: var(--nav-shadow);
+      outline: none;
+      transition: filter .19s, box-shadow .18s, background .16s, transform .11s;
+      z-index: 12;
+      min-width: 84px;
+      will-change: filter, transform, background;
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.7em;
     }
-    @media (max-width: 1200px) {
-      .agenda-roadmap { gap: 1vw; }
-      .agenda-act { min-width: 230px; max-width: 340px; }
-      .agenda-title span { font-size: 2.7rem; }
-      .agenda-act-title { font-size: 1.2rem; }
-      .agenda-canvas { padding-top: 4vh; }
+    .nav-button:focus-visible { filter: brightness(1.07); }
+    .nav-button:active { filter: brightness(0.94); transform: scale(0.96) translateY(1.5px);}
+    .nav-button.prev { left: 2vw; }
+    .nav-button.next { right: 2vw; }
+    .slide-indicator {
+      position: absolute; bottom: 3.5vh; left: 50%; transform: translateX(-50%);
+      font-size: 1.11rem; font-weight: 600; color: #a9c0c8;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.64);
+      border-radius: 1.5em;
+      padding: 0.12em 1.5em;
+      z-index: 10;
+      box-shadow: 0 2px 6px 0 rgba(30,190,205,0.06);
+      user-select: none;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 1399px) {
+      .agenda-roadmap { flex-wrap: wrap; gap: 2rem; justify-content: center; }
+      .card-wrapper { min-width: 295px; max-width: 480px; margin-bottom: 2.5rem; }
+      .roadmap-arrow { margin-top: 18px;}
     }
     @media (max-width: 900px) {
-      .agenda-roadmap { flex-direction: column; align-items: stretch; gap: 3vh; width: 98vw;}
-      .agenda-act { width: 95vw; min-width: 0; max-width: 100vw; }
-      .demo-canvas-next { bottom: 2vh; }
+      .agenda-header .title { font-size: 2.4rem;}
+      .agenda-act-title { font-size: 1.18rem;}
+      .card-wrapper { min-width: 230px;}
     }
+    @media (max-width: 799px) {
+      .agenda-roadmap {
+        flex-wrap: nowrap; gap: 0; justify-content: flex-start;
+        width: 98vw; max-width: none; overflow: visible;
+        position: relative;
+      }
+      .card-wrapper {
+        min-width: 95vw; max-width: 98vw;
+        margin: 0; padding: 0 0.5vw;
+        transition: transform .36s cubic-bezier(.64,.1,.23,1.06);
+        position: absolute; left:0; top:0;
+        z-index:2;
+        opacity:0; pointer-events:none;
+      }
+      .card-wrapper.carousel-active {
+        opacity:1; pointer-events:auto;
+        position:relative;
+        transition: opacity .34s, transform .37s;
+        z-index:8;
+      }
+      .roadmap-arrow { display:none; }
+    }
+    .agenda-canvas, .agenda-roadmap {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .agenda-canvas::-webkit-scrollbar, .agenda-roadmap::-webkit-scrollbar { display:none; }
   </style>
 </head>
 <body>
-  <div class="blobs-bg">
-    <div class="blob"></div><div class="blob"></div><div class="blob"></div><div class="blob"></div>
-  </div>
   <div class="slides-container">
-    <section class="slide active" id="slide-2">
+    <section class="slide active" id="slide-2" tabindex="-1" aria-label="Today's Agenda">
       <div class="agenda-canvas">
-        <div class="agenda-title">
-          <span>Today's Journey</span>
-          <div class="agenda-theme">The Journey of Data: <b>From Raw Potential to Intelligent Action</b></div>
-          <div class="agenda-subtheme">Theme: <b>One Lake, One Team, Infinite Possibilities</b></div>
+        <!-- Parallax Glow Layer (SVG) -->
+        <svg class="bg-parallax-glow" width="100%" height="100%" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <radialGradient id="bg-glow-g1" cx="60%" cy="55%" r="0.6">
+              <stop offset="0%" stop-color="#25e9ae" stop-opacity="0.30"/>
+              <stop offset="80%" stop-color="#25e9ae" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="bg-glow-b2" cx="35%" cy="35%" r="0.72">
+              <stop offset="0%" stop-color="#1db3c9" stop-opacity="0.18"/>
+              <stop offset="85%" stop-color="#1db3c9" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="bg-glow-y3" cx="80%" cy="20%" r="0.75">
+              <stop offset="0%" stop-color="#f5a623" stop-opacity="0.17"/>
+              <stop offset="90%" stop-color="#f5a623" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <ellipse id="glow-g" cx="900" cy="470" rx="340" ry="240" fill="url(#bg-glow-g1)"/>
+          <ellipse id="glow-b" cx="410" cy="330" rx="190" ry="155" fill="url(#bg-glow-b2)"/>
+          <ellipse id="glow-y" cx="1350" cy="170" rx="195" ry="90" fill="url(#bg-glow-y3)"/>
+        </svg>
+        <!-- Particle Layer -->
+        <canvas class="particles-layer" width="1600" height="900" aria-hidden="true"></canvas>
+        <header class="agenda-header">
+          <h1 class="title">Today's Agenda</h1>
+          <p class="subtitle">A Quick Tour of Our New Data Platform</p>
+        </header>
+        <div class="agenda-roadmap" aria-label="Agenda Roadmap">
+          <div class="card-wrapper wrapper-1" tabindex="0" aria-label="The Why: Our Challenges and The Solution">
+            <div class="card-glow"></div>
+            <div class="agenda-act" tabindex="-1">
+              <div class="agenda-icon" aria-label="Challenges Icon">
+                <!-- icon svg here -->
+              </div>
+              <h2 class="agenda-act-title">The "Why": Our Challenges &amp; The Solution</h2>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Our Current State:</b> We face slow reports, duplicated data, and logic trapped in PBIX files.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>The Fabric Way:</b> A single, unified workspace to solve these problems.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Key Capabilities:</b> We'll see how OneLake, DirectLake, and Pipelines are game-changers.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <svg class="roadmap-arrow" viewBox="0 0 100 50" aria-hidden="true">
+            <path d="M 5,25 Q 50,0 95,25"></path>
+          </svg>
+
+          <div class="card-wrapper wrapper-2" tabindex="0" aria-label="The How: Roles in the Live Demo">
+            <div class="card-glow"></div>
+            <div class="agenda-act" tabindex="-1">
+              <div class="agenda-icon" aria-label="Roles Icon">
+                <!-- icon svg here -->
+              </div>
+              <h2 class="agenda-act-title">The "How": Roles in the Live Demo</h2>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Engineer:</b> Builds the Lakehouse and data Pipelines.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Scientist:</b> Adds AI predictions using Notebooks.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Analyst:</b> Creates the report and enables data writeback.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Consumer:</b> Uses the final live report for insights.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <svg class="roadmap-arrow" viewBox="0 0 100 50" aria-hidden="true">
+            <path d="M 5,25 Q 50,50 95,25"></path>
+          </svg>
+
+          <div class="card-wrapper wrapper-3" tabindex="0" aria-label="The What's Next: Your Turn">
+            <div class="card-glow"></div>
+            <div class="agenda-act" tabindex="-1">
+              <div class="agenda-icon" aria-label="What's Next Icon">
+                <!-- icon svg here -->
+              </div>
+              <h2 class="agenda-act-title">The "What's Next": Your Turn</h2>
+              <div class="agenda-act-desc">
+                <ul>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>The Payoff:</b> Faster, trusted insights from one source of truth.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Quiz Time!</b> 🤓 Get ready for a fun knowledge check.</li>
+                  <li tabindex="0"><span class="bullet-accent"></span><b>Open Q&amp;A:</b> We'll answer all your questions.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="agenda-roadmap">
-          <div class="agenda-act">
-            <div class="agenda-dot" style="background:#38e6c3;">
-              <img src="/static/images/fabric/lakehouse.png" alt="Overture">
-            </div>
-            <div class="agenda-act-title">Overture</div>
-            <div class="agenda-act-desc">
-              <ul>
-                <li><b>What is Microsoft Fabric?</b><span class="agenda-mute">A high-level look at the platform and the “OneLake” concept.</span></li>
-                <li><b>The Data Maze</b><span class="agenda-mute">Why organizations struggle: silos, complexity, friction.</span></li>
-                <li><b>The Fabric Revolution</b><span class="agenda-mute">How Fabric unifies analytics, storage, and collaboration.</span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="agenda-act">
-            <div class="agenda-dot" style="background:#53aaff;">
-              <img src="/static/images/fabric/dashboard.png" alt="Demo Story">
-            </div>
-            <div class="agenda-act-title">The Demo Story</div>
-            <div class="agenda-act-desc">
-              <ul>
-                <li><b>Meet the Team</b><span class="agenda-mute">Diana (Engineer), Alex (Analyst), Sam (Scientist), Chloe (Consumer)</span></li>
-                <li><b>Engineer’s Journey</b><span class="agenda-mute">Ingest, organize, and transform with Lakehouse, Data Pipelines, Dataflow.</span></li>
-                <li><b>Analyst’s Quest</b><span class="agenda-mute">Model, visualize, and explore with Direct Lake and Power BI.</span></li>
-                <li><b>Scientist’s Leap</b><span class="agenda-mute">ML/AI in Notebooks: build, track, and deploy predictive models with MLflow.</span></li>
-                <li><b>Consumer’s Action</b><span class="agenda-mute">Real-time insights, business impact, and automation.</span></li>
-              </ul>
-            </div>
-          </div>
-          <div class="agenda-act">
-            <div class="agenda-dot" style="background:#fcba44;">
-              <img src="/static/images/fabric/copilot.png" alt="Finale">
-            </div>
-            <div class="agenda-act-title">Finale</div>
-            <div class="agenda-act-desc">
-              <ul>
-                <li><b>Why Fabric Wins</b><span class="agenda-mute">Unified experience, collaboration, speed, AI, and action.</span></li>
-                <li><b>Your Turn to Explore</b><span class="agenda-mute">Start your journey (free trial, docs, QR code, Q&A).</span></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <button class="demo-canvas-next prev" onclick="location.href='/present/slide-1'">Prev</button>
-        <button class="demo-canvas-next next" onclick="location.href='/present/slide-3'">Next</button>
-        <div class="slide-indicator">2 / 6</div>
+
+        <button class="nav-button prev" onclick="location.href='/present/slide-1'" aria-label="Previous slide">⟵ Prev</button>
+        <button class="nav-button next" onclick="location.href='/present/slide-3'" aria-label="Next slide">Next ⟶</button>
       </div>
     </section>
   </div>
   <script>
-    // Animate title and subheadings
-    gsap.from(".agenda-title span", { duration: 1, y: -50, opacity: 0, ease: "power2.out" });
-    gsap.from(".agenda-theme", { duration: 0.7, y: -20, opacity: 0, delay: 0.4 });
-    gsap.from(".agenda-subtheme", { duration: 0.7, y: -18, opacity: 0, delay: 0.6 });
-    // Animate cards entrance
-    gsap.to(".agenda-act", {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      stagger: 0.18,
-      duration: 0.78,
-      ease: "power3.out",
-      delay: 0.7
-    });
-    // Animate buttons
-gsap.to(".demo-canvas-next", {
-  opacity: 1,
-  y: 0,
-  duration: 0.7,
-  stagger: 0.18,
-  delay: 1.15,
-  ease: "power2.out"
-});
+    // Parallax glow and particles as before
+    const glowG = document.getElementById("glow-g"), glowB = document.getElementById("glow-b"), glowY = document.getElementById("glow-y");
+    gsap.to(glowG, { duration: 7, y: -18, x: -14, repeat: -1, yoyo: true, ease: "sine.inOut" });
+    gsap.to(glowB, { duration: 8, y: 26, x: 15, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 2.1 });
+    gsap.to(glowY, { duration: 9.6, y: -11, x: 24, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 });
 
-    // GSAP hover for cards and icons
-    document.querySelectorAll('.agenda-act').forEach(card => {
-      const dot = card.querySelector('.agenda-dot');
-      const img = dot.querySelector('img');
-      card.addEventListener('mouseenter', () => {
-        gsap.to(card, { scale: 1.045, boxShadow: "0 12px 48px #41ffe677, 0 2px 18px #36a1ee22", duration: 0.32, ease: "power2.out" });
-        gsap.to(dot, { boxShadow: "0 4px 44px #13e7c7aa, 0 2px 18px #36a1ee33", duration: 0.26, ease: "power1.out" });
-        gsap.to(img, { filter: "drop-shadow(0 6px 22px #4aeedb) brightness(1.12)", scale: 1.18, duration: 0.23, ease: "power1.out" });
+    // Particles: lightweight drifting upward
+    const canvas = document.querySelector('.particles-layer');
+    function resizeParticlesCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeParticlesCanvas);
+    resizeParticlesCanvas();
+    const ctx = canvas.getContext("2d");
+    const PARTICLE_CT = Math.floor(window.innerWidth / 26);
+    let particles = [];
+    function spawnParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 120,
+        r: Math.random() * 1.7 + 0.4,
+        v: 0.22 + Math.random() * 0.22,
+        o: 0.22 + Math.random() * 0.28
+      };
+    }
+    for (let i = 0; i < PARTICLE_CT; ++i) particles.push(spawnParticle());
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particles) {
+        ctx.globalAlpha = p.o;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, false);
+        ctx.fillStyle = "#b5f9f6";
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        p.y -= p.v;
+        if (p.y < -16) Object.assign(p, spawnParticle());
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+
+    // GSAP entrance and arrow path
+    function entranceTimeline() {
+      const tl = gsap.timeline();
+      tl.from(".agenda-header", { duration: 0.55, y: -35, opacity: 0, ease: "power3.out" })
+        .from(".card-wrapper", { duration: 0.95, y: 54, opacity: 0, stagger: 0.24, ease: "power3.out" }, "-=0.29")
+        .to(".roadmap-arrow", { strokeDashoffset: 0, duration: 0.68, ease: "power2.inOut", stagger: 0.17 }, "-=0.95");
+      return tl;
+    }
+    entranceTimeline();
+
+    // Animate roadmap arrows: pulse every 8s
+    function arrowPulse() {
+      const arrows = gsap.utils.toArray('.roadmap-arrow');
+      setInterval(() => {
+        gsap.fromTo(arrows, { strokeDashoffset: 160 }, { strokeDashoffset: 0, duration: 0.65, ease: "power1.in" });
+      }, 8000);
+    }
+    arrowPulse();
+
+    // Pulsating glow on cards (NEW)
+    const glows = [
+      { selector: ".wrapper-1 .card-glow", color: "var(--clr-glow1)" },
+      { selector: ".wrapper-2 .card-glow", color: "var(--clr-glow2)" },
+      { selector: ".wrapper-3 .card-glow", color: "var(--clr-glow3)" },
+    ];
+    glows.forEach(({ selector }) => {
+      gsap.to(document.querySelector(selector), {
+        opacity: 1, duration: 2.1, yoyo: true, repeat: -1,
+        boxShadow: "0 0 32px 8px",
+        ease: "sine.inOut",
+        filter: "blur(22px)"
       });
-      card.addEventListener('mouseleave', () => {
-        gsap.to(card, { scale: 1, boxShadow: "0 8px 48px 0 rgba(0,0,0,0.08), 0 1.5px 32px #66ebd311", duration: 0.27, ease: "power2.in" });
-        gsap.to(dot, { boxShadow: "0 3px 22px #3ad0b222", duration: 0.23, ease: "power1.in" });
-        gsap.to(img, { filter: "drop-shadow(0 3px 18px #65e9e077)", scale: 1, duration: 0.18, ease: "power1.in" });
+      gsap.to(document.querySelector(selector), {
+        opacity: 0.58, duration: 2.1, yoyo: true, repeat: -1,
+        boxShadow: "0 0 56px 16px",
+        ease: "sine.inOut",
+        filter: "blur(28px)",
+        delay: 1.05
       });
     });
+
+    // Micro-interactions: Cards & bullets
+    const cards = gsap.utils.toArray('.card-wrapper');
+    const bullets = gsap.utils.toArray('.agenda-act-desc li');
+    function dimSiblings(nodeList, target) {
+      nodeList.forEach(el => {
+        if (el === target) el.classList.add('active'), el.classList.remove('dimmed');
+        else el.classList.remove('active'), el.classList.add('dimmed');
+      });
+    }
+    function clearDimming(nodeList) { nodeList.forEach(el => { el.classList.remove('dimmed', 'active'); }); }
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => dimSiblings(cards, card));
+      card.addEventListener('mouseleave', () => clearDimming(cards));
+      card.addEventListener('focusin', () => dimSiblings(cards, card));
+      card.addEventListener('focusout', () => clearDimming(cards));
+    });
+    bullets.forEach(li => {
+      li.addEventListener('mouseenter', e => dimSiblings(bullets, li));
+      li.addEventListener('mouseleave', e => clearDimming(bullets));
+      li.addEventListener('focusin', e => dimSiblings(bullets, li));
+      li.addEventListener('focusout', e => clearDimming(bullets));
+    });
+    if ('ontouchstart' in window) {
+      cards.forEach(card => {
+        card.addEventListener('touchstart', e => { dimSiblings(cards, card); e.stopPropagation(); });
+      });
+      bullets.forEach(li => {
+        li.addEventListener('touchstart', e => { dimSiblings(bullets, li); e.stopPropagation(); });
+      });
+      document.body.addEventListener('touchstart', () => { clearDimming(cards); clearDimming(bullets); });
+    }
+    // Animate bullets: wrap each text word in <span.word>
+    bullets.forEach(li => {
+      const bTag = li.querySelector('b');
+      let textNode = '';
+      if (bTag) {
+        let cur = bTag.nextSibling;
+        while (cur) {
+          if (cur.nodeType === 3) textNode += cur.textContent;
+          cur = cur.nextSibling;
+        }
+        while (bTag.nextSibling) li.removeChild(bTag.nextSibling);
+      }
+      (textNode.trim().split(/\s+/)).forEach(word => {
+        if (word.length > 0) {
+          const span = document.createElement('span');
+          span.className = 'word'; span.textContent = word;
+          li.appendChild(document.createTextNode(' ')); li.appendChild(span);
+        }
+      });
+    });
+    // Entrance for bullet words
+    gsap.utils.toArray(".agenda-act-desc li").forEach(li => {
+      const elementsToAnimate = [li.querySelector('b'), ...li.querySelectorAll('.word')].filter(Boolean);
+      gsap.set(elementsToAnimate, { opacity: 0, y: 10 });
+      ScrollTrigger.create({
+        trigger: li,
+        start: "top 96%",
+        onEnter: () => gsap.to(elementsToAnimate, {
+          duration: 0.36, opacity: 1, y: 0, stagger: 0.03, ease: "power2.out"
+        }),
+        once: true
+      });
+    });
+    // Keyboard nav for cards & bullets
+    cards.forEach(card => card.setAttribute('tabindex','0'));
+    bullets.forEach(li => li.setAttribute('tabindex','0'));
+    // Perf: Deregister scroll triggers on reduced motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.globalTimeline.clear();
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    }
+    // Responsive carousel for < 800px
+    let curIdx = 0;
+    function setCarousel(idx) {
+      cards.forEach((card,i) => {
+        card.classList.toggle('carousel-active', i === idx);
+        if (i < idx) card.style.transform = "translateX(-110vw)";
+        else if (i > idx) card.style.transform = "translateX(110vw)";
+        else card.style.transform = "translateX(0)";
+      });
+      curIdx = idx;
+    }
+    function enableCarouselIfMobile() {
+      if (window.innerWidth < 800) {
+        setCarousel(curIdx);
+      } else {
+        cards.forEach(card => { card.classList.remove('carousel-active'); card.style.transform=''; });
+      }
+    }
+    enableCarouselIfMobile();
+    window.addEventListener('resize', enableCarouselIfMobile);
+    document.querySelector('.nav-button.next').addEventListener('click', e=>{
+      if(window.innerWidth<800){ e.preventDefault();
+        setCarousel((curIdx+1)%cards.length); }
+    });
+    document.querySelector('.nav-button.prev').addEventListener('click', e=>{
+      if(window.innerWidth<800){ e.preventDefault();
+        setCarousel((curIdx-1+cards.length)%cards.length); }
+    });
+    // Swipe detection for carousel
+    if ('ontouchstart' in window) {
+      let sx = null;
+      document.querySelector('.agenda-roadmap').addEventListener('touchstart',e=>{sx=e.touches[0].clientX;});
+      document.querySelector('.agenda-roadmap').addEventListener('touchmove',e=>{
+        if(sx!==null){
+          const dx = e.touches[0].clientX-sx;
+          if(Math.abs(dx)>55){
+            setCarousel((curIdx-(dx>0?-1:1)+cards.length)%cards.length);
+            sx=null;
+          }
+        }
+      });
+      document.querySelector('.agenda-roadmap').addEventListener('touchend',()=>{sx=null;});
+    }
   </script>
 </body>
 </html>
