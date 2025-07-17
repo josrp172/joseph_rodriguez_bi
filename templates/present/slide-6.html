@@ -496,28 +496,28 @@
         </div>
         <div class="story-roles">
           <div class="role-block" data-role="diana" style="--col:#36d6b7;">
-            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/data-flow-6528033-5376510.png" alt="Diana - Data Engineer Icon" class="avatar-img"/>
+            <img src="/static/images/avatar/woman.png" alt="Diana - Data Engineer Icon" class="avatar-img"/>
             <div>
               <div class="role-title">Diana <span>Data Engineer</span></div>
               <div class="role-desc">Her mission is to ingest raw data from Kaggle, transform it, and build a reusable pipeline for the entire team.</div>
             </div>
           </div>
           <div class="role-block" data-role="alex" style="--col:#38c8f5;">
-            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/business-analysis-5503444-4598175.png" alt="Alex - BI Developer Icon" class="avatar-img"/>
+            <img src="/static/images/avatar/man.png" alt="Alen - BI Developer Icon" class="avatar-img"/>
             <div>
-              <div class="role-title">Alex <span>BI Developer</span></div>
+              <div class="role-title">Alen <span>BI Developer</span></div>
               <div class="role-desc">He needs to build a fast, reliable Power BI report using DirectLake and implement interactive writeback for user comments.</div>
             </div>
           </div>
           <div class="role-block" data-role="sam" style="--col:#b986f9;">
-            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/data-analysis-3994383-3307559.png" alt="Sam - Data Scientist Icon" class="avatar-img"/>
+            <img src="/static/images/avatar/man_1.png" alt="Sam - Data Scientist Icon" class="avatar-img"/>
             <div>
               <div class="role-title">Sam <span>Data Scientist</span></div>
               <div class="role-desc">With clean data ready, he can finally build the salary prediction model and save the results back to the Lakehouse.</div>
             </div>
           </div>
           <div class="role-block" data-role="chloe" style="--col:#ffaa52;">
-            <img src="https://cdn3d.iconscout.com/3d/premium/thumb/business-woman-8769342-7144709.png" alt="Chloe - Business Lead Icon" class="avatar-img"/>
+            <img src="/static/images/avatar/woman_1.png" alt="Chloe - Business Lead Icon" class="avatar-img"/>
             <div>
               <div class="role-title">Chloe <span>Business Lead</span></div>
               <div class="role-desc">She needs trusted, forward-looking insights and wants to provide feedback directly within the report.</div>
@@ -604,7 +604,7 @@
 
     const personaFlows = {
       "diana": {
-        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/data-flow-6528033-5376510.png",
+        avatar: "/static/images/avatar/woman.png",
         title: "Diana — The Data Engineering Workflow",
         flow: [
           { icon: "📥", text: "<strong>Ingest Data:</strong> Uses a <strong>Notebook</strong> to pull raw job market data directly from the Kaggle API into the Lakehouse." },
@@ -614,8 +614,8 @@
         ]
       },
       "alex": {
-        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/business-analysis-5503444-4598175.png",
-        title: "Alex — The BI Development Workflow",
+        avatar: "/static/images/avatar/man.png",
+        title: "Alen — The BI Development Workflow",
         flow: [
           { icon: "🔗", text: "<strong>Connect to Data:</strong> Connects to Diana's Lakehouse tables using <strong>DirectLake</strong> mode for maximum performance without data duplication." },
           { icon: "📦", text: "<strong>Build Semantic Model:</strong> Creates a central Power BI dataset, defining key metrics and relationships once for everyone to use." },
@@ -624,21 +624,21 @@
         ]
       },
       "sam": {
-        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/data-analysis-3994383-3307559.png",
+        avatar: "/static/images/avatar/man_1.png",
         title: "Sam — The Data Science Workflow",
         flow: [
           { icon: "💡", text: "<strong>Access Clean Data:</strong> Instantly accesses the same trusted Lakehouse data Diana prepared. No more waiting for data extracts!" },
           { icon: "🐍", text: "<strong>Train ML Model:</strong> Uses a <strong>Notebook</strong> with Python and a RandomForest model to predict future salaries based on job trends." },
           { icon: "📈", text: "<strong>Evaluate Model:</strong> Measures the model's accuracy using R-squared to ensure the predictions are reliable." },
-          { icon: "💾", text: "<strong>Save Predictions:</strong> Writes the salary predictions back to a new table in the <strong>Lakehouse</strong>, making them available for Alex's report." },
+          { icon: "💾", text: "<strong>Save Predictions:</strong> Writes the salary predictions back to a new table in the <strong>Lakehouse</strong>, making them available for Alen's report." },
         ]
       },
       "chloe": {
-        avatar: "https://cdn3d.iconscout.com/3d/premium/thumb/business-woman-8769342-7144709.png",
+        avatar: "/static/images/avatar/woman_1.png",
         title: "Chloe — The Business Workflow",
         flow: [
           { icon: "🎯", text: "<strong>Analyze Insights:</strong> Views the unified Power BI report, which now includes both historical data and Sam's forward-looking salary predictions." },
-          { icon: "💬", text: "<strong>Provide Feedback:</strong> Uses the <strong>Writeback</strong> button created by Alex to leave comments on specific industries directly in the report." },
+          { icon: "💬", text: "<strong>Provide Feedback:</strong> Uses the <strong>Writeback</strong> button created by Alen to leave comments on specific industries directly in the report." },
           { icon: "🔔", text: "<strong>Stay Updated:</strong> Receives an automatic email notification from the <strong>Data Pipeline</strong> once the entire process is complete and the report has fresh data." },
         ]
       }
