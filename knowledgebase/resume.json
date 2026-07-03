@@ -1,0 +1,90 @@
+{
+  "professional_summary": "Joseph Rodriguez is a Senior BI Engineer in Manila with 7+ years across business intelligence, data analysis, RPA, and full-stack development. He specializes in Tableau and Power BI migrations, dashboard optimization, SQL, PowerApps, automation, and translating complex data into actionable insights.",
+  "skills": {
+    "expert": ["Tableau", "data visualization"],
+    "advanced": ["Power BI", "SQL", "reporting and BI"],
+    "intermediate": ["RPA", "full-stack web development"],
+    "additional": ["PowerApps", "Python", "UiPath", "Java Spring Boot", "REST APIs", "Golang", "C++", "Django", "Flask", "Oracle", "Deneb Vega-Lite", "Azure DevOps"]
+  },
+  "experience": [
+    {
+      "company": "TeamHealth",
+      "role": "Senior BI Engineer",
+      "dates": "January 2024-present",
+      "work": "Migrates and optimizes Tableau and Power BI reports; develops interactive dashboards and PowerApps solutions; leads legacy-system modernization and mentors junior analysts.",
+      "tools": ["Tableau", "Power BI", "SQL", "PowerApps"]
+    },
+    {
+      "company": "NCS Group",
+      "role": "Consultant Team Lead",
+      "dates": "May 2023-January 2024",
+      "work": "Led and mentored BI analysts, migrated home-grown reports to enterprise workflows, collaborated with data engineering, optimized data processes, and established reporting practices.",
+      "tools": ["Tableau", "Power BI", "PowerApps", "SQL"]
+    },
+    {
+      "company": "NCS Group",
+      "role": "Application Consultant - BI",
+      "dates": "December 2021-April 2023",
+      "work": "Delivered Tableau and Power BI solutions through requirements analysis and dashboard development.",
+      "tools": ["Tableau", "Power BI", "PowerApps", "SQL"]
+    },
+    {
+      "company": "Unilab, Inc.",
+      "role": "Business Intelligence Developer",
+      "dates": "May 2020-December 2021",
+      "work": "Designed and implemented Tableau dashboards, automated SQL view creation, and supported daily BI work.",
+      "tools": ["Tableau", "SQL", "Python"]
+    },
+    {
+      "company": "Ubiquity",
+      "role": "Full Stack Developer",
+      "dates": "February 2020-May 2020",
+      "work": "Designed REST API architecture with Java Spring Boot, built internal applications with Golang and C++, and developed an MVC web application.",
+      "tools": ["Java Spring Boot", "REST APIs", "Golang", "C++", "Python", "Django", "Flask"]
+    },
+    {
+      "company": "Globe Telecom",
+      "role": "Software Engineer",
+      "dates": "September 2018-February 2020",
+      "work": "Created interactive dashboards and RPA solutions that streamlined telecom operations.",
+      "tools": ["Tableau", "UiPath", "Python", "SQL"]
+    },
+    {
+      "company": "Jump Digital Asia",
+      "role": "Software Engineer Intern",
+      "dates": "October 2017-April 2018",
+      "work": "Built symmetric-encryption software for securely sharing multiple file types and created Oracle and Python data-processing scripts.",
+      "tools": ["symmetric encryption", "Oracle", "Python"]
+    }
+  ],
+  "education": {
+    "school": "Technological Institute of the Philippines",
+    "degree": "Bachelor's degree in Computer Science",
+    "dates": "2014-2018"
+  },
+  "honors": [
+    "Honours with Distinction",
+    "1st place in the Philippine National Programming Challenge",
+    "1st and 2nd place in T.I.P. programming competitions",
+    "2nd place in the Philippine National Programming Challenge",
+    "International Collegiate Programming Contest participant",
+    "Philippine Programming Rating 1, where 1 is highest"
+  ],
+  "projects": [
+    {
+      "name": "SephAnimeList",
+      "description": "A Power BI anime dashboard using MyAnimeList API data, ratings, recommendations, trends, and custom Deneb visuals.",
+      "tools": ["Power BI", "Deneb Vega-Lite", "MyAnimeList API"]
+    },
+    {
+      "name": "PH Flood Control Corruption Watch",
+      "description": "A Power BI project combining Deneb, AI, and live news.",
+      "tools": ["Power BI", "Deneb", "AI", "news data"]
+    },
+    {
+      "name": "Forrest Gump: A Data Story",
+      "description": "A narrative Tableau story about running distance, box office performance, and life events.",
+      "tools": ["Tableau"]
+    }
+  ]
+}

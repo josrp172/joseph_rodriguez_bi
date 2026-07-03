@@ -1,9 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  /* ------------------------------ */
-  /* 1. Clear Chat Context          */
-  /* ------------------------------ */
-  localStorage.removeItem('chatContext');
-
   function updateLinkedInStatus() {
     // Get current time in UTC and convert to PHT (UTC+8)
     const now = new Date();
@@ -53,10 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.experience-item').forEach(item => {
     const title = item.querySelector('h3');
     item.addEventListener('mouseenter', () => {
-      gsap.to(title, { color: 'red', duration: 0.3 });
+      gsap.to(title, { color: '#1b4dd1', duration: 0.3 });
     });
     item.addEventListener('mouseleave', () => {
-      gsap.to(title, { color: '#004b8d', duration: 0.3 });
+      gsap.to(title, { color: '#0f1b33', duration: 0.3 });
     });
   });
 
@@ -69,7 +64,10 @@ gsap.timeline({
     toggleActions: "play none none reverse",
     //markers: true,                // For debugging; remove when done
     onEnter: function() {
-      gsap.to(loader, { autoAlpha: 0, duration: 0.5, ease: "power2.out" });
+      const loaderEl = document.getElementById('loader');
+      if (loaderEl) {
+        gsap.to(loaderEl, { autoAlpha: 0, duration: 0.5, ease: "power2.out" });
+      }
     }
   }
 })
@@ -239,7 +237,7 @@ navLinks.forEach(link => {
     const percent = donut.getAttribute('data-percent') || 0;
     const angle = parseFloat(percent) * 3.6;
     donut.style.setProperty('--percentage', angle + 'deg');
-    donut.querySelector('span').textContent = percent + '%';
+    const lbl = donut.querySelector('span'); if (lbl) lbl.textContent = percent + '%';
   });
 
   /* ------------------------------ */
@@ -334,19 +332,25 @@ document.querySelectorAll('.progress-rating').forEach(rating => {
   });
 
   /* ------------------------------ */
-  /* 11. Load Chat Context          */
+  /* 11. Restore This Visitor's Chat */
   /* ------------------------------ */
-  loadChatContext();
+  renderStoredConversation();
 
   /* ------------------------------ */
   /* 12. Bind Chat Input Keypress   */
   /* ------------------------------ */
-  document.getElementById('chat-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
+  const chatInput = document.getElementById('chat-input');
+  chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
       e.preventDefault();
       sendMessageAndResponse();
     }
   });
+  chatInput.addEventListener('input', updateChatComposer);
+  document.querySelectorAll('.chat-prompt').forEach((prompt) => {
+    prompt.addEventListener('click', () => selectChatPrompt(prompt));
+  });
+  updateChatComposer();
 
  /* ---------- Magical Wand Swirl Effect (No Images) ---------- */
   const banner = document.getElementById('banner');
@@ -395,19 +399,272 @@ document.querySelectorAll('.progress-rating').forEach(rating => {
 /* ======================================== */
 /*         Chatbox & Messaging Functions    */
 /* ======================================== */
+const CHAT_HISTORY_KEY = 'personaChatHistory';
+const MAX_STORED_CHAT_MESSAGES = 50;
+let personaChatHistory = loadStructuredChatHistory();
+let isChatBusy = false;
+
+function updateChatComposer() {
+  const input = document.getElementById('chat-input');
+  const composer = document.getElementById('chat-composer');
+  const sendButton = document.getElementById('chat-send');
+  const counter = document.getElementById('chat-char-count');
+  if (!input || !composer || !sendButton || !counter) return;
+
+  input.style.height = 'auto';
+  input.style.height = `${Math.min(input.scrollHeight, 118)}px`;
+  const length = input.value.length;
+  const hasContent = Boolean(input.value.trim());
+  composer.classList.toggle('has-content', length > 0);
+  counter.textContent = `${length} / 1500`;
+  counter.classList.toggle('is-near-limit', length >= 1350);
+  sendButton.disabled = isChatBusy || !hasContent;
+}
+
+function setChatComposerState(state, message) {
+  const input = document.getElementById('chat-input');
+  const composer = document.getElementById('chat-composer');
+  const sendButton = document.getElementById('chat-send');
+  const statusText = document.getElementById('composer-status-text');
+  if (!input || !composer || !sendButton || !statusText) return;
+
+  const labels = { ready: 'Ready', thinking: 'Thinking…', responding: 'Responding…', error: 'Try again' };
+  isChatBusy = state === 'thinking' || state === 'responding';
+  input.disabled = isChatBusy;
+  composer.classList.toggle('is-busy', isChatBusy);
+  composer.classList.toggle('has-error', state === 'error');
+  sendButton.classList.toggle('is-loading', isChatBusy);
+  sendButton.setAttribute('aria-busy', String(isChatBusy));
+  statusText.textContent = message || labels[state] || labels.ready;
+  document.querySelectorAll('.chat-prompt').forEach((prompt) => {
+    prompt.disabled = isChatBusy;
+  });
+  updateChatComposer();
+}
+
+function selectChatPrompt(prompt) {
+  if (isChatBusy) return;
+  const input = document.getElementById('chat-input');
+  input.value = prompt.dataset.prompt || '';
+  updateChatComposer();
+  input.focus();
+}
+
+function loadStructuredChatHistory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+    if (!Array.isArray(saved)) return [];
+    return saved
+      .filter((message) => message && ['user', 'assistant'].includes(message.role))
+      .map((message) => ({
+        role: message.role,
+        content: String(message.content || '').slice(0, 4000),
+        createdAt: message.createdAt || null
+      }))
+      .filter((message) => message.content)
+      .slice(-MAX_STORED_CHAT_MESSAGES);
+  } catch (_) {
+    return [];
+  }
+}
+
+function rememberChatMessage(role, content) {
+  personaChatHistory.push({
+    role,
+    content: String(content).slice(0, 4000),
+    createdAt: new Date().toISOString()
+  });
+  personaChatHistory = personaChatHistory.slice(-MAX_STORED_CHAT_MESSAGES);
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(personaChatHistory));
+}
+
+function createStoredChatMessage(message) {
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('chat-message');
+
+  if (message.role === 'user') {
+    messageElement.classList.add('user-message');
+    messageElement.textContent = message.content;
+    return messageElement;
+  }
+
+  messageElement.classList.add('bot-message');
+  const avatar = document.createElement('img');
+  avatar.src = '/static/images/profile.jpg';
+  avatar.alt = 'Bot Avatar';
+  avatar.classList.add('bot-avatar');
+  const content = document.createElement('span');
+  renderChatMarkdown(content, message.content);
+  messageElement.append(avatar, content);
+  return messageElement;
+}
+
+function renderStoredConversation() {
+  const chatBody = document.querySelector('.chatbox-body');
+  if (!chatBody) return;
+
+  chatBody.replaceChildren();
+  chatBody.appendChild(createStoredChatMessage({
+    role: 'assistant',
+    content: 'Hello! Ask me anything about Joseph\'s work, experience, or background.'
+  }));
+  personaChatHistory.forEach((message) => {
+    chatBody.appendChild(createStoredChatMessage(message));
+  });
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function renderChatMarkdown(container, markdown) {
+  const source = String(markdown || '');
+  if (!window.marked || typeof window.marked.parse !== 'function') {
+    container.textContent = source;
+    return;
+  }
+
+  const template = document.createElement('template');
+  template.innerHTML = window.marked.parse(source, {
+    breaks: true,
+    gfm: true,
+    headerIds: false,
+    mangle: false
+  });
+
+  const allowedTags = new Set([
+    'A', 'BLOCKQUOTE', 'BR', 'CODE', 'DEL', 'EM', 'H1', 'H2', 'H3',
+    'H4', 'H5', 'H6', 'HR', 'LI', 'OL', 'P', 'PRE', 'STRONG', 'UL'
+  ]);
+  const dangerousTags = new Set(['IFRAME', 'OBJECT', 'SCRIPT', 'STYLE', 'SVG', 'MATH']);
+
+  [...template.content.querySelectorAll('*')].forEach((element) => {
+    if (!allowedTags.has(element.tagName)) {
+      if (dangerousTags.has(element.tagName)) {
+        element.remove();
+      } else {
+        element.replaceWith(...element.childNodes);
+      }
+      return;
+    }
+
+    [...element.attributes].forEach((attribute) => {
+      const isLinkAttribute = element.tagName === 'A' && ['href', 'title'].includes(attribute.name);
+      if (!isLinkAttribute) element.removeAttribute(attribute.name);
+    });
+
+    if (element.tagName === 'A') {
+      const href = element.getAttribute('href') || '';
+      if (!/^(https?:|mailto:)/i.test(href)) {
+        element.removeAttribute('href');
+      } else {
+        element.target = '_blank';
+        element.rel = 'noopener noreferrer';
+      }
+    }
+  });
+
+  container.classList.add('chat-markdown');
+  container.replaceChildren(template.content.cloneNode(true));
+}
+
+function typeChatMarkdown(container, markdown, { onProgress, onComplete } = {}) {
+  renderChatMarkdown(container, markdown);
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (onComplete) onComplete();
+    return;
+  }
+
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const parts = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node.nodeValue) parts.push({ node, text: node.nodeValue, revealed: false });
+  }
+
+  const totalCharacters = parts.reduce((total, part) => total + part.text.length, 0);
+  if (!totalCharacters) {
+    if (onComplete) onComplete();
+    return;
+  }
+
+  const revealableSelector = 'p, li, ul, ol, h1, h2, h3, h4, h5, h6, blockquote, pre, hr';
+  container.querySelectorAll(revealableSelector).forEach((element) => {
+    element.classList.add('chat-pending');
+  });
+  parts.forEach((part) => { part.node.nodeValue = ''; });
+  container.classList.add('is-typing');
+  container.setAttribute('aria-busy', 'true');
+
+  const charactersPerSecond = 70;
+  let startedAt;
+  let revealed = 0;
+  let partIndex = 0;
+  let partOffset = 0;
+
+  function revealFrame(timestamp) {
+    if (!startedAt) startedAt = timestamp;
+    const target = Math.min(
+      totalCharacters,
+      Math.max(1, Math.floor(((timestamp - startedAt) / 1000) * charactersPerSecond))
+    );
+    let remaining = target - revealed;
+
+    while (remaining > 0 && partIndex < parts.length) {
+      const part = parts[partIndex];
+      const count = Math.min(remaining, part.text.length - partOffset);
+      if (count > 0 && !part.revealed && part.text.trim()) {
+        let parent = part.node.parentElement;
+        while (parent && parent !== container) {
+          parent.classList.remove('chat-pending');
+          parent = parent.parentElement;
+        }
+        part.revealed = true;
+      }
+      part.node.nodeValue += part.text.slice(partOffset, partOffset + count);
+      partOffset += count;
+      revealed += count;
+      remaining -= count;
+      if (partOffset === part.text.length) {
+        partIndex += 1;
+        partOffset = 0;
+      }
+    }
+
+    if (onProgress) onProgress();
+    if (revealed < totalCharacters) {
+      requestAnimationFrame(revealFrame);
+    } else {
+      container.querySelectorAll('.chat-pending').forEach((element) => {
+        element.classList.remove('chat-pending');
+      });
+      container.classList.remove('is-typing');
+      container.removeAttribute('aria-busy');
+      if (onComplete) onComplete();
+    }
+  }
+
+  requestAnimationFrame(revealFrame);
+}
+
 function toggleChat() {
   const chatbox = document.getElementById('chatbox');
-  if (chatbox.style.display === 'block') {
-    chatbox.style.display = 'none';
+  const launcher = document.querySelector('.chat-button');
+  if (chatbox.style.display === 'flex') {
+    closeChat();
   } else {
     chatbox.style.display = 'flex';
-    loadChatContext();
+    chatbox.setAttribute('aria-hidden', 'false');
+    if (launcher) launcher.setAttribute('aria-expanded', 'true');
+    renderStoredConversation();
+    setTimeout(() => document.getElementById('chat-input')?.focus(), 180);
   }
 }
 
 function closeChat() {
   const chatbox = document.getElementById('chatbox');
+  const launcher = document.querySelector('.chat-button');
   chatbox.style.display = 'none';
+  chatbox.setAttribute('aria-hidden', 'true');
+  if (launcher) launcher.setAttribute('aria-expanded', 'false');
 }
 
 function sendMessage() {
@@ -416,19 +673,22 @@ function sendMessage() {
   if (message) {
     const chatBody = document.querySelector('.chatbox-body');
     const userMsgDiv = document.createElement('div');
-    userMsgDiv.classList.add('chat-message');
+    userMsgDiv.classList.add('chat-message', 'user-message');
     userMsgDiv.textContent = message;
     chatBody.appendChild(userMsgDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
     input.value = '';
+    rememberChatMessage('user', message);
+    updateChatComposer();
   }
 }
 
 async function sendMessageAndResponse() {
   const input = document.getElementById('chat-input');
   const message = input.value.trim();
-  if (!message) return;
+  if (!message || isChatBusy) return;
   const chatBody = document.querySelector('.chatbox-body');
+  setChatComposerState('thinking');
 
   // Append user's message
   const userMsgDiv = document.createElement('div');
@@ -437,6 +697,9 @@ async function sendMessageAndResponse() {
   chatBody.appendChild(userMsgDiv);
   chatBody.scrollTop = chatBody.scrollHeight;
   input.value = '';
+  updateChatComposer();
+  const priorHistory = personaChatHistory.slice(-6).map(({ role, content }) => ({ role, content }));
+  rememberChatMessage('user', message);
 
   // Append temporary bot message with typing indicator
   const botMsgDiv = document.createElement('div');
@@ -451,63 +714,55 @@ async function sendMessageAndResponse() {
   chatBody.appendChild(botMsgDiv);
   chatBody.scrollTop = chatBody.scrollHeight;
 
-  // Simulate "Joseph is typing" with a cycling ellipsis
-  const baseText = "Joseph is typing";
-  botTextSpan.textContent = baseText;
-  let dotCount = 0;
-  const typingInterval = setInterval(() => {
-    dotCount = (dotCount + 1) % 5; // cycles through 0 to 4 dots
-    botTextSpan.textContent = baseText + ".".repeat(dotCount);
-  }, 500);
+  // Animated three-dot typing indicator
+  botTextSpan.className = 'chat-typing';
+  botTextSpan.innerHTML = '<i></i><i></i><i></i>';
 
   try {
     const response = await fetch('/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message, history: priorHistory })
     });
     const data = await response.json();
-    clearInterval(typingInterval);
 
-    // Use the raw response text (plain text, not HTML) for display
-    const finalResponse = data.response;
-    console.log("Final plain text response:", finalResponse);
-    botTextSpan.textContent = ""; // Clear the typing indicator
-
-    // Typewriter effect for the plain text response
-    let index = 0;
-    function typeLetter() {
-      if (index < finalResponse.length) {
-        botTextSpan.textContent = finalResponse.substring(0, index + 1);
-        index++;
-        setTimeout(typeLetter, 30); // Adjust speed as needed
-      } else {
-        // Once finished, save the complete response so it reloads fully later
-        saveChatContext();
-      }
+    if (!response.ok || !data.response) {
+      throw new Error(data.error || 'The AI persona could not answer right now.');
     }
-    typeLetter();
+
+    const finalResponse = data.response;
+    rememberChatMessage('assistant', finalResponse);
+    setChatComposerState('responding');
+    botTextSpan.className = '';
+    botTextSpan.innerHTML = '';
+    let lastAutoScroll = 0;
+    typeChatMarkdown(botTextSpan, finalResponse, {
+      onProgress: () => {
+        const now = Date.now();
+        if (now - lastAutoScroll >= 80) {
+          chatBody.scrollTop = chatBody.scrollHeight;
+          lastAutoScroll = now;
+        }
+      },
+      onComplete: () => {
+        chatBody.scrollTop = chatBody.scrollHeight;
+        setChatComposerState('ready');
+      }
+    });
   } catch (error) {
-    clearInterval(typingInterval);
     console.error("Error sending message:", error);
-    botTextSpan.textContent = "An error occurred. Please try again later.";
+    botTextSpan.className = '';
+    botTextSpan.textContent = error.message || "An error occurred. Please try again later.";
+    setChatComposerState('error');
+    setTimeout(() => setChatComposerState('ready'), 2800);
   }
-  // Optionally, you might also call saveChatContext() here
-  // if you want to update after appending user's message, etc.
 }
 
-
-
-function saveChatContext() {
-  const chatBody = document.querySelector('.chatbox-body');
-  localStorage.setItem('chatContext', chatBody.innerHTML);
-}
-
-function loadChatContext() {
-  const savedContext = localStorage.getItem('chatContext');
-  if (savedContext) {
-    document.querySelector('.chatbox-body').innerHTML = savedContext;
-  }
+function clearPersonaChat() {
+  if (!confirm('Clear this conversation and start fresh?')) return;
+  personaChatHistory = [];
+  localStorage.removeItem(CHAT_HISTORY_KEY);
+  renderStoredConversation();
 }
 
 /* ======================================== */

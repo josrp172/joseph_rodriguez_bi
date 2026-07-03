@@ -13,6 +13,7 @@ from flask_socketio import SocketIO, emit
 import firebase_admin
 from firebase_admin import credentials, db as firebase_db
 import threading
+from persona_service import DeepSeekPersona, PersonaKnowledge, PersonaServiceError
 
 
 FIREBASE_SERVICE_ACCOUNT_JSON = """
@@ -52,21 +53,12 @@ socketio = SocketIO(app, async_mode='eventlet')
 # Initialize the GenAI client (API key should be kept secret)
 client = genai.Client(api_key="AIzaSyCmVExBw1v18vCNcdYzIwTrX00O5_9J3SE")
 
-# Load the entire knowledge.json from the "knowledgebase" folder
-knowledge_path = os.path.join('knowledgebase', 'knowledge.json')
-try:
-    with open(knowledge_path, 'r', encoding='utf-8') as f:
-        knowledge_data = json.load(f)
-    # Format the knowledge data as a string.
-    # Here we use json.dumps with indent for readability.
-    persona_context = json.dumps(knowledge_data, indent=2)
-    if not persona_context.strip():
-        print("Warning: knowledge.json is empty.")
-    else:
-        print("Loaded knowledge.json context:")
-except Exception as e:
-    print("Error loading knowledge.json:", e)
-    persona_context = ""
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+persona_knowledge = PersonaKnowledge(
+    os.path.join(BASE_DIR, 'knowledgebase', 'knowledge.json'),
+    os.path.join(BASE_DIR, 'knowledgebase', 'resume.json'),
+)
+persona = DeepSeekPersona(persona_knowledge)
 
 
 
@@ -81,6 +73,14 @@ def projects_bi():
 @app.route('/news')
 def news():
     return render_template('news.html')
+
+@app.route('/interview-prep')
+def interview_prep():
+    return render_template('interview-prep.html')
+
+@app.route('/deneb-lab')
+def deneb_lab():
+    return render_template('deneb-lab.html')
 
 
 @app.route('/quiz/generate_auto', methods=['POST'])
@@ -205,26 +205,20 @@ def set_selected_questionnaire():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json()
-    user_message = data.get('message', '')
+    data = request.get_json(silent=True) or {}
+    user_message = str(data.get('message', '')).strip()
     if not user_message:
         return jsonify({"error": "No message provided"}), 400
 
-    # Combine the persona context (full knowledge) with the user's message.
-    # You might separate them with a divider for clarity.
-    prompt = f"{persona_context}\n\nUser: {user_message}\n\nResponse:"
-    print("Prompt sent to AI model:")
-    print(prompt)  # Debug print; remove or log properly in production
-
     try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
-        return jsonify({"response": response.text})
-    except Exception as e:
-        print("Error generating AI response:", e)
-        return jsonify({"error": str(e)}), 500
+        answer = persona.answer(user_message, data.get('history'))
+        return jsonify({"response": answer})
+    except PersonaServiceError as exc:
+        app.logger.warning("Persona request failed: %s", exc)
+        return jsonify({"error": str(exc)}), 503
+    except Exception:
+        app.logger.exception("Unexpected persona error")
+        return jsonify({"error": "The AI persona could not answer right now."}), 500
 
 @app.route('/games')
 def games():

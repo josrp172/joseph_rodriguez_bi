@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 venv/
 .idea/
+.env
 static/quiz/sephquiz-firebase-adminsdk-fbsvc-c9e3032997.json
 static/quiz/sephquiz-firebase-adminsdk-fbsvc-c9e3032997.json

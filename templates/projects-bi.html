@@ -2,148 +2,1166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1280">
-  <title>Projects BI – Joseph Ignacio Rodriguez</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Gallery — Joseph Rodriguez</title>
+  <meta name="description" content="Joseph Rodriguez's BI dashboard gallery — Power BI, Tableau, and Deneb builds presented as a keynote deck.">
+  <link rel="icon" type="image/png" href="/static/images/logo/logo_98_65.png">
 
-  <!-- Enable smooth scrolling when using #anchors -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
-    /* Minimal styling for badges */
-    .tool-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      margin-left: 8px; /* space between each badge and the title */
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #fff;
-      text-transform: uppercase;
-    }
-    /* Example badge colors (adjust as desired) */
-    .badge-powerbi {
-      background-color: #F2C811; /* Power BI yellow */
-      color: #333;              /* Darker text for contrast */
-    }
-    .badge-deneb {
-      background-color: #0099cc; /* A teal shade */
-    }
-    .badge-myanimelist {
-      background-color: #ff9900; /* Orange shade */
-    }
-    .badge-tableau {
-      background-color: #E97635; /* A typical Tableau orange */
-    }
+  /* =================================================================
+     Dashboard Gallery — keynote deck for BI projects
+     Rides on the site design tokens in style.css.
+     Page-specific classes prefixed .dk- to avoid collisions.
+     ================================================================= */
+  html, body { height: 100%; overflow: hidden; }
+  body.dk-page { display: flex; flex-direction: column; }
+
+  /* ---- top bar ---- */
+  .dk-topbar {
+    flex-shrink: 0; height: 60px; z-index: 50;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 clamp(14px, 2.5vw, 30px);
+    background: rgba(255,255,255,.72);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid rgba(228,234,243,.9);
+  }
+  .dk-home {
+    display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  }
+  .dk-home .mark {
+    font-family: var(--font-display); font-weight: 800; color: #fff; background: var(--grad);
+    padding: 7px 11px; border-radius: 11px; box-shadow: var(--shadow-brand); font-size: .95rem;
+  }
+  .dk-home .back { font-size: .82rem; font-weight: 600; color: var(--text-body); transition: color .2s; }
+  .dk-home:hover .back { color: var(--brand-ink); }
+  .dk-title { font-family: var(--font-display); font-weight: 700; color: var(--ink); font-size: 1rem; letter-spacing: -.01em; }
+  .dk-title small { display: block; font-family: var(--font-body); font-weight: 600; font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .dk-top-actions { margin-left: auto; display: flex; align-items: center; gap: 9px; }
+  .dk-counter { font-family: var(--font-display); font-weight: 700; font-size: .9rem; color: var(--text); margin-right: 4px; }
+  .dk-counter span { color: var(--muted); font-weight: 500; }
+  .dk-ibtn {
+    width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border-strong); color: var(--text-body);
+    display: grid; place-items: center; font-size: .9rem;
+    transition: .2s var(--ease);
+  }
+  .dk-ibtn:hover { color: var(--brand-ink); border-color: var(--brand); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .dk-ibtn.wide { width: auto; padding: 0 14px; gap: 8px; display: inline-flex; font-weight: 600; font-size: .82rem; }
+  .dk-ibtn kbd { font-size: .66rem; font-weight: 700; background: var(--surface-3); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--text-body); }
+
+  /* ---- deck stage ---- */
+  .dk-deck { position: relative; flex: 1; min-height: 0; perspective: 1600px; }
+  .dk-slide {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    padding: clamp(12px, 2vh, 22px) clamp(14px, 3vw, 40px);
+    opacity: 0; pointer-events: none; will-change: transform, opacity;
+  }
+  .dk-slide.active { opacity: 1; pointer-events: auto; }
+
+  /* slide header */
+  .dk-head { flex-shrink: 0; display: flex; align-items: flex-start; gap: 18px; padding-bottom: 12px; position: relative; }
+  .dk-num {
+    font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.35); flex-shrink: 0; margin-top: 2px;
+  }
+  .dk-head-main { min-width: 0; }
+  .dk-head h2 { font-size: clamp(1.15rem, 2.4vw, 1.7rem); font-weight: 800; letter-spacing: -.02em; color: var(--ink); line-height: 1.15; }
+  .dk-sub { font-size: .86rem; color: var(--text-body); margin-top: 3px; max-width: 78ch; }
+  .dk-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+  .dk-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-body); background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 11px; border-radius: var(--radius-pill); box-shadow: var(--shadow-sm);
+  }
+  .dk-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot, var(--brand)); }
+  .dk-badge.powerbi { --dot: #F2C811; } .dk-badge.deneb { --dot: #0099cc; }
+  .dk-badge.mal { --dot: #ff9900; } .dk-badge.tableau { --dot: #E97635; }
+  .dk-badge.html { --dot: #E34C26; } .dk-badge.ai { --dot: #6A0DAD; } .dk-badge.news { --dot: #555; }
+  .dk-head-actions { margin-left: auto; display: flex; gap: 8px; flex-shrink: 0; }
+
+  /* viewer panel */
+  .dk-viewer {
+    position: relative; flex: 1; min-height: 0; border-radius: 18px; overflow: hidden;
+    background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-md);
+    display: flex; flex-direction: column;
+  }
+  .dk-chrome {
+    flex-shrink: 0; height: 34px; display: flex; align-items: center; gap: 6px;
+    padding: 0 14px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+  }
+  .dk-chrome i { width: 10px; height: 10px; border-radius: 50%; background: var(--surface-3); }
+  .dk-chrome i:nth-child(1) { background: #ff5f57; }
+  .dk-chrome i:nth-child(2) { background: #febc2e; }
+  .dk-chrome i:nth-child(3) { background: #28c840; }
+  .dk-chrome .url {
+    margin-left: 10px; flex: 1; font-size: .68rem; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 3px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dk-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: var(--surface-2); }
+  .dk-scroll .frame-wrap { width: max-content; margin: 0 auto; }
+  .dk-scroll iframe { display: block; border: none; background: #fff; }
+
+  /* loading state */
+  .dk-loading {
+    position: absolute; inset: 34px 0 0; display: grid; place-items: center; z-index: 3;
+    background: var(--surface-2); transition: opacity .5s var(--ease);
+  }
+  .dk-viewer.loaded .dk-loading { opacity: 0; pointer-events: none; }
+  .dk-loading .box { text-align: center; }
+  .dk-loading .ring {
+    width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 50%;
+    background: conic-gradient(from 0deg, #06b6d4, #2f6bff, #7c3aed, transparent 78%);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    animation: dkSpin 1s linear infinite;
+  }
+  @keyframes dkSpin { to { transform: rotate(360deg); } }
+  .dk-loading b { font-family: var(--font-display); color: var(--text); font-size: .95rem; display: block; }
+  .dk-loading span { font-size: .78rem; color: var(--muted); }
+
+  /* scroll hint inside viewer */
+  .dk-scrollhint {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4;
+    display: inline-flex; align-items: center; gap: 8px; pointer-events: none;
+    background: rgba(15,27,51,.82); color: #fff; font-size: .74rem; font-weight: 600;
+    padding: 8px 16px; border-radius: var(--radius-pill); backdrop-filter: blur(4px);
+    opacity: 0; transition: opacity .4s var(--ease);
+  }
+  .dk-viewer.loaded .dk-scrollhint { opacity: 1; animation: dkHintFade 5s forwards; }
+  @keyframes dkHintFade { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+
+  /* ---- COVER slide ---- */
+  .dk-cover { align-items: center; justify-content: center; text-align: center; }
+  .dk-cover .ghost {
+    position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; user-select: none;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(12rem, 34vw, 26rem);
+    color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.07); line-height: 1;
+  }
+  .dk-cover-inner { position: relative; max-width: 760px; }
+  .dk-kicker {
+    display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display);
+    font-size: .72rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--brand-ink);
+    background: var(--grad-soft); padding: 8px 18px; border-radius: var(--radius-pill); margin-bottom: 26px;
+  }
+  .dk-cover h1 { font-size: clamp(2.2rem, 5.4vw, 4rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.04; color: var(--ink); }
+  .dk-cover h1 .serif-accent { font-size: 1.12em; }
+  .dk-cover .sub { margin: 18px auto 30px; color: var(--text-body); font-size: 1.05rem; max-width: 52ch; }
+  .dk-exhibits { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 34px; }
+  .dk-exhibit {
+    cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 13px 18px; box-shadow: var(--shadow-sm); transition: .25s var(--ease); border-left: 3px solid transparent;
+  }
+  .dk-exhibit:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--border-strong); border-left-color: var(--brand); }
+  .dk-exhibit .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: .95rem; flex-shrink: 0; }
+  .dk-exhibit b { display: block; font-family: var(--font-display); font-size: .9rem; color: var(--text); line-height: 1.2; }
+  .dk-exhibit span { font-size: .7rem; color: var(--muted); font-weight: 600; }
+  .dk-cover .keys { color: var(--muted); font-size: .82rem; display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+  .dk-cover .keys kbd { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 6px; padding: 2px 9px; font-family: var(--font-body); font-size: .76rem; font-weight: 700; color: var(--text-body); box-shadow: var(--shadow-sm); }
+
+  /* ---- floating prev/next arrows ---- */
+  .dk-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 40;
+    width: 52px; height: 52px; border-radius: 50%; cursor: pointer;
+    background: rgba(255,255,255,.9); border: 1px solid var(--border-strong); color: var(--text);
+    display: grid; place-items: center; font-size: 1.05rem; box-shadow: var(--shadow-md);
+    transition: .2s var(--ease); backdrop-filter: blur(6px);
+  }
+  .dk-arrow:hover { background: var(--grad); color: #fff; border-color: transparent; transform: translateY(-50%) scale(1.08); box-shadow: var(--shadow-brand); }
+  .dk-arrow.prev { left: 14px; }
+  .dk-arrow.next { right: 14px; }
+  .dk-arrow[disabled] { opacity: 0; pointer-events: none; }
+
+  /* ---- bottom rail ---- */
+  .dk-rail {
+    flex-shrink: 0; z-index: 50; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px 16px 14px; background: rgba(255,255,255,.72);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(228,234,243,.9);
+  }
+  .dk-pill {
+    cursor: pointer; display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--font-display); font-weight: 700; font-size: .76rem; color: var(--text-body);
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-pill);
+    padding: 8px 16px; transition: .22s var(--ease); white-space: nowrap;
+  }
+  .dk-pill .n { font-size: .66rem; color: var(--muted); font-weight: 800; }
+  .dk-pill:hover { color: var(--text); border-color: var(--brand); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .dk-pill.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
+  .dk-pill.active .n { color: rgba(255,255,255,.75); }
+  .dk-progress { position: absolute; top: -2px; left: 0; height: 3px; background: var(--grad-bright); border-radius: 3px; width: 0; transition: width .5s var(--ease); box-shadow: 0 0 10px rgba(47,107,255,.5); }
+
+  /* ---- overview (slide sorter) ---- */
+  .dk-overview {
+    position: fixed; inset: 0; z-index: 200; display: none;
+    background: rgba(10,20,40,.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    padding: clamp(20px, 5vh, 60px) clamp(16px, 5vw, 70px); overflow-y: auto;
+  }
+  .dk-overview.open { display: block; }
+  .dk-ov-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .dk-ov-head h3 { color: #fff; font-size: 1.3rem; letter-spacing: -.01em; }
+  .dk-ov-head h3 small { display: block; font-family: var(--font-body); font-weight: 500; font-size: .78rem; color: rgba(255,255,255,.6); }
+  .dk-ov-close { cursor: pointer; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.1); color: #fff; font-size: 1rem; transition: .2s var(--ease); }
+  .dk-ov-close:hover { background: rgba(255,255,255,.22); }
+  .dk-ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .dk-ov-card {
+    cursor: pointer; border-radius: 18px; overflow: hidden; background: var(--surface);
+    border: 2px solid transparent; box-shadow: var(--shadow-lg); transition: .25s var(--ease);
+  }
+  .dk-ov-card:hover { transform: translateY(-6px) scale(1.02); }
+  .dk-ov-card.current { border-color: var(--brand); }
+  .dk-ov-thumb { position: relative; height: 150px; display: grid; place-items: center; overflow: hidden; }
+  .dk-ov-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dk-ov-thumb i { font-size: 2.4rem; color: rgba(255,255,255,.95); }
+  .dk-ov-thumb .tn { position: absolute; top: 10px; left: 12px; font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.4); }
+  .dk-ov-thumb .ov-tag {
+    position: absolute; top: 10px; right: 12px; font-family: var(--font-display); font-weight: 700;
+    font-size: .56rem; letter-spacing: .14em; text-transform: uppercase; color: #fff;
+    background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.4); border-radius: 6px; padding: 3px 8px;
+    backdrop-filter: blur(3px);
+  }
+  .dk-ov-body { padding: 14px 16px 16px; }
+  .dk-ov-body b { font-family: var(--font-display); font-size: .92rem; color: var(--text); display: block; line-height: 1.25; }
+  .dk-ov-body span { font-size: .72rem; color: var(--muted); font-weight: 600; }
+
+  /* ---- concept showcase slides ---- */
+  .dk-status {
+    display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    font-family: var(--font-display); font-weight: 700; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    color: #b45309; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.35);
+    padding: 9px 15px; border-radius: var(--radius-pill);
+  }
+  .dk-badge.dax { --dot: #7c3aed; } .dk-badge.rls { --dot: #16a34a; } .dk-badge.fabric { --dot: #00b7c3; }
+
+  .dk-showcase { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px 1fr; gap: 18px; }
+  .dk-specs { min-height: 0; overflow-y: auto; padding-right: 4px; }
+  .spec-h { font-family: var(--font-display); font-size: .66rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-ink); margin: 0 0 9px; display: flex; align-items: center; gap: 8px; }
+  .spec-h::before { content: ""; width: 18px; height: 2px; border-radius: 2px; background: var(--grad); }
+  .spec-h + .spec-h, .spec-chips + .spec-h, .spec-list + .spec-h { margin-top: 18px; }
+  .spec-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 4px; }
+  .spec-chips span {
+    font-size: .72rem; font-weight: 600; color: var(--text-body);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill);
+    padding: 5px 12px; box-shadow: var(--shadow-sm);
+  }
+  .spec-list { list-style: none; padding: 0; margin: 0; }
+  .spec-list li { position: relative; padding-left: 22px; font-size: .8rem; color: var(--text-body); line-height: 1.5; margin-bottom: 8px; }
+  .spec-list li::before { content: "✓"; position: absolute; left: 0; top: 0; font-weight: 800; background: var(--grad-bright); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dk-edge {
+    margin-top: 18px; font-size: .8rem; line-height: 1.6; color: var(--text);
+    background: var(--grad-soft); border: 1px solid rgba(47,107,255,.22); border-left: 3px solid var(--brand);
+    border-radius: 12px; padding: 13px 15px;
+  }
+  .dk-edge b { display: block; font-family: var(--font-display); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 5px; }
+
+  /* mock frame */
+  .mk-flag {
+    margin-left: 10px; flex-shrink: 0; font-family: var(--font-display); font-weight: 700; font-size: .58rem;
+    letter-spacing: .14em; text-transform: uppercase; color: #b45309;
+    background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.4); border-radius: 6px; padding: 2px 8px;
+  }
+  .mk-flag.live { color: #dc2626; background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.35); animation: pulse 1.8s infinite; }
+  .mk-tabs { flex-shrink: 0; display: flex; gap: 2px; padding: 6px 10px 0; background: var(--surface-2); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .mk-tabs button {
+    border: none; cursor: pointer; white-space: nowrap; font-family: var(--font-body); font-weight: 600; font-size: .72rem;
+    color: var(--muted); background: transparent; padding: 8px 13px; border-radius: 9px 9px 0 0;
+    border-bottom: 2px solid transparent; transition: .18s var(--ease);
+  }
+  .mk-tabs button:hover { color: var(--text); background: rgba(255,255,255,.7); }
+  .mk-tabs button.active { color: var(--brand-ink); background: var(--surface); border-bottom-color: var(--brand); }
+  .mk-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 12px; background: var(--surface-2); }
+
+  /* mock primitives */
+  .mk-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; flex-shrink: 0; }
+  .mk-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 13px; box-shadow: var(--shadow-sm); min-width: 0; }
+  .mk-kpi .k { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .mk-kpi .v { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--ink); line-height: 1.2; margin-top: 2px; }
+  .mk-kpi .d { display: block; font-size: .62rem; font-weight: 700; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-kpi .d.up { color: #16a34a; } .mk-kpi .d.dn { color: #dc2626; }
+  .mk-grid { display: grid; gap: 10px; min-height: 0; }
+  .mk-grid.c2 { grid-template-columns: 1.35fr 1fr; }
+  .mk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px; box-shadow: var(--shadow-sm); min-width: 0; }
+  .mk-card.grow { display: flex; flex-direction: column; }
+  .mk-card .t { display: block; font-size: .62rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; }
+  .mk-card .t b { color: var(--brand-ink); }
+
+  .mk-line { width: 100%; height: 86px; flex: 1; }
+  .mk-line .area { fill: var(--mk1); opacity: .12; }
+  .mk-line .ln { fill: none; stroke: var(--mk1); stroke-width: 2.5; stroke-linecap: round; }
+  .mk-line .ln.alt { stroke: var(--mk2); stroke-dasharray: 1 0; opacity: .55; }
+  .mk-line .fc { fill: none; stroke: var(--mk2); stroke-width: 2.5; stroke-dasharray: 6 5; stroke-linecap: round; }
+  .mk-line .pt { fill: var(--mk1); animation: pulseDot 2.2s ease-in-out infinite; }
+
+  .mk-donut-row { display: flex; align-items: center; gap: 14px; }
+  .mk-donut { width: 74px; height: 74px; border-radius: 50%; position: relative; flex-shrink: 0; animation: spinSlow 16s linear infinite; }
+  .mk-donut::after { content: ""; position: absolute; inset: 17px; background: var(--surface); border-radius: 50%; }
+  .mk-legend { display: grid; gap: 6px; }
+  .mk-legend i { font-style: normal; font-size: .68rem; font-weight: 600; color: var(--text-body); display: inline-flex; align-items: center; gap: 7px; }
+  .mk-legend i::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--c); }
+
+  .mk-rows { display: grid; gap: 8px; }
+  .mk-row-line { display: flex; align-items: center; gap: 10px; }
+  .mk-row-line b { width: 96px; flex-shrink: 0; font-size: .7rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-row-line .track { position: relative; flex: 1; height: 9px; background: var(--surface-3); border-radius: 6px; overflow: visible; }
+  .mk-row-line .track i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: linear-gradient(90deg, var(--mk1), var(--mk2)); }
+  .mk-row-line .track.bullet u { position: absolute; top: -3px; bottom: -3px; width: 2.5px; background: var(--ink); border-radius: 2px; }
+  .mk-row-line .rag { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .mk-row-line .rag.g { background: #22c55e; } .mk-row-line .rag.a { background: #f59e0b; } .mk-row-line .rag.r { background: #ef4444; }
+
+  .mk-heat { flex: 1; min-height: 84px; display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 1fr; gap: 3px; }
+  .mk-heat i { border-radius: 3px; background: var(--mk1); animation: heatBreathe 4s ease-in-out infinite; }
+  @keyframes heatBreathe { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.18); } }
+
+  .mk-slider { position: relative; height: 8px; border-radius: 6px; background: linear-gradient(90deg, var(--mk1), var(--mk2)); margin: 10px 4px 8px; }
+  .mk-slider i { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 3px solid var(--mk1); box-shadow: var(--shadow-md); animation: pulse 2.4s infinite; }
+  .mk-note { font-size: .74rem; color: var(--text-body); }
+  .mk-note b { color: var(--ink); } .mk-wi { color: var(--brand-ink); }
+
+  .mk-water { flex: 1; min-height: 110px; display: flex; align-items: flex-end; gap: 8px; padding-top: 6px; }
+  .mk-water .wb { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
+  .mk-water .wb i { width: 100%; height: var(--h); margin-bottom: var(--off, 0%); border-radius: 4px; transform-origin: bottom; animation: barGrow 3s var(--ease) infinite alternate; }
+  .mk-water .wb.total i { background: linear-gradient(180deg, var(--mk1), var(--mk2)); }
+  .mk-water .wb.pos i { background: #22c55e; }
+  .mk-water .wb.neg i { background: #f87171; }
+  .mk-water .wb b { font-size: .58rem; font-weight: 700; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+
+  .mk-infl { display: grid; gap: 9px; }
+  .mk-infl .ir { display: flex; align-items: center; gap: 9px; }
+  .mk-infl .ir b { width: 148px; flex-shrink: 0; font-size: .68rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-infl .ir .track { flex: 1; height: 8px; background: var(--surface-3); border-radius: 6px; position: relative; }
+  .mk-infl .ir .track i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: linear-gradient(90deg, var(--mk1), var(--mk2)); }
+  .mk-infl .ir em { font-style: normal; font-family: var(--font-display); font-weight: 800; font-size: .68rem; color: var(--brand-ink); width: 32px; text-align: right; }
+
+  .mk-scatter { position: relative; flex: 1; min-height: 96px; border-radius: 8px;
+    background: linear-gradient(135deg, rgba(34,197,94,.07), rgba(245,158,11,.07) 55%, rgba(239,68,68,.10)); border: 1px solid var(--border); }
+  .mk-scatter .dot { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent); transform: translate(-50%, -50%); animation: pulseDot 3s ease-in-out infinite; }
+
+  .mk-map { width: 100%; flex: 1; min-height: 96px; }
+  .mk-map .route { fill: none; stroke: var(--mk1); stroke-width: 2; stroke-dasharray: 6 6; animation: routeDash 1.2s linear infinite; opacity: .8; }
+  .mk-map .route.r2 { stroke: var(--mk2); animation-duration: 1.6s; }
+  .mk-map .route.r3 { stroke: var(--mk1); opacity: .4; animation-duration: 2s; }
+  @keyframes routeDash { to { stroke-dashoffset: -12; } }
+  .mk-map .hub { fill: var(--mk2); animation: pulseDot 2s ease-in-out infinite; }
+
+  .mk-feed { display: grid; gap: 7px; }
+  .mk-feed .fi { display: flex; align-items: center; gap: 8px; font-size: .68rem; font-weight: 600; color: var(--text-body);
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 7px 10px; opacity: 0; animation: taskPop 7.5s var(--ease) infinite; }
+  .mk-feed .fi i { width: 15px; height: 15px; border-radius: 50%; color: #fff; font-size: .5rem; display: grid; place-items: center; flex-shrink: 0; background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .mk-feed .f2 { animation-delay: 2.5s; } .mk-feed .f2 i { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .mk-feed .f3 { animation-delay: 5s; }
+
+  .mk-bars { display: flex; align-items: flex-end; gap: 8px; height: 64px; padding: 4px 2px 0; }
+  .mk-bars span { flex: 1; border-radius: 4px 4px 2px 2px; background: linear-gradient(180deg, var(--mk1), var(--mk2)); transform-origin: bottom; animation: barGrow 2.6s var(--ease) infinite alternate; }
+  .mk-bars span:nth-child(2n) { animation-delay: .3s; } .mk-bars span:nth-child(3n) { animation-delay: .55s; }
+
+  /* ---- responsive ---- */
+  @media (max-width: 1180px) {
+    .dk-showcase { grid-template-columns: 260px 1fr; }
+    .mk-kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .dk-showcase { display: flex; flex-direction: column; overflow-y: auto; gap: 14px; }
+    .dk-specs { order: 2; overflow: visible; }
+    .dk-showcase .dk-viewer { order: 1; flex: none; min-height: 420px; }
+    .mk-grid.c2 { grid-template-columns: 1fr; }
+    .dk-status span { display: none; }
+    .dk-title small { display: none; }
+    .dk-sub { display: none; }
+    .dk-num { font-size: 1.5rem; }
+    .dk-counter { display: none; }
+    .dk-pill span.lbl { display: none; }
+    .dk-pill { padding: 8px 12px; }
+    .dk-arrow { width: 44px; height: 44px; }
+    .dk-arrow.prev { left: 8px; } .dk-arrow.next { right: 8px; }
+    .dk-head-actions .dk-ibtn.wide span { display: none; }
+    .dk-head-actions .dk-ibtn.wide { width: 40px; padding: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dk-slide, .dk-progress { transition: none !important; }
+  }
   </style>
 </head>
+<body class="dk-page">
 
-<body>
-  <!-- Navigation Bar (Same as in index.html) -->
-  <nav>
-    <div class="nav-container">
-      <div class="nav-left">
-        <h3 class="nav-title">
-          <span class="nav-text">JR</span>
-          <span class="linkedin-status">
-            <span class="status-indicator online"></span>
-            <span class="status-text">Online Linkedin</span>
-          </span>
-        </h3>
-      </div>
-      <div class="nav-right">
-        <a href="/">Home</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-      </div>
+  <!-- Ambient layers from the design system -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="dk-topbar">
+    <a class="dk-home" href="/">
+      <span class="mark">JR</span>
+      <span class="back"><i class="fas fa-arrow-left"></i> Portfolio</span>
+    </a>
+    <div class="dk-title">Dashboard Gallery<small>Presented like a keynote</small></div>
+    <div class="dk-top-actions">
+      <span class="dk-counter"><b id="dk-cur">01</b> <span>/ <span id="dk-total">04</span></span></span>
+      <button class="dk-ibtn wide" id="dk-grid-btn" title="Overview (G)"><i class="fas fa-th-large"></i> <span>Overview</span> <kbd>G</kbd></button>
+      <button class="dk-ibtn" id="dk-fs-btn" title="Fullscreen this dashboard"><i class="fas fa-expand"></i></button>
     </div>
-  </nav>
+  </div>
 
-  <main style="max-width: 1200px; margin: 20px auto;">
-    <!-- Page Title -->
-    <h1>Projects BI</h1>
+  <!-- ===== DECK ===== -->
+  <main class="dk-deck" id="dk-deck">
 
-    <!-- ========== FIRST PROJECT (Power BI) ========== -->
-    <!-- Give this container an ID of "project1" -->
-    <div id="project1" style="margin-top: 30px;">
-      <!-- Title + Badges in one row -->
-      <div style="display: flex; align-items: center; margin-top: 10px;">
-        <h2 style="font-size: 1.2rem; margin: 0;">
-          SephAnimeList
-        </h2>
-        <!-- Badges immediately to the right of the title -->
-        <span class="tool-badge badge-powerbi">Power BI</span>
-        <span class="tool-badge badge-deneb">Deneb</span>
-        <span class="tool-badge badge-myanimelist">MyAnimelist API</span>
-      </div>
+    <!-- 00 · Cover -->
+    <section class="dk-slide dk-cover active" data-i="0">
+      <div class="ghost" aria-hidden="true">BI</div>
+      <div class="dk-cover-inner">
+        <span class="dk-kicker"><i class="fas fa-chart-bar"></i> Joseph Rodriguez · BI Gallery</span>
+        <h1>Dashboards, presented like a <span class="serif-accent">keynote.</span></h1>
+        <p class="sub">Eight exhibits — three fully interactive builds and five concept dashboards
+          from the lab. Navigate like a slideshow; explore each one right inside its slide.</p>
 
-      <!-- Embed the Power BI report using an iframe -->
-      <iframe
-        style="width: 1350px; height: 1850px; border: none; margin-top: 20px;"
-        src="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee"
-        allowFullScreen="true">
-      </iframe>
-    </div>
+        <div class="dk-exhibits">
+          <button class="dk-exhibit" data-goto="1">
+            <span class="ic" style="background:linear-gradient(135deg,#2f6bff,#7c3aed)"><i class="fas fa-water"></i></span>
+            <span><b>PH Flood Control Watch</b><span>Power BI · AI · Live news</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="2">
+            <span class="ic" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><i class="fas fa-tv"></i></span>
+            <span><b>SephAnimeList</b><span>Power BI · Deneb · MAL API</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="3">
+            <span class="ic" style="background:linear-gradient(135deg,#E97635,#b45309)"><i class="fas fa-running"></i></span>
+            <span><b>Forrest Gump: A Data Story</b><span>Tableau</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="4">
+            <span class="ic" style="background:linear-gradient(135deg,#2f6bff,#1b4dd1)"><i class="fas fa-crown"></i></span>
+            <span><b>Revenue Command Center</b><span>Concept · Executive BI</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="5">
+            <span class="ic" style="background:linear-gradient(135deg,#06b6d4,#0e7490)"><i class="fas fa-heartbeat"></i></span>
+            <span><b>Healthcare Ops Pulse</b><span>Concept · RLS · What-if</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="6">
+            <span class="ic" style="background:linear-gradient(135deg,#16a34a,#059669)"><i class="fas fa-coins"></i></span>
+            <span><b>P&amp;L Storyboard</b><span>Concept · Calc groups</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="7">
+            <span class="ic" style="background:linear-gradient(135deg,#7c3aed,#db2777)"><i class="fas fa-users"></i></span>
+            <span><b>People &amp; Attrition AI</b><span>Concept · AI visuals</span></span>
+          </button>
+          <button class="dk-exhibit" data-goto="8">
+            <span class="ic" style="background:linear-gradient(135deg,#d97706,#ea580c)"><i class="fas fa-truck-moving"></i></span>
+            <span><b>Supply Chain Control Tower</b><span>Concept · Real-time</span></span>
+          </button>
+        </div>
 
-    <!-- ========== SECOND PROJECT (Tableau) ========== -->
-    <!-- Give this container an ID of "project2" -->
-    <div id="project2" style="margin-top: 50px;">
-      <!-- Title and Badge -->
-      <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <h2 style="margin: 0; font-size: 1.5rem;">
-          The Life and Journey of Forrest Gump: A Data Story
-        </h2>
-        <span class="tool-badge badge-tableau" style="margin-left: 10px;">Tableau</span>
-      </div>
-
-      <!-- Fixed-width container to match PBI's 1350px width -->
-      <div style="width: 1350px; border: 1px solid #ccc; padding: 10px;">
-        <!-- The Tableau Embed -->
-        <div class="tableauPlaceholder" style="width: 100%; height: 2150px; margin: 0 auto;">
-          <noscript>
-            <a href="#">
-              <img alt="Forrest Gump Dashboard"
-                   src="https://public.tableau.com/static/images/fo/forrestgump/ForrestGrumpFinal/1_rss.png"
-                   style="border: none" />
-            </a>
-          </noscript>
-          <object class="tableauViz" width="100%" height="100%" style="display: block;">
-            <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
-            <param name="embed_code_version" value="3" />
-            <param name="site_root" value="" />
-            <param name="name" value="forrestgump/ForrestGrumpFinal" />
-            <param name="tabs" value="no" />
-            <param name="toolbar" value="yes" />
-            <param name="static_image"
-                   value="https://public.tableau.com/static/images/fo/forrestgump/ForrestGrumpFinal/1.png" />
-            <param name="animate_transition" value="yes" />
-            <param name="display_static_image" value="yes" />
-            <param name="display_spinner" value="yes" />
-            <param name="display_overlay" value="yes" />
-            <param name="display_count" value="yes" />
-            <param name="language" value="en-US" />
-            <param name="filter" value="publish=yes" />
-          </object>
+        <div class="keys">
+          <span><kbd>←</kbd> <kbd>→</kbd> navigate</span>
+          <span><kbd>G</kbd> overview</span>
+          <span><kbd>F</kbd> fullscreen</span>
         </div>
       </div>
+    </section>
 
-      <!-- Minimal script to load the Tableau Viz (no auto-resize) -->
-      <script type="text/javascript">
-        var divElement = document.querySelector('.tableauPlaceholder');
-        var vizElement = divElement.getElementsByTagName('object')[0];
-        var scriptElement = document.createElement('script');
-        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
-        vizElement.parentNode.insertBefore(scriptElement, vizElement);
-      </script>
-    </div>
+    <!-- 01 · PH Flood Control Corruption Watch -->
+    <section class="dk-slide" data-i="1">
+      <div class="dk-head">
+        <span class="dk-num">01</span>
+        <div class="dk-head-main">
+          <h2>PH Flood Control Corruption Watch</h2>
+          <p class="dk-sub">An investigative dashboard tracking DPWH flood-control spending — AI-assisted insights with live news context.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge deneb">Deneb</span>
+            <span class="dk-badge html">HTML Content</span>
+            <span class="dk-badge ai">AI</span>
+            <span class="dk-badge news">Latest News</span>
+          </div>
+        </div>
+        <div class="dk-head-actions">
+          <a class="dk-ibtn wide" href="https://app.powerbi.com/reportEmbed?reportId=46d45b50-2b81-4f4e-8945-c8e468af7153&autoAuth=true&ctid=cd9358c3-d338-4e52-98ee-e11fa490760c" target="_blank" rel="noopener" title="Open in new tab"><i class="fas fa-external-link-alt"></i> <span>Open</span></a>
+        </div>
+      </div>
+      <div class="dk-viewer">
+        <div class="dk-chrome"><i></i><i></i><i></i><span class="url">app.powerbi.com · DPWH Flood Control Corruption Watch</span></div>
+        <div class="dk-scroll">
+          <div class="frame-wrap">
+            <iframe title="DPWH - Flood Control Corruption Watch"
+              data-src="https://app.powerbi.com/reportEmbed?reportId=46d45b50-2b81-4f4e-8945-c8e468af7153&autoAuth=true&ctid=cd9358c3-d338-4e52-98ee-e11fa490760c"
+              style="width: 1500px; height: 6050px;" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="dk-loading"><div class="box"><div class="ring"></div><b>Summoning the data…</b><span>Power BI is waking up</span></div></div>
+        <span class="dk-scrollhint"><i class="fas fa-mouse"></i> Scroll inside to explore the full report</span>
+      </div>
+    </section>
+
+    <!-- 02 · SephAnimeList -->
+    <section class="dk-slide" data-i="2">
+      <div class="dk-head">
+        <span class="dk-num">02</span>
+        <div class="dk-head-main">
+          <h2>SephAnimeList</h2>
+          <p class="dk-sub">My personal anime universe, quantified — watchlist, ratings, and recommendations pulled live from the MyAnimeList API.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge deneb">Deneb</span>
+            <span class="dk-badge mal">MyAnimeList API</span>
+          </div>
+        </div>
+        <div class="dk-head-actions">
+          <a class="dk-ibtn wide" href="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee" target="_blank" rel="noopener" title="Open in new tab"><i class="fas fa-external-link-alt"></i> <span>Open</span></a>
+        </div>
+      </div>
+      <div class="dk-viewer">
+        <div class="dk-chrome"><i></i><i></i><i></i><span class="url">app.powerbi.com · SephAnimeList</span></div>
+        <div class="dk-scroll">
+          <div class="frame-wrap">
+            <iframe title="SephAnimeList"
+              data-src="https://app.powerbi.com/view?r=eyJrIjoiZTI1NDQ5MWItYzYzZi00ZDBjLThkZjAtMWFlY2FkZmZkMjZjIiwidCI6ImNkOTM1OGMzLWQzMzgtNGU1Mi05OGVlLWUxMWZhNDkwNzYwYyIsImMiOjN9&pageName=5a53ded5bfae8acff9ee"
+              style="width: 1350px; height: 1850px;" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="dk-loading"><div class="box"><div class="ring"></div><b>Loading the watchlist…</b><span>Deneb visuals incoming</span></div></div>
+        <span class="dk-scrollhint"><i class="fas fa-mouse"></i> Scroll inside to explore the full report</span>
+      </div>
+    </section>
+
+    <!-- 03 · Forrest Gump (Tableau) -->
+    <section class="dk-slide" data-i="3">
+      <div class="dk-head">
+        <span class="dk-num">03</span>
+        <div class="dk-head-main">
+          <h2>The Life and Journey of Forrest Gump: A Data Story</h2>
+          <p class="dk-sub">A narrative-driven Tableau story — running miles, box office, and life events, told scene by scene.</p>
+          <div class="dk-badges">
+            <span class="dk-badge tableau">Tableau</span>
+          </div>
+        </div>
+        <div class="dk-head-actions">
+          <a class="dk-ibtn wide" href="https://public.tableau.com/views/forrestgump/ForrestGrumpFinal" target="_blank" rel="noopener" title="Open in new tab"><i class="fas fa-external-link-alt"></i> <span>Open</span></a>
+        </div>
+      </div>
+      <div class="dk-viewer">
+        <div class="dk-chrome"><i></i><i></i><i></i><span class="url">public.tableau.com · Forrest Gump — A Data Story</span></div>
+        <div class="dk-scroll">
+          <div class="frame-wrap">
+            <iframe title="Forrest Gump — A Data Story"
+              data-src="https://public.tableau.com/views/forrestgump/ForrestGrumpFinal?:showVizHome=no&:embed=true&:toolbar=yes"
+              style="width: 1350px; height: 2150px;" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="dk-loading"><div class="box"><div class="ring"></div><b>Run, data, run…</b><span>Tableau Public is loading</span></div></div>
+        <span class="dk-scrollhint"><i class="fas fa-mouse"></i> Scroll inside to explore the full story</span>
+      </div>
+    </section>
+
+    <!-- 04 · Executive Revenue Command Center (concept) -->
+    <section class="dk-slide" data-i="4">
+      <div class="dk-head">
+        <span class="dk-num">04</span>
+        <div class="dk-head-main">
+          <h2>Executive Revenue Command Center</h2>
+          <p class="dk-sub">A C-suite cockpit that answers "how is the business doing?" in ten seconds — then lets leadership pull every thread behind the number.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge dax">Advanced DAX</span>
+            <span class="dk-badge ai">Smart Narrative</span>
+          </div>
+        </div>
+        <div class="dk-head-actions"><span class="dk-status"><i class="fas fa-flask"></i> Concept · In build</span></div>
+      </div>
+      <div class="dk-showcase">
+        <aside class="dk-specs">
+          <div class="spec-h">Key visuals</div>
+          <div class="spec-chips">
+            <span>KPI cards + sparklines</span><span>Forecast band line</span><span>Decomposition tree</span>
+            <span>Revenue mix donut</span><span>Region RAG table</span>
+          </div>
+          <div class="spec-h">Techniques on display</div>
+          <ul class="spec-list">
+            <li>Time-intelligence DAX (YTD / YoY / rolling 12M)</li>
+            <li>Field parameters — one page, any metric</li>
+            <li>Dynamic titles &amp; drill-through to detail</li>
+            <li>AI Smart Narrative auto-commentary</li>
+          </ul>
+          <div class="dk-edge"><b>Competitive edge</b> Proves I can design for the boardroom — ruthless prioritization, one-glance clarity, and drill-downs that survive a CFO's "why?" three levels deep.</div>
+        </aside>
+        <div class="dk-viewer mk" style="--mk1:#2f6bff; --mk2:#7c3aed">
+          <div class="dk-chrome"><i></i><i></i><i></i><span class="url">concept · Executive Revenue Command Center.pbix</span><span class="mk-flag">Concept</span></div>
+          <div class="mk-tabs"><button class="active">Pulse</button><button>Drivers</button><button>Regions</button><button>Forecast</button><button>Board Pack</button></div>
+          <div class="mk-body">
+            <div class="mk-kpis">
+              <div class="mk-kpi"><span class="k">Revenue YTD</span><span class="v">$84.2M</span><span class="d up">▲ 12.4% YoY</span></div>
+              <div class="mk-kpi"><span class="k">Gross Margin</span><span class="v">41.8%</span><span class="d up">▲ 1.2 pts</span></div>
+              <div class="mk-kpi"><span class="k">Net Retention</span><span class="v">118%</span><span class="d up">▲ 3 pts</span></div>
+              <div class="mk-kpi"><span class="k">Pipeline</span><span class="v">$23.6M</span><span class="d dn">▼ 4.1%</span></div>
+            </div>
+            <div class="mk-grid c2">
+              <div class="mk-card grow">
+                <span class="t">Revenue vs Forecast · rolling 12M</span>
+                <svg class="mk-line" viewBox="0 0 300 90" preserveAspectRatio="none">
+                  <path class="area" d="M0,72 L30,64 L60,66 L90,52 L120,56 L150,44 L180,40 L210,30 L210,90 L0,90 Z"/>
+                  <path class="ln" d="M0,72 L30,64 L60,66 L90,52 L120,56 L150,44 L180,40 L210,30"/>
+                  <path class="fc" d="M210,30 L240,26 L270,18 L300,14"/>
+                  <circle class="pt" cx="210" cy="30" r="4"/>
+                </svg>
+              </div>
+              <div class="mk-card">
+                <span class="t">Revenue mix</span>
+                <div class="mk-donut-row">
+                  <span class="mk-donut" style="background: conic-gradient(var(--mk1) 0 46%, var(--mk2) 46% 74%, #06b6d4 74% 88%, var(--surface-3) 88%)"></span>
+                  <div class="mk-legend"><i style="--c:var(--mk1)">Subscriptions</i><i style="--c:var(--mk2)">Services</i><i style="--c:#06b6d4">Licensing</i></div>
+                </div>
+              </div>
+            </div>
+            <div class="mk-card">
+              <span class="t">Regional performance</span>
+              <div class="mk-rows">
+                <div class="mk-row-line"><b>APAC</b><span class="track"><i style="width:86%"></i></span><em class="rag g"></em></div>
+                <div class="mk-row-line"><b>North America</b><span class="track"><i style="width:74%"></i></span><em class="rag g"></em></div>
+                <div class="mk-row-line"><b>EMEA</b><span class="track"><i style="width:58%"></i></span><em class="rag a"></em></div>
+                <div class="mk-row-line"><b>LATAM</b><span class="track"><i style="width:41%"></i></span><em class="rag r"></em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Healthcare Operations Pulse (concept) -->
+    <section class="dk-slide" data-i="5">
+      <div class="dk-head">
+        <span class="dk-num">05</span>
+        <div class="dk-head-main">
+          <h2>Healthcare Operations Pulse</h2>
+          <p class="dk-sub">An ER command center balancing patient flow against staffing — built with the domain instincts of a BI engineer working in healthcare.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge rls">Dynamic RLS</span>
+            <span class="dk-badge dax">What-if</span>
+          </div>
+        </div>
+        <div class="dk-head-actions"><span class="dk-status"><i class="fas fa-flask"></i> Concept · In build</span></div>
+      </div>
+      <div class="dk-showcase">
+        <aside class="dk-specs">
+          <div class="spec-h">Key visuals</div>
+          <div class="spec-chips">
+            <span>Arrival heatmap (7×24)</span><span>Census vs staffing line</span><span>Wait-time KPI ring</span>
+            <span>LWBS trend</span><span>Facility drill-through</span>
+          </div>
+          <div class="spec-h">Techniques on display</div>
+          <ul class="spec-list">
+            <li>Dynamic row-level security by facility</li>
+            <li>What-if staffing parameter simulation</li>
+            <li>Incremental refresh on encounter facts</li>
+            <li>Conditional formatting tied to SLA targets</li>
+          </ul>
+          <div class="dk-edge"><b>Competitive edge</b> Domain fluency — as a Senior BI Engineer at TeamHealth I speak patient flow natively, and this shows I convert clinical operations into decisions, not just charts.</div>
+        </aside>
+        <div class="dk-viewer mk" style="--mk1:#0e7490; --mk2:#06b6d4">
+          <div class="dk-chrome"><i></i><i></i><i></i><span class="url">concept · Healthcare Operations Pulse.pbix</span><span class="mk-flag">Concept</span></div>
+          <div class="mk-tabs"><button class="active">Command Center</button><button>Patient Flow</button><button>Staffing</button><button>Quality</button><button>Facility Drill</button></div>
+          <div class="mk-body">
+            <div class="mk-kpis">
+              <div class="mk-kpi"><span class="k">Avg ER Wait</span><span class="v">24m</span><span class="d up">▼ 6m vs target</span></div>
+              <div class="mk-kpi"><span class="k">Bed Occupancy</span><span class="v">87%</span><span class="d dn">▲ crossing 90% at 6pm</span></div>
+              <div class="mk-kpi"><span class="k">LWBS Rate</span><span class="v">1.9%</span><span class="d up">▼ 0.4 pts</span></div>
+              <div class="mk-kpi"><span class="k">Shift Coverage</span><span class="v">96%</span><span class="d up">▲ 2 pts</span></div>
+            </div>
+            <div class="mk-grid c2">
+              <div class="mk-card grow">
+                <span class="t">Arrivals intensity · day × hour</span>
+                <div class="mk-heat"></div>
+              </div>
+              <div class="mk-card grow">
+                <span class="t">Census vs staffing · today</span>
+                <svg class="mk-line" viewBox="0 0 300 90" preserveAspectRatio="none">
+                  <path class="ln" d="M0,70 L40,62 L80,48 L120,34 L160,26 L200,32 L240,48 L300,60"/>
+                  <path class="ln alt" d="M0,60 L40,58 L80,52 L120,44 L160,40 L200,42 L240,52 L300,58"/>
+                  <circle class="pt" cx="160" cy="26" r="4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="mk-card">
+              <span class="t">What-if · nurses on shift <b class="mk-wi">+3</b></span>
+              <div class="mk-slider"><i style="left:64%"></i></div>
+              <div class="mk-note">Projected wait drops to <b>17m</b> · occupancy stays under 90%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · P&L Storyboard (concept) -->
+    <section class="dk-slide" data-i="6">
+      <div class="dk-head">
+        <span class="dk-num">06</span>
+        <div class="dk-head-main">
+          <h2>Finance P&amp;L Storyboard</h2>
+          <p class="dk-sub">From revenue to EBITDA as a narrative — every variance explained, every scenario one slider away.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge dax">Calculation Groups</span>
+            <span class="dk-badge deneb">Deneb</span>
+          </div>
+        </div>
+        <div class="dk-head-actions"><span class="dk-status"><i class="fas fa-flask"></i> Concept · In build</span></div>
+      </div>
+      <div class="dk-showcase">
+        <aside class="dk-specs">
+          <div class="spec-h">Key visuals</div>
+          <div class="spec-chips">
+            <span>P&amp;L waterfall walk</span><span>Bullet budget vs actual</span><span>Cash runway gauge</span>
+            <span>Scenario toggles</span><span>Ledger drill-through</span>
+          </div>
+          <div class="spec-h">Techniques on display</div>
+          <ul class="spec-list">
+            <li>Calculation groups — Actual / Budget / PY / FX-adj from one measure</li>
+            <li>Bookmark-driven scenario storytelling</li>
+            <li>Deneb custom waterfall &amp; bullet charts</li>
+            <li>Currency conversion &amp; fiscal calendars</li>
+          </ul>
+          <div class="dk-edge"><b>Competitive edge</b> Calculation groups and fiscal-grade modeling are where senior engineers separate from report builders — this is finance-team trust, earned in one demo.</div>
+        </aside>
+        <div class="dk-viewer mk" style="--mk1:#16a34a; --mk2:#059669">
+          <div class="dk-chrome"><i></i><i></i><i></i><span class="url">concept · Finance P&amp;L Storyboard.pbix</span><span class="mk-flag">Concept</span></div>
+          <div class="mk-tabs"><button class="active">P&amp;L Walk</button><button>Budget vs Actual</button><button>Cash</button><button>Scenarios</button><button>Ledger</button></div>
+          <div class="mk-body">
+            <div class="mk-kpis">
+              <div class="mk-kpi"><span class="k">EBITDA</span><span class="v">$18.4M</span><span class="d up">▲ 9.8% vs budget</span></div>
+              <div class="mk-kpi"><span class="k">EBITDA Margin</span><span class="v">21.9%</span><span class="d up">▲ 1.4 pts</span></div>
+              <div class="mk-kpi"><span class="k">Opex Ratio</span><span class="v">31.2%</span><span class="d up">▼ 0.8 pts</span></div>
+              <div class="mk-kpi"><span class="k">Cash Runway</span><span class="v">19 mo</span><span class="d up">▲ 2 mo</span></div>
+            </div>
+            <div class="mk-card grow">
+              <span class="t">Revenue → EBITDA walk · FY view</span>
+              <div class="mk-water">
+                <div class="wb total" style="--h:92%"><i></i><b>Rev</b></div>
+                <div class="wb neg" style="--h:34%; --off:58%"><i></i><b>COGS</b></div>
+                <div class="wb pos" style="--h:8%; --off:50%"><i></i><b>Mix</b></div>
+                <div class="wb neg" style="--h:22%; --off:36%"><i></i><b>Opex</b></div>
+                <div class="wb neg" style="--h:7%; --off:29%"><i></i><b>FX</b></div>
+                <div class="wb pos" style="--h:5%; --off:24%"><i></i><b>Other</b></div>
+                <div class="wb total end" style="--h:29%"><i></i><b>EBITDA</b></div>
+              </div>
+            </div>
+            <div class="mk-card">
+              <span class="t">Budget vs actual · top lines</span>
+              <div class="mk-rows">
+                <div class="mk-row-line"><b>Revenue</b><span class="track bullet"><i style="width:84%"></i><u style="left:78%"></u></span><em class="rag g"></em></div>
+                <div class="mk-row-line"><b>COGS</b><span class="track bullet"><i style="width:62%"></i><u style="left:66%"></u></span><em class="rag g"></em></div>
+                <div class="mk-row-line"><b>Marketing</b><span class="track bullet"><i style="width:74%"></i><u style="left:60%"></u></span><em class="rag a"></em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 · People Analytics & Attrition AI (concept) -->
+    <section class="dk-slide" data-i="7">
+      <div class="dk-head">
+        <span class="dk-num">07</span>
+        <div class="dk-head-main">
+          <h2>People Analytics &amp; Attrition AI</h2>
+          <p class="dk-sub">Who's at risk of leaving, why, and what it costs — AI-assisted workforce intelligence with executive-safe governance.</p>
+          <div class="dk-badges">
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge ai">Key Influencers AI</span>
+            <span class="dk-badge rls">RLS Governance</span>
+          </div>
+        </div>
+        <div class="dk-head-actions"><span class="dk-status"><i class="fas fa-flask"></i> Concept · In build</span></div>
+      </div>
+      <div class="dk-showcase">
+        <aside class="dk-specs">
+          <div class="spec-h">Key visuals</div>
+          <div class="spec-chips">
+            <span>Key Influencers (AI)</span><span>Risk × impact scatter</span><span>Cohort retention heatmap</span>
+            <span>eNPS trend</span><span>Manager drill view</span>
+          </div>
+          <div class="spec-h">Techniques on display</div>
+          <ul class="spec-list">
+            <li>AI visuals — Key Influencers &amp; decomposition tree</li>
+            <li>SVG measures for in-table micro-charts</li>
+            <li>Sensitive-data RLS: HR vs manager vs exec views</li>
+            <li>Attrition-cost DAX modeling</li>
+          </ul>
+          <div class="dk-edge"><b>Competitive edge</b> Blends AI-flavored analytics with the governance maturity HR data demands — a rare pairing that reads unmistakably senior.</div>
+        </aside>
+        <div class="dk-viewer mk" style="--mk1:#7c3aed; --mk2:#db2777">
+          <div class="dk-chrome"><i></i><i></i><i></i><span class="url">concept · People Analytics &amp; Attrition AI.pbix</span><span class="mk-flag">Concept</span></div>
+          <div class="mk-tabs"><button class="active">Workforce Pulse</button><button>Attrition AI</button><button>Comp Equity</button><button>DEI</button><button>Manager View</button></div>
+          <div class="mk-body">
+            <div class="mk-kpis">
+              <div class="mk-kpi"><span class="k">Headcount</span><span class="v">4,812</span><span class="d up">▲ 3.1% QoQ</span></div>
+              <div class="mk-kpi"><span class="k">Attrition (12M)</span><span class="v">11.2%</span><span class="d up">▼ 1.8 pts</span></div>
+              <div class="mk-kpi"><span class="k">eNPS</span><span class="v">+42</span><span class="d up">▲ 6</span></div>
+              <div class="mk-kpi"><span class="k">Time to Fill</span><span class="v">31d</span><span class="d dn">▲ 4d</span></div>
+            </div>
+            <div class="mk-grid c2">
+              <div class="mk-card grow">
+                <span class="t">Top attrition influencers · AI</span>
+                <div class="mk-infl">
+                  <div class="ir"><b>No promotion in 2y+</b><span class="track"><i style="width:88%"></i></span><em>2.4×</em></div>
+                  <div class="ir"><b>Manager changed twice</b><span class="track"><i style="width:66%"></i></span><em>1.9×</em></div>
+                  <div class="ir"><b>Comp below band mid</b><span class="track"><i style="width:52%"></i></span><em>1.6×</em></div>
+                  <div class="ir"><b>Remote → forced hybrid</b><span class="track"><i style="width:38%"></i></span><em>1.3×</em></div>
+                </div>
+              </div>
+              <div class="mk-card grow">
+                <span class="t">Flight risk × business impact</span>
+                <div class="mk-scatter">
+                  <span class="dot" style="left:78%; top:18%; --c:#ef4444"></span>
+                  <span class="dot" style="left:64%; top:34%; --c:#ef4444"></span>
+                  <span class="dot" style="left:52%; top:26%; --c:#f59e0b"></span>
+                  <span class="dot" style="left:38%; top:52%; --c:#f59e0b"></span>
+                  <span class="dot" style="left:24%; top:66%; --c:#22c55e"></span>
+                  <span class="dot" style="left:44%; top:74%; --c:#22c55e"></span>
+                  <span class="dot" style="left:16%; top:38%; --c:#22c55e"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 · Real-Time Supply Chain Control Tower (concept) -->
+    <section class="dk-slide" data-i="8">
+      <div class="dk-head">
+        <span class="dk-num">08</span>
+        <div class="dk-head-main">
+          <h2>Real-Time Supply Chain Control Tower</h2>
+          <p class="dk-sub">Every shipment, every lane, every stockout risk — streaming into one tower that updates while you watch.</p>
+          <div class="dk-badges">
+            <span class="dk-badge fabric">MS Fabric Real-Time</span>
+            <span class="dk-badge powerbi">Power BI</span>
+            <span class="dk-badge deneb">Deneb</span>
+          </div>
+        </div>
+        <div class="dk-head-actions"><span class="dk-status"><i class="fas fa-flask"></i> Concept · In build</span></div>
+      </div>
+      <div class="dk-showcase">
+        <aside class="dk-specs">
+          <div class="spec-h">Key visuals</div>
+          <div class="spec-chips">
+            <span>Live lane map</span><span>OTIF scorecards</span><span>Stockout risk table</span>
+            <span>Event ticker</span><span>DC utilization bars</span>
+          </div>
+          <div class="spec-h">Techniques on display</div>
+          <ul class="spec-list">
+            <li>Fabric Eventstream → KQL → live report</li>
+            <li>Deneb custom lane/route visuals</li>
+            <li>Data-driven alerts on SLA breaches</li>
+            <li>Medallion architecture behind the scenes</li>
+          </ul>
+          <div class="dk-edge"><b>Competitive edge</b> Real-time streaming BI on Microsoft Fabric is the frontier skill of 2026 — this exhibit says I'm already living there, not catching up.</div>
+        </aside>
+        <div class="dk-viewer mk" style="--mk1:#d97706; --mk2:#ea580c">
+          <div class="dk-chrome"><i></i><i></i><i></i><span class="url">concept · Supply Chain Control Tower · streaming</span><span class="mk-flag live">● Live</span></div>
+          <div class="mk-tabs"><button class="active">Live Tower</button><button>Inventory Health</button><button>Supplier Scorecards</button><button>Lanes &amp; Routes</button><button>Alerts</button></div>
+          <div class="mk-body">
+            <div class="mk-kpis">
+              <div class="mk-kpi"><span class="k">OTIF</span><span class="v">94.6%</span><span class="d up">▲ 1.1 pts</span></div>
+              <div class="mk-kpi"><span class="k">In-Transit</span><span class="v">1,284</span><span class="d up">live</span></div>
+              <div class="mk-kpi"><span class="k">Stockout Risk</span><span class="v">17 SKUs</span><span class="d dn">▲ 5 today</span></div>
+              <div class="mk-kpi"><span class="k">Fill Rate</span><span class="v">97.2%</span><span class="d up">▲ 0.4 pts</span></div>
+            </div>
+            <div class="mk-grid c2">
+              <div class="mk-card grow">
+                <span class="t">Active lanes · live</span>
+                <svg class="mk-map" viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet">
+                  <path class="route" d="M30,90 Q100,20 170,55"/>
+                  <path class="route r2" d="M170,55 Q220,80 275,35"/>
+                  <path class="route r3" d="M60,100 Q160,95 275,35"/>
+                  <circle class="hub" cx="30" cy="90" r="5"/>
+                  <circle class="hub" cx="170" cy="55" r="6"/>
+                  <circle class="hub" cx="275" cy="35" r="5"/>
+                  <circle class="hub" cx="60" cy="100" r="4"/>
+                </svg>
+              </div>
+              <div class="mk-card grow">
+                <span class="t">Event stream</span>
+                <div class="mk-feed">
+                  <div class="fi f1"><i class="fas fa-check"></i> PO-8841 delivered · Cebu DC · on time</div>
+                  <div class="fi f2"><i class="fas fa-exclamation"></i> Lane MNL→DVO delayed 40m · storm</div>
+                  <div class="fi f3"><i class="fas fa-check"></i> SKU-2210 replenished · risk cleared</div>
+                </div>
+              </div>
+            </div>
+            <div class="mk-card">
+              <span class="t">DC utilization</span>
+              <div class="mk-bars">
+                <span style="height:72%"></span><span style="height:88%"></span><span style="height:54%"></span>
+                <span style="height:66%"></span><span style="height:91%"></span><span style="height:47%"></span>
+                <span style="height:78%"></span><span style="height:60%"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- floating arrows -->
+    <button class="dk-arrow prev" id="dk-prev" aria-label="Previous slide" disabled><i class="fas fa-chevron-left"></i></button>
+    <button class="dk-arrow next" id="dk-next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
   </main>
 
-  <footer style="text-align:center; margin-bottom:20px;">
-    <p>© 2025 Joseph Rodriguez. All rights reserved.</p>
-  </footer>
+  <!-- ===== BOTTOM RAIL ===== -->
+  <div class="dk-rail" style="position:relative">
+    <div class="dk-progress" id="dk-progress"></div>
+    <button class="dk-pill active" data-goto="0"><span class="n">00</span> <span class="lbl">Cover</span></button>
+    <button class="dk-pill" data-goto="1"><span class="n">01</span> <span class="lbl">Flood Watch</span></button>
+    <button class="dk-pill" data-goto="2"><span class="n">02</span> <span class="lbl">AnimeList</span></button>
+    <button class="dk-pill" data-goto="3"><span class="n">03</span> <span class="lbl">Forrest Gump</span></button>
+    <button class="dk-pill" data-goto="4"><span class="n">04</span> <span class="lbl">Revenue</span></button>
+    <button class="dk-pill" data-goto="5"><span class="n">05</span> <span class="lbl">Healthcare</span></button>
+    <button class="dk-pill" data-goto="6"><span class="n">06</span> <span class="lbl">P&amp;L</span></button>
+    <button class="dk-pill" data-goto="7"><span class="n">07</span> <span class="lbl">People AI</span></button>
+    <button class="dk-pill" data-goto="8"><span class="n">08</span> <span class="lbl">Control Tower</span></button>
+  </div>
 
-  <script src="/static/js/scripts.js"></script>
+  <!-- ===== OVERVIEW (slide sorter) ===== -->
+  <div class="dk-overview" id="dk-overview" role="dialog" aria-modal="true" aria-label="Slide overview">
+    <div class="dk-ov-head">
+      <h3>All slides<small>Click any slide to jump — or press Esc</small></h3>
+      <button class="dk-ov-close" id="dk-ov-close" aria-label="Close overview"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="dk-ov-grid">
+      <div class="dk-ov-card" data-goto="0">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#2f6bff,#7c3aed)">
+          <span class="tn">00</span><i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="dk-ov-body"><b>Cover — Dashboard Gallery</b><span>Start here</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="1">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#0e7490,#2f6bff)">
+          <span class="tn">01</span><i class="fas fa-water"></i>
+        </div>
+        <div class="dk-ov-body"><b>PH Flood Control Corruption Watch</b><span>Power BI · Deneb · AI · News</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="2">
+        <div class="dk-ov-thumb">
+          <img src="/static/images/sephanimelist.png" alt="SephAnimeList thumbnail">
+          <span class="tn">02</span>
+        </div>
+        <div class="dk-ov-body"><b>SephAnimeList</b><span>Power BI · Deneb · MAL API</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="3">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#E97635,#b45309)">
+          <span class="tn">03</span><i class="fas fa-running"></i>
+        </div>
+        <div class="dk-ov-body"><b>Forrest Gump: A Data Story</b><span>Tableau</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="4">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#2f6bff,#1b4dd1)">
+          <span class="tn">04</span><i class="fas fa-crown"></i><span class="ov-tag">Concept</span>
+        </div>
+        <div class="dk-ov-body"><b>Executive Revenue Command Center</b><span>Power BI · DAX · Smart Narrative</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="5">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#06b6d4,#0e7490)">
+          <span class="tn">05</span><i class="fas fa-heartbeat"></i><span class="ov-tag">Concept</span>
+        </div>
+        <div class="dk-ov-body"><b>Healthcare Operations Pulse</b><span>Power BI · RLS · What-if</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="6">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#16a34a,#059669)">
+          <span class="tn">06</span><i class="fas fa-coins"></i><span class="ov-tag">Concept</span>
+        </div>
+        <div class="dk-ov-body"><b>Finance P&amp;L Storyboard</b><span>Power BI · Calc groups · Deneb</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="7">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#7c3aed,#db2777)">
+          <span class="tn">07</span><i class="fas fa-users"></i><span class="ov-tag">Concept</span>
+        </div>
+        <div class="dk-ov-body"><b>People Analytics &amp; Attrition AI</b><span>Power BI · AI visuals · RLS</span></div>
+      </div>
+      <div class="dk-ov-card" data-goto="8">
+        <div class="dk-ov-thumb" style="background:linear-gradient(135deg,#d97706,#ea580c)">
+          <span class="tn">08</span><i class="fas fa-truck-moving"></i><span class="ov-tag">Concept</span>
+        </div>
+        <div class="dk-ov-body"><b>Real-Time Supply Chain Control Tower</b><span>Fabric Real-Time · Deneb</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const slides = [...document.querySelectorAll('.dk-slide')];
+    const pills = [...document.querySelectorAll('.dk-pill')];
+    const prevBtn = document.getElementById('dk-prev');
+    const nextBtn = document.getElementById('dk-next');
+    const curEl = document.getElementById('dk-cur');
+    const totalEl = document.getElementById('dk-total');
+    const progress = document.getElementById('dk-progress');
+    const overview = document.getElementById('dk-overview');
+    const N = slides.length;
+    let cur = 0;
+
+    totalEl.textContent = String(N).padStart(2, '0');
+
+    /* ---- lazy-load an iframe the first time its slide is shown ---- */
+    function loadFrame(i) {
+      const slide = slides[i];
+      const frame = slide.querySelector('iframe[data-src]');
+      if (!frame) return;
+      const viewer = slide.querySelector('.dk-viewer');
+      frame.addEventListener('load', () => {
+        viewer.classList.add('loaded');
+        const nxt = slides[i + 1];           /* quietly preload the next exhibit */
+        if (nxt) {
+          const nf = nxt.querySelector('iframe[data-src]');
+          if (nf) { nf.src = nf.dataset.src; nf.removeAttribute('data-src');
+            nf.addEventListener('load', () => nxt.querySelector('.dk-viewer').classList.add('loaded'), { once: true }); }
+        }
+      }, { once: true });
+      frame.src = frame.dataset.src;
+      frame.removeAttribute('data-src');
+    }
+
+    /* ---- header entrance stagger ---- */
+    function headIn(slide) {
+      if (REDUCED || !window.gsap) return;
+      const parts = slide.querySelectorAll('.dk-num, .dk-head h2, .dk-sub, .dk-badge, .dk-head-actions, .dk-cover-inner > *');
+      gsap.fromTo(parts, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .55, stagger: .05, ease: 'power3.out', clearProps: 'all', delay: .12 });
+    }
+
+    /* ---- go to slide (interruption-safe: concurrent push, no lock) ---- */
+    function goTo(i, dir) {
+      i = Math.max(0, Math.min(N - 1, i));
+      if (i === cur) return;
+      dir = dir || (i > cur ? 1 : -1);
+      const out = slides[cur], inn = slides[i];
+      loadFrame(i);
+      cur = i;
+      updateChrome();
+
+      if (REDUCED || !window.gsap) {
+        slides.forEach((s) => s.classList.toggle('active', s === inn));
+        return;
+      }
+      gsap.killTweensOf(slides);
+      slides.forEach((s) => {
+        if (s !== out && s !== inn) { s.classList.remove('active'); gsap.set(s, { clearProps: 'all' }); }
+      });
+      gsap.set(out, { zIndex: 1 });
+      gsap.set(inn, { zIndex: 2 });
+      inn.classList.add('active');
+      gsap.to(out, {
+        xPercent: -16 * dir, opacity: 0, scale: .96, rotateY: -7 * dir, transformPerspective: 1600,
+        duration: .42, ease: 'power2.inOut',
+        onComplete: () => { out.classList.remove('active'); gsap.set(out, { clearProps: 'all' }); }
+      });
+      gsap.fromTo(inn,
+        { xPercent: 16 * dir, opacity: 0, scale: .96, rotateY: 7 * dir, transformPerspective: 1600 },
+        { xPercent: 0, opacity: 1, scale: 1, rotateY: 0, duration: .55, ease: 'power3.out',
+          onComplete: () => gsap.set(inn, { clearProps: 'all' }) });
+      headIn(inn);
+    }
+
+    function updateChrome() {
+      curEl.textContent = String(cur + 1).padStart(2, '0');
+      pills.forEach((p) => p.classList.toggle('active', +p.dataset.goto === cur));
+      progress.style.width = ((cur) / (N - 1)) * 100 + '%';
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === N - 1;
+      prevBtn.toggleAttribute('disabled', cur === 0);
+      nextBtn.toggleAttribute('disabled', cur === N - 1);
+    }
+
+    /* ---- overview ---- */
+    function openOverview() {
+      overview.classList.add('open');
+      document.querySelectorAll('.dk-ov-card').forEach((c) => c.classList.toggle('current', +c.dataset.goto === cur));
+      if (!REDUCED && window.gsap) {
+        gsap.fromTo('.dk-ov-card', { y: 26, opacity: 0, scale: .94 }, { y: 0, opacity: 1, scale: 1, duration: .4, stagger: .06, ease: 'power3.out', clearProps: 'all' });
+      }
+    }
+    function closeOverview() { overview.classList.remove('open'); }
+
+    /* ---- wiring ---- */
+    prevBtn.addEventListener('click', () => goTo(cur - 1, -1));
+    nextBtn.addEventListener('click', () => goTo(cur + 1, 1));
+    document.querySelectorAll('[data-goto]').forEach((el) => {
+      el.addEventListener('click', () => { closeOverview(); goTo(+el.dataset.goto); });
+    });
+    document.getElementById('dk-grid-btn').addEventListener('click', openOverview);
+    document.getElementById('dk-ov-close').addEventListener('click', closeOverview);
+    overview.addEventListener('click', (e) => { if (e.target === overview) closeOverview(); });
+
+    document.getElementById('dk-fs-btn').addEventListener('click', () => {
+      const viewer = slides[cur].querySelector('.dk-viewer');
+      const target = viewer || document.documentElement;
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (target.requestFullscreen) target.requestFullscreen();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (overview.classList.contains('open')) {
+        if (e.key === 'Escape' || e.key.toLowerCase() === 'g') { e.preventDefault(); closeOverview(); }
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goTo(cur + 1, 1); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(cur - 1, -1); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(0, -1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(N - 1, 1); }
+      else if (e.key.toLowerCase() === 'g') { e.preventDefault(); openOverview(); }
+      else if (e.key.toLowerCase() === 'f') { e.preventDefault(); document.getElementById('dk-fs-btn').click(); }
+    });
+
+    /* swipe on slide headers / cover (embeds keep their own touch) */
+    let tx = null;
+    document.getElementById('dk-deck').addEventListener('touchstart', (e) => {
+      if (e.target.closest('.dk-scroll')) { tx = null; return; }
+      tx = e.touches[0].clientX;
+    }, { passive: true });
+    document.getElementById('dk-deck').addEventListener('touchend', (e) => {
+      if (tx === null) return;
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 60) goTo(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+      tx = null;
+    }, { passive: true });
+
+    /* build the 7×24-style heatmap cells (12 cols × 5 rows, deterministic wave) */
+    document.querySelectorAll('.mk-heat').forEach((heat) => {
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 12; c++) {
+          const cell = document.createElement('i');
+          const wave = Math.sin((c / 11) * Math.PI) * .75 + (r === 2 || r === 3 ? .25 : 0);
+          cell.style.opacity = (0.12 + Math.max(0, Math.min(1, wave)) * 0.78).toFixed(2);
+          cell.style.animationDelay = ((c * 5 + r) % 7) * .3 + 's';
+          heat.appendChild(cell);
+        }
+      }
+    });
+
+    /* mock report tabs — visual page switch */
+    document.querySelectorAll('.mk-tabs').forEach((strip) => {
+      strip.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        strip.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn));
+        const body = strip.parentElement.querySelector('.mk-body');
+        if (body && window.gsap && !REDUCED) {
+          gsap.fromTo(body, { opacity: .35, y: 8 }, { opacity: 1, y: 0, duration: .4, ease: 'power2.out', clearProps: 'all' });
+        }
+      });
+    });
+
+    /* cover entrance */
+    if (!REDUCED && window.gsap) {
+      gsap.fromTo('.dk-cover-inner > *', { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: .7, stagger: .09, ease: 'power3.out', clearProps: 'all', delay: .15 });
+      gsap.fromTo('.dk-topbar, .dk-rail', { opacity: 0 }, { opacity: 1, duration: .6, delay: .1, clearProps: 'all' });
+    }
+    updateChrome();
+  })();
+  </script>
 </body>
 </html>

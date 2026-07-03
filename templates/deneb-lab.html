@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deneb Lab — Joseph Rodriguez</title>
+  <meta name="description" content="Joseph Rodriguez's Deneb custom-visual gallery — paste a Vega or Vega-Lite spec and it renders instantly.">
+  <link rel="icon" type="image/png" href="/static/images/logo/logo_98_65.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+
+  <style>
+  /* =================================================================
+     Deneb Lab — living gallery for Deneb / Deneb Lite custom visuals
+     Rides on the site design tokens. Classes prefixed .dv-.
+     ================================================================= */
+  .dv-wrap { width: min(100% - var(--gutter) * 2, 1280px); margin: 0 auto; padding: 34px 0 120px; }
+
+  /* ---- top bar ---- */
+  .dv-topbar { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,.72);
+    backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid rgba(228,234,243,.9); }
+  .dv-topbar-inner { width: min(100% - var(--gutter) * 2, 1280px); margin: 0 auto; height: 64px;
+    display: flex; align-items: center; gap: 16px; }
+  .dv-home { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .dv-home .mark { font-family: var(--font-display); font-weight: 800; color: #fff; background: var(--grad);
+    padding: 7px 11px; border-radius: 11px; box-shadow: var(--shadow-brand); font-size: .95rem; }
+  .dv-home .back { font-size: .82rem; font-weight: 600; color: var(--text-body); transition: color .2s; }
+  .dv-home:hover .back { color: var(--brand-ink); }
+  .dv-ttl { font-family: var(--font-display); font-weight: 700; color: var(--ink); font-size: 1rem; }
+  .dv-ttl small { display: block; font-family: var(--font-body); font-weight: 600; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .dv-top-actions { margin-left: auto; display: flex; gap: 9px; align-items: center; }
+  .dv-btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none;
+    font-family: var(--font-body); font-weight: 600; font-size: .88rem; padding: 11px 18px;
+    border-radius: var(--radius-pill); transition: .2s var(--ease); }
+  .dv-btn.primary { background: var(--grad); color: #fff; box-shadow: var(--shadow-brand); }
+  .dv-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(47,107,255,.34); }
+  .dv-btn.ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
+  .dv-btn.ghost:hover { transform: translateY(-1px); border-color: var(--brand); color: var(--brand-ink); box-shadow: var(--shadow-sm); }
+
+  /* ---- hero ---- */
+  .dv-hero { position: relative; padding: 34px 0 8px; margin-bottom: 26px; }
+  .dv-ghost { position: absolute; top: -30px; right: -8px; z-index: 0; pointer-events: none; user-select: none;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 12vw, 9.5rem); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.09); }
+  .dv-kicker { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display);
+    font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--brand-ink);
+    background: var(--grad-soft); padding: 7px 16px; border-radius: var(--radius-pill); margin-bottom: 16px; }
+  .dv-hero h1 { position: relative; z-index: 1; font-size: clamp(2rem, 4.6vw, 3.4rem); font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+  .dv-hero h1 .serif-accent { font-size: 1.12em; }
+  .dv-hero .sub { margin-top: 12px; color: var(--text-body); font-size: 1.02rem; max-width: 62ch; }
+  .dv-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+  .dv-stat { display: inline-flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-pill); padding: 8px 16px; box-shadow: var(--shadow-sm); font-size: .82rem; font-weight: 600; color: var(--text-body); }
+  .dv-stat b { font-family: var(--font-display); font-weight: 800; font-size: 1.02rem; }
+  .dv-stat .swatch { width: 9px; height: 9px; border-radius: 3px; }
+
+  /* ---- gallery grid ---- */
+  .dv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 22px; }
+  .dv-card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s; }
+  .dv-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
+  .dv-card-top { display: flex; align-items: center; gap: 9px; padding: 14px 18px 0; }
+  .dv-lang { font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 4px 11px; border-radius: 99px; }
+  .dv-lang.vl { background: rgba(47,107,255,.12); color: var(--brand-ink); }
+  .dv-lang.vg { background: rgba(124,58,237,.13); color: #6d28d9; }
+  .dv-card-top .acts { margin-left: auto; display: flex; gap: 5px; opacity: 0; transition: opacity .25s var(--ease); }
+  .dv-card:hover .dv-card-top .acts { opacity: 1; }
+  .dv-iconbtn { width: 32px; height: 32px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface);
+    color: var(--muted); cursor: pointer; font-size: .78rem; display: grid; place-items: center; transition: .18s var(--ease); }
+  .dv-iconbtn:hover { color: var(--brand-ink); border-color: var(--brand); transform: translateY(-1px); }
+  .dv-iconbtn.danger:hover { color: #dc2626; border-color: #ef4444; }
+  .dv-viz { min-height: 250px; padding: 12px 16px 6px; display: grid; place-items: center; cursor: zoom-in; overflow: hidden; }
+  .dv-viz.vega-embed, .dv-preview-box.vega-embed, .dv-detail-viz.vega-embed {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .dv-viz.vega-embed canvas, .dv-viz.vega-embed svg,
+  .dv-preview-box.vega-embed canvas, .dv-preview-box.vega-embed svg,
+  .dv-detail-viz.vega-embed canvas, .dv-detail-viz.vega-embed svg { max-width: 100%; }
+  .dv-viz > div { width: 100%; }
+  .dv-viz.err { place-items: center; color: #b45309; font-size: .82rem; text-align: center; padding: 30px; cursor: default; }
+  .dv-viz.err i { display: block; font-size: 1.6rem; margin-bottom: 10px; color: #f59e0b; }
+  .dv-card-body { padding: 6px 20px 18px; }
+  .dv-card-body h3 { font-size: 1.06rem; letter-spacing: -.01em; color: var(--ink); margin-bottom: 4px; }
+  .dv-card-body p { font-size: .85rem; color: var(--text-body); line-height: 1.55; }
+  .dv-card-body .when { display: block; margin-top: 10px; font-size: .68rem; color: var(--muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+
+  /* add-new card */
+  .dv-add-card { min-height: 340px; border: 2px dashed var(--border-strong); border-radius: var(--radius);
+    display: grid; place-items: center; cursor: pointer; background: transparent;
+    transition: .25s var(--ease); text-align: center; color: var(--muted); }
+  .dv-add-card:hover { border-color: var(--brand); background: rgba(47,107,255,.04); transform: translateY(-4px); }
+  .dv-add-card i { font-size: 2rem; display: block; margin-bottom: 12px; background: var(--grad-bright);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .dv-add-card b { font-family: var(--font-display); color: var(--text); font-size: 1.05rem; display: block; }
+  .dv-add-card span { font-size: .82rem; }
+
+  .dv-empty { grid-column: 1 / -1; text-align: center; padding: 70px 20px; color: var(--muted); }
+  .dv-empty i { font-size: 2.6rem; display: block; margin-bottom: 14px; color: var(--border-strong); }
+
+  /* ---- modals ---- */
+  .dv-modal { position: fixed; inset: 0; z-index: 2000; display: none; background: rgba(10,20,40,.5);
+    backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); overflow-y: auto; padding: 4vh 16px; }
+  .dv-modal.open { display: block; }
+  .dv-panel { width: min(1060px, 100%); margin: 0 auto; background: var(--surface); border-radius: 24px;
+    box-shadow: var(--shadow-lg); overflow: hidden; animation: dvIn .25s var(--ease-out); }
+  @keyframes dvIn { from { opacity: 0; transform: translateY(16px) scale(.985); } to { opacity: 1; transform: none; } }
+  .dv-panel-head { display: flex; align-items: center; gap: 14px; padding: 18px 26px; border-bottom: 1px solid var(--border); }
+  .dv-panel-head h3 { font-size: 1.15rem; color: var(--ink); letter-spacing: -.01em; }
+  .dv-panel-head .close { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; border: none;
+    background: var(--surface-3); color: var(--text-body); cursor: pointer; font-size: .95rem; transition: .18s var(--ease); }
+  .dv-panel-head .close:hover { background: var(--border-strong); color: var(--text); }
+
+  /* editor layout */
+  .dv-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 480px; }
+  .dv-form { padding: 22px 26px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
+  .dv-form label { font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); display: flex; align-items: center; gap: 8px; }
+  .dv-form label .opt { font-weight: 600; color: var(--muted); text-transform: none; letter-spacing: 0; }
+  .dv-form input[type="text"], .dv-form textarea { width: 100%; border: 1px solid var(--border-strong); border-radius: 12px;
+    background: var(--surface-2); color: var(--text); font-family: var(--font-body); font-size: .9rem; padding: 11px 14px;
+    transition: border-color .2s, box-shadow .2s; }
+  .dv-form textarea { font-family: 'Consolas', 'Courier New', monospace; font-size: .8rem; line-height: 1.55; resize: vertical; }
+  .dv-form input:focus, .dv-form textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px rgba(47,107,255,.12); background: var(--surface); }
+  #dv-f-spec { min-height: 190px; flex: 1; }
+  #dv-f-data { min-height: 74px; }
+  .dv-detect { display: inline-flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 700; color: var(--muted); }
+  .dv-detect .dv-lang { font-size: .6rem; }
+  .dv-err { display: none; font-size: .78rem; color: #b91c1c; background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3);
+    border-radius: 10px; padding: 10px 13px; line-height: 1.5; }
+  .dv-err.show { display: block; }
+  .dv-form-foot { display: flex; gap: 10px; align-items: center; margin-top: auto; padding-top: 6px; }
+  .dv-preview-pane { padding: 22px 26px; display: flex; flex-direction: column; background: var(--surface-2); }
+  .dv-preview-pane .ph { font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .dv-preview-box { flex: 1; min-height: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    display: grid; place-items: center; padding: 16px; overflow: auto; }
+  .dv-preview-box > div { width: 100%; }
+  .dv-preview-box .hint { color: var(--muted); font-size: .86rem; text-align: center; }
+  .dv-preview-box .hint i { display: block; font-size: 1.8rem; margin-bottom: 10px; color: var(--border-strong); }
+
+  /* detail modal */
+  .dv-detail-body { padding: 24px 28px; }
+  .dv-detail-viz { background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: grid; place-items: center; overflow: auto; min-height: 320px; }
+  .dv-detail-viz > div { width: 100%; }
+  .dv-detail-desc { margin-top: 14px; color: var(--text-body); font-size: .92rem; }
+  .dv-code { display: none; margin-top: 0; }
+  .dv-code.show { display: block; }
+  .dv-code pre { background: #0f1b33; color: #d7e3ff; border-radius: 16px; padding: 20px; font-size: .78rem; line-height: 1.6;
+    max-height: 420px; overflow: auto; font-family: 'Consolas', 'Courier New', monospace; }
+  .dv-detail-tabs { display: flex; gap: 8px; margin: 18px 0 14px; }
+  .dv-tabbtn { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
+    font-weight: 600; font-size: .82rem; padding: 8px 16px; border-radius: var(--radius-pill); transition: .18s var(--ease); }
+  .dv-tabbtn.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
+  .dv-detail-foot { display: flex; gap: 10px; flex-wrap: wrap; padding: 0 28px 26px; }
+
+  /* toast */
+  .dv-toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 3000;
+    background: var(--text); color: #fff; padding: 13px 22px; border-radius: var(--radius-pill); font-weight: 600; font-size: .9rem;
+    box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: .35s var(--ease); display: inline-flex; gap: 9px; align-items: center; }
+  .dv-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .dv-toast i { color: #4ade80; }
+
+  @media (max-width: 940px) {
+    .dv-editor { grid-template-columns: 1fr; }
+    .dv-form { border-right: none; border-bottom: 1px solid var(--border); }
+    .dv-grid { grid-template-columns: 1fr; }
+    .dv-top-actions .dv-btn span { display: none; }
+    .dv-top-actions .dv-btn { padding: 11px 14px; }
+  }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="dv-topbar">
+    <div class="dv-topbar-inner">
+      <a class="dv-home" href="/">
+        <span class="mark">JR</span>
+        <span class="back"><i class="fas fa-arrow-left"></i> Portfolio</span>
+      </a>
+      <div class="dv-ttl">Deneb Lab<small>Custom visuals · Vega &amp; Vega-Lite</small></div>
+      <div class="dv-top-actions">
+        <button class="dv-btn ghost" id="dv-import-btn" title="Import gallery JSON"><i class="fas fa-file-import"></i> <span>Import</span></button>
+        <button class="dv-btn ghost" id="dv-export-btn" title="Export gallery JSON"><i class="fas fa-file-export"></i> <span>Export</span></button>
+        <button class="dv-btn primary" id="dv-add-btn"><i class="fas fa-plus"></i> <span>Add visual</span></button>
+        <input type="file" id="dv-import-file" accept="application/json" hidden>
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-wrap">
+
+    <!-- ===== HERO ===== -->
+    <header class="dv-hero">
+      <div class="dv-ghost" aria-hidden="true">DENEB</div>
+      <span class="dv-kicker"><i class="fas fa-star"></i> The custom-visual playground</span>
+      <h1>Where data becomes <span class="serif-accent">art.</span></h1>
+      <p class="sub">Every visual here runs on the exact Vega engine that powers Deneb inside Power BI.
+        Paste a spec — Deneb (Vega) or Deneb Lite (Vega-Lite) — and it renders instantly, styled with my design system.</p>
+      <div class="dv-stats" id="dv-stats"></div>
+    </header>
+
+    <!-- ===== GALLERY ===== -->
+    <section class="dv-grid" id="dv-grid" aria-live="polite"></section>
+  </div>
+
+  <!-- ===== ADD / EDIT MODAL ===== -->
+  <div class="dv-modal" id="dv-editor-modal" role="dialog" aria-modal="true" aria-label="Add or edit visual">
+    <div class="dv-panel">
+      <div class="dv-panel-head">
+        <h3 id="dv-editor-title">Add a new visual</h3>
+        <span class="dv-detect" id="dv-detect"></span>
+        <button class="close" id="dv-editor-close" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="dv-editor">
+        <div class="dv-form">
+          <div>
+            <label for="dv-f-title">Title</label>
+            <input type="text" id="dv-f-title" placeholder="e.g. Radial Sales Bloom" autocomplete="off">
+          </div>
+          <div>
+            <label for="dv-f-desc">Description <span class="opt">— optional</span></label>
+            <input type="text" id="dv-f-desc" placeholder="One line on what makes this visual special" autocomplete="off">
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+            <label for="dv-f-spec">Deneb / Deneb Lite spec <span class="opt">— paste the JSON</span></label>
+            <textarea id="dv-f-spec" spellcheck="false" placeholder='{"$schema": "https://vega.github.io/schema/vega-lite/v5.json", "mark": "bar", ... }'></textarea>
+          </div>
+          <div>
+            <label for="dv-f-data">Sample data <span class="opt">— optional JSON array; fills Deneb's named "dataset"</span></label>
+            <textarea id="dv-f-data" spellcheck="false" placeholder='[{"category": "A", "value": 28}, ...]'></textarea>
+          </div>
+          <div class="dv-err" id="dv-err"></div>
+          <div class="dv-form-foot">
+            <button class="dv-btn ghost" id="dv-preview-btn"><i class="fas fa-eye"></i> Preview</button>
+            <button class="dv-btn primary" id="dv-save-btn"><i class="fas fa-check"></i> Save to gallery</button>
+          </div>
+        </div>
+        <div class="dv-preview-pane">
+          <span class="ph"><i class="fas fa-magic"></i> Live preview</span>
+          <div class="dv-preview-box" id="dv-preview-box">
+            <div class="hint"><i class="fas fa-draw-polygon"></i> Paste a spec and hit Preview —<br>your visual materializes here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL MODAL ===== -->
+  <div class="dv-modal" id="dv-detail-modal" role="dialog" aria-modal="true" aria-label="Visual detail">
+    <div class="dv-panel">
+      <div class="dv-panel-head">
+        <h3 id="dv-detail-title">Visual</h3>
+        <span class="dv-lang vl" id="dv-detail-lang">Vega-Lite</span>
+        <button class="close" id="dv-detail-close" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="dv-detail-body">
+        <div class="dv-detail-tabs">
+          <button class="dv-tabbtn active" data-tab="viz"><i class="fas fa-chart-area"></i> Visual</button>
+          <button class="dv-tabbtn" data-tab="code"><i class="fas fa-code"></i> Spec</button>
+        </div>
+        <div id="dv-detail-vizwrap">
+          <div class="dv-detail-viz" id="dv-detail-viz"></div>
+          <p class="dv-detail-desc" id="dv-detail-desc"></p>
+        </div>
+        <div class="dv-code" id="dv-detail-code"><pre><code id="dv-detail-pre"></code></pre></div>
+      </div>
+      <div class="dv-detail-foot">
+        <button class="dv-btn ghost" id="dv-copy-btn"><i class="fas fa-copy"></i> Copy spec</button>
+        <button class="dv-btn ghost" id="dv-edit-btn"><i class="fas fa-pen"></i> Edit</button>
+        <button class="dv-btn ghost" id="dv-delete-btn" style="color:#dc2626; border-color:rgba(239,68,68,.4)"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-toast" id="dv-toast"><i class="fas fa-check-circle"></i><span id="dv-toast-text"></span></div>
+
+  <script>
+  (function () {
+    'use strict';
+    const LS_KEY = 'dv_gallery_v2';
+    const $ = (s) => document.querySelector(s);
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Brand theme applied to every visual (never mutates your spec) */
+    const DV_CONFIG = {
+      font: 'Inter, sans-serif',
+      background: 'transparent',
+      axis: { labelColor: '#8a97ad', titleColor: '#51607a', gridColor: '#eaf0fb', domainColor: '#d4ddec', tickColor: '#d4ddec', labelFontSize: 11, titleFontSize: 11 },
+      legend: { labelColor: '#51607a', titleColor: '#51607a', labelFontSize: 11 },
+      range: { category: ['#2f6bff', '#7c3aed', '#06b6d4', '#db2777', '#f59e0b', '#22c55e'] },
+      view: { stroke: null }
+    };
+
+    /* ---------------- Seed visuals (deletable — they're yours to replace) ---------------- */
+    const SEEDS = [
+      {
+        title: 'Aurora Revenue Flow',
+        desc: 'A gradient area chart with monotone easing — the house style for every trend I ship.',
+        spec: {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container", "height": 230,
+          "data": { "values": [
+            {"m":"Jan","v":34},{"m":"Feb","v":41},{"m":"Mar","v":38},{"m":"Apr","v":52},
+            {"m":"May","v":49},{"m":"Jun","v":63},{"m":"Jul","v":58},{"m":"Aug","v":71},
+            {"m":"Sep","v":68},{"m":"Oct","v":82},{"m":"Nov","v":79},{"m":"Dec","v":94} ] },
+          "mark": { "type": "area", "interpolate": "monotone",
+            "line": { "color": "#2f6bff", "strokeWidth": 3 },
+            "color": { "gradient": "linear", "x1": 1, "y1": 1, "x2": 1, "y2": 0,
+              "stops": [ {"offset": 0, "color": "rgba(47,107,255,0)"}, {"offset": 1, "color": "rgba(124,58,237,0.55)"} ] } },
+          "encoding": {
+            "x": { "field": "m", "type": "ordinal", "sort": null, "axis": { "labelAngle": 0, "grid": false, "title": null } },
+            "y": { "field": "v", "type": "quantitative", "axis": { "title": null, "tickCount": 4 } },
+            "tooltip": [ {"field": "m", "title": "Month"}, {"field": "v", "title": "Revenue"} ] }
+        }
+      },
+      {
+        title: 'Momentum Bars',
+        desc: 'Rounded gradient bars with value labels — my go-to replacement for the default Power BI bar.',
+        spec: {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container", "height": 230,
+          "data": { "values": [
+            {"t":"Tableau","v":95},{"t":"Power BI","v":88},{"t":"SQL","v":86},
+            {"t":"Deneb","v":80},{"t":"RPA","v":72},{"t":"Fabric","v":68} ] },
+          "layer": [
+            { "mark": { "type": "bar", "cornerRadiusEnd": 7, "height": {"band": 0.62},
+                "color": { "gradient": "linear", "x1": 0, "y1": 0, "x2": 1, "y2": 0,
+                  "stops": [ {"offset": 0, "color": "#2f6bff"}, {"offset": 1, "color": "#7c3aed"} ] } },
+              "encoding": {
+                "y": { "field": "t", "type": "ordinal", "sort": "-x", "axis": { "title": null, "grid": false, "domain": false, "ticks": false } },
+                "x": { "field": "v", "type": "quantitative", "axis": null, "scale": {"domain": [0, 108]} } } },
+            { "mark": { "type": "text", "align": "left", "dx": 6, "fontWeight": 700, "color": "#0f1b33" },
+              "encoding": {
+                "y": { "field": "t", "type": "ordinal", "sort": "-x" },
+                "x": { "field": "v", "type": "quantitative" },
+                "text": { "field": "v" } } } ]
+        }
+      },
+      {
+        title: 'Commit Punchcard',
+        desc: 'Day × hour activity density — proof that heatmaps can be beautiful.',
+        spec: {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container", "height": 210,
+          "data": { "sequence": { "start": 0, "stop": 84, "as": "i" } },
+          "transform": [
+            { "calculate": "floor(datum.i / 12)", "as": "day" },
+            { "calculate": "datum.i % 12", "as": "slot" },
+            { "calculate": "abs(sin(datum.i * 1.7) * cos(datum.i * 0.6)) + random() * 0.28", "as": "heat" },
+            { "calculate": "['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][datum.day]", "as": "dayName" } ],
+          "mark": { "type": "circle" },
+          "encoding": {
+            "x": { "field": "slot", "type": "ordinal", "axis": { "title": null, "labelExpr": "(datum.value * 2) + 'h'", "grid": false } },
+            "y": { "field": "dayName", "type": "ordinal", "sort": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], "axis": { "title": null, "grid": false } },
+            "size": { "field": "heat", "type": "quantitative", "legend": null, "scale": { "range": [12, 340] } },
+            "color": { "field": "heat", "type": "quantitative", "legend": null,
+              "scale": { "range": ["#c7d8ff", "#2f6bff", "#7c3aed"] } },
+            "tooltip": [ {"field": "dayName", "title": "Day"}, {"field": "heat", "title": "Intensity", "format": ".2f"} ] }
+        }
+      },
+      {
+        title: 'Focus Ring',
+        desc: 'A KPI donut with layered center text — Deneb Lite doing what card visuals wish they could.',
+        spec: {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container", "height": 230,
+          "data": { "values": [ {"k": "done", "v": 76, "c": "#2f6bff"}, {"k": "rest", "v": 24, "c": "#eaf0fb"} ] },
+          "layer": [
+            { "mark": { "type": "arc", "innerRadius": 74, "cornerRadius": 8, "padAngle": 0.02 },
+              "encoding": {
+                "theta": { "field": "v", "type": "quantitative", "stack": true },
+                "color": { "field": "c", "type": "nominal", "scale": null },
+                "order": { "field": "v", "sort": "descending" } } },
+            { "mark": { "type": "text", "fontSize": 34, "fontWeight": 800, "dy": -6, "color": "#0f1b33", "font": "Sora, sans-serif" },
+              "encoding": { "text": { "value": "76%" } } },
+            { "mark": { "type": "text", "fontSize": 12, "dy": 20, "color": "#8a97ad" },
+              "encoding": { "text": { "value": "readiness score" } } } ]
+        }
+      },
+      {
+        title: 'Signal Scatter (full Vega)',
+        desc: 'Pure Vega with a hover signal — the "hard mode" Deneb that most portfolios never show. Uses the named dataset, Deneb-style.',
+        data: [
+          {"x": 12, "y": 34, "s": 40, "g": "BI"}, {"x": 25, "y": 58, "s": 72, "g": "BI"},
+          {"x": 38, "y": 42, "s": 55, "g": "BI"}, {"x": 47, "y": 74, "s": 90, "g": "RPA"},
+          {"x": 55, "y": 51, "s": 48, "g": "RPA"}, {"x": 66, "y": 82, "s": 100, "g": "Full Stack"},
+          {"x": 74, "y": 66, "s": 64, "g": "Full Stack"}, {"x": 86, "y": 91, "s": 118, "g": "Data Story"} ],
+        spec: {
+          "$schema": "https://vega.github.io/schema/vega/v5.json",
+          "width": 360, "height": 230, "padding": 8, "autosize": { "type": "fit", "contains": "padding" },
+          "signals": [
+            { "name": "hovered", "value": null,
+              "on": [ { "events": "symbol:mouseover", "update": "datum" }, { "events": "symbol:mouseout", "update": "null" } ] } ],
+          "data": [ { "name": "dataset" } ],
+          "scales": [
+            { "name": "x", "type": "linear", "domain": { "data": "dataset", "field": "x" }, "range": "width", "nice": true },
+            { "name": "y", "type": "linear", "domain": { "data": "dataset", "field": "y" }, "range": "height", "nice": true },
+            { "name": "size", "domain": { "data": "dataset", "field": "s" }, "range": [80, 900] },
+            { "name": "color", "type": "ordinal", "domain": { "data": "dataset", "field": "g" },
+              "range": ["#2f6bff", "#7c3aed", "#06b6d4", "#db2777"] } ],
+          "axes": [
+            { "orient": "bottom", "scale": "x", "grid": false, "labelColor": "#8a97ad", "domainColor": "#d4ddec", "tickColor": "#d4ddec" },
+            { "orient": "left", "scale": "y", "grid": true, "gridColor": "#eaf0fb", "labelColor": "#8a97ad", "domainColor": "#d4ddec", "tickColor": "#d4ddec" } ],
+          "marks": [
+            { "type": "symbol", "from": { "data": "dataset" },
+              "encode": {
+                "update": {
+                  "x": { "scale": "x", "field": "x" }, "y": { "scale": "y", "field": "y" },
+                  "size": { "scale": "size", "field": "s" },
+                  "fill": { "scale": "color", "field": "g" },
+                  "fillOpacity": [ { "test": "hovered && hovered !== datum", "value": 0.25 }, { "value": 0.85 } ],
+                  "stroke": { "value": "#ffffff" }, "strokeWidth": { "value": 1.5 },
+                  "tooltip": { "signal": "{'Group': datum.g, 'X': datum.x, 'Y': datum.y}" } } } } ]
+        }
+      }
+    ];
+
+    /* ---------------- State ---------------- */
+    let gallery = load();
+    let editingId = null;   /* null = adding */
+    let detailId = null;
+    const views = new Map(); /* container element -> vega view (for cleanup) */
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) { /* fall through to seeds */ }
+      const seeded = SEEDS.map((s) => ({
+        id: uid(), title: s.title, desc: s.desc,
+        spec: JSON.stringify(s.spec, null, 2),
+        data: s.data ? JSON.stringify(s.data, null, 2) : '',
+        createdAt: Date.now()
+      }));
+      localStorage.setItem(LS_KEY, JSON.stringify(seeded));
+      return seeded;
+    }
+    function save() { localStorage.setItem(LS_KEY, JSON.stringify(gallery)); }
+    function uid() { return (crypto.randomUUID ? crypto.randomUUID() : 'v' + Date.now() + Math.random().toString(16).slice(2)); }
+
+    /* ---------------- Spec helpers ---------------- */
+    function detectMode(spec) {
+      const sch = (spec.$schema || '').toLowerCase();
+      if (sch.includes('vega-lite')) return 'vega-lite';
+      if (sch.includes('vega')) return 'vega';
+      if (spec.mark || spec.encoding || spec.layer || spec.facet || spec.hconcat || spec.vconcat || spec.repeat) return 'vega-lite';
+      if (Array.isArray(spec.marks) || Array.isArray(spec.scales) || Array.isArray(spec.signals)) return 'vega';
+      return 'vega-lite';
+    }
+    function prepSpec(item) {
+      const spec = JSON.parse(item.spec);           /* throws on bad JSON */
+      const mode = detectMode(spec);
+      let values = null;
+      if (item.data && item.data.trim()) {
+        values = JSON.parse(item.data);
+        if (!Array.isArray(values)) throw new Error('Sample data must be a JSON array of rows.');
+      }
+      /* Deneb convention: named dataset gets the sample rows */
+      if (values) {
+        if (mode === 'vega-lite') {
+          if (!spec.data || (spec.data.name && !spec.data.values)) spec.data = { values };
+        } else if (Array.isArray(spec.data)) {
+          const d = spec.data.find((x) => x.name === 'dataset');
+          if (d) { d.values = values; delete d.url; }
+        }
+      }
+      if (mode === 'vega-lite' && spec.width === undefined) spec.width = 'container';
+      if (mode === 'vega-lite' && spec.height === undefined) spec.height = 240;
+      return { spec, mode };
+    }
+    async function render(el, item, opts) {
+      const old = views.get(el);
+      if (old) { try { old.finalize(); } catch (e) {} views.delete(el); }
+      el.innerHTML = '';
+      el.classList.remove('err');
+      if (!window.vegaEmbed) { el.classList.add('err'); el.innerHTML = '<div><i class="fas fa-plug"></i>Vega runtime not loaded — check your connection.</div>'; return; }
+      try {
+        const { spec, mode } = prepSpec(item);
+        const res = await vegaEmbed(el, spec, Object.assign({ mode, actions: false, renderer: 'canvas', config: DV_CONFIG }, opts || {}));
+        views.set(el, res.view);
+        return mode;
+      } catch (e) {
+        el.classList.add('err');
+        el.innerHTML = '<div><i class="fas fa-exclamation-triangle"></i>' + escapeHtml(String(e.message || e)) + '</div>';
+      }
+    }
+    function escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function langOf(item) { try { return detectMode(JSON.parse(item.spec)); } catch (e) { return 'vega-lite'; } }
+    function langBadge(mode) {
+      return mode === 'vega'
+        ? '<span class="dv-lang vg">Deneb · Vega</span>'
+        : '<span class="dv-lang vl">Deneb Lite · Vega-Lite</span>';
+    }
+
+    /* ---------------- Gallery render ---------------- */
+    function renderStats() {
+      const vl = gallery.filter((g) => langOf(g) === 'vega-lite').length;
+      const vg = gallery.length - vl;
+      $('#dv-stats').innerHTML =
+        '<span class="dv-stat"><b class="grad-text">' + gallery.length + '</b> visual' + (gallery.length === 1 ? '' : 's') + '</span>' +
+        '<span class="dv-stat"><i class="swatch" style="background:#2f6bff"></i> ' + vl + ' Vega-Lite</span>' +
+        '<span class="dv-stat"><i class="swatch" style="background:#7c3aed"></i> ' + vg + ' Vega</span>' +
+        '<span class="dv-stat"><i class="fas fa-database" style="color:#06b6d4"></i> saved in this browser</span>';
+    }
+    function renderGrid() {
+      views.forEach((v) => { try { v.finalize(); } catch (e) {} });
+      views.clear();
+      const grid = $('#dv-grid');
+      grid.innerHTML = '';
+      if (!gallery.length) {
+        grid.innerHTML = '<div class="dv-empty"><i class="fas fa-draw-polygon"></i>The lab is empty — hit <b>Add visual</b> and paste your first Deneb spec.</div>';
+      }
+      gallery.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'dv-card';
+        card.innerHTML =
+          '<div class="dv-card-top">' + langBadge(langOf(item)) +
+            '<div class="acts">' +
+              '<button class="dv-iconbtn" data-act="code" title="View spec"><i class="fas fa-code"></i></button>' +
+              '<button class="dv-iconbtn" data-act="edit" title="Edit"><i class="fas fa-pen"></i></button>' +
+              '<button class="dv-iconbtn danger" data-act="del" title="Delete"><i class="fas fa-trash"></i></button>' +
+            '</div></div>' +
+          '<div class="dv-viz"></div>' +
+          '<div class="dv-card-body"><h3>' + escapeHtml(item.title) + '</h3>' +
+            (item.desc ? '<p>' + escapeHtml(item.desc) + '</p>' : '') +
+            '<span class="when">Added ' + new Date(item.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) + '</span></div>';
+        const viz = card.querySelector('.dv-viz');
+        render(viz, item);
+        viz.addEventListener('click', () => openDetail(item.id, 'viz'));
+        card.querySelector('[data-act="code"]').addEventListener('click', () => openDetail(item.id, 'code'));
+        card.querySelector('[data-act="edit"]').addEventListener('click', () => openEditor(item.id));
+        card.querySelector('[data-act="del"]').addEventListener('click', () => removeItem(item.id));
+        grid.appendChild(card);
+      });
+      const add = document.createElement('button');
+      add.className = 'dv-add-card';
+      add.innerHTML = '<span><i class="fas fa-plus-circle"></i><b>Add a new visual</b><span>Paste Deneb or Deneb Lite JSON</span></span>';
+      add.addEventListener('click', () => openEditor(null));
+      grid.appendChild(add);
+      renderStats();
+      if (!REDUCED && window.gsap) {
+        gsap.fromTo('#dv-grid > *', { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .5, stagger: .05, ease: 'power3.out', clearProps: 'all' });
+      }
+    }
+
+    /* ---------------- Editor modal ---------------- */
+    function openEditor(id) {
+      editingId = id;
+      const item = id ? gallery.find((g) => g.id === id) : null;
+      $('#dv-editor-title').textContent = item ? 'Edit visual' : 'Add a new visual';
+      $('#dv-f-title').value = item ? item.title : '';
+      $('#dv-f-desc').value = item ? (item.desc || '') : '';
+      $('#dv-f-spec').value = item ? item.spec : '';
+      $('#dv-f-data').value = item ? (item.data || '') : '';
+      $('#dv-err').classList.remove('show');
+      $('#dv-detect').innerHTML = '';
+      $('#dv-preview-box').innerHTML = '<div class="hint"><i class="fas fa-draw-polygon"></i> Paste a spec and hit Preview —<br>your visual materializes here.</div>';
+      $('#dv-editor-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (item) preview();
+      setTimeout(() => $(item ? '#dv-f-spec' : '#dv-f-title').focus(), 60);
+    }
+    function closeEditor() { $('#dv-editor-modal').classList.remove('open'); document.body.style.overflow = ''; }
+
+    function currentDraft() {
+      return {
+        title: $('#dv-f-title').value.trim(),
+        desc: $('#dv-f-desc').value.trim(),
+        spec: $('#dv-f-spec').value.trim(),
+        data: $('#dv-f-data').value.trim()
+      };
+    }
+    async function preview() {
+      const draft = currentDraft();
+      const err = $('#dv-err');
+      err.classList.remove('show');
+      if (!draft.spec) { err.textContent = 'Paste a spec first — the JSON from Deneb\'s editor works as-is.'; err.classList.add('show'); return false; }
+      try {
+        JSON.parse(draft.spec);
+        if (draft.data) { const d = JSON.parse(draft.data); if (!Array.isArray(d)) throw new Error('Sample data must be a JSON array.'); }
+      } catch (e) {
+        err.textContent = 'JSON problem: ' + (e.message || e);
+        err.classList.add('show');
+        return false;
+      }
+      const mode = await render($('#dv-preview-box'), draft);
+      if (mode) { $('#dv-detect').innerHTML = 'Detected: ' + langBadge(mode); return true; }
+      err.textContent = 'The spec parsed as JSON but Vega rejected it — details shown in the preview pane.';
+      err.classList.add('show');
+      return false;
+    }
+    async function saveDraft() {
+      const draft = currentDraft();
+      if (!draft.title) { const e = $('#dv-err'); e.textContent = 'Give it a title — every masterpiece deserves a name.'; e.classList.add('show'); return; }
+      const ok = await preview();
+      if (!ok) return;
+      if (editingId) {
+        const item = gallery.find((g) => g.id === editingId);
+        Object.assign(item, draft);
+        toast('Visual updated ✨');
+      } else {
+        gallery.unshift(Object.assign({ id: uid(), createdAt: Date.now() }, draft));
+        toast('Added to the gallery 🎨');
+      }
+      save(); closeEditor(); renderGrid();
+    }
+
+    /* ---------------- Detail modal ---------------- */
+    function openDetail(id, tab) {
+      const item = gallery.find((g) => g.id === id);
+      if (!item) return;
+      detailId = id;
+      $('#dv-detail-title').textContent = item.title;
+      const mode = langOf(item);
+      const langEl = $('#dv-detail-lang');
+      langEl.className = 'dv-lang ' + (mode === 'vega' ? 'vg' : 'vl');
+      langEl.textContent = mode === 'vega' ? 'Deneb · Vega' : 'Deneb Lite · Vega-Lite';
+      $('#dv-detail-desc').textContent = item.desc || '';
+      try { $('#dv-detail-pre').textContent = JSON.stringify(JSON.parse(item.spec), null, 2); }
+      catch (e) { $('#dv-detail-pre').textContent = item.spec; }
+      setDetailTab(tab || 'viz');
+      $('#dv-detail-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      render($('#dv-detail-viz'), item);
+    }
+    function closeDetail() { $('#dv-detail-modal').classList.remove('open'); document.body.style.overflow = ''; }
+    function setDetailTab(tab) {
+      document.querySelectorAll('.dv-tabbtn').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+      $('#dv-detail-vizwrap').style.display = tab === 'viz' ? '' : 'none';
+      $('#dv-detail-code').classList.toggle('show', tab === 'code');
+    }
+
+    function removeItem(id) {
+      const item = gallery.find((g) => g.id === id);
+      if (!item) return;
+      if (!confirm('Delete "' + item.title + '" from the gallery?')) return;
+      gallery = gallery.filter((g) => g.id !== id);
+      save(); closeDetail(); renderGrid();
+      toast('Visual removed');
+    }
+
+    /* ---------------- Import / Export ---------------- */
+    function doExport() {
+      const blob = new Blob([JSON.stringify(gallery, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'deneb-lab-gallery.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('Gallery exported — keep it safe 📦');
+    }
+    function doImport(file) {
+      const rd = new FileReader();
+      rd.onload = () => {
+        try {
+          const arr = JSON.parse(rd.result);
+          if (!Array.isArray(arr)) throw new Error('Not a gallery file.');
+          let added = 0;
+          arr.forEach((it) => {
+            if (it && it.spec && it.title) {
+              gallery.push({ id: uid(), title: String(it.title), desc: String(it.desc || ''), spec: String(it.spec), data: String(it.data || ''), createdAt: it.createdAt || Date.now() });
+              added++;
+            }
+          });
+          save(); renderGrid();
+          toast('Imported ' + added + ' visual' + (added === 1 ? '' : 's'));
+        } catch (e) { toast('Import failed: ' + (e.message || e)); }
+      };
+      rd.readAsText(file);
+    }
+
+    /* ---------------- Toast ---------------- */
+    let toastTimer;
+    function toast(msg) {
+      $('#dv-toast-text').textContent = msg;
+      const t = $('#dv-toast');
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    /* ---------------- Wiring ---------------- */
+    $('#dv-add-btn').addEventListener('click', () => openEditor(null));
+    $('#dv-editor-close').addEventListener('click', closeEditor);
+    $('#dv-preview-btn').addEventListener('click', preview);
+    $('#dv-save-btn').addEventListener('click', saveDraft);
+    $('#dv-detail-close').addEventListener('click', closeDetail);
+    $('#dv-copy-btn').addEventListener('click', () => {
+      const item = gallery.find((g) => g.id === detailId);
+      if (item) navigator.clipboard.writeText(item.spec).then(() => toast('Spec copied to clipboard'));
+    });
+    $('#dv-edit-btn').addEventListener('click', () => { const id = detailId; closeDetail(); openEditor(id); });
+    $('#dv-delete-btn').addEventListener('click', () => removeItem(detailId));
+    document.querySelectorAll('.dv-tabbtn').forEach((b) => b.addEventListener('click', () => setDetailTab(b.dataset.tab)));
+    $('#dv-export-btn').addEventListener('click', doExport);
+    $('#dv-import-btn').addEventListener('click', () => $('#dv-import-file').click());
+    $('#dv-import-file').addEventListener('change', (e) => { if (e.target.files[0]) doImport(e.target.files[0]); e.target.value = ''; });
+    document.querySelectorAll('.dv-modal').forEach((m) => m.addEventListener('click', (e) => { if (e.target === m) { closeEditor(); closeDetail(); } }));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeEditor(); closeDetail(); } });
+
+    /* re-render visuals on resize (container widths change) */
+    let rT;
+    window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(renderGrid, 300); });
+
+    renderGrid();
+  })();
+  </script>
+</body>
+</html>

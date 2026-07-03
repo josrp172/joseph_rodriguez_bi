@@ -2,779 +2,1412 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="og:image" content="https://placehold.co/400x150">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joseph Rodriguez — Senior BI Engineer · Data, crafted.</title>
+  <meta name="description" content="Senior BI Engineer turning raw data into decisions people trust — dashboards, automation, and full-stack tools. Tableau, Power BI, SQL, RPA, Microsoft Fabric.">
+  <meta property="og:title" content="Joseph Rodriguez — Senior BI Engineer">
+  <meta property="og:description" content="I turn raw data into decisions people trust — dashboards, automation, and full-stack tools.">
+  <meta property="og:image" content="/static/images/profile.png">
+  <link rel="icon" type="image/png" href="/static/images/logo/logo_98_65.png">
 
-  <title>Joseph Ignacio Rodriguez – Senior BI Engineer</title>
-<meta name="viewport" content="width=1280">
-
-  <!-- CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/css/style.css">
-  <!-- AOS CSS via CDN -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/TextPlugin.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/Draggable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/TextPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/Draggable.min.js"></script>
 </head>
 <body>
 
+  <a class="skip-link" href="#experience">Skip to content</a>
+
+  <!-- Ambient layers -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- Cinematic intro veil -->
+  <div id="intro-veil" aria-hidden="true">
+    <div class="veil-inner">
+      <span class="veil-mark">JR</span>
+      <span class="veil-name" id="veil-name">Joseph Rodriguez</span>
+      <span class="veil-role">Senior BI Engineer</span>
+      <span class="veil-bar"><i id="veil-bar-fill"></i></span>
+    </div>
+  </div>
+
+  <!-- Cursor aura (decorative, desktop only) -->
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"><span class="cursor-label"></span></div>
+
+  <!-- Scroll progress indicator -->
+  <div class="scroll-progress" aria-hidden="true"><span id="scroll-progress-bar"></span></div>
+
+  <!-- Section dot navigator -->
+  <nav class="section-nav" id="section-nav" aria-label="Jump to section">
+    <a href="#banner" data-label="Home" class="active" aria-label="Home"><span></span></a>
+    <a href="#experience" data-label="Experience" aria-label="Experience"><span></span></a>
+    <a href="#projects" data-label="Projects" aria-label="Projects"><span></span></a>
+    <a href="#contact" data-label="Contact" aria-label="Contact"><span></span></a>
+  </nav>
 
   <!-- ===== NAVIGATION BAR ===== -->
   <nav>
     <div class="nav-container">
       <div class="nav-left">
-        <!-- index.html -->
-<h3 class="nav-title">
-  <span class="nav-text">JR</span>
-  <span class="linkedin-status">
-    <span class="status-indicator online"></span>
-    <span class="status-text">Online Linkedin</span>
-  </span>
-</h3>
+        <h3 class="nav-title">
+          <span class="nav-text">JR</span>
+          <span class="linkedin-status">
+            <span class="status-indicator online"></span>
+            <span class="status-text">Online Linkedin</span>
+          </span>
+        </h3>
       </div>
-      <div class="nav-right">
-        <a href="#banner">Home</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-        <a href="/games">Games</a>
-
-
+      <div style="display:flex; align-items:center;">
+        <div class="nav-right">
+          <a href="#banner">Home</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+          <a href="/games">Games</a>
+        </div>
+        <button class="nav-cmdk" id="nav-cmdk" aria-label="Open command palette" title="Command palette">
+          <i class="fas fa-search" aria-hidden="true"></i> Quick nav <kbd>Ctrl K</kbd>
+        </button>
       </div>
     </div>
   </nav>
 
-<!-- ===== BANNER / HEADER ===== -->
-<header id="banner" data-aos="fade-down">
-  <div class="header-content">
-    <!-- Typed Banner -->
-    <h1>
-      Hi, I'm Joseph Rodriguez, a
-      <span class="typed-container" id="typed-roles"></span>
-    </h1>
-    <p>Senior BI Engineer @ TeamHealth</p>
-  </div>
-  <!-- Laser effect container -->
-  <div class="laser"></div>
+  <!-- ===== HERO ===== -->
+  <header id="banner">
+    <div class="hero-ghost" aria-hidden="true">DATA</div>
+    <div class="hero-grid">
+      <div class="header-content">
+        <span class="hero-eyebrow" data-hero="1">
+          <span class="dot"></span> Senior BI Engineer @ TeamHealth
+        </span>
 
+        <h1 class="hero-name" aria-label="Joseph Rodriguez">
+          <span class="ln">Joseph</span>
+          <span class="ln">Rodriguez</span>
+        </h1>
 
-</header>
+        <div class="hero-role" data-hero="1">— a <span class="typed-container" id="typed-roles"></span></div>
 
-  <!-- ===== SECTION SEPARATOR ===== -->
-  <div class="section-separator" data-aos="fade-up"></div>
+        <p class="hero-tag" data-hero="1">
+          I turn raw data into <span class="serif-accent">decisions people trust</span> —
+          through dashboards, automation, and full-stack tools that move business forward.
+        </p>
 
-  <!-- ===== MAIN CONTAINER (Experience & About) ===== -->
-  <div class="main-container" id="experience" data-aos="fade-up">
-    <!-- LEFT COLUMN: About Me & Education -->
-    <div class="left-column">
-      <!-- Row with Profile Picture & "About Me" heading -->
-      <div class="about-me-row">
-        <div class="profile-pic-wrapper">
-
-          <img src="/static/images/profile.png" class="profile-pic">
+        <div class="hero-cta" data-hero="1">
+          <a href="#projects" class="btn btn-primary"><i class="fas fa-layer-group"></i> View My Work</a>
+          <a href="#contact" class="btn btn-ghost"><i class="fas fa-paper-plane"></i> Get in Touch</a>
+          <span class="hero-kbd-hint">or press <kbd>Ctrl</kbd><kbd>K</kbd> to explore</span>
         </div>
-        <h3>About Me</h3>
+
+        <div class="hero-stats" data-hero="1">
+          <div class="stat-card">
+            <div class="stat-num grad-text" data-count="7" data-suffix="+">0</div>
+            <div class="stat-label">Years Experience</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num grad-text" data-count="7">0</div>
+            <div class="stat-label">Roles Held</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num grad-text" data-count="5">0</div>
+            <div class="stat-label">Core Tools</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num grad-text" data-count="6">0</div>
+            <div class="stat-label">Awards Won</div>
+          </div>
+        </div>
       </div>
-      <p class="profile-summary" id="typed-about">
-        Experienced IT professional specializing in
-        <span class="highlight">Business Intelligence</span>,
-        <span class="highlight">Data Analysis</span>,
-        <span class="highlight">RPA</span>, and
-        <span class="highlight">Full Stack Development</span>.
-        Skilled in migrating and optimizing reports using Tableau and Power BI,
-        creating intricate dashboards tailored to specific requirements.
-        Proficient in crafting interactive PowerApps solutions for user-friendly interfaces
-        and seamless experiences. Collaborative and results‑oriented,
-        I translate complex data sets into actionable insights for key stakeholders.
-      </p>
-      <div class="info-box">
-        <h4>Education</h4>
-        <table class="education-table">
-          <tr>
-            <td rowspan="2" style="width:60px; text-align:center;">
-              <div class="school-logo-wrapper">
-              <img src="/static/images/tip_c.png" alt="TIP Logo" class="school-logo">
+
+      <!-- 3D role stage (swaps with the typed role) -->
+      <div class="hero-stage" aria-hidden="true" data-hero="1">
+       <div class="stage-env">
+         <span class="env-glow"></span>
+         <span class="env-ring r3"></span>
+         <span class="env-ring r1"></span>
+         <span class="env-ring r2"></span>
+         <span class="mote m1"></span><span class="mote m2"></span><span class="mote m3"></span>
+         <span class="mote m4"></span><span class="mote m5"></span><span class="mote m6"></span>
+       </div>
+       <div class="stage-3d" id="stage-3d">
+
+        <div class="orbiter ob1"><span class="orb"><i class="fab fa-python"></i></span></div>
+        <div class="orbiter ob2"><span class="orb"><i class="fas fa-database"></i></span></div>
+        <div class="orbiter ob3"><span class="orb"><i class="fas fa-chart-pie"></i></span></div>
+
+        <div class="scene scene-bi active" data-role="0">
+          <div class="float">
+            <div class="dash viz-panel">
+              <div class="viz-dots"><i></i><i></i><i></i></div>
+              <div class="kpis">
+                <div class="kpi"><b>2.4M</b><span>Revenue</span></div>
+                <div class="kpi"><b>98%</b><span>Uptime</span></div>
+                <div class="kpi"><b>14</b><span>Reports</span></div>
+              </div>
+              <div class="dash-row">
+                <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="donut"></div>
+              </div>
             </div>
-            </td>
-            <td>
-              <strong>Institute:</strong> Technological Institute of the Philippines
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Degree:</strong> Bachelors, Computer Science (2014-2018)
-            </td>
-          </tr>
-        </table>
+            <div class="viz-chip chip-trend"><b>▲ 27%</b><span>vs last qtr</span></div>
+            <div class="viz-chip chip-live"><b><span class="livedot"></span> LIVE</b><span>refreshed 2s ago</span></div>
+            <div class="mini-panel">
+              <div class="mini-donut"></div>
+              <div class="mini-lines"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene scene-rpa" data-role="1">
+          <div class="float">
+            <div class="bot">
+              <div class="antenna"></div>
+              <div class="head">
+                <span class="ear l"></span><span class="ear r"></span>
+                <div class="face"><span class="eye"></span><span class="eye"></span></div>
+              </div>
+              <div class="body">
+                <i class="fas fa-cog gear"></i>
+                <i class="fas fa-cog gear small"></i>
+              </div>
+            </div>
+            <div class="viz-chip chip-auto"><b><i class="fas fa-bolt"></i> Automating…</b></div>
+            <div class="task-feed">
+              <div class="task t1"><i class="fas fa-check"></i> Invoice #221 processed</div>
+              <div class="task t2"><i class="fas fa-check"></i> Report emailed to VP</div>
+              <div class="task t3"><i class="fas fa-check"></i> Data synced · 0 errors</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene scene-fs" data-role="2">
+          <div class="float">
+            <div class="stack">
+              <span class="data-pulse"></span>
+              <span class="data-pulse p2"></span>
+              <div class="slab front"><span class="ico"><i class="fas fa-laptop-code"></i></span><div>Frontend<small>UI · UX</small></div></div>
+              <div class="slab back"><span class="ico"><i class="fas fa-server"></i></span><div>Backend<small>APIs · Logic</small></div></div>
+              <div class="slab db"><span class="ico"><i class="fas fa-database"></i></span><div>Database<small>SQL · Storage</small></div></div>
+            </div>
+            <div class="viz-chip chip-code">
+              <span class="tag">&lt;/&gt; app.js</span>
+              <div class="ln a"></div><div class="ln b"></div><div class="ln c"></div>
+            </div>
+            <div class="viz-chip chip-req"><b>GET /api/insights</b><span class="ok">200 OK · 42ms</span></div>
+          </div>
+        </div>
+
+        <div class="scene scene-data" data-role="3">
+          <div class="float">
+            <div class="story viz-panel">
+              <div class="viz-dots"><i></i><i></i><i></i></div>
+              <div class="chart">
+                <svg viewBox="0 0 300 130" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="hgrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="#06b6d4"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#7c3aed"/>
+                    </linearGradient>
+                    <linearGradient id="harea" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="rgba(47,107,255,.28)"/><stop offset="1" stop-color="rgba(47,107,255,0)"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M5,110 L60,86 L120,96 L180,52 L240,60 L295,18 L295,130 L5,130 Z" fill="url(#harea)"/>
+                  <path class="trend-line" d="M5,110 L60,86 L120,96 L180,52 L240,60 L295,18"/>
+                  <circle class="dot-pt" cx="120" cy="96" r="4"/>
+                  <circle class="dot-pt" cx="180" cy="52" r="4"/>
+                  <circle class="dot-pt" cx="295" cy="18" r="4"/>
+                </svg>
+              </div>
+              <div class="legend"><span>Insights</span><span>Trends</span><span>Forecast</span></div>
+            </div>
+            <div class="viz-chip chip-up"><b>+128%</b><span>growth</span></div>
+            <div class="viz-chip chip-note"><b>Q4 spike</b><span>the story behind the trend</span></div>
+          </div>
+        </div>
+
+       </div><!-- /.stage-3d -->
+       <div class="stage-hud">
+         <span class="hud-corner tl"></span><span class="hud-corner tr"></span>
+         <span class="hud-corner bl"></span><span class="hud-corner br"></span>
+         <span class="hud-live"><i></i> LIVE</span>
+         <span class="stage-mode" id="stage-mode">BI DASHBOARD</span>
+       </div>
+      </div><!-- /.hero-stage -->
+    </div><!-- /.hero-grid -->
+
+    <span class="scroll-cue" aria-hidden="true"></span>
+  </header>
+
+  <!-- ===== TECH-STACK TICKER ===== -->
+  <section class="tech-marquee" aria-label="Technologies Joseph works with">
+    <div class="marquee-track">
+      <span class="marquee-item">Tableau</span>
+      <span class="marquee-item">Power BI</span>
+      <span class="marquee-item">SQL</span>
+      <span class="marquee-item">Python</span>
+      <span class="marquee-item">UiPath</span>
+      <span class="marquee-item">Power Apps</span>
+      <span class="marquee-item">Microsoft Fabric</span>
+      <span class="marquee-item">Deneb</span>
+      <span class="marquee-item">Java Spring Boot</span>
+      <span class="marquee-item">Flask</span>
+      <span class="marquee-item">Django</span>
+      <span class="marquee-item">Golang</span>
+      <span class="marquee-item">C++</span>
+      <span class="marquee-item">Oracle</span>
+      <span class="marquee-item" aria-hidden="true">Tableau</span>
+      <span class="marquee-item" aria-hidden="true">Power BI</span>
+      <span class="marquee-item" aria-hidden="true">SQL</span>
+      <span class="marquee-item" aria-hidden="true">Python</span>
+      <span class="marquee-item" aria-hidden="true">UiPath</span>
+      <span class="marquee-item" aria-hidden="true">Power Apps</span>
+      <span class="marquee-item" aria-hidden="true">Microsoft Fabric</span>
+      <span class="marquee-item" aria-hidden="true">Deneb</span>
+      <span class="marquee-item" aria-hidden="true">Java Spring Boot</span>
+      <span class="marquee-item" aria-hidden="true">Flask</span>
+      <span class="marquee-item" aria-hidden="true">Django</span>
+      <span class="marquee-item" aria-hidden="true">Golang</span>
+      <span class="marquee-item" aria-hidden="true">C++</span>
+      <span class="marquee-item" aria-hidden="true">Oracle</span>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT + SKILLS + EXPERIENCE ===== -->
+  <div id="experience">
+
+    <!-- 01 · About (bento) -->
+    <section class="site-section" id="about">
+      <div class="sec-head" data-aos="fade-up">
+        <div class="sec-ghost" aria-hidden="true">01</div>
+        <span class="sec-kicker"><span class="num">01</span> About</span>
+        <h2>The human behind the <span class="serif-accent">dashboards</span></h2>
       </div>
-<!-- Honors and Awards Section -->
-<div class="info-box honors-awards">
-  <h4>Honors and Awards</h4>
-  <ul class="awards-list">
-    <li>Honours with Distinction</li>
-    <li>1st Place - Philippine National Programming Challenge</li>
-    <li>1st/2nd Place - T.I.P's Programming Competition</li>
-    <li>2nd Place - Philippine National Programming Challenge</li>
-    <li>International Collegiate Programming Contest Participation</li>
-    <li>Philippine Programming Rating 1 (1 - Highest; 4 - Lowest)</li>
-  </ul>
-</div>
 
-    <hr style="border: 0; border-top: 2px solid #ccc; margin: 20px 0;">
-       <div class="social-icons">
-      <a href="https://www.linkedin.com/in/joseph-ignacio-rodriguez-50379b134/" target="_blank" class="social-icon linkedin">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-       <a href="https://facebook.com/your_facebook" target="_blank" class="social-icon facebook">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-
-      <a href="https://twitter.com/your_twitter" target="_blank" class="social-icon twitter">
-        <i class="fab fa-twitter"></i>
-      </a>
-
-
-    </div>
-
-    </div>
-
-
-    <!-- RIGHT COLUMN: Skills & Experience -->
-    <div class="right-column">
-      <!-- Technical Skills Section: Progress Bars with Tool Icons in One Row -->
-      <div class="section" data-aos="fade-up">
-        <h2>Technical Skills</h2>
-<div class="progress-skills">
-  <!-- Tableau Skill (Expert - level 5) -->
-  <div class="progress-skill">
-    <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
-    <div class="progress-rating" data-level="5">
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-    </div>
-    <span class="rating-label">Expert</span>
-    <p>Tableau</p>
-  </div>
-  <!-- Power BI Skill (Advanced - level 4) -->
-  <div class="progress-skill">
-    <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
-    <div class="progress-rating" data-level="4">
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-    </div>
-    <span class="rating-label">Advanced</span>
-    <p>Power BI</p>
-  </div>
-  <!-- SQL Skill (Advanced - level 4) -->
-  <div class="progress-skill">
-    <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
-    <div class="progress-rating" data-level="4">
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-    </div>
-    <span class="rating-label">Advanced</span>
-    <p>SQL</p>
-  </div>
-  <!-- RPA Skill (Intermediate - level 3) -->
-  <div class="progress-skill">
-    <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
-    <div class="progress-rating" data-level="3">
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-    </div>
-    <span class="rating-label">Intermediate</span>
-    <p>RPA</p>
-  </div>
-  <!-- Full Stack Skill (Intermediate - level 3) -->
-  <div class="progress-skill">
-    <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
-    <div class="progress-rating" data-level="3">
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-      <div class="segment"></div>
-    </div>
-    <span class="rating-label">Intermediate</span>
-    <p>Full Stack</p>
-  </div>
-</div>
-      </div>
-
-<!-- ===================== EXPERIENCE SECTION ===================== -->
-<div class="section" data-aos="fade-up">
-  <h2>Experience</h2>
-
-  <div class="experience-list">
-
-    <!-- 1. Senior BI Engineer @ TeamHealth -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <img src="/static/images/th.jpg" alt="TeamHealth">
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">Jan 2024 - Present</div>
-        <h3>Senior BI Engineer @ TeamHealth</h3>
-        <span>1 yr 2 mos</span>
-        <p>
-          Migrating and optimizing reports using Tableau and Power BI.
-          Developing interactive dashboards and PowerApps solutions that drive business insights.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            In this role, I lead a team through modernizing legacy systems and mentor junior analysts to boost technical skills.
+      <div class="bento">
+        <div class="bento-card b-intro" data-aos="fade-up">
+          <h3><i class="fas fa-signature"></i> My story, in short</h3>
+          <p class="profile-summary" id="typed-about">
+            Experienced IT professional specializing in
+            <span class="highlight">Business Intelligence</span>,
+            <span class="highlight">Data Analysis</span>,
+            <span class="highlight">RPA</span>, and
+            <span class="highlight">Full Stack Development</span>.
+            Skilled in migrating and optimizing reports using Tableau and Power BI,
+            creating intricate dashboards tailored to specific requirements.
+            Proficient in crafting interactive PowerApps solutions for user-friendly interfaces
+            and seamless experiences. Collaborative and results‑oriented,
+            I translate complex data sets into actionable insights for key stakeholders.
           </p>
+          <div class="intro-foot">
+            <div class="social-icons">
+              <a href="https://www.linkedin.com/in/joseph-ignacio-rodriguez-50379b134/" target="_blank" class="social-icon linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="https://facebook.com/your_facebook" target="_blank" class="social-icon facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://twitter.com/your_twitter" target="_blank" class="social-icon twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
         </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+
+        <div class="bento-card b-photo" data-aos="fade-up" data-aos-delay="60">
+          <div class="profile-pic-wrapper">
+            <img src="/static/images/profile.png" class="profile-pic" alt="Joseph Rodriguez">
+          </div>
+          <div class="who">
+            <b>Joseph Rodriguez</b>
+            <span>Senior BI Engineer · RPA · Full Stack</span>
+            <span class="loc"><i class="fas fa-map-marker-alt"></i> Manila, Philippines</span>
+          </div>
         </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Tableau</span>
-          <span class="tool-badge">Power BI</span>
-          <span class="tool-badge">SQL</span>
+
+        <div class="bento-card b-edu" data-aos="fade-up" data-aos-delay="90">
+          <h3><i class="fas fa-graduation-cap"></i> Education</h3>
+          <table class="education-table">
+            <tr>
+              <td rowspan="2" style="width:60px; text-align:center;">
+                <div class="school-logo-wrapper">
+                  <img src="/static/images/tip_c.png" alt="TIP Logo" class="school-logo">
+                </div>
+              </td>
+              <td><strong>Institute:</strong> Technological Institute of the Philippines</td>
+            </tr>
+            <tr>
+              <td><strong>Degree:</strong> Bachelors, Computer Science (2014-2018)</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="bento-card b-awards" data-aos="fade-up" data-aos-delay="120">
+          <h3><i class="fas fa-trophy"></i> Honors &amp; Awards</h3>
+          <ul class="awards-list">
+            <li>Honours with Distinction</li>
+            <li>1st Place - Philippine National Programming Challenge</li>
+            <li>1st/2nd Place - T.I.P's Programming Competition</li>
+            <li>2nd Place - Philippine National Programming Challenge</li>
+            <li>International Collegiate Programming Contest Participation</li>
+            <li>Philippine Programming Rating 1 (1 - Highest; 4 - Lowest)</li>
+          </ul>
+        </div>
+
+        <div class="bento-card b-clock" data-aos="fade-up" data-aos-delay="150">
+          <h3><i class="fas fa-clock"></i> My timezone</h3>
+          <div class="ph-time" id="ph-time">--:--:--</div>
+          <div class="ph-date" id="ph-date">Manila, Philippines (PHT)</div>
+          <span class="ph-note"><span class="dot"></span> Usually online 8pm – 6am PHT</span>
         </div>
       </div>
+    </section>
+
+    <!-- 02 · Skills -->
+    <section class="site-section">
+      <div class="sec-head" data-aos="fade-up">
+        <div class="sec-ghost" aria-hidden="true">02</div>
+        <span class="sec-kicker"><span class="num">02</span> Skills</span>
+        <h2>A stack built for <span class="serif-accent">impact</span></h2>
+        <p class="sec-sub">Five core disciplines, honed across seven years of shipping data products people actually use.</p>
+      </div>
+
+      <div class="progress-skills">
+        <div class="progress-skill" data-aos="fade-up">
+          <img src="/static/images/tableau.jpg" alt="Tableau" class="skill-icon">
+          <p>Tableau</p>
+          <span class="skill-cat">Data Visualization</span>
+          <div class="progress-rating" data-level="5">
+            <div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div>
+          </div>
+          <span class="rating-label">Expert</span>
+        </div>
+        <div class="progress-skill" data-aos="fade-up" data-aos-delay="60">
+          <img src="/static/images/powerbi.jpg" alt="Power BI" class="skill-icon">
+          <p>Power BI</p>
+          <span class="skill-cat">Reporting &amp; BI</span>
+          <div class="progress-rating" data-level="4">
+            <div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div>
+          </div>
+          <span class="rating-label">Advanced</span>
+        </div>
+        <div class="progress-skill" data-aos="fade-up" data-aos-delay="120">
+          <img src="/static/images/sql.png" alt="SQL" class="skill-icon">
+          <p>SQL</p>
+          <span class="skill-cat">Databases</span>
+          <div class="progress-rating" data-level="4">
+            <div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div>
+          </div>
+          <span class="rating-label">Advanced</span>
+        </div>
+        <div class="progress-skill" data-aos="fade-up" data-aos-delay="180">
+          <img src="/static/images/uipath.jpg" alt="RPA" class="skill-icon">
+          <p>RPA</p>
+          <span class="skill-cat">Automation</span>
+          <div class="progress-rating" data-level="3">
+            <div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div>
+          </div>
+          <span class="rating-label">Intermediate</span>
+        </div>
+        <div class="progress-skill" data-aos="fade-up" data-aos-delay="240">
+          <img src="/static/images/fullstack.png" alt="Full Stack" class="skill-icon">
+          <p>Full Stack</p>
+          <span class="skill-cat">Web Development</span>
+          <div class="progress-rating" data-level="3">
+            <div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div><div class="segment"></div>
+          </div>
+          <span class="rating-label">Intermediate</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 · Experience -->
+    <section class="site-section">
+      <div class="exp-layout">
+        <div class="exp-side" data-aos="fade-up">
+          <div class="sec-head">
+            <div class="sec-ghost" aria-hidden="true">03</div>
+            <span class="sec-kicker"><span class="num">03</span> Experience</span>
+            <h2>Seven years of <span class="serif-accent">shipping</span></h2>
+            <p class="sec-sub">From programming competitions to enterprise BI — every role sharpened the same instinct: make data useful, fast.</p>
+          </div>
+          <div class="exp-metrics">
+            <div class="exp-metric"><b class="grad-text">7+</b><span>Years</span></div>
+            <div class="exp-metric"><b class="grad-text">6</b><span>Companies</span></div>
+            <div class="exp-metric"><b class="grad-text">7</b><span>Roles</span></div>
+          </div>
+          <span class="exp-hint"><i class="fas fa-hand-pointer"></i> Hover a role — expand for the full story</span>
+        </div>
+
+        <div class="experience-list">
+
+          <div class="experience-item" data-aos="fade-up">
+            <div class="experience-company"><img src="/static/images/th.jpg" alt="TeamHealth"></div>
+            <div class="experience-details">
+              <div class="experience-date">Jan 2024 - Present</div>
+              <h3>Senior BI Engineer @ TeamHealth</h3>
+              <span>1 yr 2 mos</span>
+              <p>Migrating and optimizing reports using Tableau and Power BI. Developing interactive dashboards and PowerApps solutions that drive business insights.</p>
+              <div class="experience-extra" style="display: none;">
+                <p>In this role, I lead a team through modernizing legacy systems and mentor junior analysts to boost technical skills.</p>
+              </div>
+              <div class="toggle-extra-container">
+                <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+              </div>
+              <div class="experience-tools">
+                <span class="tool-badge">Tableau</span>
+                <span class="tool-badge">Power BI</span>
+                <span class="tool-badge">SQL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grouped: multiple roles at NCS Group -->
+          <div class="experience-item is-group" data-aos="fade-up">
+            <div class="experience-company"><img src="/static/images/ncs.jpg" alt="NCS Group"></div>
+            <div class="experience-group-body">
+              <div class="experience-group-header">
+                NCS Group
+                <span class="group-count">2 roles</span>
+                <span class="group-duration">Dec 2021 - Jan 2024 · 2 yrs 2 mos</span>
+              </div>
+              <div class="experience-roles">
+                <div class="experience-details">
+                  <div class="experience-date">May 2023 - Jan 2024</div>
+                  <h3>Consultant Team Lead</h3>
+                  <span>9 mos</span>
+                  <p>Led and mentored a team of BI analysts, migrated home-grown reports to enterprise workflows, and collaborated with data engineering teams.</p>
+                  <div class="experience-extra" style="display: none;">
+                    <p>Additional responsibilities included optimizing data processes and establishing reporting best practices.</p>
+                  </div>
+                  <div class="toggle-extra-container">
+                    <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+                  </div>
+                  <div class="experience-tools">
+                    <span class="tool-badge">Tableau</span>
+                    <span class="tool-badge">Power BI</span>
+                    <span class="tool-badge">PowerApps</span>
+                    <span class="tool-badge">Enterprise Workflows</span>
+                    <span class="tool-badge">SQL</span>
+                  </div>
+                </div>
+                <div class="experience-details">
+                  <div class="experience-date">Dec 2021 - Apr 2023</div>
+                  <h3>Application Consultant - BI</h3>
+                  <span>1 yr 5 mos</span>
+                  <p>Delivered robust BI solutions using Tableau and Power BI while engaging in requirement analysis and dashboard development.</p>
+                  <div class="experience-extra" style="display: none;">
+                    <p>To be added</p>
+                  </div>
+                  <div class="toggle-extra-container">
+                    <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+                  </div>
+                  <div class="experience-tools">
+                    <span class="tool-badge">Tableau</span>
+                    <span class="tool-badge">Power BI</span>
+                    <span class="tool-badge">PowerApps</span>
+                    <span class="tool-badge">Enterprise Workflows</span>
+                    <span class="tool-badge">SQL</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="experience-item" data-aos="fade-up">
+            <div class="experience-company"><img src="/static/images/unilab.jpg" alt="Unilab, Inc."></div>
+            <div class="experience-details">
+              <div class="experience-date">May 2020 - Dec 2021</div>
+              <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
+              <span>1 yr 8 mos</span>
+              <p>Designed and implemented Tableau dashboards, automated SQL view creation, and supported day-to-day BI tasks.</p>
+              <div class="experience-extra" style="display: none;">
+                <p>To be added</p>
+              </div>
+              <div class="toggle-extra-container">
+                <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+              </div>
+              <div class="experience-tools">
+                <span class="tool-badge">Tableau</span>
+                <span class="tool-badge">SQL</span>
+                <span class="tool-badge">Python</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="experience-item" data-aos="fade-up">
+            <div class="experience-company"><img src="/static/images/ubiquity.jpg" alt="Ubiquity"></div>
+            <div class="experience-details">
+              <div class="experience-date">Feb 2020 - May 2020</div>
+              <h3>Full Stack Developer @ Ubiquity</h3>
+              <span>4 mos</span>
+              <p>Designed and constructed the RESTful API architecture of a web project using Java Spring Boot, ensuring seamless communication and data exchange. Engineered internal applications using Golang and C++, enhancing system performance and productivity.</p>
+              <div class="experience-extra" style="display: none;">
+                <p>Developed a robust MVC web application delivering an intuitive and user-friendly interface.</p>
+              </div>
+              <div class="toggle-extra-container">
+                <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+              </div>
+              <div class="experience-tools">
+                <span class="tool-badge">Java Spring Boot</span>
+                <span class="tool-badge">RESTful APIs</span>
+                <span class="tool-badge">Golang</span>
+                <span class="tool-badge">C++</span>
+                <span class="tool-badge">Python</span>
+                <span class="tool-badge">Django</span>
+                <span class="tool-badge">Flask</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="experience-item" data-aos="fade-up">
+            <div class="experience-company"><img src="/static/images/globe.jpg" alt="Globe Telecom"></div>
+            <div class="experience-details">
+              <div class="experience-date">Sep 2018 - Feb 2020</div>
+              <h3>Software Engineer @ Globe Telecom</h3>
+              <span>1 yr 6 mos</span>
+              <p>Created interactive dashboards and developed various RPA solutions to streamline telecom operations.</p>
+              <div class="experience-extra" style="display: none;">
+                <p>To be added</p>
+              </div>
+              <div class="toggle-extra-container">
+                <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+              </div>
+              <div class="experience-tools">
+                <span class="tool-badge">Tableau</span>
+                <span class="tool-badge">UiPath</span>
+                <span class="tool-badge">Python</span>
+                <span class="tool-badge">SQL</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="experience-item" data-aos="fade-up">
+            <div class="experience-company no-logo"><i class="fas fa-laptop-code"></i></div>
+            <div class="experience-details">
+              <div class="experience-date">Oct 2017 - Apr 2018</div>
+              <h3>Software Engineer Intern @ Jump Digital Asia</h3>
+              <span>7 mos</span>
+              <p>Developed a sophisticated software program utilizing Symmetric Encryption techniques to secure and encrypt diverse file types, facilitating secure sharing among multiple users.</p>
+              <div class="experience-extra" style="display: none;">
+                <p>Created efficient data processing scripts using Oracle and Python, streamlining data manipulation and analysis.</p>
+              </div>
+              <div class="toggle-extra-container">
+                <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
+              </div>
+              <div class="experience-tools">
+                <span class="tool-badge">Symmetric Encryption</span>
+                <span class="tool-badge">Oracle</span>
+                <span class="tool-badge">Python</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div><!-- /#experience -->
+
+  <!-- ===== 04 · PROJECTS ===== -->
+  <section class="site-section" id="projects">
+    <div class="projects-header sec-head" data-aos="fade-up">
+      <div class="sec-ghost" aria-hidden="true">04</div>
+      <span class="sec-kicker"><span class="num">04</span> Projects</span>
+      <h2>Selected <span class="serif-accent">work</span></h2>
+      <p class="sec-sub">A curated slice of personal &amp; professional builds — open a case study, then continue into the interactive portfolio experiences below.</p>
     </div>
 
-    <!-- 2. Consultant Team Lead @ NCS Group -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <img src="/static/images/ncs.jpg" alt="NCS Group">
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">May 2023 - Jan 2024</div>
-        <h3>Consultant Team Lead @ NCS Group</h3>
-        <span>9 mos</span>
-        <p>
-          Led and mentored a team of BI analysts, migrated home-grown reports to enterprise workflows,
-          and collaborated with data engineering teams.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            Additional responsibilities included optimizing data processes and establishing reporting best practices.
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Tableau</span>
-          <span class="tool-badge">Power BI</span>
-          <span class="tool-badge">PowerApps</span>
-          <span class="tool-badge">Enterprise Workflows</span>
-          <span class="tool-badge">SQL</span>
-
-        </div>
-      </div>
+    <div id="project-filters" data-aos="fade-up">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="powerbi">Power BI</button>
+      <button class="filter-btn" data-filter="tableau">Tableau</button>
+      <button class="filter-btn" data-filter="other">Other</button>
     </div>
 
-    <!-- 3. Application Consultant - BI -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <!-- No company image provided -->
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">Dec 2021 - Apr 2023</div>
-        <h3>Application Consultant - BI</h3>
-        <span>1 yr 5 mos</span>
-        <p>
-          Delivered robust BI solutions using Tableau and Power BI while engaging in requirement analysis
-          and dashboard development.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            To be added
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Tableau</span>
-          <span class="tool-badge">Power BI</span>
-          <span class="tool-badge">PowerApps</span>
-          <span class="tool-badge">Enterprise Workflows</span>
-          <span class="tool-badge">SQL</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. Business Intelligence Developer @ Unilab, Inc. -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <img src="/static/images/unilab.jpg" alt="Unilab, Inc.">
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">May 2020 - Dec 2021</div>
-        <h3>Business Intelligence Developer @ Unilab, Inc.</h3>
-        <span>1 yr 8 mos</span>
-        <p>
-          Designed and implemented Tableau dashboards, automated SQL view creation, and supported day-to-day BI tasks.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            To be added
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Tableau</span>
-          <span class="tool-badge">SQL</span>
-          <span class="tool-badge">Python</span>
-          <span class="tool-badge">SQL</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. Full Stack Developer @ Ubiquity -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <img src="/static/images/ubiquity.jpg" alt="Ubiquity">
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">Feb 2020 - May 2020</div>
-        <h3>Full Stack Developer @ Ubiquity</h3>
-        <span>4 mos</span>
-        <p>
-          Designed and constructed the Restful API architecture of a web project using Java Spring Boot,
-          ensuring seamless communication and data exchange. Engineered internal applications using Golang and C++,
-          enhancing system performance and productivity.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            Developed a robust MVC web application delivering an intuitive and user-friendly interface.
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Java Spring Boot</span>
-          <span class="tool-badge">RESTful APIs</span>
-          <span class="tool-badge">Golang</span>
-          <span class="tool-badge">C++</span>
-          <span class="tool-badge">Python</span>
-          <span class="tool-badge">Django</span>
-          <span class="tool-badge">Flask</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 6. Software Engineer @ Globe Telecom -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <img src="/static/images/globe.jpg" alt="Globe Telecom">
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">Sep 2018 - Feb 2020</div>
-        <h3>Software Engineer @ Globe Telecom</h3>
-        <span>1 yr 6 mos</span>
-        <p>
-          Created interactive dashboards and developed various RPA solutions to streamline telecom operations.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            To be added
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Tableau</span>
-          <span class="tool-badge">UiPath</span>
-          <span class="tool-badge">Python</span>
-          <span class="tool-badge">SQL</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 7. Software Engineer Intern @ Jump Digital Asia -->
-    <div class="experience-item">
-      <div class="experience-company">
-        <!-- No company image provided -->
-      </div>
-      <div class="experience-details">
-        <div class="experience-date">Oct 2017 - Apr 2018</div>
-        <h3>Software Engineer Intern @ Jump Digital Asia</h3>
-        <span>7 mos</span>
-        <p>
-          Developed a sophisticated software program utilizing Symmetric Encryption techniques to secure and encrypt diverse file types,
-          facilitating secure sharing among multiple users.
-        </p>
-        <div class="experience-extra" style="display: none;">
-          <p>
-            Created efficient data processing scripts using Oracle and Python, streamlining data manipulation and analysis.
-          </p>
-        </div>
-        <div class="toggle-extra-container">
-          <button class="toggle-extra" onclick="toggleExtra(this)">see more...</button>
-        </div>
-        <!-- Tool badges now at the bottom -->
-        <div class="experience-tools">
-          <span class="tool-badge">Symmetric Encryption</span>
-          <span class="tool-badge">Oracle</span>
-          <span class="tool-badge">Python</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!-- ================== END EXPERIENCE SECTION ================== -->
-
-
-
-    </div>
-  </div>
-
-  <!-- SECTION SEPARATOR -->
-  <div class="section-separator" data-aos="fade-up"></div>
-
-<section id="projects" data-aos="fade-up">
-  <div class="projects-header" style="text-align: center; margin-bottom: 20px;">
-    <h2 style="text-transform: uppercase; color: #004b8d; margin-bottom: 10px;">Projects</h2>
-    <p style="color: #555;">Some personal & professional projects I've worked on:</p>
-  </div>
-
-  <!-- Filter Buttons -->
-  <div id="project-filters" style="text-align: center; margin-bottom: 30px;">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="powerbi">Power BI</button>
-    <button class="filter-btn" data-filter="tableau">Tableau</button>
-    <button class="filter-btn" data-filter="other">Other</button>
-  </div>
-
-  <!-- Projects Grid -->
-  <div class="projects-grid">
-    <!-- Project Card 1: Tableau -->
-    <div class="project-card" data-category="powerbi"
-         data-title="SephAnimeList Power BI Report"
- data-description="
-<div style='padding: 0 1.5rem; text-align: left;'>
-  <!-- Overview -->
+    <div class="projects-grid">
+      <div class="project-card featured" data-category="powerbi" data-aos="fade-up"
+           data-title="SephAnimeList Power BI Report"
+           data-description="
+<div style='padding: 0 0.5rem; text-align: left;'>
   <p style='margin: 1rem 0 0.5rem;'><strong>Overview</strong></p>
   <p style='margin-bottom: 1.5rem;'>
     Welcome to <strong>SephAnimeList</strong>, my personal anime tracking dashboard built using Power BI.
-    This project pulls data from <strong>MyAnimeList's API</strong> to track my anime watchlist, including what I’ve watched, what I’m currently watching, and what’s planned.
+    This project pulls data from <strong>MyAnimeList's API</strong> to track my anime watchlist, including what I've watched, what I'm currently watching, and what's planned.
     It also highlights ratings, trends, and recommendations, all displayed in an interactive and visually engaging format.
   </p>
-
-  <!-- Features -->
   <p style='margin: 1rem 0 0.5rem;'><strong>Features</strong></p>
   <ul style='margin-left: 2em; margin-bottom: 1.5rem; list-style-type: disc;'>
     <li><strong>2024-2025 Watchlist</strong> – Categorizes my anime into <strong>Watched</strong>, <strong>Currently Watching</strong>, and <strong>Planned to Watch</strong>.</li>
-    <li><strong>Anime Ratings</strong> – Displays average ratings for anime I’ve watched.</li>
-    <li><strong>Most Popular Anime</strong> – Shows the top trending anime based on MyAnimeList’s popularity data.</li>
+    <li><strong>Anime Ratings</strong> – Displays average ratings for anime I've watched.</li>
+    <li><strong>Most Popular Anime</strong> – Shows the top trending anime based on MyAnimeList's popularity data.</li>
     <li><strong>Recommendations</strong> – Provides anime suggestions based on genres and themes I enjoy.</li>
-    <li><strong>Deneb-Powered Visuals</strong> – Uses <strong>Deneb</strong> to create visually stunning charts and animations that enhance the dashboard experience.</li>
+    <li><strong>Deneb-Powered Visuals</strong> – Uses <strong>Deneb</strong> to create visually stunning charts and animations.</li>
   </ul>
-
-  <!-- Limitations -->
-  <p style='margin: 1rem 0 0.5rem;'><strong>Limitations</strong></p>
-  <ul style='margin-left: 2em; margin-bottom: 1.5rem; list-style-type: disc;'>
-    <li>The dashboard <strong>only pulls my watchlist</strong> from MyAnimeList and does not provide full database access.</li>
-    <li>Recommendations are manually curated based on my preferences rather than an AI-driven suggestion system.</li>
-  </ul>
-
-  <!-- Why Power BI & Deneb? -->
-  <p style='margin: 1rem 0 0.5rem;'><strong>Why Power BI & Deneb?</strong></p>
+  <p style='margin: 1rem 0 0.5rem;'><strong>Why Power BI &amp; Deneb?</strong></p>
   <p style='margin-bottom: 1.5rem;'>
-    Power BI makes it easy to visualize and analyze my anime data in a structured way. <strong>Deneb</strong> enhances this further by allowing me to create custom visuals
+    Power BI makes it easy to visualize and analyze my anime data in a structured way. <strong>Deneb</strong> enhances this further by allowing custom visuals
     with smooth animations and unique aesthetics, making my dashboard more immersive than standard Power BI visuals.
   </p>
-
-  <!-- Dashboard Link -->
   <p style='margin: 1rem 0;'>
-    <strong>Check Out SephAnimeList:</strong>
-    <a href='/projects-bi'>Click Here</a>
+    <strong>Check Out SephAnimeList:</strong> <a href='/projects-bi'>Click Here</a>
   </p>
 </div>"
-
-         data-image="static/images/sephanimelist.png">
-      <div class="project-image-container">
-        <img src="/static/images/sephanimelist.png" alt="Project 1">
-        <div class="project-category powerbi">Power BI</div>
+           data-image="static/images/sephanimelist.png">
+        <div class="project-image-container">
+          <img src="/static/images/sephanimelist.png" alt="SephAnimeList">
+          <div class="project-category powerbi">Power BI</div>
+        </div>
+        <div class="project-body">
+          <h3>SephAnimeList — A Power BI Anime Dashboard</h3>
+          <p>A personalized anime tracking dashboard powered by Power BI, pulling my watchlist from MyAnimeList's API. Features ratings, recommendations, and trends with custom Deneb visuals.</p>
+          <span class="project-cta">Open case study <i class="fas fa-arrow-right"></i></span>
+        </div>
       </div>
-      <h3>SephAnimeList - A Power BI Anime Dashboard</h3>
-<p>A personalized anime tracking dashboard powered by Power BI, pulling my watchlist from MyAnimeList's API. It features my anime list, ratings, recommendations, and popular trends with custom Deneb visuals for a unique and immersive experience.</p>
+
+      <div class="project-card is-soon" data-category="tableau" data-aos="fade-up"
+           data-title="New Tableau Project"
+           data-description="<p style='text-align:center; color:#51607a;'>A new Tableau data story is in the works — check back soon!</p>">
+        <div class="project-image-container">
+          <div class="project-soon">
+            <i class="fas fa-chart-line"></i>
+            <b>In the Works</b>
+            <small>Coming Soon</small>
+          </div>
+          <div class="project-category tableau">Tableau</div>
+        </div>
+        <h3>New Tableau Project</h3>
+        <p>A fresh data-storytelling dashboard is currently being crafted.</p>
+      </div>
+
+      <div class="project-card is-soon" data-category="other" data-aos="fade-up" data-aos-delay="60"
+           data-title="New Project"
+           data-description="<p style='text-align:center; color:#51607a;'>Something new is brewing — stay tuned!</p>">
+        <div class="project-image-container">
+          <div class="project-soon">
+            <i class="fas fa-flask"></i>
+            <b>In the Lab</b>
+            <small>Coming Soon</small>
+          </div>
+          <div class="project-category other">Other</div>
+        </div>
+        <h3>New Project</h3>
+        <p>An experimental build is on the way — more details soon.</p>
+      </div>
     </div>
 
-    <!-- Project Card 2: Power BI -->
-    <div class="project-card" data-category="tableau"
-         data-title="Project Two"
-         data-description="Soon..."
-         data-image="https://placehold.co/600x300">
-      <div class="project-image-container">
-        <img src="https://placehold.co/400x150" alt="Project 2">
-        <div class="project-category tableau">Tableau</div>
+    <div class="resume-showcase" aria-labelledby="resume-showcase-title">
+      <div class="resume-showcase-head" data-aos="fade-up">
+        <span class="resume-showcase-kicker"><i class="fas fa-route" aria-hidden="true"></i> Continue the walkthrough</span>
+        <div>
+          <h3 id="resume-showcase-title">See the work <span class="serif-accent">in motion</span></h3>
+          <p>These are not side pages. They are the next chapters of my resume: the finished BI stories, then the custom-visual craft behind them.</p>
+        </div>
       </div>
-      <h3>Project Two</h3>
-      <p>Soon...</p>
+
+      <div class="resume-showcase-grid">
+        <a class="resume-showcase-card" href="/projects-bi" data-aos="fade-up" data-cursor="Explore" aria-label="Explore the interactive BI dashboard gallery">
+          <div class="resume-showcase-media resume-showcase-media-bi">
+            <div class="resume-showcase-frame">
+              <img src="/static/images/bi-showcase-preview.png" alt="Preview of Joseph Rodriguez's interactive BI dashboard gallery" loading="lazy">
+            </div>
+            <span class="resume-showcase-index" aria-hidden="true">01</span>
+            <span class="resume-showcase-hint" aria-hidden="true"><i class="fas fa-mouse-pointer"></i><span class="pointer-copy">Move to explore</span><span class="touch-copy">Tap to open</span></span>
+            <span class="resume-showcase-status"><i class="fas fa-circle" aria-hidden="true"></i> Interactive gallery</span>
+          </div>
+          <div class="resume-showcase-copy">
+            <div class="resume-showcase-meta"><span>Power BI</span><span>Tableau</span><span>Data storytelling</span></div>
+            <h3>Dashboard Gallery</h3>
+            <p>Explore my portfolio as a keynote-style presentation: nine chapters spanning production dashboards, AI-assisted analytics, and executive data stories.</p>
+            <div class="resume-showcase-facts" aria-label="Gallery highlights">
+              <span><b>09</b> chapters</span>
+              <span><b>03</b> interactive builds</span>
+            </div>
+            <span class="resume-showcase-link">Start the BI walkthrough <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </a>
+
+        <a class="resume-showcase-card" href="/deneb-lab" data-aos="fade-up" data-aos-delay="80" data-cursor="Explore" aria-label="Open the interactive Deneb custom visual lab">
+          <div class="resume-showcase-media resume-showcase-media-deneb">
+            <div class="resume-showcase-frame">
+              <img src="/static/images/deneb-showcase-preview.png" alt="Preview of Joseph Rodriguez's Deneb and Vega custom visual lab" loading="lazy">
+            </div>
+            <span class="resume-showcase-index" aria-hidden="true">02</span>
+            <span class="resume-showcase-hint" aria-hidden="true"><i class="fas fa-mouse-pointer"></i><span class="pointer-copy">Move to explore</span><span class="touch-copy">Tap to open</span></span>
+            <span class="resume-showcase-status"><i class="fas fa-circle" aria-hidden="true"></i> Live visual lab</span>
+          </div>
+          <div class="resume-showcase-copy">
+            <div class="resume-showcase-meta"><span>Deneb</span><span>Vega-Lite</span><span>Custom visuals</span></div>
+            <h3>Deneb Lab</h3>
+            <p>Go behind the dashboards and inspect the visual engineering: responsive Vega specifications, reusable patterns, and a working editor for new experiments.</p>
+            <div class="resume-showcase-facts" aria-label="Deneb Lab highlights">
+              <span><b>05</b> visual patterns</span>
+              <span><b>100%</b> interactive</span>
+            </div>
+            <span class="resume-showcase-link">Enter the visual lab <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </a>
+      </div>
     </div>
+  </section>
 
-    <!-- Project Card 3: Other -->
-    <div class="project-card" data-category="other"
-         data-title="Project Three"
-         data-description="Soon..."
-         data-image="https://placehold.co/600x300">
-      <div class="project-image-container">
-        <img src="https://placehold.co/400x150" alt="Project 3">
-        <div class="project-category other">Other</div>
-      </div>
-      <h3>Project Three</h3>
-      <p>Soon...</p>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-<!-- Modal Popup for Project Details -->
-<div id="project-modal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close" onclick="closeProjectModal()">&times;</span>
-    <img id="modal-image" src="" alt="Project Image">
-    <h3 id="modal-title"></h3>
-    <p id="modal-description"></p>
-  </div>
-</div>
-
-  <!-- SECTION SEPARATOR -->
-  <div class="section-separator" data-aos="fade-up"></div>
-
-<!-- CONTACT SECTION - Two Columns (Same Structure as About/Experience) -->
-<div class="main-container" id="contact" data-aos="fade-up" style="
-  margin: 0 auto 60px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
-  padding: 40px;
-  display: flex;
-  gap: 40px;
-">
-  <!-- LEFT COLUMN: "Let’s Talk" & Contact Form -->
-  <div class="left-column" style="width: 35%; padding: 20px; border-right: 1px solid #eee;">
-    <h2 style="font-size: 1.6rem; color: #004b8d; margin-bottom: 20px;">Let’s Talk</h2>
-    <p style="font-size: 1rem; line-height: 1.8; color: #555; margin-bottom: 20px;">
-      Have a question or a project in mind? Feel free to reach out. I’d love to hear from you and discuss how we can work together.
-    </p>
-    <form style="display: flex; flex-direction: column; gap: 20px;">
-      <div>
-        <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Name</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          placeholder="Your Name"
-          style="
-            width: 100%;
-            padding: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: #333;
-          "
-          required
-        />
-      </div>
-      <div>
-        <label for="email" style="display: block; margin-bottom: 8px; font-weight: 600;">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="you@example.com"
-          style="
-            width: 100%;
-            padding: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: #333;
-          "
-          required
-        />
-      </div>
-      <div>
-        <label for="message" style="display: block; margin-bottom: 8px; font-weight: 600;">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="5"
-          placeholder="Your Message"
-          style="
-            width: 100%;
-            padding: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            color: #333;
-            resize: vertical;
-          "
-          required
-        ></textarea>
-      </div>
-      <button
-        id="submit-btn"
-        type="submit"
-         class="shiny-gradient"
-        style="
-          align-self: flex-start;
-          background: #004b8d;
-          color: #fff;
-          border: none;
-          padding: 14px 28px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-        "
-      >
-        Submit
-      </button>
-    </form>
-  </div>
-
-  <!-- RIGHT COLUMN: "Chat with My AI Persona" Card -->
-  <div class="right-column" style="width: 65%; padding: 20px;">
-    <h2 style="font-size: 1.6rem; color: #004b8d; margin-bottom: 20px;">Chat with My AI Persona</h2>
-    <p style="font-size: 1rem; line-height: 1.8; color: #555; margin-bottom: 20px;">
-      Prefer a conversational approach? Use the chatbox to interact with my AI persona for personalized assistance and instant responses.
-    </p>
-    <div style="
-      border: 1px solid #ccc;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    ">
-      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-        <!-- AI Persona Image with Speaking Effect -->
-<div class="speaking-container">
-  <img name="twitter:image" src="/static/images/profile.jpg" alt="AI Persona" class="ai-avatar" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-   <div class="speaking-effect"></div>
-</div>
-        <span style="font-weight: bold; color: #004b8d; font-size: 1.1rem;">My AI Persona</span>
-      </div>
-      <p style="font-size: 0.9rem; color: #555; margin-bottom: 20px;">
-        Get quick answers and personalized assistance by chatting with my AI persona.
-      </p>
-      <button
-              id="open-chat-btn"
-              class="shiny-gradient"
-        onclick="toggleChat()"
-        style="
-          background: #004b8d;
-          color: #fff;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 600;
-        "
-      >
-        Open Chat
-      </button>
+  <!-- Project Modal -->
+  <div id="project-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeProjectModal()">&times;</span>
+      <img id="modal-image" src="" alt="Project Image">
+      <h3 id="modal-title"></h3>
+      <p id="modal-description"></p>
     </div>
   </div>
-</div>
-</section>
 
-<!-- ===== FLOATING CHATBOX (Single Instance) ===== -->
-<!-- Floating Chat Button -->
-<div class="chat-button" onclick="toggleChat()">
-  <img src="/static/images/chat-icon.png" alt="Chat Icon" style="width:24px; height:24px;">
-</div>
+  <!-- ===== 05 · CONTACT ===== -->
+  <section class="site-section" id="contact">
+    <div class="sec-head" data-aos="fade-up">
+      <div class="sec-ghost" aria-hidden="true">05</div>
+      <span class="sec-kicker"><span class="num">05</span> Contact</span>
+      <h2>Let's build something <span class="serif-accent">beautiful</span></h2>
+      <p class="sec-sub">Have a question, a dataset, or a project in mind? Two ways to reach me — pick your favorite.</p>
+    </div>
 
-<!-- Chatbox (Floating, Single Instance) -->
-<div class="chatbox" id="chatbox">
-  <div class="chatbox-header">
-    <span>Chat with my AI Persona</span>
-    <button class="chatbox-close" onclick="closeChat()">×</button>
+    <div class="contact-grid">
+      <div class="contact-card" data-aos="fade-up">
+        <h3>Send a message</h3>
+        <p class="contact-intro">Old school works too. Drop me a line and I'll get back to you.</p>
+        <form class="contact-form">
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+          </div>
+          <button id="submit-btn" type="submit" class="shiny-gradient">Send Message</button>
+        </form>
+      </div>
+
+      <div class="contact-card" data-aos="fade-up" data-aos-delay="80">
+        <h3>Chat with my AI persona</h3>
+        <p class="contact-intro">Prefer a conversation? My AI persona knows my work, skills, and story — and it answers instantly.</p>
+        <div class="persona-card">
+          <div class="persona-head">
+            <div class="speaking-container">
+              <div class="ai-mascot" aria-hidden="true">
+                <div class="mascot">
+                  <div class="me-frame">
+                    <div class="me-char">
+                      <div class="me-shoulders"></div>
+                      <div class="me-head">
+                        <span class="me-ear l"></span>
+                        <span class="me-ear r"></span>
+                        <div class="me-headset"></div>
+                        <div class="me-hair"></div>
+                        <div class="me-face">
+                          <span class="me-brow l"></span>
+                          <span class="me-brow r"></span>
+                          <span class="me-eye l"><i></i></span>
+                          <span class="me-eye r"><i></i></span>
+                          <span class="me-cheek l"></span>
+                          <span class="me-cheek r"></span>
+                          <span class="me-nose"></span>
+                          <span class="me-mouth"></span>
+                        </div>
+                      </div>
+                      <div class="me-hand"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="speaking-effect"></div>
+            </div>
+            <span class="name">My AI Persona<small>Powered by my portfolio knowledge</small></span>
+          </div>
+          <p>Ask it anything about my experience, my stack, or how I'd approach your problem — it's me, minus the timezone.</p>
+          <button id="open-chat-btn" class="shiny-gradient" onclick="toggleChat()">Open Chat</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FLOATING CHAT LAUNCHER ===== -->
+  <div class="chat-button" onclick="toggleChat()" role="button" aria-label="Open AI persona chat" aria-controls="chatbox" aria-expanded="false" tabindex="0" data-cursor="Chat">
+    <i class="fas fa-comment-dots cb-icon" aria-hidden="true"></i>
+    <span class="cb-status" aria-hidden="true"></span>
   </div>
-  <div class="chatbox-body">
-    <div class="chat-message bot-message">
-      <img src="/static/images/profile.jpg" alt="Bot Avatar" class="bot-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
-      <span>Hello! How can I help you today?</span>
+
+  <div class="chatbox" id="chatbox" aria-live="polite" aria-hidden="true">
+    <div class="chatbox-header">
+      <div class="chatbox-title">
+        <span class="chatbox-presence" aria-hidden="true"><i></i></span>
+        <span>Chat with my AI Persona<small>Resume-aware · ready to help</small></span>
+      </div>
+      <button class="chatbox-close" onclick="closeChat()">×</button>
+    </div>
+    <div class="chatbox-body">
+      <div class="chat-message bot-message">
+        <img src="/static/images/profile.jpg" alt="Bot Avatar" class="bot-avatar">
+        <span>Hello! How can I help you today?</span>
+      </div>
+    </div>
+    <div class="chatbox-footer">
+      <div class="chat-prompts" aria-label="Suggested questions">
+        <button type="button" class="chat-prompt" data-prompt="Give me a quick overview of Joseph's career."><i class="fas fa-briefcase" aria-hidden="true"></i> Career</button>
+        <button type="button" class="chat-prompt" data-prompt="What are Joseph's strongest BI skills?"><i class="fas fa-chart-pie" aria-hidden="true"></i> BI skills</button>
+        <button type="button" class="chat-prompt" data-prompt="How does Joseph lead and mentor teams?"><i class="fas fa-users" aria-hidden="true"></i> Leadership</button>
+      </div>
+      <div class="chat-composer" id="chat-composer">
+        <textarea id="chat-input" rows="1" maxlength="1500" aria-label="Message Joseph's AI persona" placeholder="Ask about my work, skills, or story..."></textarea>
+        <div class="chat-composer-meta">
+          <div class="chat-composer-status" aria-live="polite">
+            <span class="composer-status-dot" aria-hidden="true"></span>
+            <span id="composer-status-text">Ready</span>
+          </div>
+          <div class="chat-composer-actions">
+            <span class="chat-char-count" id="chat-char-count">0 / 1500</span>
+            <span class="chat-key-hint"><kbd>Enter</kbd> to send</span>
+            <button type="button" class="chat-send" id="chat-send" onclick="sendMessageAndResponse()" aria-label="Send message" disabled>
+              <span>Send</span>
+              <i class="fas fa-arrow-up" aria-hidden="true"></i>
+              <i class="fas fa-circle-notch chat-send-spinner" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="chatbox-footer">
-    <input type="text" id="chat-input" placeholder="Type a message..." />
-    <button onclick="sendMessageAndResponse()">Send</button>
-  </div>
-</div>
 
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="footer-cta">
+      <h4>Got data? Let's make it <span class="serif-accent">speak.</span></h4>
+      <a href="#contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Start a conversation</a>
+    </div>
 
-  <!-- FOOTER -->
-  <footer data-aos="fade-up">
-    <p style="font-size:0.95rem; text-align:center;">© 2025 Joseph Rodriguez. All rights reserved.</p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-mark">JR</span>
+        <p>Senior BI Engineer turning complex data into clear, beautiful decisions — dashboards, automation, and full-stack tools.</p>
+        <div class="social-icons">
+          <a href="https://www.linkedin.com/in/joseph-ignacio-rodriguez-50379b134/" target="_blank" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://facebook.com/your_facebook" target="_blank" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://twitter.com/your_twitter" target="_blank" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Navigate</h5>
+        <nav class="footer-links">
+          <a href="#banner">Home</a>
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+          <a href="/games">Games</a>
+        </nav>
+      </div>
+
+      <div class="footer-col">
+        <h5>Get in touch</h5>
+        <nav class="footer-links">
+          <a href="#contact">Send a message</a>
+          <a href="#contact">Chat with my AI</a>
+          <a href="/projects-bi">View BI projects</a>
+          <a href="/deneb-lab">Deneb Lab</a>
+          <a href="/news">News</a>
+        </nav>
+        <a href="#banner" class="back-to-top"><i class="fas fa-arrow-up"></i> Back to top</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span id="footer-year">2026</span> Joseph Rodriguez. All rights reserved.</p>
+      <p class="built">Built with <i class="fas fa-heart"></i> &amp; lots of data.</p>
+    </div>
   </footer>
 
-  <!-- SCRIPTS -->
-  <!-- Typed.js via CDN -->
-  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
-  <!-- AOS via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <!-- ===== COMMAND PALETTE ===== -->
+  <div id="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="cmdk-panel">
+      <div class="cmdk-input-row">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input type="text" id="cmdk-input" placeholder="Where to? Try 'projects' or 'chat'…" autocomplete="off">
+        <span class="cmdk-esc">ESC</span>
+      </div>
+      <div class="cmdk-list" id="cmdk-list"></div>
+    </div>
+  </div>
 
-  <!-- Custom Scripts -->
+  <!-- ===== SCRIPTS ===== -->
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="/static/js/scripts.js"></script>
   <script>
-    // Initialize Typed.js with preStringTyped to set color before typing begins
+    if (window.gsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const FINE = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    /* ---------- Split hero name + veil name into characters ---------- */
+    function splitChars(el) {
+      const chars = [];
+      el.querySelectorAll('.ln').forEach((ln) => {
+        const txt = ln.textContent;
+        ln.textContent = '';
+        [...txt].forEach((c) => {
+          const s = document.createElement('span');
+          s.className = 'ch';
+          s.textContent = c;
+          ln.appendChild(s);
+          chars.push(s);
+        });
+      });
+      return chars;
+    }
+    function splitPlain(el) {
+      const txt = el.textContent;
+      el.textContent = '';
+      return [...txt].map((c) => {
+        const s = document.createElement('span');
+        s.className = 'ch';
+        s.textContent = c === ' ' ? ' ' : c;
+        el.appendChild(s);
+        return s;
+      });
+    }
+    const heroChars = splitChars(document.querySelector('.hero-name'));
+
+    /* ---------- Cinematic intro veil + hero entrance ---------- */
+    (function () {
+      const veil = document.getElementById('intro-veil');
+      const seen = sessionStorage.getItem('jr-intro-seen');
+
+      const heroIn = (instant) => {
+        if (!window.gsap || instant) return;
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        tl.from(heroChars, { yPercent: 115, duration: .8, stagger: .028 }, 0)
+          .from('[data-hero]', { y: 26, opacity: 0, duration: .7, stagger: .09, clearProps: 'all' }, .25);
+      };
+
+      if (!veil) return;
+      if (REDUCED || !window.gsap) { veil.remove(); return; }
+      if (seen) { veil.remove(); heroIn(false); return; }
+
+      document.body.style.overflow = 'hidden';
+      const veilChars = splitPlain(document.getElementById('veil-name'));
+      const done = () => {
+        veil.remove();
+        document.body.style.overflow = '';
+        sessionStorage.setItem('jr-intro-seen', '1');
+      };
+      const safety = setTimeout(done, 3800);
+
+      const tl = gsap.timeline({
+        onComplete: () => { clearTimeout(safety); done(); heroIn(false); }
+      });
+      tl.to(veilChars, { y: '-0%', duration: 0 })
+        .fromTo(veilChars, { yPercent: 110 }, { yPercent: 0, duration: .6, stagger: .03, ease: 'power3.out' }, .05)
+        .to('.veil-role', { opacity: 1, duration: .4 }, .5)
+        .fromTo('#veil-bar-fill', { width: 0 }, { width: '100%', duration: .9, ease: 'power2.inOut' }, .25)
+        .to('.veil-inner', { y: -26, opacity: 0, duration: .4, ease: 'power2.in' }, '+=.15')
+        .to(veil, { yPercent: -100, duration: .65, ease: 'power4.inOut' }, '-=.1');
+    })();
+
+    /* ---------- 3D stage: swap scene with the typed role ---------- */
+    const heroScenes = document.querySelectorAll('.hero-stage .scene');
+    const MODE_NAMES = ['BI DASHBOARD', 'RPA AUTOMATION', 'FULL STACK', 'DATA STORY'];
+    const modeEl = document.getElementById('stage-mode');
+    const stageWrap = document.querySelector('.hero-stage');
+    let lastScene = 0;
+
+    function stageBurst() {
+      if (!stageWrap || !window.gsap || REDUCED) return;
+      for (let i = 0; i < 9; i++) {
+        const s = document.createElement('span');
+        s.className = 'stage-spark';
+        stageWrap.appendChild(s);
+        const a = Math.random() * Math.PI * 2;
+        const d = 60 + Math.random() * 110;
+        gsap.fromTo(s, { x: 0, y: 0, scale: 1, opacity: 1 }, {
+          x: Math.cos(a) * d, y: Math.sin(a) * d - 20, scale: .2, opacity: 0,
+          duration: .7 + Math.random() * .3, ease: 'power2.out', onComplete: () => s.remove()
+        });
+      }
+    }
+
+    function setHeroScene(pos) {
+      heroScenes.forEach((s) => s.classList.toggle('active', +s.dataset.role === pos));
+      if (pos !== lastScene) { stageBurst(); lastScene = pos; }
+      if (modeEl) {
+        modeEl.textContent = MODE_NAMES[pos] || '';
+        if (window.gsap && !REDUCED) {
+          gsap.fromTo(modeEl, { y: 9, opacity: 0, xPercent: -50 }, { y: 0, opacity: 1, xPercent: -50, duration: .35, ease: 'power2.out' });
+        }
+      }
+    }
     new Typed('#typed-roles', {
-      strings: [
-        'BI Developer',
-        'RPA Developer',
-        'Full Stack Developer'
-      ],
+      strings: ['BI Developer', 'RPA Developer', 'Full Stack Developer', 'Data Storyteller'],
       typeSpeed: 70,
-      backSpeed: 50,
-      backDelay: 1500,
+      backSpeed: 45,
+      backDelay: 1600,
       startDelay: 500,
       loop: true,
       showCursor: true,
       cursorChar: '|',
-      preStringTyped: function(arrayPos, self) {
-        const colors = ['red', 'green', 'blue'];
-        const typedEl = document.querySelector('#typed-roles');
-        typedEl.style.color = colors[arrayPos] || '#000';
+      preStringTyped: function (pos) { setHeroScene(pos); }
+    });
+
+    /* ---------- AOS ---------- */
+    AOS.init({ duration: 750, once: true, offset: 60, easing: 'ease-out-cubic' });
+
+    /* ---------- Count-up hero stats ---------- */
+    (function () {
+      const nums = document.querySelectorAll('.stat-num[data-count]');
+      const animate = (el) => {
+        const target = parseInt(el.getAttribute('data-count'), 10) || 0;
+        const suffix = el.getAttribute('data-suffix') || '';
+        const dur = 1400;
+        const start = performance.now();
+        const step = (now) => {
+          const p = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + (p === 1 ? suffix : '');
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) { animate(entry.target); io.unobserve(entry.target); }
+        });
+      }, { threshold: 0.5 });
+      nums.forEach((n) => io.observe(n));
+    })();
+
+    /* ---------- Magnetic hero buttons ---------- */
+    document.querySelectorAll('.hero-cta .btn').forEach((btn) => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        gsap.to(btn, { x: dx * 0.25, y: dy * 0.35, duration: 0.3, ease: 'power2.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.4, ease: 'elastic.out(1, 0.4)' });
+      });
+    });
+
+    /* ---------- Scroll progress ---------- */
+    (function () {
+      const bar = document.getElementById('scroll-progress-bar');
+      if (!bar) return;
+      const update = () => {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+      };
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    })();
+
+    /* ---------- Cursor parallax on the 3D stage ---------- */
+    (function () {
+      const stage = document.getElementById('stage-3d');
+      const banner = document.getElementById('banner');
+      if (!stage || !banner || !FINE || REDUCED) return;
+      banner.addEventListener('pointermove', (e) => {
+        const r = banner.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(stage, { rotateY: px * 16, rotateX: -py * 12, duration: 0.5, ease: 'power2.out', transformPerspective: 1200 });
+      });
+      banner.addEventListener('mouseleave', () => {
+        gsap.to(stage, { rotateY: 0, rotateX: 0, duration: 0.7, ease: 'power2.out' });
+      });
+    })();
+
+    /* ---------- Cursor-follow spotlight + 3D tilt on cards ---------- */
+    (function () {
+      const wire = (sel, tilt, persp) => {
+        document.querySelectorAll(sel).forEach((card) => {
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width;
+            const ny = (e.clientY - r.top) / r.height;
+            card.style.setProperty('--mx', nx * 100 + '%');
+            card.style.setProperty('--my', ny * 100 + '%');
+            if (!FINE || REDUCED) return;
+            gsap.to(card, {
+              rotateY: (nx - 0.5) * tilt, rotateX: -(ny - 0.5) * tilt, y: -6,
+              duration: 0.3, ease: 'power2.out', transformPerspective: persp, transformOrigin: 'center'
+            });
+          });
+          card.addEventListener('mouseleave', () => {
+            if (FINE && !REDUCED) gsap.to(card, { rotateY: 0, rotateX: 0, y: 0, duration: 0.5, ease: 'power2.out' });
+          });
+        });
+      };
+      wire('.project-card:not(.featured)', 9, 900);
+      wire('.progress-skill', 6, 700);
+      // featured card: spotlight only (tilting a full-width card feels seasick)
+      document.querySelectorAll('.project-card.featured').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%');
+          card.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%');
+        });
+      });
+    })();
+
+    /* ---------- Resume showcase: cinematic pointer depth ---------- */
+    (function () {
+      const grid = document.querySelector('.resume-showcase-grid');
+      const cards = grid ? [...grid.querySelectorAll('.resume-showcase-card')] : [];
+      if (!grid || !cards.length) return;
+      const DEPTH_VARS = ['--card-rx', '--card-ry', '--spot-x', '--spot-y', '--bg-x', '--bg-y', '--frame-x', '--frame-y', '--image-x', '--image-y'];
+
+      const syncGrid = () => grid.classList.toggle('has-engaged', cards.some((card) => card.classList.contains('is-engaged')));
+
+      cards.forEach((card) => {
+        let rafId = 0;
+
+        const engage = () => {
+          card.classList.add('is-engaged');
+          syncGrid();
+        };
+
+        const resetDepth = () => {
+          cancelAnimationFrame(rafId);
+          DEPTH_VARS.forEach((name) => card.style.removeProperty(name));
+        };
+
+        const disengage = () => {
+          if (document.activeElement === card) return;
+          card.classList.remove('is-engaged', 'is-pressed');
+          resetDepth();
+          syncGrid();
+        };
+
+        card.addEventListener('pointerenter', engage);
+        card.addEventListener('pointermove', (e) => {
+          engage();
+          if (!FINE || REDUCED) return;
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(() => {
+            const r = card.getBoundingClientRect();
+            const nx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+            const ny = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+            card.style.setProperty('--card-rx', ((.5 - ny) * 6).toFixed(2) + 'deg');
+            card.style.setProperty('--card-ry', ((nx - .5) * 8).toFixed(2) + 'deg');
+            card.style.setProperty('--spot-x', (nx * 100).toFixed(1) + '%');
+            card.style.setProperty('--spot-y', (ny * 100).toFixed(1) + '%');
+            card.style.setProperty('--bg-x', ((.5 - nx) * 12).toFixed(1) + 'px');
+            card.style.setProperty('--bg-y', ((.5 - ny) * 10).toFixed(1) + 'px');
+            card.style.setProperty('--frame-x', ((nx - .5) * 14).toFixed(1) + 'px');
+            card.style.setProperty('--frame-y', (((ny - .5) * 9) - 4).toFixed(1) + 'px');
+            card.style.setProperty('--image-x', ((.5 - nx) * 5).toFixed(1) + 'px');
+            card.style.setProperty('--image-y', ((.5 - ny) * 4).toFixed(1) + 'px');
+          });
+        });
+        card.addEventListener('pointerleave', disengage);
+        card.addEventListener('focus', engage);
+        card.addEventListener('blur', () => {
+          card.classList.remove('is-engaged', 'is-pressed');
+          resetDepth();
+          syncGrid();
+        });
+        card.addEventListener('pointerdown', () => card.classList.add('is-pressed'));
+        card.addEventListener('pointerup', () => card.classList.remove('is-pressed'));
+        card.addEventListener('pointercancel', () => card.classList.remove('is-pressed'));
+      });
+
+      document.addEventListener('pointermove', (e) => {
+        if (!FINE || !grid.classList.contains('has-engaged') || grid.contains(e.target)) return;
+        cards.forEach((card) => {
+          if (document.activeElement === card) return;
+          card.classList.remove('is-engaged', 'is-pressed');
+          DEPTH_VARS.forEach((name) => card.style.removeProperty(name));
+        });
+        syncGrid();
+      }, { passive: true });
+    })();
+
+    /* ---------- Section dot navigator ---------- */
+    (function () {
+      const links = document.querySelectorAll('.section-nav a');
+      if (!links.length) return;
+      const map = {};
+      links.forEach((a) => { map[a.getAttribute('href').slice(1)] = a; });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting && map[en.target.id]) {
+            links.forEach((a) => a.classList.remove('active'));
+            map[en.target.id].classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+      ['banner', 'experience', 'projects', 'contact'].forEach((id) => {
+        const s = document.getElementById(id);
+        if (s) io.observe(s);
+      });
+    })();
+
+    /* ---------- Ghost numerals: subtle scroll parallax ---------- */
+    (function () {
+      if (REDUCED || !window.gsap || !window.ScrollTrigger) return;
+      gsap.utils.toArray('.sec-ghost, .hero-ghost').forEach((el) => {
+        gsap.fromTo(el, { y: -30 }, {
+          y: 50, ease: 'none',
+          scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
+        });
+      });
+    })();
+
+    /* ---------- Manila clock ---------- */
+    (function () {
+      const t = document.getElementById('ph-time');
+      const d = document.getElementById('ph-date');
+      if (!t) return;
+      const tick = () => {
+        const now = new Date();
+        t.textContent = now.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour12: true });
+        if (d) d.textContent = now.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila', weekday: 'long', month: 'long', day: 'numeric' }) + ' · Manila (PHT)';
+      };
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    /* ---------- Dynamic footer year ---------- */
+    (function () {
+      const y = document.getElementById('footer-year');
+      if (y) y.textContent = new Date().getFullYear();
+    })();
+
+    /* ---------- Cursor aura ---------- */
+    (function () {
+      if (!FINE || REDUCED || !window.gsap) return;
+      const dot = document.querySelector('.cursor-dot');
+      const ring = document.querySelector('.cursor-ring');
+      const label = ring.querySelector('.cursor-label');
+      const dx = gsap.quickTo(dot, 'x', { duration: .08, ease: 'power2.out' });
+      const dy = gsap.quickTo(dot, 'y', { duration: .08, ease: 'power2.out' });
+      const rx = gsap.quickTo(ring, 'x', { duration: .32, ease: 'power2.out' });
+      const ry = gsap.quickTo(ring, 'y', { duration: .32, ease: 'power2.out' });
+      let shown = false;
+      window.addEventListener('pointermove', (e) => {
+        if (!shown) { gsap.to([dot, ring], { opacity: 1, duration: .3 }); shown = true; }
+        dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY);
+      }, { passive: true });
+      document.documentElement.addEventListener('mouseleave', () => {
+        gsap.to([dot, ring], { opacity: 0, duration: .3 });
+        shown = false;
+      });
+      const HOVER = 'a, button, .project-card, .progress-skill, .chat-button, .experience-item, .bento-card, input, textarea';
+      document.addEventListener('pointerover', (e) => {
+        const t = e.target.closest(HOVER);
+        if (t) {
+          ring.classList.add('is-active');
+          label.textContent = t.getAttribute('data-cursor') || '';
+        }
+      });
+      document.addEventListener('pointerout', (e) => {
+        if (e.target.closest(HOVER)) { ring.classList.remove('is-active'); label.textContent = ''; }
+      });
+      document.querySelectorAll('.project-card').forEach((c) => c.setAttribute('data-cursor', 'View'));
+    })();
+
+    /* ---------- Hero name: letters bounce under the cursor ---------- */
+    (function () {
+      if (!FINE || REDUCED || !window.gsap) return;
+      document.querySelectorAll('.hero-name .ch').forEach((ch) => {
+        ch.addEventListener('pointerenter', () => {
+          gsap.to(ch, { y: -9, duration: .16, ease: 'power2.out', overwrite: 'auto',
+            onComplete: () => gsap.to(ch, { y: 0, duration: .5, ease: 'elastic.out(1.2, .4)' }) });
+        });
+      });
+    })();
+
+    /* ---------- Command palette (Ctrl/⌘ + K) ---------- */
+    (function () {
+      const overlay = document.getElementById('cmdk');
+      const input = document.getElementById('cmdk-input');
+      const list = document.getElementById('cmdk-list');
+      if (!overlay || !input || !list) return;
+
+      const ACTIONS = [
+        { group: 'Navigate', icon: 'fa-home', label: 'Home', hint: 'section', run: () => goto('#banner') },
+        { group: 'Navigate', icon: 'fa-user', label: 'About me', hint: 'section', run: () => goto('#about') },
+        { group: 'Navigate', icon: 'fa-briefcase', label: 'Experience', hint: 'section', run: () => goto('#experience') },
+        { group: 'Navigate', icon: 'fa-layer-group', label: 'Projects', hint: 'section', run: () => goto('#projects') },
+        { group: 'Navigate', icon: 'fa-paper-plane', label: 'Contact', hint: 'section', run: () => goto('#contact') },
+        { group: 'Do', icon: 'fa-comment-dots', label: 'Chat with my AI persona', hint: 'chat', run: () => { close(); if (window.toggleChat) toggleChat(); } },
+        { group: 'Do', icon: 'fa-gamepad', label: 'Play games', hint: '/games', run: () => { window.location.href = '/games'; } },
+        { group: 'Do', icon: 'fa-chart-bar', label: 'View BI projects', hint: '/projects-bi', run: () => { window.location.href = '/projects-bi'; } },
+        { group: 'Do', icon: 'fa-draw-polygon', label: 'Open Deneb Lab', hint: '/deneb-lab', run: () => { window.location.href = '/deneb-lab'; } },
+        { group: 'Do', icon: 'fa-arrow-up', label: 'Back to top', hint: 'scroll', run: () => goto('#banner') },
+      ];
+      let filtered = ACTIONS, active = 0;
+
+      function goto(sel) {
+        close();
+        const el = document.querySelector(sel);
+        if (el) el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
       }
-    });
-
-    // Initialize AOS
-    AOS.init({
-      duration: 800,
-      once: true
-    });
-
-    // GSAP hover animation for project cards (optional)
-    document.querySelectorAll('.project-card').forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        gsap.to(card, { scale: 1.05, duration: 0.3 });
+      function open() {
+        overlay.classList.add('open');
+        input.value = '';
+        render('');
+        setTimeout(() => input.focus(), 30);
+      }
+      function close() { overlay.classList.remove('open'); }
+      function render(q) {
+        filtered = ACTIONS.filter((a) => a.label.toLowerCase().includes(q.toLowerCase()));
+        active = 0;
+        if (!filtered.length) {
+          list.innerHTML = '<div class="cmdk-empty">Nothing found — try “projects”, “chat”, or “games”.</div>';
+          return;
+        }
+        let html = '', lastGroup = '';
+        filtered.forEach((a, i) => {
+          if (a.group !== lastGroup) { html += `<div class="cmdk-group">${a.group}</div>`; lastGroup = a.group; }
+          html += `<div class="cmdk-item${i === 0 ? ' active' : ''}" data-i="${i}">
+            <i class="fas ${a.icon}"></i> ${a.label} <span class="hint">${a.hint}</span></div>`;
+        });
+        list.innerHTML = html;
+        list.querySelectorAll('.cmdk-item').forEach((el) => {
+          el.addEventListener('click', () => filtered[+el.dataset.i].run());
+          el.addEventListener('mousemove', () => setActive(+el.dataset.i));
+        });
+      }
+      function setActive(i) {
+        active = Math.max(0, Math.min(i, filtered.length - 1));
+        list.querySelectorAll('.cmdk-item').forEach((el) => el.classList.toggle('active', +el.dataset.i === active));
+        const el = list.querySelector(`.cmdk-item[data-i="${active}"]`);
+        if (el) el.scrollIntoView({ block: 'nearest' });
+      }
+      input.addEventListener('input', () => render(input.value));
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          overlay.classList.contains('open') ? close() : open();
+          return;
+        }
+        if (!overlay.classList.contains('open')) return;
+        if (e.key === 'Escape') close();
+        else if (e.key === 'ArrowDown') { e.preventDefault(); setActive(active + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+        else if (e.key === 'Enter') { e.preventDefault(); if (filtered[active]) filtered[active].run(); }
       });
-      card.addEventListener('mouseleave', () => {
-        gsap.to(card, { scale: 1, duration: 0.3 });
-      });
-    });
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+      const navBtn = document.getElementById('nav-cmdk');
+      if (navBtn) navBtn.addEventListener('click', open);
+    })();
   </script>
 </body>
 </html>

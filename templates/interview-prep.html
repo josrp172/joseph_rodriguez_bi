@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview War Room — Joseph Rodriguez</title>
+
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/Draggable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
+
+  <style>
+  /* =================================================================
+     Interview War Room — cinematic prep workspace
+     Scatter "slide wall" + PowerPoint-style presentation mode.
+     Page-specific classes prefixed .ip- to avoid clashes.
+     ================================================================= */
+
+  .ip-wrap { width: min(100% - var(--gutter) * 2, 1200px); margin: 0 auto; padding: 36px 0 130px; }
+
+  /* ---- top bar ---- */
+  .ip-topbar { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,.72);
+    backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid rgba(228,234,243,.9); }
+  .ip-topbar-inner { width: min(100% - var(--gutter) * 2, 1200px); margin: 0 auto; height: 70px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .ip-brand { display: inline-flex; align-items: center; gap: 12px; }
+  .ip-brand .badge { background: var(--grad); color: #fff; font-family: var(--font-display); font-weight: 700;
+    padding: 8px 12px; border-radius: 12px; box-shadow: var(--shadow-brand); letter-spacing: .5px; }
+  .ip-brand .ttl { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 1.02rem; }
+  .ip-brand .ttl small { display: block; font-weight: 500; font-size: .72rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+  .ip-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-body);
+    font-weight: 600; font-size: .92rem; padding: 9px 16px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); background: var(--surface); transition: .2s var(--ease); }
+  .ip-back:hover { color: var(--text); border-color: var(--border-strong); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+  /* ---- hero ---- */
+  .ip-hero { display: grid; grid-template-columns: 1.45fr .9fr; gap: 24px; margin-top: 28px; }
+  .ip-hero-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-md); padding: 32px 34px; position: relative; overflow: hidden; }
+  #ip-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .ip-hero-card > * { position: relative; z-index: 1; }
+  .ip-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .76rem; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); background: var(--grad-soft);
+    padding: 7px 13px; border-radius: var(--radius-pill); }
+  .ip-eyebrow .pulse { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: ipPulse 2s infinite; }
+  @keyframes ipPulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.55);} 70% { box-shadow: 0 0 0 9px rgba(34,197,94,0);} 100% { box-shadow:0 0 0 0 rgba(34,197,94,0);} }
+  .ip-hero-card h1 { font-size: clamp(1.7rem, 3.2vw, 2.55rem); margin: 16px 0 10px; letter-spacing: -.01em; }
+  .ip-hero-card p.sub { color: var(--text-body); font-size: 1.02rem; max-width: 52ch; }
+  .ip-quote { margin-top: 22px; padding: 16px 18px; border-radius: var(--radius-sm); background: var(--surface-2);
+    border: 1px solid var(--border); border-left: 4px solid var(--brand); display: flex; gap: 13px; align-items: flex-start; }
+  .ip-quote i { color: var(--violet); font-size: 1.1rem; margin-top: 3px; }
+  .ip-quote span { font-style: italic; color: var(--text); font-weight: 500; }
+  .ip-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .ip-btn { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; border: none;
+    font-family: var(--font-body); font-weight: 600; font-size: .96rem; padding: 13px 22px; border-radius: var(--radius-pill); transition: .2s var(--ease); }
+  .ip-btn-primary { background: var(--grad); color: #fff; box-shadow: var(--shadow-brand); }
+  .ip-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(47,107,255,.34); }
+  .ip-btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
+  .ip-btn-ghost:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+  /* readiness ring */
+  .ip-ring-card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .ip-ring { position: relative; width: 200px; height: 200px; }
+  .ip-ring svg { transform: rotate(-90deg); }
+  .ip-ring .track { fill: none; stroke: var(--surface-3); stroke-width: 16; }
+  .ip-ring .meter { fill: none; stroke: url(#ipGrad); stroke-width: 16; stroke-linecap: round; }
+  .ip-ring .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ip-ring .pct { font-family: var(--font-display); font-weight: 800; font-size: 2.7rem; line-height: 1; }
+  .ip-ring .lbl { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  .ip-ring-status { margin-top: 16px; font-weight: 700; font-size: 1.08rem; color: var(--text); }
+  .ip-ring-sub { color: var(--text-body); font-size: .9rem; margin-top: 4px; }
+
+  /* ---- stat strip ---- */
+  .ip-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
+  .ip-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 18px 20px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: center; }
+  .ip-stat .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 1.05rem; flex-shrink: 0; }
+  .ip-stat .v { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--text); line-height: 1; }
+  .ip-stat .k { font-size: .8rem; color: var(--muted); margin-top: 3px; }
+
+  /* ---- section head ---- */
+  .ip-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 48px 0 18px; flex-wrap: wrap; }
+  .ip-section-head h2 { font-size: 1.5rem; }
+  .ip-section-head .ip-kicker { font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); }
+
+  /* ---- category cards ---- */
+  .ip-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .ip-cat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
+    box-shadow: var(--shadow-sm); cursor: pointer; transition: .25s var(--ease); position: relative; overflow: hidden; }
+  .ip-cat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
+  .ip-cat .ic { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: #fff; font-size: 1.15rem; margin-bottom: 14px; }
+  .ip-cat h3 { font-size: 1.16rem; margin-bottom: 5px; }
+  .ip-cat p { font-size: .9rem; color: var(--text-body); margin-bottom: 16px; }
+  .ip-cat .bar { height: 8px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+  .ip-cat .bar i { display: block; height: 100%; border-radius: 99px; background: var(--grad-bright); width: 0; transition: width 1s var(--ease); }
+  .ip-cat .meta { display: flex; justify-content: space-between; font-size: .82rem; color: var(--muted); margin-top: 9px; }
+  .ip-cat .meta b { color: var(--text); }
+
+  /* ---- toolbar ---- */
+  .ip-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0 22px; }
+  .ip-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ip-chip { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
+    font-weight: 600; font-size: .86rem; padding: 8px 15px; border-radius: var(--radius-pill); transition: .2s var(--ease);
+    display: inline-flex; align-items: center; gap: 7px; }
+  .ip-chip:hover { color: var(--text); border-color: var(--brand); }
+  .ip-chip.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
+  .ip-chip .cnt { font-size: .74rem; opacity: .75; }
+  .ip-tool-btns { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+  .ip-search { position: relative; }
+  .ip-search input { border: 1px solid var(--border-strong); background: var(--surface); border-radius: var(--radius-pill);
+    padding: 11px 16px 11px 40px; font-family: var(--font-body); font-size: .92rem; width: 220px; color: var(--text); transition: .2s var(--ease); }
+  .ip-search input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px rgba(47,107,255,.12); }
+  .ip-search i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .ip-icon-btn { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
+    font-weight: 600; font-size: .88rem; padding: 11px 16px; border-radius: var(--radius-pill); transition: .2s var(--ease);
+    display: inline-flex; align-items: center; gap: 8px; }
+  .ip-icon-btn:hover { color: var(--text); border-color: var(--brand); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .ip-icon-btn.solid { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
+
+  /* ---- THE BOARD (scatter slide wall) ---- */
+  .ip-board { position: relative; perspective: 1400px; min-height: 480px; margin-top: 4px; }
+  .ip-board-hint { position: absolute; top: -34px; right: 0; font-size: .8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+
+  .bc { position: absolute; top: 0; left: 0; width: 290px; cursor: grab; will-change: transform; transform-style: preserve-3d; }
+  .bc:active { cursor: grabbing; }
+  .bc-inner { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface);
+    border: 1px solid var(--border); box-shadow: 0 18px 40px rgba(15,27,51,.16), 0 4px 10px rgba(15,27,51,.08);
+    padding: 0; animation: bcFloat 6s ease-in-out infinite; }
+  @keyframes bcFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  .bc-band { height: 8px; }
+  .bc-band.technical { background: linear-gradient(90deg,#2f6bff,#1b4dd1); }
+  .bc-band.behavioral { background: linear-gradient(90deg,#7c3aed,#6d28d9); }
+  .bc-band.scripts { background: linear-gradient(90deg,#06b6d4,#0e7490); }
+  .bc-body { padding: 16px 18px 18px; min-height: 168px; display: flex; flex-direction: column; }
+  .bc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+  .bc-num { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--border-strong); }
+  .bc-tag { font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; }
+  .bc-tag.technical { background: rgba(47,107,255,.12); color: var(--brand-ink); }
+  .bc-tag.behavioral { background: rgba(124,58,237,.13); color: #6d28d9; }
+  .bc-tag.scripts { background: rgba(6,182,212,.14); color: #0e7490; }
+  .bc-dot { margin-left: auto; width: 11px; height: 11px; border-radius: 50%; background: var(--border-strong); }
+  .bc.mastered .bc-dot { background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+  .bc.review .bc-dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
+  .bc-sub { font-size: .72rem; color: var(--muted); font-weight: 600; margin-bottom: 7px; }
+  .bc-q { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 1.04rem; line-height: 1.34; }
+  .bc-cta { margin-top: auto; padding-top: 14px; font-size: .78rem; font-weight: 700; color: var(--brand-ink); display: inline-flex; align-items: center; gap: 6px; opacity: 0; transition: opacity .2s var(--ease); }
+  .bc:hover .bc-cta { opacity: 1; }
+  .bc.mastered .bc-inner { border-color: rgba(34,197,94,.5); }
+  .bc.review .bc-inner { border-color: rgba(245,158,11,.55); }
+  .ip-board-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); }
+  .ip-board-empty i { font-size: 2.4rem; margin-bottom: 12px; color: var(--border-strong); }
+
+  /* mobile board fallback */
+  .ip-board.stacked { perspective: none; min-height: 0; display: grid; gap: 16px; }
+  .ip-board.stacked .bc { position: relative; width: 100%; transform: none !important; cursor: pointer; }
+  .ip-board.stacked .bc-inner { animation: none; }
+
+  /* ---- PRESENTATION MODE ---- */
+  .pm { position: fixed; inset: 0; z-index: 2000; display: none; }
+  .pm.show { display: block; }
+  .pm-bg { position: absolute; inset: 0; background:
+      radial-gradient(60vw 60vw at 18% 12%, rgba(47,107,255,.55), transparent 60%),
+      radial-gradient(55vw 55vw at 85% 20%, rgba(124,58,237,.55), transparent 60%),
+      radial-gradient(60vw 60vw at 70% 95%, rgba(6,182,212,.45), transparent 60%),
+      #0b1228; }
+  .pm-bg::after { content: ""; position: absolute; inset: 0; background:
+      radial-gradient(40vw 40vw at 30% 80%, rgba(124,58,237,.35), transparent 60%);
+      animation: pmDrift 16s ease-in-out infinite alternate; }
+  @keyframes pmDrift { to { transform: translate(8vw, -6vh) scale(1.15); } }
+
+  .pm-chrome-top { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center;
+    gap: 16px; padding: 22px 30px; }
+  .pm-counter { color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: .04em; }
+  .pm-counter b { font-size: 1.5rem; }
+  .pm-counter span { opacity: .55; }
+  .pm-progress { flex: 1; height: 6px; background: rgba(255,255,255,.16); border-radius: 99px; overflow: hidden; max-width: 540px; }
+  .pm-progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg,#22d3ee,#3b82f6,#a855f7); border-radius: 99px; transition: width .5s var(--ease); }
+  .pm-top-btns { display: flex; gap: 10px; margin-left: auto; }
+  .pm-cbtn { cursor: pointer; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #fff;
+    width: 42px; height: 42px; border-radius: 50%; font-size: 1rem; transition: .18s var(--ease); display: grid; place-items: center; }
+  .pm-cbtn:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }
+  .pm-cbtn.wide { width: auto; padding: 0 16px; gap: 8px; font-weight: 600; font-size: .9rem; border-radius: 99px; }
+
+  .pm-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 96px 6vw 130px; perspective: 1800px; }
+  .pm-slide { width: min(880px, 100%); max-height: 100%; overflow-y: auto; background: rgba(255,255,255,.97);
+    border-radius: 26px; box-shadow: 0 40px 90px rgba(0,0,0,.45); padding: 44px 50px; position: relative; transform-style: preserve-3d; }
+  .pm-watermark { position: absolute; top: 8px; right: 28px; font-family: var(--font-display); font-weight: 800;
+    font-size: 9rem; line-height: 1; color: rgba(15,27,51,.05); pointer-events: none; z-index: 0; }
+  .pm-slide > * { position: relative; z-index: 1; }
+  .pm-ribbon { display: inline-flex; align-items: center; gap: 9px; font-size: .74rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; padding: 7px 14px; border-radius: 99px; }
+  .pm-ribbon.technical { background: rgba(47,107,255,.12); color: var(--brand-ink); }
+  .pm-ribbon.behavioral { background: rgba(124,58,237,.13); color: #6d28d9; }
+  .pm-ribbon.scripts { background: rgba(6,182,212,.14); color: #0e7490; }
+  .pm-ribbon .rdot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .pm-q { font-family: var(--font-display); font-weight: 800; color: var(--text); font-size: clamp(1.5rem, 3.4vw, 2.3rem);
+    line-height: 1.25; margin: 20px 0 0; letter-spacing: -.01em; }
+  .pm-a { margin-top: 26px; color: var(--text-body); font-size: 1.04rem; line-height: 1.78; display: none; }
+  .pm-a.show { display: block; }
+  .pm-a strong { color: var(--text); }
+  .pm-a .star { display: grid; gap: 10px; margin-top: 6px; }
+  .pm-a .star div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 15px; }
+  .pm-a .star b { color: var(--brand-ink); }
+  .pm-a ul { margin: 10px 0 0; padding-left: 20px; }
+  .pm-a ul li { margin-bottom: 8px; }
+  .pm-a .say { background: var(--grad-soft); border-radius: 12px; padding: 15px 17px; margin-top: 14px; color: var(--text); font-weight: 500; }
+  .pm-a .say::before { content: "🗣️ Say it like this"; display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 7px; }
+  .pm-a code { background: var(--surface-3); padding: 2px 6px; border-radius: 6px; font-size: .9em; }
+  .pm-tip { margin-top: 28px; font-size: .86rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .pm-tip kbd, .pm-kbd kbd { background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 6px; padding: 2px 8px; font-family: var(--font-body); font-size: .8rem; color: var(--text-body); }
+
+  .pm-chrome-bot { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center;
+    justify-content: center; gap: 12px; padding: 24px 30px; flex-wrap: wrap; }
+  .pm-nav { cursor: pointer; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #fff;
+    width: 52px; height: 52px; border-radius: 50%; font-size: 1.1rem; transition: .18s var(--ease); display: grid; place-items: center; }
+  .pm-nav:hover { background: rgba(255,255,255,.22); transform: scale(1.06); }
+  .pm-grade { cursor: pointer; border: none; font-weight: 700; font-size: .95rem; padding: 13px 24px; border-radius: 99px;
+    transition: .18s var(--ease); display: inline-flex; align-items: center; gap: 9px; }
+  .pm-grade.again { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+  .pm-grade.again:hover { background: rgba(245,158,11,.9); border-color: transparent; }
+  .pm-grade.reveal { background: rgba(255,255,255,.95); color: var(--text); }
+  .pm-grade.reveal:hover { transform: translateY(-2px); }
+  .pm-grade.got { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; box-shadow: 0 12px 26px rgba(34,197,94,.4); }
+  .pm-grade.got:hover { transform: translateY(-2px); }
+  .pm-kbd { color: rgba(255,255,255,.65); font-size: .8rem; width: 100%; text-align: center; }
+
+  .pm-done { text-align: center; }
+  .pm-done .big { font-size: 3.4rem; }
+  .pm-done h3 { font-size: 1.9rem; margin: 14px 0 8px; }
+  .pm-done p { color: var(--text-body); font-size: 1.05rem; }
+
+  /* ---- toast ---- */
+  .ip-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: #fff; padding: 13px 22px; border-radius: var(--radius-pill); font-weight: 600;
+    font-size: .92rem; box-shadow: var(--shadow-lg); z-index: 3000; opacity: 0; pointer-events: none;
+    transition: .35s var(--ease); display: inline-flex; align-items: center; gap: 9px; }
+  .ip-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #ip-confetti { position: fixed; inset: 0; z-index: 2500; pointer-events: none; }
+
+  /* ---- responsive ---- */
+  @media (max-width: 900px) {
+    .ip-hero { grid-template-columns: 1fr; }
+    .ip-stats { grid-template-columns: repeat(2, 1fr); }
+    .ip-cats { grid-template-columns: 1fr; }
+    .ip-tool-btns { margin-left: 0; width: 100%; }
+    .ip-search input { width: 100%; }
+    .ip-search { flex: 1; }
+    .pm-slide { padding: 30px 24px; }
+    .pm-watermark { font-size: 6rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, .bc-inner { animation: none !important; } }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="ip-topbar">
+    <div class="ip-topbar-inner">
+      <div class="ip-brand">
+        <span class="badge">JR</span>
+        <span class="ttl">Interview War Room<small>Private prep · BI Engineer</small></span>
+      </div>
+      <a class="ip-back" href="/"><i class="fas fa-arrow-left"></i> Back to portfolio</a>
+    </div>
+  </div>
+
+  <div class="ip-wrap">
+
+    <!-- ===== HERO ===== -->
+    <section class="ip-hero">
+      <div class="ip-hero-card">
+        <canvas id="ip-particles"></canvas>
+        <span class="ip-eyebrow"><span class="pulse"></span> Your safe space to prepare</span>
+        <h1 id="ip-greet">Let's get you interview-ready.</h1>
+        <p class="sub">A calm, cinematic place to rehearse the answers that win offers — technical depth, behavioral stories,
+          and the exact scripts you'll say out loud. Drag the slides, present them like a deck, and watch your readiness climb.</p>
+        <div class="ip-quote">
+          <i class="fas fa-quote-left"></i>
+          <span id="ip-quote-text">Loading a little motivation…</span>
+        </div>
+        <div class="ip-hero-actions">
+          <button class="ip-btn ip-btn-primary" id="ip-start-session"><i class="fas fa-play"></i> Present all (shuffled)</button>
+          <button class="ip-btn ip-btn-ghost" id="ip-review-weak"><i class="fas fa-bullseye"></i> Drill my weak spots</button>
+        </div>
+      </div>
+
+      <div class="ip-hero-card ip-ring-card">
+        <div class="ip-ring">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <defs>
+              <linearGradient id="ipGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#06b6d4"/><stop offset="50%" stop-color="#2f6bff"/><stop offset="100%" stop-color="#7c3aed"/>
+              </linearGradient>
+            </defs>
+            <circle class="track" cx="100" cy="100" r="84"/>
+            <circle class="meter" id="ip-ring-meter" cx="100" cy="100" r="84"/>
+          </svg>
+          <div class="center">
+            <div class="pct grad-text" id="ip-ring-pct">0%</div>
+            <div class="lbl">Readiness</div>
+          </div>
+        </div>
+        <div class="ip-ring-status" id="ip-ring-status">Warming up</div>
+        <div class="ip-ring-sub" id="ip-ring-sub">Master slides to raise your score</div>
+      </div>
+    </section>
+
+    <!-- ===== STAT STRIP ===== -->
+    <section class="ip-stats">
+      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><i class="fas fa-check-double"></i></div><div><div class="v" id="ip-stat-mastered">0</div><div class="k">Slides mastered</div></div></div>
+      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><i class="fas fa-fire"></i></div><div><div class="v" id="ip-stat-streak">0</div><div class="k">Day streak</div></div></div>
+      <div class="ip-stat"><div class="ico" style="background:var(--grad)"><i class="fas fa-layer-group"></i></div><div><div class="v" id="ip-stat-total">0</div><div class="k">Total prompts</div></div></div>
+      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#06b6d4,#7c3aed)"><i class="fas fa-stopwatch"></i></div><div><div class="v" id="ip-stat-today">0</div><div class="k">Reviewed today</div></div></div>
+    </section>
+
+    <!-- ===== CATEGORIES ===== -->
+    <div class="ip-section-head"><div><div class="ip-kicker">Your three pillars</div><h2>What we're sharpening</h2></div></div>
+    <section class="ip-cats" id="ip-cats"></section>
+
+    <!-- ===== BOARD ===== -->
+    <div class="ip-section-head" style="margin-bottom:6px"><div><div class="ip-kicker">The slide wall</div><h2>Drag, shuffle &amp; present</h2></div></div>
+    <div class="ip-toolbar">
+      <div class="ip-chips" id="ip-chips"></div>
+      <div class="ip-tool-btns">
+        <div class="ip-search"><i class="fas fa-search"></i><input type="text" id="ip-search" placeholder="Search prompts…" autocomplete="off"></div>
+        <button class="ip-icon-btn" id="ip-shuffle"><i class="fas fa-shuffle"></i> Reshuffle</button>
+        <button class="ip-icon-btn solid" id="ip-present"><i class="fas fa-display"></i> Present</button>
+      </div>
+    </div>
+    <div class="ip-board" id="ip-board">
+      <div class="ip-board-hint"><i class="fas fa-hand-pointer"></i> Drag slides · click to present</div>
+    </div>
+
+    <div style="text-align:center;margin-top:46px">
+      <button class="ip-icon-btn" id="ip-reset" style="color:var(--muted);border-color:var(--border)"><i class="fas fa-rotate-left"></i> Reset all progress</button>
+    </div>
+  </div>
+
+  <!-- ===== PRESENTATION MODE ===== -->
+  <div class="pm" id="pm">
+    <div class="pm-bg"></div>
+    <div class="pm-chrome-top">
+      <div class="pm-counter"><b id="pm-cur">1</b> <span>/ <span id="pm-total">1</span></span></div>
+      <div class="pm-progress"><i id="pm-prog"></i></div>
+      <div class="pm-top-btns">
+        <button class="pm-cbtn wide" id="pm-autoplay" title="Autoplay"><i class="fas fa-play"></i> <span>Auto</span></button>
+        <button class="pm-cbtn" id="pm-shuffle-live" title="Shuffle remaining"><i class="fas fa-shuffle"></i></button>
+        <button class="pm-cbtn" id="pm-close" title="Exit (Esc)"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="pm-stage"><div class="pm-slide" id="pm-slide"></div></div>
+    <div class="pm-chrome-bot" id="pm-foot"></div>
+  </div>
+
+  <canvas id="ip-confetti"></canvas>
+  <div class="ip-toast" id="ip-toast"><i class="fas fa-check-circle"></i><span id="ip-toast-text"></span></div>
+
+  <script>
+  /* =================================================================
+     DATA — sample BI Engineer deck
+     ================================================================= */
+  const CATS = {
+    technical:  { label: "Technical",  icon: "fa-database",      grad: "linear-gradient(135deg,#2f6bff,#1b4dd1)", blurb: "BI depth — SQL, modeling, DAX, Fabric, RPA. Show how you think, not just what you know." },
+    behavioral: { label: "Behavioral", icon: "fa-people-arrows", grad: "linear-gradient(135deg,#7c3aed,#6d28d9)", blurb: "STAR stories that prove ownership, collaboration, and impact under pressure." },
+    scripts:    { label: "Scripts",    icon: "fa-comment-dots",  grad: "linear-gradient(135deg,#06b6d4,#0e7490)", blurb: "Word-for-word lines for the moments that matter — intro, why-you, salary, closing." }
+  };
+
+  const DECK = [
+    { id:"t1", cat:"technical", sub:"Data Modeling", q:"Star schema vs. snowflake — which do you reach for and why?",
+      a:`<p>I default to a <strong>star schema</strong> for analytics: one central fact table surrounded by denormalized dimensions. Fewer joins means faster queries and a model that's intuitive for self-service users in Power BI / Tableau.</p>
+      <ul><li><strong>Star</strong> — denormalized dims, best query performance, easiest for report builders.</li>
+      <li><strong>Snowflake</strong> — dims normalized into sub-tables; saves storage and enforces integrity, but adds joins and complexity.</li></ul>
+      <div class="say">In practice I model in a star schema and only snowflake when a dimension is huge and shared across facts — like a product hierarchy that has to stay consistent. Performance and usability win for BI workloads.</div>`},
+    { id:"t2", cat:"technical", sub:"SQL", q:"Walk me through window functions — when do they beat a GROUP BY?",
+      a:`<p>Window functions compute across a set of rows <strong>without collapsing them</strong> — so I keep row-level detail while adding aggregates alongside.</p>
+      <ul><li><code>ROW_NUMBER()/RANK()</code> — dedupe or get "latest record per key."</li>
+      <li><code>SUM() OVER (PARTITION BY ... ORDER BY ...)</code> — running totals & YTD.</li>
+      <li><code>LAG()/LEAD()</code> — period-over-period change without a self-join.</li></ul>
+      <div class="say">Classic example: "show each order plus that customer's running total." A GROUP BY forces you to lose the order rows; a window function keeps the detail and adds the cumulative sum in one pass.</div>`},
+    { id:"t3", cat:"technical", sub:"DAX", q:"Explain CALCULATE in DAX like I'm a new analyst.",
+      a:`<p><code>CALCULATE</code> evaluates an expression in a <strong>modified filter context</strong> — it's the engine behind almost every serious measure.</p>
+      <ul><li>First argument = the measure/expression.</li><li>Remaining arguments = filters that <em>override</em> the current context.</li></ul>
+      <p><code>Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))</code></p>
+      <div class="say">I describe it as "do this calculation, but change the filters first." Master CALCULATE plus filter context and 90% of DAX clicks into place.</div>`},
+    { id:"t4", cat:"technical", sub:"DAX", q:"Measure vs. calculated column — how do you decide?",
+      a:`<ul><li><strong>Calculated column</strong> — computed row-by-row at refresh, stored in the model, eats memory. Use when you need the value to slice/filter or sit on an axis.</li>
+      <li><strong>Measure</strong> — computed on the fly in the current filter context, near-zero storage. Use for any aggregation: sums, ratios, KPIs.</li></ul>
+      <div class="say">Rule of thumb I give juniors: if you're aggregating, it's a measure. If you need a per-row attribute to filter or group by, it's a column — and even then, push it to the source or Power Query when you can.</div>`},
+    { id:"t5", cat:"technical", sub:"ETL", q:"ETL vs. ELT — and where does the medallion architecture fit?",
+      a:`<p><strong>ETL</strong> transforms before loading; <strong>ELT</strong> loads raw then transforms inside the warehouse/lakehouse — which is what I do in <strong>Microsoft Fabric</strong>.</p>
+      <ul><li><strong>Bronze</strong> — raw ingested data, untouched.</li><li><strong>Silver</strong> — cleaned, conformed, deduplicated.</li><li><strong>Gold</strong> — business-ready star schemas the reports sit on.</li></ul>
+      <div class="say">Modern cloud platforms make ELT the default — storage is cheap and compute is elastic. I land raw in bronze so I never lose source fidelity, then build silver and gold layers I can rebuild and audit at any time.</div>`},
+    { id:"t6", cat:"technical", sub:"Data Warehouse", q:"How do you handle Slowly Changing Dimensions?",
+      a:`<ul><li><strong>Type 1</strong> — overwrite. No history (e.g. fixing a typo).</li>
+      <li><strong>Type 2</strong> — add a new row with start/end dates + a current flag. Full history; my default for things like a customer's region or a sales rep assignment.</li>
+      <li><strong>Type 3</strong> — keep a "previous value" column. Limited history.</li></ul>
+      <div class="say">For anything where "what was true at the time" matters for reporting — assignments, pricing tiers, org structure — I use Type 2 so a sale always rolls up to the dimension values that were valid on the transaction date.</div>`},
+    { id:"t7", cat:"technical", sub:"Performance", q:"A Power BI report is slow. How do you diagnose and fix it?",
+      a:`<p>I work outside-in with <strong>Performance Analyzer</strong> and DAX Studio to find whether it's the visual, the DAX, or the model.</p>
+      <ul><li><strong>Model</strong> — star schema, drop unused columns, lower cardinality, prefer Import over DirectQuery where possible.</li>
+      <li><strong>DAX</strong> — avoid row-by-row iterators on big tables, replace heavy <code>FILTER</code> with boolean filters, use variables.</li>
+      <li><strong>Visuals</strong> — fewer visuals per page, limit slicers, avoid huge table visuals.</li></ul>
+      <div class="say">I always measure before optimizing — Performance Analyzer tells me if I'm spending time in the DAX query or in visual rendering, so I fix the real bottleneck instead of guessing.</div>`},
+    { id:"t8", cat:"technical", sub:"Governance", q:"How do you implement row-level security at scale?",
+      a:`<p>I define <strong>RLS roles</strong> with DAX filters on dimension tables, then for big orgs use <strong>dynamic RLS</strong> driven by a security/mapping table keyed on <code>USERPRINCIPALNAME()</code>.</p>
+      <ul><li>Static roles for a handful of fixed groups.</li><li>Dynamic RLS so one role scales to thousands of users via a mapping table.</li><li>Always test with "View as role" before publishing.</li></ul>
+      <div class="say">Dynamic RLS means I don't create a role per region — the user logs in, we look them up in a mapping table, and they only ever see their slice. One role, fully data-driven.</div>`},
+    { id:"t9", cat:"technical", sub:"Pipelines", q:"What is incremental refresh and why does it matter?",
+      a:`<p>Instead of reloading an entire history every refresh, incremental refresh only pulls <strong>recent/changed partitions</strong> — say the last 7 days — while keeping years of archived data static.</p>
+      <ul><li>Faster, cheaper refreshes.</li><li>Less load on source systems.</li><li>Configured with RangeStart / RangeEnd parameters in Power Query.</li></ul>
+      <div class="say">For a fact table with tens of millions of rows, full refresh is wasteful and fragile. I partition by date and only refresh the hot window — refreshes drop from an hour to minutes.</div>`},
+    { id:"t10", cat:"technical", sub:"RPA", q:"How do you decide a process is worth automating with RPA?",
+      a:`<p>I screen for processes that are <strong>repetitive, rules-based, high-volume, and stable</strong>. If the steps change weekly or need real judgment, RPA is the wrong tool.</p>
+      <ul><li>Quantify volume × time × frequency to size the ROI.</li><li>Confirm the inputs are structured and the rules are deterministic.</li><li>Build in logging, exception handling, and a fallback path.</li></ul>
+      <div class="say">My filter is simple: boring, frequent, and rule-based gets automated. I always add error handling and an audit log so the bot fails loudly and safely instead of quietly corrupting data.</div>`},
+    { id:"t11", cat:"technical", sub:"Quality", q:"How do you ensure the numbers on a dashboard are trustworthy?",
+      a:`<ul><li><strong>Reconcile</strong> totals against the source system / a known-good report.</li>
+      <li><strong>Tests</strong> — row counts, null checks, duplicate keys, referential integrity at the silver layer.</li>
+      <li><strong>Single source of truth</strong> — one governed dataset, certified, so everyone uses the same definitions.</li>
+      <li><strong>Documentation</strong> — clear measure definitions so "revenue" means one thing.</li></ul>
+      <div class="say">Trust is the product. I reconcile to source on every release and keep a data dictionary, because the fastest way to lose a stakeholder is one wrong number they catch before you do.</div>`},
+    { id:"t12", cat:"technical", sub:"Storytelling", q:"How do you design a dashboard people actually use?",
+      a:`<p>I start with the <strong>decision</strong>, not the data: who's looking, what action they take, what question they ask first.</p>
+      <ul><li>Top-left = the headline KPI; detail flows down/right.</li><li>Progressive disclosure — summary first, drill-through for detail.</li><li>Consistent color with meaning; restraint over decoration.</li></ul>
+      <div class="say">A dashboard isn't a data dump — it's a decision tool. I design backward from "what will this person do differently after looking at it," and cut anything that doesn't serve that.</div>`},
+
+    { id:"b1", cat:"behavioral", sub:"Stakeholders", q:"Tell me about a time you handled a difficult stakeholder.",
+      a:`<div class="star">
+        <div><b>Situation</b> — A senior leader insisted a dashboard was "wrong" because the revenue didn't match their spreadsheet.</div>
+        <div><b>Task</b> — Rebuild trust without throwing anyone under the bus.</div>
+        <div><b>Action</b> — I walked them through the lineage line by line, found their sheet was double-counting a returns adjustment, and added a clearly labeled reconciliation view so the gap was visible and explainable.</div>
+        <div><b>Result</b> — The leader became one of the dashboard's biggest advocates, and the reconciliation view became a standard I rolled out elsewhere.</div></div>
+      <div class="say">I don't get defensive when someone challenges a number — I treat it as a chance to prove the data's integrity. Nine times out of ten we both learn something, and trust goes up.</div>`},
+    { id:"b2", cat:"behavioral", sub:"Impact", q:"Describe a time you improved a process.",
+      a:`<div class="star">
+        <div><b>Situation</b> — A monthly report took a full day of manual exports and copy-paste each cycle.</div>
+        <div><b>Task</b> — Give the team their day back and remove human error.</div>
+        <div><b>Action</b> — I built an automated pipeline that ingested the sources, applied the transforms, and refreshed a Power BI dataset on a schedule — plus an RPA bot for the one legacy system without an API.</div>
+        <div><b>Result</b> — Reporting went from ~8 hours to near-zero touch, errors dropped, and the analyst moved to higher-value analysis.</div></div>
+      <div class="say">I look for the boring, repetitive work that quietly drains a team and turn it into something that runs itself — then I redirect that time toward actual analysis.</div>`},
+    { id:"b3", cat:"behavioral", sub:"Resilience", q:"Tell me about a mistake you made and what you learned.",
+      a:`<div class="star">
+        <div><b>Situation</b> — I shipped a measure change that quietly altered a KPI definition mid-quarter.</div>
+        <div><b>Task</b> — Own it fast and prevent a repeat.</div>
+        <div><b>Action</b> — I flagged it the moment I caught it, communicated the impact transparently, corrected it, and introduced version control + a change log and a peer-review step for measure changes.</div>
+        <div><b>Result</b> — No lasting damage, and the review process caught two potential issues over the next quarter.</div></div>
+      <div class="say">My instinct when I make a mistake is to surface it immediately and fix the system, not just the symptom — that's how a one-time error becomes a permanent guardrail.</div>`},
+    { id:"b4", cat:"behavioral", sub:"Prioritization", q:"How do you handle conflicting priorities and deadlines?",
+      a:`<div class="star">
+        <div><b>Situation</b> — Two directors needed "urgent" dashboards the same week.</div>
+        <div><b>Task</b> — Deliver value to both without burning out or shipping junk.</div>
+        <div><b>Action</b> — I clarified the actual decision and deadline behind each, found one was truly board-driven and the other could take a phased v1, and aligned both stakeholders on the sequence transparently.</div>
+        <div><b>Result</b> — Both got what they needed on time; the phased one even refined its requirements before the full build.</div></div>
+      <div class="say">I prioritize by impact and real deadline, not by who asked loudest — and I make the trade-offs visible so stakeholders feel in control rather than deprioritized.</div>`},
+    { id:"b5", cat:"behavioral", sub:"Influence", q:"Tell me about a time you influenced without authority.",
+      a:`<div class="star">
+        <div><b>Situation</b> — Teams were each maintaining their own conflicting "revenue" metric.</div>
+        <div><b>Task</b> — Get them onto one governed definition — without being their manager.</div>
+        <div><b>Action</b> — I built a single certified dataset, showed each team it reproduced their numbers, and quantified the cost of the discrepancies to leadership to win sponsorship.</div>
+        <div><b>Result</b> — Adoption of the shared model and far fewer "whose number is right" debates in reviews.</div></div>
+      <div class="say">I influence with evidence and empathy — I show people the new way solves their pain first, and bring leadership the business case. People adopt what makes their life easier.</div>`},
+    { id:"b6", cat:"behavioral", sub:"Learning", q:"Tell me about a time you had to learn something new quickly.",
+      a:`<div class="star">
+        <div><b>Situation</b> — A project required Microsoft Fabric when my background was more traditional Power BI / SQL.</div>
+        <div><b>Task</b> — Get productive in lakehouse, dataflows, and notebooks fast.</div>
+        <div><b>Action</b> — I built a small end-to-end proof of concept — bronze→silver→gold — on real data, leaned on docs and the community, and shared what I learned with the team.</div>
+        <div><b>Result</b> — Delivered the pipeline on time and became the go-to person for Fabric questions.</div></div>
+      <div class="say">I learn by building something real and small end-to-end, not by reading endlessly — and I document as I go so the whole team levels up with me.</div>`},
+
+    { id:"s1", cat:"scripts", sub:"Opener", q:'"Tell me about yourself."',
+      a:`<div class="say">I'm a BI Engineer with around seven years turning messy data into decisions people actually trust. I've spanned the full stack of BI — SQL and data modeling, Power BI and Tableau, ELT pipelines in Microsoft Fabric, and RPA automation. Most recently as a Senior BI Engineer at TeamHealth, I've focused on building governed, reliable reporting and automating the manual work around it. What I enjoy most is the moment a stakeholder stops arguing about whose number is right and starts making a decision — that's the impact I'm after, and it's why this role caught my eye.</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Keep it ~60–90 seconds: present → past highlights → why this role.</p>`},
+    { id:"s2", cat:"scripts", sub:"Motivation", q:'"Why do you want this role / this company?"',
+      a:`<div class="say">Two reasons. First, the work — you're investing in [their data platform / analytics maturity], and that's exactly where I do my best work: building trustworthy data products that scale. Second, the impact — I want my dashboards driving real decisions, not sitting unused, and from what I've seen your team treats BI as a strategic function, not a report factory. I'd bring depth across modeling, Fabric, and automation, and I'm genuinely excited to plug into that.</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Always customize the bracketed parts with one specific, researched detail about them.</p>`},
+    { id:"s3", cat:"scripts", sub:"Strengths", q:'"What are your greatest strengths?"',
+      a:`<div class="say">My core strength is bridging the technical and the business. I can model a star schema and tune DAX, but I'm just as comfortable sitting with a director to figure out the decision behind the request. The combination means I build things people actually use. The second is reliability — I treat data trust as the product, so I reconcile to source, document definitions, and automate the fragile manual steps before they break.</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Pick 2 strengths max and back each with how it shows up in your work.</p>`},
+    { id:"s4", cat:"scripts", sub:"Weakness", q:'"What is your greatest weakness?"',
+      a:`<div class="say">Early on I tended to over-engineer — I'd build the elegant, fully-scalable solution when the team needed a good answer this week. I've learned to ship a solid v1 first, validate it solves the real problem, then iterate. I now explicitly ask "what decision does this need to support, and by when?" before I start building, and it's made me both faster and more useful.</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Real weakness + concrete fix + evidence you've improved. Never "I'm a perfectionist."</p>`},
+    { id:"s5", cat:"scripts", sub:"Transition", q:'"Why are you leaving / looking to move?"',
+      a:`<div class="say">I've grown a lot where I am and I'm proud of what I've built, but I'm looking for a role with more scope to shape the data platform and work on harder, higher-impact problems. This isn't about leaving something behind — it's about moving toward a team where BI is central to how decisions get made, which is exactly what this role looks like.</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Stay positive — frame it as moving toward growth, never away from problems.</p>`},
+    { id:"s6", cat:"scripts", sub:"Compensation", q:'"What are your salary expectations?"',
+      a:`<div class="say">I'm looking for a package that reflects my experience across BI engineering, Fabric, and automation, and is competitive for this market and scope. Based on my research the range for this kind of role is around [your researched range] — but I'm flexible and most focused on overall fit. What range did you have budgeted for the position?</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Anchor with a researched range, then turn it back to them. Never undersell on the spot.</p>`},
+    { id:"s7", cat:"scripts", sub:"Closing", q:'"Do you have any questions for us?" (always yes)',
+      a:`<ul>
+        <li>What does success in this role look like in the first 6–12 months?</li>
+        <li>How does the team think about data governance and a single source of truth today?</li>
+        <li>Where is the BI/analytics function heading over the next year or two?</li>
+        <li>What's the biggest data challenge the team is wrestling with right now?</li>
+        <li>How would you describe the collaboration between BI and the business stakeholders?</li></ul>
+      <div class="say">I'm genuinely curious — what would make someone a standout in this role versus just solid?</div>`},
+    { id:"s8", cat:"scripts", sub:"Closing", q:"Your closing statement — leave them remembering you.",
+      a:`<div class="say">Thank you — this was a great conversation and it's only made me more excited. To be direct: I think I'm a strong fit. You need someone who can build trustworthy data products end-to-end and partner with the business to drive decisions, and that's exactly the work I love and have a track record in. I'd be thrilled to bring that to your team. What are the next steps in the process?</div>
+      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Confident, not arrogant. Reaffirm fit, express enthusiasm, ask about next steps.</p>`}
+  ];
+
+  const QUOTES = [
+    "You don't have to be perfect — you have to be prepared.",
+    "Confidence is just preparation you can feel.",
+    "Every rep today is a calmer answer tomorrow.",
+    "You've already done the hard work. This is just telling the story.",
+    "Slow is smooth, smooth is fast. Breathe and answer.",
+    "They're not trying to trip you up — they want you to be great.",
+    "You know your work better than anyone in that room.",
+    "Small consistent reps beat one panicked cram session.",
+    "Nervous and ready can feel the same. Choose ready.",
+    "The best interview is a conversation between two experts. Be one of them."
+  ];
+
+  /* =================================================================
+     STATE
+     ================================================================= */
+  const LS_KEY = "ip_progress_v1", LS_STREAK = "ip_streak_v1";
+  const state = loadState();
+  let activeCat = "all", searchTerm = "";
+  const hasGSAP = !!window.gsap;
+  if (hasGSAP && window.Draggable) gsap.registerPlugin(Draggable);
+
+  function loadState(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } }
+  function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  const $ = s => document.querySelector(s);
+  const byCat = c => DECK.filter(d => d.cat === c);
+  const masteredCount = c => DECK.filter(d => (!c || d.cat===c) && state[d.id]==="mastered").length;
+  const escapeRx = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const rand = (a,b) => a + Math.random()*(b-a);
+  const shuffle = arr => arr.slice().sort(()=>Math.random()-0.5);
+
+  /* ---- streak ---- */
+  const todayStr = () => new Date().toISOString().slice(0,10);
+  function getStreak(){ try { return JSON.parse(localStorage.getItem(LS_STREAK)) || {count:0,last:null,today:0,todayDate:null}; } catch(e){ return {count:0,last:null,today:0,todayDate:null}; } }
+  function bumpStreak(){
+    const s = getStreak(), t = todayStr();
+    if (s.last !== t){ const y = new Date(Date.now()-86400000).toISOString().slice(0,10); s.count = (s.last===y)?s.count+1:1; s.last = t; }
+    if (s.todayDate !== t){ s.today = 0; s.todayDate = t; }
+    s.today += 1; localStorage.setItem(LS_STREAK, JSON.stringify(s)); return s;
+  }
+  const reviewedToday = () => { const s = getStreak(); return s.todayDate===todayStr() ? s.today : 0; };
+
+  /* =================================================================
+     DASHBOARD
+     ================================================================= */
+  function renderGreeting(){
+    const h = new Date().getHours();
+    const part = h<12 ? "Good morning" : h<18 ? "Good afternoon" : "Good evening";
+    $("#ip-greet").textContent = `${part}, Joseph — let's get you ready.`;
+    $("#ip-quote-text").textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  }
+  let ringInit = false;
+  function renderDashboard(animate){
+    const total = DECK.length, mastered = masteredCount(), pct = Math.round(mastered/total*100);
+    const R = 84, C = 2*Math.PI*R, meter = $("#ip-ring-meter");
+    meter.style.strokeDasharray = C;
+    const target = C*(1-pct/100);
+    const fromPct = ringInit ? (+($("#ip-ring-pct").textContent.replace('%',''))||0) : 0;
+    /* set final value first so it's correct even if the tween never ticks */
+    meter.style.strokeDashoffset = target; $("#ip-ring-pct").textContent = pct+"%";
+    if (hasGSAP && (animate || !ringInit)){
+      gsap.fromTo(meter, {strokeDashoffset: C*(1-fromPct/100)}, {strokeDashoffset: target, duration: 1.1, ease:"power2.out"});
+      const o = {v: fromPct};
+      gsap.to(o, {v: pct, duration: 1.1, ease:"power2.out", onUpdate:()=>{ $("#ip-ring-pct").textContent = Math.round(o.v)+"%"; }});
+    }
+    ringInit = true;
+
+    let status="Warming up", sub="Master slides to raise your score";
+    if (pct>=100){ status="Interview-ready 🚀"; sub="You've mastered every prompt. Go get it."; }
+    else if (pct>=75){ status="Sharp and confident"; sub="You're in great shape — keep the edge."; }
+    else if (pct>=40){ status="Building momentum"; sub="Solid progress. Keep the streak alive."; }
+    else if (pct>0){ status="Getting started"; sub="Every slide you master moves the needle."; }
+    $("#ip-ring-status").textContent = status; $("#ip-ring-sub").textContent = sub;
+
+    countTo("#ip-stat-mastered", mastered); countTo("#ip-stat-total", total);
+    countTo("#ip-stat-streak", getStreak().count); countTo("#ip-stat-today", reviewedToday());
+  }
+  function countTo(sel, val){
+    const el = $(sel); if (!el) return;
+    const from = +el.textContent||0;
+    el.textContent = val;  /* correct value first; tween is just flourish */
+    if (!hasGSAP || from===val) return;
+    const o = {v: from};
+    gsap.to(o, {v: val, duration:.7, ease:"power1.out", onUpdate:()=>{ el.textContent = Math.round(o.v); }});
+  }
+
+  function renderCats(){
+    const wrap = $("#ip-cats"); wrap.innerHTML = "";
+    Object.entries(CATS).forEach(([key,c])=>{
+      const total = byCat(key).length, done = masteredCount(key), pct = Math.round(done/total*100);
+      const el = document.createElement("div");
+      el.className = "ip-cat";
+      el.innerHTML = `<div class="ic" style="background:${c.grad}"><i class="fas ${c.icon}"></i></div>
+        <h3>${c.label}</h3><p>${c.blurb}</p>
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        <div class="meta"><span><b>${done}</b> / ${total} mastered</span><span>${pct}%</span></div>`;
+      el.addEventListener("click", ()=>{ setCat(key); $("#ip-board").scrollIntoView({behavior:"smooth", block:"start"}); });
+      wrap.appendChild(el);
+    });
+  }
+  function renderChips(){
+    const wrap = $("#ip-chips"); wrap.innerHTML = "";
+    [["all","All",DECK.length], ...Object.entries(CATS).map(([k,c])=>[k,c.label,byCat(k).length])].forEach(([key,label,cnt])=>{
+      const b = document.createElement("button");
+      b.className = "ip-chip"+(activeCat===key?" active":"");
+      b.innerHTML = `${label} <span class="cnt">${cnt}</span>`;
+      b.addEventListener("click", ()=> setCat(key));
+      wrap.appendChild(b);
+    });
+  }
+  function setCat(c){ activeCat = c; renderChips(); layoutBoard(true); }
+
+  function filtered(){
+    let items = DECK.filter(d => activeCat==="all" || d.cat===activeCat);
+    if (searchTerm){ const rx = new RegExp(escapeRx(searchTerm),"i"); items = items.filter(d => rx.test(d.q)||rx.test(d.sub)||rx.test(d.a)); }
+    return items;
+  }
+
+  /* =================================================================
+     THE BOARD (scatter slide wall)
+     ================================================================= */
+  let boardCards = [];
+  function isMobile(){ return window.innerWidth < 760; }
+
+  function layoutBoard(animate){
+    const board = $("#ip-board");
+    board.querySelectorAll(".bc, .ip-board-empty").forEach(n => n.remove());
+    boardCards = [];
+    const items = filtered();
+    const hint = board.querySelector(".ip-board-hint");
+
+    if (!items.length){
+      const e = document.createElement("div");
+      e.className = "ip-board-empty";
+      e.innerHTML = `<i class="fas fa-search"></i><div>No prompts match that. Try another search or category.</div>`;
+      board.appendChild(e); board.style.height = "300px"; if (hint) hint.style.display="none"; return;
+    }
+    if (hint) hint.style.display = "";
+
+    const mobile = isMobile();
+    board.classList.toggle("stacked", mobile);
+
+    if (mobile){
+      board.style.height = "auto";
+      items.forEach((d,i)=>{ const el = makeCard(d); board.appendChild(el); boardCards.push({el, d}); });
+      return;
+    }
+
+    const W = board.clientWidth, CW = 290, GAP = 26;
+    const cols = Math.max(1, Math.floor((W + GAP) / (CW + GAP)));
+    const cellW = W / cols, rowH = 264;
+    const rows = Math.ceil(items.length / cols);
+    board.style.height = (rows * rowH + 40) + "px";
+
+    items.forEach((d,i)=>{
+      const col = i % cols, row = Math.floor(i / cols);
+      const baseX = col*cellW + (cellW-CW)/2 + rand(-16,16);
+      const baseY = row*rowH + rand(-12,12) + 8;
+      const rot = rand(-5,5);
+      const el = makeCard(d);
+      el.dataset.rot = rot;
+      board.appendChild(el);
+      const card = {el, d, x: Math.max(0, baseX), y: Math.max(0, baseY), rot};
+      boardCards.push(card);
+
+      if (hasGSAP){
+        gsap.set(el, {x: card.x, y: card.y, rotation: rot});
+        if (animate){
+          gsap.from(el, {x: card.x + rand(-160,160), y: card.y + rand(-120,120), rotation: rand(-30,30),
+            opacity: 0, scale: .8, duration: .7, ease: "back.out(1.4)", delay: i*0.035});
+        }
+        wireCardMotion(card);
+      } else {
+        el.style.transform = `translate(${card.x}px,${card.y}px) rotate(${rot}deg)`;
+        el.addEventListener("click", ()=> openPM(filtered(), filtered().findIndex(x=>x.id===d.id)));
+      }
+    });
+  }
+
+  function makeCard(d){
+    const idx = DECK.findIndex(x=>x.id===d.id)+1;
+    const st = state[d.id];
+    const el = document.createElement("article");
+    el.className = "bc"+(st==="mastered"?" mastered":st==="review"?" review":"");
+    el.dataset.id = d.id;
+    el.innerHTML = `<div class="bc-inner">
+      <div class="bc-band ${d.cat}"></div>
+      <div class="bc-body">
+        <div class="bc-top">
+          <span class="bc-num">${String(idx).padStart(2,'0')}</span>
+          <span class="bc-tag ${d.cat}">${CATS[d.cat].label}</span>
+          <span class="bc-dot"></span>
+        </div>
+        <div class="bc-sub">${d.sub}</div>
+        <div class="bc-q">${d.q}</div>
+        <span class="bc-cta">Present this <i class="fas fa-arrow-right"></i></span>
+      </div></div>`;
+    return el;
+  }
+
+  function wireCardMotion(card){
+    const el = card.el;
+    let dragged = false;
+    const drag = Draggable.create(el, {
+      type: "x,y", bounds: "#ip-board", zIndexBoost: true,
+      onPress(){ dragged = false; gsap.to(el, {rotation:0, scale:1.05, duration:.25, ease:"power2.out"});
+        el.querySelector(".bc-inner").style.animationPlayState = "paused"; },
+      onDrag(){ dragged = true; },
+      onRelease(){ card.x = this.x; card.y = this.y;
+        if (!dragged) gsap.to(el, {scale:1, rotation:card.rot, duration:.3, ease:"power2.out"});
+        el.querySelector(".bc-inner").style.animationPlayState = ""; },
+      onClick(){ if (!dragged) openPM(filtered(), filtered().findIndex(x=>x.id===card.d.id)); }
+    })[0];
+    card._drag = drag;
+
+    el.addEventListener("mouseenter", ()=>{ if (drag.isDragging) return;
+      gsap.to(el, {rotation:0, scale:1.05, zIndex:50, duration:.3, ease:"power2.out", overwrite:"auto"}); });
+    el.addEventListener("mousemove", e=>{ if (drag.isDragging) return;
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX-r.left)/r.width-0.5, py = (e.clientY-r.top)/r.height-0.5;
+      gsap.to(el, {rotationY: px*14, rotationX: -py*14, duration:.4, ease:"power2.out", overwrite:"auto"}); });
+    el.addEventListener("mouseleave", ()=>{ if (drag.isDragging) return;
+      gsap.to(el, {rotation:card.rot, rotationX:0, rotationY:0, scale:1, zIndex:1, duration:.5, ease:"power2.out", overwrite:"auto"}); });
+  }
+
+  function reshuffle(){
+    if (isMobile()){ layoutBoard(true); return; }
+    const board = $("#ip-board"), W = board.clientWidth, CW = 290, GAP = 26;
+    const cols = Math.max(1, Math.floor((W + GAP)/(CW + GAP)));
+    const cellW = W/cols, rowH = 264;
+    const order = shuffle(boardCards);
+    order.forEach((card,i)=>{
+      const col = i%cols, row = Math.floor(i/cols);
+      card.x = Math.max(0, col*cellW + (cellW-CW)/2 + rand(-16,16));
+      card.y = Math.max(0, row*rowH + rand(-12,12) + 8);
+      card.rot = rand(-5,5); card.el.dataset.rot = card.rot;
+      if (hasGSAP) gsap.to(card.el, {x:card.x, y:card.y, rotation:card.rot, rotationX:0, rotationY:0, scale:1,
+        duration:.7, ease:"back.out(1.3)", delay:i*0.03, overwrite:"auto"});
+    });
+    toast("Board reshuffled 🔀", true);
+  }
+
+  /* =================================================================
+     PRESENTATION MODE
+     ================================================================= */
+  const PM = { queue: [], idx: 0, revealed: false, auto: null };
+  const TRANSITIONS = [
+    { out:{xPercent:-120, opacity:0}, in:{xPercent:120, opacity:0} },
+    { out:{xPercent:120, opacity:0}, in:{xPercent:-120, opacity:0} },
+    { out:{yPercent:-110, opacity:0}, in:{yPercent:110, opacity:0} },
+    { out:{yPercent:110, opacity:0}, in:{yPercent:-110, opacity:0} },
+    { out:{scale:.55, opacity:0}, in:{scale:1.3, opacity:0} },
+    { out:{rotationY:95, opacity:0, transformOrigin:"center center"}, in:{rotationY:-95, opacity:0, transformOrigin:"center center"} },
+    { out:{rotationY:-90, opacity:.2, transformOrigin:"left center"}, in:{rotationY:90, opacity:.2, transformOrigin:"right center"} },
+    { out:{rotationX:80, opacity:0, transformOrigin:"center top"}, in:{rotationX:-80, opacity:0, transformOrigin:"center bottom"} }
+  ];
+
+  function openPM(queue, startIdx){
+    PM.queue = queue && queue.length ? queue : shuffle(DECK);
+    PM.idx = Math.max(0, startIdx||0);
+    $("#pm").classList.add("show");
+    document.body.style.overflow = "hidden";
+    $("#pm-total").textContent = PM.queue.length;
+    renderPM(true);
+  }
+  function closePM(){ stopAuto(); $("#pm").classList.remove("show"); document.body.style.overflow=""; layoutBoard(false); renderDashboard(true); }
+
+  function renderPM(first){
+    const slide = $("#pm-slide");
+    if (PM.idx >= PM.queue.length){ renderPMDone(); return; }
+    const d = PM.queue[PM.idx];
+    const num = DECK.findIndex(x=>x.id===d.id)+1;
+    PM.revealed = false;
+    $("#pm-cur").textContent = PM.idx+1;
+    $("#pm-prog").style.width = (PM.idx/PM.queue.length*100)+"%";
+
+    const html = `<div class="pm-watermark">${String(num).padStart(2,'0')}</div>
+      <span class="pm-ribbon ${d.cat}"><span class="rdot"></span> ${CATS[d.cat].label} · ${d.sub}</span>
+      <h2 class="pm-q">${d.q}</h2>
+      <div class="pm-a" id="pm-a">${d.a}</div>
+      <div class="pm-tip" id="pm-tip"><i class="fas fa-keyboard"></i> Press <kbd>Space</kbd> to reveal the model answer</div>`;
+
+    const t = TRANSITIONS[Math.floor(Math.random()*TRANSITIONS.length)];
+    if (hasGSAP && !first){
+      gsap.to(slide, {...t.out, duration:.32, ease:"power2.in", onComplete(){
+        slide.innerHTML = html;
+        gsap.fromTo(slide, {...t.in}, {xPercent:0, yPercent:0, scale:1, rotationY:0, rotationX:0, opacity:1, duration:.5, ease:"power3.out",
+          onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
+      }});
+    } else {
+      slide.innerHTML = html;
+      if (hasGSAP) gsap.fromTo(slide, {opacity:0, y:30, scale:.96}, {opacity:1, y:0, scale:1, duration:.6, ease:"power3.out", onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
+    }
+    renderPMFoot(false);
+  }
+
+  function renderPMFoot(done){
+    const foot = $("#pm-foot");
+    if (done){ foot.innerHTML = ""; return; }
+    foot.innerHTML = `
+      <button class="pm-nav" id="pm-prev" title="Previous (←)"><i class="fas fa-chevron-left"></i></button>
+      <button class="pm-grade again" id="pm-again"><i class="fas fa-rotate-right"></i> Review again</button>
+      <button class="pm-grade reveal" id="pm-reveal"><i class="fas fa-eye"></i> Reveal</button>
+      <button class="pm-grade got" id="pm-got"><i class="fas fa-check"></i> Got it</button>
+      <button class="pm-nav" id="pm-next" title="Next (→)"><i class="fas fa-chevron-right"></i></button>
+      <div class="pm-kbd"><kbd>Space</kbd> reveal · <kbd>1</kbd> review · <kbd>2</kbd> got it · <kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>Esc</kbd> exit</div>`;
+    $("#pm-prev").onclick = pmPrev;
+    $("#pm-next").onclick = pmNext;
+    $("#pm-reveal").onclick = pmReveal;
+    $("#pm-again").onclick = ()=>{ const d=PM.queue[PM.idx]; markCard(d.id,"review"); pmNext(); };
+    $("#pm-got").onclick = ()=>{ const d=PM.queue[PM.idx]; markCard(d.id,"mastered"); pmNext(); };
+  }
+
+  function pmReveal(){
+    const a = $("#pm-a"); if (!a || PM.revealed) return;
+    PM.revealed = true; a.classList.add("show");
+    const tip = $("#pm-tip"); if (tip) tip.style.display="none";
+    const rb = $("#pm-reveal"); if (rb){ rb.innerHTML = '<i class="fas fa-check-circle"></i> Revealed'; rb.style.opacity=.55; }
+    if (hasGSAP) gsap.from(a.children, {opacity:0, y:16, duration:.45, stagger:.06, ease:"power2.out"});
+  }
+  function pmNext(){ PM.idx++; renderPM(false); }
+  function pmPrev(){ if (PM.idx>0){ PM.idx--; renderPM(false); } }
+
+  function renderPMDone(){
+    stopAuto();
+    const did = PM.queue.length, pct = Math.round(masteredCount()/DECK.length*100), streak = getStreak().count;
+    $("#pm-cur").textContent = did; $("#pm-prog").style.width = "100%";
+    const slide = $("#pm-slide");
+    slide.innerHTML = `<div class="pm-done">
+      <div class="big">🎉</div>
+      <h3>Session complete!</h3>
+      <p>You presented <b>${did}</b> slide${did>1?'s':''}. Readiness is now <b>${pct}%</b> and your streak is <b>${streak} day${streak!==1?'s':''}</b>. Proud of you — go get that offer.</p></div>`;
+    if (hasGSAP) gsap.fromTo(slide, {opacity:0, scale:.9}, {opacity:1, scale:1, duration:.5, ease:"back.out(1.5)", onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
+    burst(180);
+    const foot = $("#pm-foot");
+    foot.innerHTML = `<button class="pm-grade got" id="pm-again-all"><i class="fas fa-redo"></i> Go again (shuffled)</button>
+      <button class="pm-grade again" id="pm-finish"><i class="fas fa-flag-checkered"></i> Done for now</button>`;
+    $("#pm-again-all").onclick = ()=> openPM(shuffle(DECK), 0);
+    $("#pm-finish").onclick = closePM;
+  }
+
+  /* autoplay */
+  function toggleAuto(){
+    if (PM.auto){ stopAuto(); }
+    else {
+      $("#pm-autoplay").innerHTML = '<i class="fas fa-pause"></i> <span>Auto</span>';
+      $("#pm-autoplay").style.background = "rgba(34,211,238,.3)";
+      PM.auto = setInterval(()=>{
+        if (PM.idx >= PM.queue.length){ stopAuto(); return; }
+        if (!PM.revealed) pmReveal(); else pmNext();
+      }, 5200);
+    }
+  }
+  function stopAuto(){ if (PM.auto){ clearInterval(PM.auto); PM.auto=null; }
+    const b = $("#pm-autoplay"); if (b){ b.innerHTML = '<i class="fas fa-play"></i> <span>Auto</span>'; b.style.background=""; } }
+
+  /* =================================================================
+     MARK / TOAST / CONFETTI
+     ================================================================= */
+  function markCard(id, status){
+    const prev = state[id]; state[id] = status; saveState(); bumpStreak();
+    renderDashboard(true); renderCats(); renderChips();
+    const bc = document.querySelector(`.bc[data-id="${id}"]`);
+    if (bc){ bc.classList.remove("mastered","review"); bc.classList.add(status); }
+    if (status==="mastered" && prev!=="mastered"){
+      const m = masteredCount();
+      toast(`Mastered! ${m} / ${DECK.length} done`, true);
+      const pct = Math.round(m/DECK.length*100);
+      if (pct===100) burst(280); else if (m%5===0) burst(130);
+    } else if (status==="review"){ toast("Flagged to review again", false); }
+  }
+
+  let toastTimer;
+  function toast(msg, good){
+    const t = $("#ip-toast"); $("#ip-toast-text").textContent = msg;
+    const i = t.querySelector("i"); i.className = good ? "fas fa-check-circle" : "fas fa-flag";
+    i.style.color = good ? "#4ade80" : "#fbbf24";
+    t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(()=> t.classList.remove("show"), 2200);
+  }
+
+  function burst(n){
+    const cv = $("#ip-confetti"), ctx = cv.getContext("2d");
+    cv.width = innerWidth; cv.height = innerHeight;
+    const colors = ["#2f6bff","#7c3aed","#06b6d4","#22c55e","#f59e0b"];
+    const parts = Array.from({length:n}, ()=>({ x: innerWidth/2+(Math.random()-.5)*140, y: innerHeight/2.3,
+      vx:(Math.random()-.5)*15, vy:Math.random()*-16-4, g:.35+Math.random()*.2, s:5+Math.random()*7,
+      c:colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*6.28, vr:(Math.random()-.5)*.4, life:0 }));
+    let frame=0;
+    (function anim(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      parts.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life++;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.globalAlpha=Math.max(0,1-p.life/95);
+        ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); ctx.restore(); });
+      if (++frame<100) requestAnimationFrame(anim); else ctx.clearRect(0,0,cv.width,cv.height);
+    })();
+  }
+
+  /* =================================================================
+     HERO PARTICLES (constellation)
+     ================================================================= */
+  function initParticles(){
+    const cv = $("#ip-particles"); if (!cv) return;
+    const ctx = cv.getContext("2d"); let w,h,pts;
+    function size(){ const r = cv.parentElement.getBoundingClientRect(); w=cv.width=r.width; h=cv.height=r.height;
+      pts = Array.from({length: Math.min(46, Math.floor(w/22))}, ()=>({ x:Math.random()*w, y:Math.random()*h,
+        vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35, r:Math.random()*2+1 })); }
+    size(); window.addEventListener("resize", size);
+    (function loop(){
+      ctx.clearRect(0,0,w,h);
+      pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.28); ctx.fillStyle="rgba(47,107,255,.32)"; ctx.fill(); });
+      for (let i=0;i<pts.length;i++) for (let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, dist=Math.hypot(dx,dy);
+        if (dist<110){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(124,58,237,${.13*(1-dist/110)})`; ctx.lineWidth=1; ctx.stroke(); } }
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* =================================================================
+     WIRING
+     ================================================================= */
+  $("#ip-search").addEventListener("input", e=>{ searchTerm = e.target.value.trim(); layoutBoard(false); });
+  $("#ip-shuffle").addEventListener("click", reshuffle);
+  $("#ip-present").addEventListener("click", ()=> openPM(shuffle(filtered()), 0));
+  $("#ip-start-session").addEventListener("click", ()=> openPM(shuffle(DECK), 0));
+  $("#ip-review-weak").addEventListener("click", ()=>{
+    const weak = DECK.filter(d => state[d.id]!=="mastered");
+    if (!weak.length){ toast("You've mastered everything! 🎉", true); burst(220); return; }
+    openPM(shuffle(weak), 0);
+  });
+  $("#pm-close").addEventListener("click", closePM);
+  $("#pm-autoplay").addEventListener("click", toggleAuto);
+  $("#pm-shuffle-live").addEventListener("click", ()=>{
+    const remaining = PM.queue.slice(PM.idx);
+    PM.queue = PM.queue.slice(0,PM.idx).concat(shuffle(remaining));
+    renderPM(false); toast("Shuffled the rest 🔀", true);
+  });
+
+  document.addEventListener("keydown", e=>{
+    if (!$("#pm").classList.contains("show")) return;
+    if (e.key==="Escape") return closePM();
+    if (PM.idx >= PM.queue.length) return;
+    const d = PM.queue[PM.idx];
+    if (e.code==="Space"){ e.preventDefault(); pmReveal(); }
+    else if (e.key==="ArrowRight"){ pmNext(); }
+    else if (e.key==="ArrowLeft"){ pmPrev(); }
+    else if (e.key==="1"){ markCard(d.id,"review"); pmNext(); }
+    else if (e.key==="2"){ markCard(d.id,"mastered"); pmNext(); }
+  });
+
+  $("#ip-reset").addEventListener("click", ()=>{
+    if (!confirm("Reset all progress and streak? This can't be undone.")) return;
+    localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_STREAK);
+    for (const k in state) delete state[k];
+    renderGreeting(); renderDashboard(true); renderCats(); renderChips(); layoutBoard(true);
+    toast("Progress reset — fresh start", false);
+  });
+
+  let rT; window.addEventListener("resize", ()=>{ clearTimeout(rT); rT = setTimeout(()=> layoutBoard(false), 250); });
+
+  /* INIT */
+  renderGreeting(); renderDashboard(false); renderCats(); renderChips(); layoutBoard(true); initParticles();
+  </script>
+</body>
+</html>
