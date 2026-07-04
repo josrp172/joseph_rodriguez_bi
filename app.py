@@ -78,6 +78,44 @@ def news():
 def interview_prep():
     return render_template('interview-prep.html')
 
+@app.route('/api/transcribe', methods=['POST'])
+def api_transcribe():
+    import requests
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'success': False, 'error': 'No audio file provided'}), 400
+        
+        audio_file = request.files['audio']
+        audio_bytes = audio_file.read()
+        filename = audio_file.filename or 'speech.webm'
+        mime_type = audio_file.mimetype or 'audio/webm'
+        
+        # Call Modulate.ai API to transcribe
+        headers = {
+            'X-API-Key': '5842dbea-9ee6-4be8-9f03-b4351e686267'
+        }
+        
+        files = {
+            'upload_file': (filename, audio_bytes, mime_type)
+        }
+        
+        # Using English Fast Batch endpoint for rapid translation
+        endpoint = 'https://platform.modulate.ai/api/velma-2-stt-batch-english-vfast'
+        
+        response = requests.post(endpoint, headers=headers, files=files)
+        
+        if response.status_code != 200:
+            print(f"Modulate API Error: {response.status_code} - {response.text}")
+            return jsonify({'success': False, 'error': f"Modulate API error: {response.text}"}), response.status_code
+            
+        result = response.json()
+        transcription = result.get('text', '').strip()
+        
+        return jsonify({'success': True, 'text': transcription})
+    except Exception as e:
+        print("Transcription error:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/deneb-lab')
 def deneb_lab():
     return render_template('deneb-lab.html')

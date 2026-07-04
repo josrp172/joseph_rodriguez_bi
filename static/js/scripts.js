@@ -724,7 +724,7 @@ async function sendMessageAndResponse() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message, history: priorHistory })
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
 
     if (!response.ok || !data.response) {
       throw new Error(data.error || 'The AI persona could not answer right now.');

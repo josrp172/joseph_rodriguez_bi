@@ -836,19 +836,58 @@
     </div>
   </section>
 
-  <!-- ===== FLOATING CHAT LAUNCHER ===== -->
+  <!-- ===== FLOATING CHAT LAUNCHER (live mini-mascot) ===== -->
   <div class="chat-button" onclick="toggleChat()" role="button" aria-label="Open AI persona chat" aria-controls="chatbox" aria-expanded="false" tabindex="0" data-cursor="Chat">
-    <i class="fas fa-comment-dots cb-icon" aria-hidden="true"></i>
+    <span class="cb-mascot" aria-hidden="true">
+      <span class="mascot">
+        <span class="me-frame">
+          <span class="me-char">
+            <span class="me-shoulders"></span>
+            <span class="me-head">
+              <span class="me-ear l"></span>
+              <span class="me-ear r"></span>
+              <span class="me-headset"></span>
+              <span class="me-hair"></span>
+              <span class="me-face">
+                <span class="me-brow l"></span>
+                <span class="me-brow r"></span>
+                <span class="me-eye l"><i></i></span>
+                <span class="me-eye r"><i></i></span>
+                <span class="me-cheek l"></span>
+                <span class="me-cheek r"></span>
+                <span class="me-nose"></span>
+                <span class="me-mouth"></span>
+              </span>
+            </span>
+            <span class="me-hand"></span>
+          </span>
+        </span>
+      </span>
+    </span>
+    <span class="cb-x" aria-hidden="true"><i class="fas fa-times"></i></span>
     <span class="cb-status" aria-hidden="true"></span>
+    <span class="cb-tip" aria-hidden="true">Chat with me 👋</span>
+  </div>
+
+  <div class="chat-nudge" id="chat-nudge" role="button" tabindex="0" aria-label="Open AI persona chat" hidden>
+    <button class="cn-close" aria-label="Dismiss">×</button>
+    <b>👋 That's my AI twin down there</b>
+    <span>Ask it anything about my work — it knows my whole story.</span>
   </div>
 
   <div class="chatbox" id="chatbox" aria-live="polite" aria-hidden="true">
     <div class="chatbox-header">
       <div class="chatbox-title">
-        <span class="chatbox-presence" aria-hidden="true"><i></i></span>
-        <span>Chat with my AI Persona<small>Resume-aware · ready to help</small></span>
+        <span class="chatbox-ava-wrap">
+          <img src="/static/images/profile.jpg" alt="" class="chatbox-ava">
+          <span class="chatbox-presence" aria-hidden="true"><i></i></span>
+        </span>
+        <span>Joseph's AI Persona<small>Resume-aware · replies in seconds</small></span>
       </div>
-      <button class="chatbox-close" onclick="closeChat()">×</button>
+      <div class="chatbox-actions">
+        <button class="chatbox-close chatbox-clear" onclick="clearPersonaChat()" title="Clear conversation" aria-label="Clear conversation"><i class="fas fa-broom" aria-hidden="true"></i></button>
+        <button class="chatbox-close" onclick="closeChat()" aria-label="Close chat">×</button>
+      </div>
     </div>
     <div class="chatbox-body">
       <div class="chat-message bot-message">
@@ -1320,6 +1359,33 @@
         if (e.target.closest(HOVER)) { ring.classList.remove('is-active'); label.textContent = ''; }
       });
       document.querySelectorAll('.project-card').forEach((c) => c.setAttribute('data-cursor', 'View'));
+    })();
+
+    /* ---------- First-visit chat nudge ---------- */
+    (function () {
+      const nudge = document.getElementById('chat-nudge');
+      if (!nudge || sessionStorage.getItem('jr-chat-nudged')) return;
+      let hideTimer;
+      const hide = () => {
+        clearTimeout(hideTimer);
+        if (nudge.hidden) return;
+        if (window.gsap && !REDUCED) {
+          gsap.to(nudge, { y: 10, opacity: 0, duration: .3, ease: 'power2.in', onComplete: () => { nudge.hidden = true; } });
+        } else nudge.hidden = true;
+      };
+      setTimeout(() => {
+        const box = document.getElementById('chatbox');
+        if (box && box.style.display === 'flex') return;
+        nudge.hidden = false;
+        sessionStorage.setItem('jr-chat-nudged', '1');
+        if (window.gsap && !REDUCED) {
+          gsap.fromTo(nudge, { y: 16, opacity: 0, scale: .95 }, { y: 0, opacity: 1, scale: 1, duration: .5, ease: 'back.out(1.6)', clearProps: 'scale' });
+        }
+        hideTimer = setTimeout(hide, 9000);
+      }, 6000);
+      nudge.querySelector('.cn-close').addEventListener('click', (e) => { e.stopPropagation(); hide(); });
+      nudge.addEventListener('click', () => { hide(); if (window.toggleChat) toggleChat(); });
+      nudge.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hide(); if (window.toggleChat) toggleChat(); } });
     })();
 
     /* ---------- Hero name: letters bounce under the cursor ---------- */

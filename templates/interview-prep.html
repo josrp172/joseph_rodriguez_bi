@@ -4,466 +4,917 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interview War Room — Joseph Rodriguez</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="/static/images/logo/logo_98_65.png">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/Draggable.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/ScrollTrigger.min.js"></script>
 
   <style>
   /* =================================================================
-     Interview War Room — cinematic prep workspace
-     Scatter "slide wall" + PowerPoint-style presentation mode.
-     Page-specific classes prefixed .ip- to avoid clashes.
+     Interview War Room — Signal edition
+     Editorial light theme, synced with the portfolio design system.
+     Page classes prefixed .ip-. Buttons/chips reuse global styles.
      ================================================================= */
+  .ip-wrap { width: min(100% - var(--gutter) * 2, 1240px); margin: 0 auto; padding: 30px 0 120px; }
 
-  .ip-wrap { width: min(100% - var(--gutter) * 2, 1200px); margin: 0 auto; padding: 36px 0 130px; }
-
-  /* ---- top bar ---- */
+  /* ---- top bar (site pattern) ---- */
   .ip-topbar { position: sticky; top: 0; z-index: 900; background: rgba(255,255,255,.72);
     backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px);
     border-bottom: 1px solid rgba(228,234,243,.9); }
-  .ip-topbar-inner { width: min(100% - var(--gutter) * 2, 1200px); margin: 0 auto; height: 70px;
-    display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .ip-brand { display: inline-flex; align-items: center; gap: 12px; }
-  .ip-brand .badge { background: var(--grad); color: #fff; font-family: var(--font-display); font-weight: 700;
-    padding: 8px 12px; border-radius: 12px; box-shadow: var(--shadow-brand); letter-spacing: .5px; }
-  .ip-brand .ttl { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 1.02rem; }
-  .ip-brand .ttl small { display: block; font-weight: 500; font-size: .72rem; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
-  .ip-back { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-body);
-    font-weight: 600; font-size: .92rem; padding: 9px 16px; border-radius: var(--radius-pill);
-    border: 1px solid var(--border); background: var(--surface); transition: .2s var(--ease); }
-  .ip-back:hover { color: var(--text); border-color: var(--border-strong); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+  .ip-topbar-inner { width: min(100% - var(--gutter) * 2, 1240px); margin: 0 auto; height: 64px;
+    display: flex; align-items: center; gap: 16px; }
+  .ip-home { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .ip-home .mark { font-family: var(--font-display); font-weight: 800; color: #fff; background: var(--grad);
+    padding: 7px 11px; border-radius: 11px; box-shadow: var(--shadow-brand); font-size: .95rem; }
+  .ip-home .back { font-size: .82rem; font-weight: 600; color: var(--text-body); transition: color .2s; }
+  .ip-home:hover .back { color: var(--brand-ink); }
+  .ip-ttl { font-family: var(--font-display); font-weight: 700; color: var(--ink); font-size: 1rem; }
+  .ip-ttl small { display: block; font-family: var(--font-body); font-weight: 600; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .ip-top-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .ip-streak-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 8px 16px;
+    box-shadow: var(--shadow-sm); font-size: .82rem; font-weight: 700; color: var(--text); font-family: var(--font-display); }
+  .ip-streak-pill i { color: #f59e0b; }
+  .ip-topbar .btn { padding: 11px 20px; font-size: .88rem; }
 
   /* ---- hero ---- */
-  .ip-hero { display: grid; grid-template-columns: 1.45fr .9fr; gap: 24px; margin-top: 28px; }
-  .ip-hero-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    box-shadow: var(--shadow-md); padding: 32px 34px; position: relative; overflow: hidden; }
-  #ip-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
-  .ip-hero-card > * { position: relative; z-index: 1; }
-  .ip-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .76rem; font-weight: 700;
-    letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); background: var(--grad-soft);
-    padding: 7px 13px; border-radius: var(--radius-pill); }
-  .ip-eyebrow .pulse { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: ipPulse 2s infinite; }
-  @keyframes ipPulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.55);} 70% { box-shadow: 0 0 0 9px rgba(34,197,94,0);} 100% { box-shadow:0 0 0 0 rgba(34,197,94,0);} }
-  .ip-hero-card h1 { font-size: clamp(1.7rem, 3.2vw, 2.55rem); margin: 16px 0 10px; letter-spacing: -.01em; }
-  .ip-hero-card p.sub { color: var(--text-body); font-size: 1.02rem; max-width: 52ch; }
-  .ip-quote { margin-top: 22px; padding: 16px 18px; border-radius: var(--radius-sm); background: var(--surface-2);
-    border: 1px solid var(--border); border-left: 4px solid var(--brand); display: flex; gap: 13px; align-items: flex-start; }
-  .ip-quote i { color: var(--violet); font-size: 1.1rem; margin-top: 3px; }
-  .ip-quote span { font-style: italic; color: var(--text); font-weight: 500; }
-  .ip-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-  .ip-btn { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; border: none;
-    font-family: var(--font-body); font-weight: 600; font-size: .96rem; padding: 13px 22px; border-radius: var(--radius-pill); transition: .2s var(--ease); }
-  .ip-btn-primary { background: var(--grad); color: #fff; box-shadow: var(--shadow-brand); }
-  .ip-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(47,107,255,.34); }
-  .ip-btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
-  .ip-btn-ghost:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .ip-hero { position: relative; display: grid; grid-template-columns: 1.25fr .75fr; gap: 26px; align-items: stretch; padding: 40px 0 10px; }
+  .ip-hero-ghost { position: absolute; top: -18px; right: -10px; z-index: 0; pointer-events: none; user-select: none;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(5rem, 13vw, 10rem); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.09); }
+  .ip-hero-left { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; }
+  .ip-kicker { display: inline-flex; align-items: center; gap: 10px; width: max-content; font-family: var(--font-display);
+    font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--brand-ink);
+    background: var(--grad-soft); padding: 7px 16px; border-radius: var(--radius-pill); margin-bottom: 18px; }
+  .ip-kicker .pulse { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  .ip-hero h1 { font-size: clamp(2.1rem, 4.8vw, 3.6rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); }
+  .ip-hero h1 .serif-accent { font-size: 1.12em; }
+  .ip-hero .sub { margin-top: 14px; color: var(--text-body); font-size: 1.04rem; max-width: 54ch; }
+  .ip-quote { margin-top: 22px; font-family: var(--font-accent); font-style: italic; font-size: 1.15rem; color: var(--text);
+    border-left: 3px solid var(--brand); padding-left: 16px; max-width: 50ch; }
+  .ip-quote b { background: var(--grad-bright); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 400; }
+  .ip-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
-  /* readiness ring */
-  .ip-ring-card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  .ip-ring { position: relative; width: 200px; height: 200px; }
+  /* readiness card */
+  .ip-ready { position: relative; z-index: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-md); padding: 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+  .ip-ready::before { content: ""; position: absolute; top: -40%; right: -30%; width: 80%; height: 90%;
+    background: radial-gradient(circle, rgba(124,58,237,.08), transparent 65%); pointer-events: none; }
+  .ip-ring { position: relative; width: 172px; height: 172px; }
   .ip-ring svg { transform: rotate(-90deg); }
-  .ip-ring .track { fill: none; stroke: var(--surface-3); stroke-width: 16; }
-  .ip-ring .meter { fill: none; stroke: url(#ipGrad); stroke-width: 16; stroke-linecap: round; }
+  .ip-ring .track { fill: none; stroke: var(--surface-3); stroke-width: 14; }
+  .ip-ring .meter { fill: none; stroke: url(#ipGrad); stroke-width: 14; stroke-linecap: round; }
   .ip-ring .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ip-ring .pct { font-family: var(--font-display); font-weight: 800; font-size: 2.7rem; line-height: 1; }
-  .ip-ring .lbl { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-  .ip-ring-status { margin-top: 16px; font-weight: 700; font-size: 1.08rem; color: var(--text); }
-  .ip-ring-sub { color: var(--text-body); font-size: .9rem; margin-top: 4px; }
+  .ip-ring .pct { font-family: var(--font-display); font-weight: 800; font-size: 2.4rem; line-height: 1; }
+  .ip-ring .lbl { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
+  .ip-ready-status { margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; color: var(--ink); }
+  .ip-ready-sub { color: var(--text-body); font-size: .84rem; margin-top: 3px; }
+  .ip-ready-metrics { display: flex; gap: 10px; margin-top: 18px; }
+  .ip-rm { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; }
+  .ip-rm b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: var(--ink); line-height: 1.1; }
+  .ip-rm span { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
-  /* ---- stat strip ---- */
-  .ip-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
-  .ip-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 18px 20px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: center; }
-  .ip-stat .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 1.05rem; flex-shrink: 0; }
-  .ip-stat .v { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; color: var(--text); line-height: 1; }
-  .ip-stat .k { font-size: .8rem; color: var(--muted); margin-top: 3px; }
+  /* ---- pillars ---- */
+  .ip-sec-head { position: relative; margin: 56px 0 24px; }
+  .ip-sec-head .ghost { position: absolute; top: -46px; right: -6px; z-index: 0; pointer-events: none; user-select: none;
+    font-family: var(--font-display); font-weight: 800; font-size: clamp(4.5rem, 10vw, 8rem); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.09); }
+  .ip-sec-head h2 { position: relative; z-index: 1; font-size: clamp(1.6rem, 3.2vw, 2.3rem); font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .ip-sec-head h2 .serif-accent { font-size: 1.12em; }
+  .ip-sec-head .s { margin-top: 8px; color: var(--text-body); max-width: 60ch; }
 
-  /* ---- section head ---- */
-  .ip-section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 48px 0 18px; flex-wrap: wrap; }
-  .ip-section-head h2 { font-size: 1.5rem; }
-  .ip-section-head .ip-kicker { font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); }
-
-  /* ---- category cards ---- */
-  .ip-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .ip-cat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px;
-    box-shadow: var(--shadow-sm); cursor: pointer; transition: .25s var(--ease); position: relative; overflow: hidden; }
-  .ip-cat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
-  .ip-cat .ic { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; color: #fff; font-size: 1.15rem; margin-bottom: 14px; }
-  .ip-cat h3 { font-size: 1.16rem; margin-bottom: 5px; }
-  .ip-cat p { font-size: .9rem; color: var(--text-body); margin-bottom: 16px; }
-  .ip-cat .bar { height: 8px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
-  .ip-cat .bar i { display: block; height: 100%; border-radius: 99px; background: var(--grad-bright); width: 0; transition: width 1s var(--ease); }
-  .ip-cat .meta { display: flex; justify-content: space-between; font-size: .82rem; color: var(--muted); margin-top: 9px; }
-  .ip-cat .meta b { color: var(--text); }
+  .ip-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .ip-pillar { position: relative; overflow: hidden; cursor: pointer; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 24px 26px;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s; }
+  .ip-pillar::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad-bright);
+    transform: scaleX(0); transform-origin: left; transition: transform .4s var(--ease); }
+  .ip-pillar:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+  .ip-pillar:hover::after { transform: scaleX(1); }
+  .ip-pillar .k { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: .68rem;
+    font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 12px; }
+  .ip-pillar .k::before { content: ""; width: 22px; height: 2px; border-radius: 2px; background: var(--grad); }
+  .ip-pillar .k .num { background: var(--grad-bright); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .ip-pillar h3 { font-size: 1.18rem; color: var(--ink); margin-bottom: 6px; letter-spacing: -.01em; }
+  .ip-pillar p { font-size: .88rem; color: var(--text-body); margin-bottom: 18px; min-height: 42px; }
+  .ip-pillar .bar { height: 7px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+  .ip-pillar .bar i { display: block; height: 100%; border-radius: 99px; background: var(--grad-bright); width: 0; transition: width 1s var(--ease); }
+  .ip-pillar .meta { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-top: 9px; }
+  .ip-pillar .meta b { color: var(--ink); font-family: var(--font-display); }
 
   /* ---- toolbar ---- */
-  .ip-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0 22px; }
-  .ip-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .ip-chip { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
-    font-weight: 600; font-size: .86rem; padding: 8px 15px; border-radius: var(--radius-pill); transition: .2s var(--ease);
-    display: inline-flex; align-items: center; gap: 7px; }
-  .ip-chip:hover { color: var(--text); border-color: var(--brand); }
-  .ip-chip.active { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
-  .ip-chip .cnt { font-size: .74rem; opacity: .75; }
-  .ip-tool-btns { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
-  .ip-search { position: relative; }
+  .ip-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 22px; position: relative; z-index: 1; }
+  .ip-toolbar .filter-btn { font-size: .86rem; }
+  .ip-toolbar .filter-btn .cnt { opacity: .6; font-size: .76rem; margin-left: 4px; }
+  .ip-search { position: relative; margin-left: auto; }
   .ip-search input { border: 1px solid var(--border-strong); background: var(--surface); border-radius: var(--radius-pill);
-    padding: 11px 16px 11px 40px; font-family: var(--font-body); font-size: .92rem; width: 220px; color: var(--text); transition: .2s var(--ease); }
+    padding: 11px 16px 11px 40px; font-family: var(--font-body); font-size: .9rem; width: 230px; color: var(--text); transition: .2s var(--ease); }
   .ip-search input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 4px rgba(47,107,255,.12); }
   .ip-search i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-  .ip-icon-btn { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
-    font-weight: 600; font-size: .88rem; padding: 11px 16px; border-radius: var(--radius-pill); transition: .2s var(--ease);
-    display: inline-flex; align-items: center; gap: 8px; }
-  .ip-icon-btn:hover { color: var(--text); border-color: var(--brand); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-  .ip-icon-btn.solid { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
 
-  /* ---- THE BOARD (scatter slide wall) ---- */
-  .ip-board { position: relative; perspective: 1400px; min-height: 480px; margin-top: 4px; }
-  .ip-board-hint { position: absolute; top: -34px; right: 0; font-size: .8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  /* ---- deck grid ---- */
+  .ip-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
+  .ip-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 22px 24px; display: flex; flex-direction: column;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s; }
+  .ip-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s var(--ease);
+    background: radial-gradient(200px circle at var(--mx, 50%) var(--my, 0%), rgba(47,107,255,.14), transparent 70%); }
+  .ip-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-strong); }
+  .ip-card:hover::before { opacity: 1; }
+  .ip-card.mastered { border-color: rgba(34,197,94,.4); }
+  .ip-card.review { border-color: rgba(245,158,11,.45); }
+  .ip-card-top { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; position: relative; z-index: 1; }
+  .ip-tag { font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 4px 11px; border-radius: 99px; }
+  .ip-tag.t-technical { background: rgba(47,107,255,.12); color: var(--brand-ink); }
+  .ip-tag.t-behavioral { background: rgba(124,58,237,.13); color: #6d28d9; }
+  .ip-tag.t-scripts { background: rgba(6,182,212,.14); color: #0e7490; }
+  .ip-sub { font-size: .74rem; color: var(--muted); font-weight: 600; }
+  .ip-dot { margin-left: auto; width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; }
+  .ip-card.mastered .ip-dot { background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.16); }
+  .ip-card.review .ip-dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.16); }
+  .ip-q { position: relative; z-index: 1; font-family: var(--font-display); font-weight: 700; color: var(--ink);
+    font-size: 1.05rem; line-height: 1.35; letter-spacing: -.01em; }
+  .ip-a { position: relative; z-index: 1; margin-top: 14px; color: var(--text-body); font-size: .92rem; line-height: 1.7; display: none; }
+  .ip-card.open .ip-a { display: block; animation: ipReveal .35s var(--ease); }
+  @keyframes ipReveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .ip-a strong { color: var(--ink); }
+  .ip-a ul { margin: 8px 0 0; padding-left: 18px; }
+  .ip-a ul li { margin-bottom: 6px; }
+  .ip-a code { background: var(--surface-3); padding: 2px 6px; border-radius: 6px; font-size: .88em; }
+  .ip-a .star { display: grid; gap: 8px; margin-top: 6px; }
+  .ip-a .star div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 12px; }
+  .ip-a .star b { color: var(--brand-ink); }
+  .ip-a .say { background: var(--grad-soft); border-radius: 12px; padding: 13px 15px; margin-top: 10px; color: var(--ink); font-weight: 500; }
+  .ip-a .say::before { content: "Say it like this"; display: block; font-family: var(--font-display); font-size: .64rem;
+    font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 6px; }
+  .ip-card-actions { margin-top: auto; padding-top: 16px; display: flex; gap: 8px; align-items: center; position: relative; z-index: 1; }
+  .ip-mini { cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-body);
+    font-family: var(--font-body); font-weight: 600; font-size: .8rem; padding: 8px 14px; border-radius: var(--radius-pill);
+    transition: .2s var(--ease); display: inline-flex; align-items: center; gap: 6px; }
+  .ip-mini:hover { transform: translateY(-1px); color: var(--text); box-shadow: var(--shadow-sm); }
+  .ip-mini.solid { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); margin-right: auto; }
+  .ip-mini.good:hover { border-color: #22c55e; color: #15803d; }
+  .ip-mini.again:hover { border-color: #f59e0b; color: #b45309; }
+  .ip-empty { grid-column: 1 / -1; text-align: center; padding: 64px 20px; color: var(--muted); }
+  .ip-empty i { font-size: 2.4rem; margin-bottom: 12px; color: var(--border-strong); display: block; }
+  .ip-reset-row { text-align: center; margin-top: 42px; }
 
-  .bc { position: absolute; top: 0; left: 0; width: 290px; cursor: grab; will-change: transform; transform-style: preserve-3d; }
-  .bc:active { cursor: grabbing; }
-  .bc-inner { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface);
-    border: 1px solid var(--border); box-shadow: 0 18px 40px rgba(15,27,51,.16), 0 4px 10px rgba(15,27,51,.08);
-    padding: 0; animation: bcFloat 6s ease-in-out infinite; }
-  @keyframes bcFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-  .bc-band { height: 8px; }
-  .bc-band.technical { background: linear-gradient(90deg,#2f6bff,#1b4dd1); }
-  .bc-band.behavioral { background: linear-gradient(90deg,#7c3aed,#6d28d9); }
-  .bc-band.scripts { background: linear-gradient(90deg,#06b6d4,#0e7490); }
-  .bc-body { padding: 16px 18px 18px; min-height: 168px; display: flex; flex-direction: column; }
-  .bc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
-  .bc-num { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--border-strong); }
-  .bc-tag { font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; }
-  .bc-tag.technical { background: rgba(47,107,255,.12); color: var(--brand-ink); }
-  .bc-tag.behavioral { background: rgba(124,58,237,.13); color: #6d28d9; }
-  .bc-tag.scripts { background: rgba(6,182,212,.14); color: #0e7490; }
-  .bc-dot { margin-left: auto; width: 11px; height: 11px; border-radius: 50%; background: var(--border-strong); }
-  .bc.mastered .bc-dot { background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
-  .bc.review .bc-dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
-  .bc-sub { font-size: .72rem; color: var(--muted); font-weight: 600; margin-bottom: 7px; }
-  .bc-q { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 1.04rem; line-height: 1.34; }
-  .bc-cta { margin-top: auto; padding-top: 14px; font-size: .78rem; font-weight: 700; color: var(--brand-ink); display: inline-flex; align-items: center; gap: 6px; opacity: 0; transition: opacity .2s var(--ease); }
-  .bc:hover .bc-cta { opacity: 1; }
-  .bc.mastered .bc-inner { border-color: rgba(34,197,94,.5); }
-  .bc.review .bc-inner { border-color: rgba(245,158,11,.55); }
-  .ip-board-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); }
-  .ip-board-empty i { font-size: 2.4rem; margin-bottom: 12px; color: var(--border-strong); }
+  /* ---- FOCUS MODE (light, editorial) ---- */
+  .fm { position: fixed; inset: 0; z-index: 2000; display: none;
+    background: rgba(242,245,251,.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .fm.show { display: flex; flex-direction: column; }
+  .fm-progress { position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 5; }
+  .fm-progress i { display: block; height: 100%; width: 0; background: var(--grad-bright); border-radius: 3px;
+    transition: width .5s var(--ease); box-shadow: 0 0 10px rgba(47,107,255,.5); }
+  .fm-top { flex-shrink: 0; display: flex; align-items: center; gap: 14px; padding: 22px clamp(16px, 4vw, 44px) 0; }
+  .fm-counter { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--ink); }
+  .fm-counter span { color: var(--muted); font-weight: 600; }
+  .fm-top-actions { margin-left: auto; display: flex; gap: 9px; }
+  .fm-ibtn { width: 42px; height: 42px; border-radius: 50%; cursor: pointer; background: var(--surface);
+    border: 1px solid var(--border-strong); color: var(--text-body); display: grid; place-items: center;
+    font-size: .9rem; transition: .2s var(--ease); box-shadow: var(--shadow-sm); }
+  .fm-ibtn:hover { color: var(--brand-ink); border-color: var(--brand); transform: translateY(-1px); }
+  .fm-ibtn.wide { width: auto; padding: 0 16px; border-radius: var(--radius-pill); display: inline-flex; gap: 8px; font-weight: 600; font-size: .84rem; }
+  .fm-ibtn.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: var(--shadow-brand); }
+  .fm-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 18px clamp(16px, 4vw, 44px); perspective: 1600px; }
+  .fm-slide { position: relative; width: min(780px, 100%); max-height: 100%; overflow-y: auto;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
+    box-shadow: var(--shadow-lg); padding: 42px 48px 34px; will-change: transform, opacity;
+    scrollbar-width: thin; scrollbar-color: rgba(47,107,255,.3) transparent; }
+  .fm-slide::-webkit-scrollbar { width: 7px; }
+  .fm-slide::-webkit-scrollbar-thumb { background: rgba(47,107,255,.3); border-radius: 8px; }
+  .fm-ghostnum { position: absolute; top: -8px; right: 16px; font-family: var(--font-display); font-weight: 800;
+    font-size: 7.5rem; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(47,107,255,.09);
+    pointer-events: none; user-select: none; }
+  .fm-kicker { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: .66rem;
+    font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--brand-ink);
+    background: var(--grad-soft); padding: 6px 14px; border-radius: var(--radius-pill); }
+  .fm-q { font-family: var(--font-display); font-weight: 800; color: var(--ink); letter-spacing: -.02em;
+    font-size: clamp(1.4rem, 3vw, 2.05rem); line-height: 1.22; margin-top: 18px; }
+  .fm-a { margin-top: 22px; color: var(--text-body); font-size: 1rem; line-height: 1.75; display: none; }
+  .fm-a.show { display: block; }
+  .fm-a strong { color: var(--ink); }
+  .fm-a ul { margin: 10px 0 0; padding-left: 20px; }
+  .fm-a ul li { margin-bottom: 8px; }
+  .fm-a code { background: var(--surface-3); padding: 2px 6px; border-radius: 6px; font-size: .9em; }
+  .fm-a .star { display: grid; gap: 10px; margin-top: 6px; }
+  .fm-a .star div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 11px 14px; }
+  .fm-a .star b { color: var(--brand-ink); }
+  .fm-a .say { background: var(--grad-soft); border-radius: 12px; padding: 14px 16px; margin-top: 12px; color: var(--ink); font-weight: 500; }
+  .fm-a .say::before { content: "Say it like this"; display: block; font-family: var(--font-display); font-size: .64rem;
+    font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 6px; }
+  .fm-hint { margin-top: 24px; font-size: .84rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  kbd.fm-kbd, .fm-keys kbd { background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 6px;
+    padding: 2px 8px; font-family: var(--font-body); font-size: .76rem; font-weight: 700; color: var(--text-body); box-shadow: 0 1px 0 var(--border); }
+  .fm-foot { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+    padding: 14px clamp(16px, 4vw, 44px) 22px; }
+  .fm-foot .btn { padding: 12px 22px; font-size: .9rem; }
+  .fm-nav { width: 48px; height: 48px; border-radius: 50%; cursor: pointer; background: var(--surface);
+    border: 1px solid var(--border-strong); color: var(--text); display: grid; place-items: center; font-size: 1rem;
+    transition: .2s var(--ease); box-shadow: var(--shadow-sm); }
+  .fm-nav:hover { background: var(--grad); color: #fff; border-color: transparent; transform: scale(1.06); box-shadow: var(--shadow-brand); }
+  .fm-grade-again { border-color: rgba(245,158,11,.5) !important; }
+  .fm-grade-again:hover { color: #b45309 !important; border-color: #f59e0b !important; }
+  .fm-grade-got { background: linear-gradient(135deg, #22c55e, #16a34a) !important; color: #fff !important;
+    border: none !important; box-shadow: 0 12px 26px rgba(34,197,94,.35) !important; }
+  .fm-grade-got:hover { transform: translateY(-2px); }
+  .fm-keys { width: 100%; text-align: center; color: var(--muted); font-size: .76rem; margin-top: 2px; }
+  .fm-done { text-align: center; padding: 14px 0; }
+  .fm-done .big { font-size: 3rem; }
+  .fm-done h3 { font-size: 1.7rem; margin: 12px 0 8px; color: var(--ink); letter-spacing: -.02em; }
+  .fm-done h3 .serif-accent { font-size: 1.12em; }
+  .fm-done p { color: var(--text-body); }
 
-  /* mobile board fallback */
-  .ip-board.stacked { perspective: none; min-height: 0; display: grid; gap: 16px; }
-  .ip-board.stacked .bc { position: relative; width: 100%; transform: none !important; cursor: pointer; }
-  .ip-board.stacked .bc-inner { animation: none; }
-
-  /* ---- PRESENTATION MODE ---- */
-  .pm { position: fixed; inset: 0; z-index: 2000; display: none; }
-  .pm.show { display: block; }
-  .pm-bg { position: absolute; inset: 0; background:
-      radial-gradient(60vw 60vw at 18% 12%, rgba(47,107,255,.55), transparent 60%),
-      radial-gradient(55vw 55vw at 85% 20%, rgba(124,58,237,.55), transparent 60%),
-      radial-gradient(60vw 60vw at 70% 95%, rgba(6,182,212,.45), transparent 60%),
-      #0b1228; }
-  .pm-bg::after { content: ""; position: absolute; inset: 0; background:
-      radial-gradient(40vw 40vw at 30% 80%, rgba(124,58,237,.35), transparent 60%);
-      animation: pmDrift 16s ease-in-out infinite alternate; }
-  @keyframes pmDrift { to { transform: translate(8vw, -6vh) scale(1.15); } }
-
-  .pm-chrome-top { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center;
-    gap: 16px; padding: 22px 30px; }
-  .pm-counter { color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 1rem; letter-spacing: .04em; }
-  .pm-counter b { font-size: 1.5rem; }
-  .pm-counter span { opacity: .55; }
-  .pm-progress { flex: 1; height: 6px; background: rgba(255,255,255,.16); border-radius: 99px; overflow: hidden; max-width: 540px; }
-  .pm-progress i { display: block; height: 100%; width: 0; background: linear-gradient(90deg,#22d3ee,#3b82f6,#a855f7); border-radius: 99px; transition: width .5s var(--ease); }
-  .pm-top-btns { display: flex; gap: 10px; margin-left: auto; }
-  .pm-cbtn { cursor: pointer; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #fff;
-    width: 42px; height: 42px; border-radius: 50%; font-size: 1rem; transition: .18s var(--ease); display: grid; place-items: center; }
-  .pm-cbtn:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }
-  .pm-cbtn.wide { width: auto; padding: 0 16px; gap: 8px; font-weight: 600; font-size: .9rem; border-radius: 99px; }
-
-  .pm-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    padding: 96px 6vw 130px; perspective: 1800px; }
-  .pm-slide { width: min(880px, 100%); max-height: 100%; overflow-y: auto; background: rgba(255,255,255,.97);
-    border-radius: 26px; box-shadow: 0 40px 90px rgba(0,0,0,.45); padding: 44px 50px; position: relative; transform-style: preserve-3d; }
-  .pm-watermark { position: absolute; top: 8px; right: 28px; font-family: var(--font-display); font-weight: 800;
-    font-size: 9rem; line-height: 1; color: rgba(15,27,51,.05); pointer-events: none; z-index: 0; }
-  .pm-slide > * { position: relative; z-index: 1; }
-  .pm-ribbon { display: inline-flex; align-items: center; gap: 9px; font-size: .74rem; font-weight: 700;
-    letter-spacing: .12em; text-transform: uppercase; padding: 7px 14px; border-radius: 99px; }
-  .pm-ribbon.technical { background: rgba(47,107,255,.12); color: var(--brand-ink); }
-  .pm-ribbon.behavioral { background: rgba(124,58,237,.13); color: #6d28d9; }
-  .pm-ribbon.scripts { background: rgba(6,182,212,.14); color: #0e7490; }
-  .pm-ribbon .rdot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-  .pm-q { font-family: var(--font-display); font-weight: 800; color: var(--text); font-size: clamp(1.5rem, 3.4vw, 2.3rem);
-    line-height: 1.25; margin: 20px 0 0; letter-spacing: -.01em; }
-  .pm-a { margin-top: 26px; color: var(--text-body); font-size: 1.04rem; line-height: 1.78; display: none; }
-  .pm-a.show { display: block; }
-  .pm-a strong { color: var(--text); }
-  .pm-a .star { display: grid; gap: 10px; margin-top: 6px; }
-  .pm-a .star div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 15px; }
-  .pm-a .star b { color: var(--brand-ink); }
-  .pm-a ul { margin: 10px 0 0; padding-left: 20px; }
-  .pm-a ul li { margin-bottom: 8px; }
-  .pm-a .say { background: var(--grad-soft); border-radius: 12px; padding: 15px 17px; margin-top: 14px; color: var(--text); font-weight: 500; }
-  .pm-a .say::before { content: "🗣️ Say it like this"; display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-ink); margin-bottom: 7px; }
-  .pm-a code { background: var(--surface-3); padding: 2px 6px; border-radius: 6px; font-size: .9em; }
-  .pm-tip { margin-top: 28px; font-size: .86rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
-  .pm-tip kbd, .pm-kbd kbd { background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 6px; padding: 2px 8px; font-family: var(--font-body); font-size: .8rem; color: var(--text-body); }
-
-  .pm-chrome-bot { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center;
-    justify-content: center; gap: 12px; padding: 24px 30px; flex-wrap: wrap; }
-  .pm-nav { cursor: pointer; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #fff;
-    width: 52px; height: 52px; border-radius: 50%; font-size: 1.1rem; transition: .18s var(--ease); display: grid; place-items: center; }
-  .pm-nav:hover { background: rgba(255,255,255,.22); transform: scale(1.06); }
-  .pm-grade { cursor: pointer; border: none; font-weight: 700; font-size: .95rem; padding: 13px 24px; border-radius: 99px;
-    transition: .18s var(--ease); display: inline-flex; align-items: center; gap: 9px; }
-  .pm-grade.again { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.28); }
-  .pm-grade.again:hover { background: rgba(245,158,11,.9); border-color: transparent; }
-  .pm-grade.reveal { background: rgba(255,255,255,.95); color: var(--text); }
-  .pm-grade.reveal:hover { transform: translateY(-2px); }
-  .pm-grade.got { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; box-shadow: 0 12px 26px rgba(34,197,94,.4); }
-  .pm-grade.got:hover { transform: translateY(-2px); }
-  .pm-kbd { color: rgba(255,255,255,.65); font-size: .8rem; width: 100%; text-align: center; }
-
-  .pm-done { text-align: center; }
-  .pm-done .big { font-size: 3.4rem; }
-  .pm-done h3 { font-size: 1.9rem; margin: 14px 0 8px; }
-  .pm-done p { color: var(--text-body); font-size: 1.05rem; }
-
-  /* ---- toast ---- */
-  .ip-toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  /* toast + confetti */
+  .ip-toast { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 3000;
     background: var(--text); color: #fff; padding: 13px 22px; border-radius: var(--radius-pill); font-weight: 600;
-    font-size: .92rem; box-shadow: var(--shadow-lg); z-index: 3000; opacity: 0; pointer-events: none;
-    transition: .35s var(--ease); display: inline-flex; align-items: center; gap: 9px; }
+    font-size: .9rem; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: .35s var(--ease);
+    display: inline-flex; align-items: center; gap: 9px; }
   .ip-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .ip-toast i { color: #4ade80; }
   #ip-confetti { position: fixed; inset: 0; z-index: 2500; pointer-events: none; }
 
   /* ---- responsive ---- */
-  @media (max-width: 900px) {
+  @media (max-width: 980px) {
     .ip-hero { grid-template-columns: 1fr; }
-    .ip-stats { grid-template-columns: repeat(2, 1fr); }
-    .ip-cats { grid-template-columns: 1fr; }
-    .ip-tool-btns { margin-left: 0; width: 100%; }
+    .ip-pillars { grid-template-columns: 1fr; }
+    .ip-search { margin-left: 0; width: 100%; }
     .ip-search input { width: 100%; }
-    .ip-search { flex: 1; }
-    .pm-slide { padding: 30px 24px; }
-    .pm-watermark { font-size: 6rem; }
+    .ip-topbar .btn span { display: none; }
+    .ip-topbar .btn { padding: 11px 14px; }
+    .fm-slide { padding: 30px 24px; }
+    .fm-ghostnum { font-size: 4.5rem; }
   }
-  @media (prefers-reduced-motion: reduce) { *, .bc-inner { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* =================================================================
+     SPEECH LAB (TRANSCRIPTION TOOL) STYLE RULES
+     ================================================================= */
+  .ip-tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+    position: relative;
+    z-index: 10;
+  }
+  .ip-tab-btn {
+    background: transparent;
+    border: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.02rem;
+    color: var(--muted);
+    padding: 10px 22px;
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+    transition: all 0.25s var(--ease);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ip-tab-btn i {
+    font-size: 0.9em;
+  }
+  .ip-tab-btn:hover {
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+  .ip-tab-btn.active {
+    color: #fff;
+    background: var(--grad);
+    box-shadow: var(--shadow-brand);
+  }
+  
+  .ip-lab-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    margin-top: 20px;
+    align-items: start;
+  }
+  .ip-lab-card, .ip-output-card, .ip-history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ip-lab-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .ip-voice-circle-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ip-btn-record {
+    position: relative;
+    z-index: 10;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    background: var(--grad);
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-brand);
+    transition: all 0.3s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ip-btn-record:focus {
+    outline: none;
+  }
+  .ip-btn-record:hover {
+    transform: scale(1.05);
+  }
+  .ip-btn-record.recording {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4);
+  }
+  .ip-voice-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #ef4444;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.7);
+  }
+  .ip-btn-record.recording ~ .ip-voice-ring {
+    animation: ipVoicePulse 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #ip-voice-ring-2 {
+    animation-delay: 1s !important;
+  }
+  @keyframes ipVoicePulse {
+    0% { transform: scale(0.7); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+  .ip-rec-status {
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--ink);
+    margin-top: 10px;
+    line-height: 1.4;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ip-rec-timer {
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .ip-lab-settings {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .ip-setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text-body);
+  }
+  .ip-setting-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--brand);
+  }
+  .ip-output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .ip-output-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--ink);
+  }
+  .ip-word-count {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .ip-transcript-container {
+    position: relative;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ip-transcript-rich {
+    min-height: 280px;
+    max-height: 480px;
+    padding: 20px;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text);
+    outline: none;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .ip-transcript-rich:empty::before {
+    content: attr(placeholder);
+    color: var(--muted);
+    font-style: italic;
+    pointer-events: none;
+  }
+  .ip-transcript-rich .interim {
+    color: var(--muted);
+    font-style: italic;
+    opacity: 0.75;
+  }
+  .ip-output-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ip-output-actions .btn {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
+  .text-danger {
+    color: #dc2626 !important;
+  }
+  
+  /* History styling */
+  .ip-history-card {
+    margin-top: 24px;
+  }
+  .ip-history-card h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ip-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .ip-history-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .ip-history-item:hover {
+    border-color: var(--border-strong);
+  }
+  .ip-history-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 700;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 6px;
+  }
+  .ip-history-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .ip-history-actions {
+    display: flex;
+    gap: 12px;
+  }
+  .ip-history-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+  }
+  .ip-history-btn:hover {
+    color: var(--brand-ink);
+  }
+  .ip-history-empty {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    border: 2.5px dashed var(--border);
+    border-radius: var(--radius);
+    font-style: italic;
+  }
   </style>
 </head>
 <body>
 
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-grain" aria-hidden="true"></div>
+
   <!-- ===== TOP BAR ===== -->
   <div class="ip-topbar">
     <div class="ip-topbar-inner">
-      <div class="ip-brand">
-        <span class="badge">JR</span>
-        <span class="ttl">Interview War Room<small>Private prep · BI Engineer</small></span>
+      <a class="ip-home" href="/">
+        <span class="mark">JR</span>
+        <span class="back"><i class="fas fa-arrow-left"></i> Portfolio</span>
+      </a>
+      <div class="ip-ttl">Interview War Room<small>Private prep · BI Engineer</small></div>
+      <div class="ip-top-actions">
+        <span class="ip-streak-pill" title="Day streak"><i class="fas fa-fire"></i> <span id="ip-streak-top">0</span></span>
+        <button class="btn btn-primary" id="ip-present-top"><i class="fas fa-play"></i> <span>Focus session</span></button>
       </div>
-      <a class="ip-back" href="/"><i class="fas fa-arrow-left"></i> Back to portfolio</a>
     </div>
   </div>
 
   <div class="ip-wrap">
 
-    <!-- ===== HERO ===== -->
-    <section class="ip-hero">
-      <div class="ip-hero-card">
-        <canvas id="ip-particles"></canvas>
-        <span class="ip-eyebrow"><span class="pulse"></span> Your safe space to prepare</span>
-        <h1 id="ip-greet">Let's get you interview-ready.</h1>
-        <p class="sub">A calm, cinematic place to rehearse the answers that win offers — technical depth, behavioral stories,
-          and the exact scripts you'll say out loud. Drag the slides, present them like a deck, and watch your readiness climb.</p>
-        <div class="ip-quote">
-          <i class="fas fa-quote-left"></i>
-          <span id="ip-quote-text">Loading a little motivation…</span>
-        </div>
-        <div class="ip-hero-actions">
-          <button class="ip-btn ip-btn-primary" id="ip-start-session"><i class="fas fa-play"></i> Present all (shuffled)</button>
-          <button class="ip-btn ip-btn-ghost" id="ip-review-weak"><i class="fas fa-bullseye"></i> Drill my weak spots</button>
+    <!-- ===== TAB NAVIGATION ===== -->
+    <div class="ip-tab-nav">
+      <button class="ip-tab-btn active" id="ip-tab-deck"><i class="fas fa-graduation-cap"></i> Practice Deck</button>
+      <button class="ip-tab-btn" id="ip-tab-speech"><i class="fas fa-microphone"></i> Speech Lab</button>
+    </div>
+
+    <!-- ===== PRACTICE DECK VIEW ===== -->
+    <div id="ip-practice-view">
+
+      <!-- ===== HERO ===== -->
+      <header class="ip-hero">
+      <div class="ip-hero-ghost" aria-hidden="true">READY</div>
+      <div class="ip-hero-left">
+        <span class="ip-kicker"><span class="pulse"></span> Your safe space to prepare</span>
+        <h1 id="ip-greet">Own the room before you <span class="serif-accent">enter it.</span></h1>
+        <p class="sub">Technical depth, behavioral stories, and the exact scripts you'll say out loud —
+          rehearsed a little every day until confidence is just muscle memory.</p>
+        <p class="ip-quote" id="ip-quote">"You don't have to be perfect — you have to be <b>prepared</b>."</p>
+        <div class="ip-hero-cta">
+          <button class="btn btn-primary" id="ip-start-session"><i class="fas fa-bolt"></i> Start a focus session</button>
+          <button class="btn btn-ghost" id="ip-review-weak"><i class="fas fa-bullseye"></i> Drill my weak spots</button>
         </div>
       </div>
 
-      <div class="ip-hero-card ip-ring-card">
+      <div class="ip-ready">
         <div class="ip-ring">
-          <svg width="200" height="200" viewBox="0 0 200 200">
+          <svg width="172" height="172" viewBox="0 0 172 172">
             <defs>
               <linearGradient id="ipGrad" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stop-color="#06b6d4"/><stop offset="50%" stop-color="#2f6bff"/><stop offset="100%" stop-color="#7c3aed"/>
               </linearGradient>
             </defs>
-            <circle class="track" cx="100" cy="100" r="84"/>
-            <circle class="meter" id="ip-ring-meter" cx="100" cy="100" r="84"/>
+            <circle class="track" cx="86" cy="86" r="72"/>
+            <circle class="meter" id="ip-ring-meter" cx="86" cy="86" r="72"/>
           </svg>
           <div class="center">
             <div class="pct grad-text" id="ip-ring-pct">0%</div>
             <div class="lbl">Readiness</div>
           </div>
         </div>
-        <div class="ip-ring-status" id="ip-ring-status">Warming up</div>
-        <div class="ip-ring-sub" id="ip-ring-sub">Master slides to raise your score</div>
+        <div class="ip-ready-status" id="ip-ring-status">Warming up</div>
+        <div class="ip-ready-sub" id="ip-ring-sub">Master prompts to raise your score</div>
+        <div class="ip-ready-metrics">
+          <div class="ip-rm"><b id="ip-stat-mastered">0</b><span>Mastered</span></div>
+          <div class="ip-rm"><b id="ip-stat-total">0</b><span>Prompts</span></div>
+          <div class="ip-rm"><b id="ip-stat-today">0</b><span>Today</span></div>
+        </div>
       </div>
-    </section>
+    </header>
 
-    <!-- ===== STAT STRIP ===== -->
-    <section class="ip-stats">
-      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#22c55e,#16a34a)"><i class="fas fa-check-double"></i></div><div><div class="v" id="ip-stat-mastered">0</div><div class="k">Slides mastered</div></div></div>
-      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#f59e0b,#ef4444)"><i class="fas fa-fire"></i></div><div><div class="v" id="ip-stat-streak">0</div><div class="k">Day streak</div></div></div>
-      <div class="ip-stat"><div class="ico" style="background:var(--grad)"><i class="fas fa-layer-group"></i></div><div><div class="v" id="ip-stat-total">0</div><div class="k">Total prompts</div></div></div>
-      <div class="ip-stat"><div class="ico" style="background:linear-gradient(135deg,#06b6d4,#7c3aed)"><i class="fas fa-stopwatch"></i></div><div><div class="v" id="ip-stat-today">0</div><div class="k">Reviewed today</div></div></div>
-    </section>
+    <!-- ===== PILLARS ===== -->
+    <div class="ip-sec-head">
+      <div class="ghost" aria-hidden="true">01</div>
+      <h2>Three pillars, one <span class="serif-accent">performance.</span></h2>
+      <p class="s">Click a pillar to focus the deck on it.</p>
+    </div>
+    <section class="ip-pillars" id="ip-pillars"></section>
 
-    <!-- ===== CATEGORIES ===== -->
-    <div class="ip-section-head"><div><div class="ip-kicker">Your three pillars</div><h2>What we're sharpening</h2></div></div>
-    <section class="ip-cats" id="ip-cats"></section>
-
-    <!-- ===== BOARD ===== -->
-    <div class="ip-section-head" style="margin-bottom:6px"><div><div class="ip-kicker">The slide wall</div><h2>Drag, shuffle &amp; present</h2></div></div>
-    <div class="ip-toolbar">
-      <div class="ip-chips" id="ip-chips"></div>
-      <div class="ip-tool-btns">
-        <div class="ip-search"><i class="fas fa-search"></i><input type="text" id="ip-search" placeholder="Search prompts…" autocomplete="off"></div>
-        <button class="ip-icon-btn" id="ip-shuffle"><i class="fas fa-shuffle"></i> Reshuffle</button>
-        <button class="ip-icon-btn solid" id="ip-present"><i class="fas fa-display"></i> Present</button>
+    <!-- ===== DECK ===== -->
+    <div class="ip-sec-head">
+      <div class="ghost" aria-hidden="true">02</div>
+      <h2>The <span class="serif-accent">deck.</span></h2>
+      <p class="s">Reveal the model answer, grade yourself honestly, and the readiness ring does the rest.</p>
+    </div>
+    <div class="ip-toolbar" id="ip-toolbar">
+      <div style="display:flex; gap:8px; flex-wrap:wrap" id="ip-chips"></div>
+      <div class="ip-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="ip-search" placeholder="Search prompts…" autocomplete="off">
       </div>
     </div>
-    <div class="ip-board" id="ip-board">
-      <div class="ip-board-hint"><i class="fas fa-hand-pointer"></i> Drag slides · click to present</div>
+    <section class="ip-deck" id="ip-deck" aria-live="polite"></section>
+
+    <div class="ip-reset-row">
+      <button class="ip-mini" id="ip-reset" style="color:var(--muted)"><i class="fas fa-rotate-left"></i> Reset all progress</button>
+    </div>
+  </div> <!-- Close ip-practice-view -->
+
+  <!-- ===== SPEECH LAB VIEW ===== -->
+  <div id="ip-speech-view" style="display: none;">
+    <!-- Section Header -->
+    <div class="ip-sec-head">
+      <div class="ghost" aria-hidden="true">LAB</div>
+      <h2>Speech <span class="serif-accent">Lab.</span></h2>
+      <p class="s">Record or live-transcribe your speech. The transcribed text will appear below, ready for copy-pasting or automation.</p>
     </div>
 
-    <div style="text-align:center;margin-top:46px">
-      <button class="ip-icon-btn" id="ip-reset" style="color:var(--muted);border-color:var(--border)"><i class="fas fa-rotate-left"></i> Reset all progress</button>
+    <div class="ip-lab-container">
+      <!-- Left panel: Controls and Waveform -->
+      <div class="ip-lab-sidebar">
+        <div class="ip-lab-card">
+          <!-- Microphone Selection Dropdown -->
+          <div class="ip-setting-row" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 14px; width: 100%;">
+            <label for="ip-mic-select" style="font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: left;">Select Microphone</label>
+            <div style="position: relative; width: 100%;">
+              <select id="ip-mic-select" style="width: 100%; border: 1px solid var(--border-strong); background: var(--surface-2); border-radius: var(--radius-sm); padding: 10px 32px 10px 12px; font-family: var(--font-body); font-size: 0.84rem; color: var(--text); appearance: none; -webkit-appearance: none; cursor: pointer; outline: none; transition: border-color 0.2s;"></select>
+              <i class="fas fa-chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--muted); font-size: 0.8rem;"></i>
+            </div>
+            <span style="font-size: 0.65rem; color: var(--muted); margin-top: 4px; line-height: 1.35; text-align: left;">
+              <i class="fas fa-info-circle"></i> Browser speech recognition uses your system default mic. Change it in your OS settings if needed.
+            </span>
+          </div>
+
+          <div class="ip-voice-circle-wrap">
+            <div class="ip-voice-ring" id="ip-voice-ring-1"></div>
+            <div class="ip-voice-ring" id="ip-voice-ring-2"></div>
+            <button class="ip-btn-record" id="ip-rec-btn" aria-label="Start recording">
+              <i class="fas fa-microphone"></i>
+            </button>
+          </div>
+          <div class="ip-rec-status" id="ip-rec-status">Click microphone to start transcribing</div>
+          
+          <!-- Sound Bar Visualizer Canvas -->
+          <div class="ip-visualizer-wrap" style="width: 100%; margin-top: 14px; margin-bottom: 6px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-strong); height: 64px; background: #18181b;">
+            <canvas id="ip-audio-canvas" width="272" height="64" style="display: block; width: 100%; height: 100%;"></canvas>
+          </div>
+
+          <div class="ip-rec-timer" id="ip-rec-timer">00:00</div>
+
+          <div class="ip-lab-settings">
+            <!-- Engine Select Dropdown -->
+            <div class="ip-setting-row" style="flex-direction: column; align-items: stretch; gap: 4px; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 10px;">
+              <label for="ip-opt-engine" style="font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: left;">Transcription Engine</label>
+              <select id="ip-opt-engine" style="width: 100%; border: 1px solid var(--border-strong); background: var(--surface-2); border-radius: var(--radius-sm); padding: 8px 10px; font-family: var(--font-body); font-size: 0.8rem; color: var(--text); outline: none; cursor: pointer;">
+                <option value="modulate-stream" selected>Modulate.ai Streaming (Near Real-time)</option>
+                <option value="browser-speech">Browser Web Speech (Native Real-time)</option>
+                <option value="modulate-batch">Modulate.ai Batch (Send on stop)</option>
+              </select>
+            </div>
+
+            <!-- Language Select Dropdown -->
+            <div class="ip-setting-row" style="flex-direction: column; align-items: stretch; gap: 4px; width: 100%; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 10px;">
+              <label for="ip-opt-lang" style="font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: left;">Speech Language</label>
+              <select id="ip-opt-lang" style="width: 100%; border: 1px solid var(--border-strong); background: var(--surface-2); border-radius: var(--radius-sm); padding: 8px 10px; font-family: var(--font-body); font-size: 0.8rem; color: var(--text); outline: none; cursor: pointer;">
+                <option value="en-US" selected>English (United States)</option>
+                <option value="en-GB">English (United Kingdom)</option>
+                <option value="es-ES">Español (España)</option>
+                <option value="es-MX">Español (México)</option>
+                <option value="fr-FR">Français (France)</option>
+                <option value="de-DE">Deutsch (Deutschland)</option>
+                <option value="zh-CN">中文 (简体)</option>
+              </select>
+            </div>
+
+            <div class="ip-setting-row">
+              <label for="ip-opt-continuous">Continuous Listening</label>
+              <input type="checkbox" id="ip-opt-continuous" checked>
+            </div>
+            <div class="ip-setting-row">
+              <label for="ip-opt-interim">Real-time Results</label>
+              <input type="checkbox" id="ip-opt-interim" checked>
+            </div>
+            <div class="ip-setting-row">
+              <label for="ip-opt-autoscroll">Auto-scroll Text</label>
+              <input type="checkbox" id="ip-opt-autoscroll" checked>
+            </div>
+            <div class="ip-setting-row" style="border-top: 1px dashed var(--border); padding-top: 10px; margin-top: 8px;">
+               <label for="ip-opt-disable-vis" style="color:#ef4444; font-size: 0.8rem;"><i class="fas fa-exclamation-triangle"></i> Disable Sound Bar (Fix mic lock)</label>
+               <input type="checkbox" id="ip-opt-disable-vis">
+             </div>
+          </div>
+
+          <!-- Diagnostics Console -->
+          <details class="ip-diagnostics" style="margin-top: 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-2); padding: 8px 12px; font-size: 0.76rem; color: var(--text-body); cursor: pointer; text-align: left;">
+            <summary style="font-family: var(--font-display); font-weight: 700; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-terminal"></i> Speech Diagnostics Log
+            </summary>
+            <div id="ip-diag-log" style="font-family: monospace; max-height: 120px; overflow-y: auto; margin-top: 8px; white-space: pre-wrap; font-size: 0.72rem; line-height: 1.4; color: #06b6d4; border-top: 1px solid var(--border); padding-top: 8px; cursor: text;" onclick="event.stopPropagation();">
+              [Log initialized]
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Right panel: Text display and Actions -->
+      <div class="ip-lab-main">
+        <div class="ip-output-card">
+          <div class="ip-output-header">
+            <span class="ip-output-title">Live Transcript</span>
+            <span class="ip-word-count" id="ip-word-count">0 words · 0 characters</span>
+          </div>
+          
+          <div class="ip-transcript-container">
+            <div id="ip-transcript-rich" class="ip-transcript-rich" contenteditable="true" placeholder="Start speaking and watch the text appear here..."></div>
+          </div>
+
+          <div class="ip-output-actions">
+            <button class="btn btn-ghost" id="ip-btn-copy"><i class="fas fa-copy"></i> Copy Text</button>
+            <button class="btn btn-ghost" id="ip-btn-download"><i class="fas fa-download"></i> Download .txt</button>
+            <button class="btn btn-ghost text-danger" id="ip-btn-clear" style="border-color: rgba(220,38,38,0.2); color: #dc2626"><i class="fas fa-trash-alt"></i> Clear</button>
+          </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="ip-history-card">
+          <h3><i class="fas fa-history"></i> Saved Transcripts</h3>
+          <div class="ip-history-list" id="ip-history-list">
+            <div class="ip-history-empty">No transcripts saved in this session. Click "Got it" or pause to log your transcripts.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== PRESENTATION MODE ===== -->
-  <div class="pm" id="pm">
-    <div class="pm-bg"></div>
-    <div class="pm-chrome-top">
-      <div class="pm-counter"><b id="pm-cur">1</b> <span>/ <span id="pm-total">1</span></span></div>
-      <div class="pm-progress"><i id="pm-prog"></i></div>
-      <div class="pm-top-btns">
-        <button class="pm-cbtn wide" id="pm-autoplay" title="Autoplay"><i class="fas fa-play"></i> <span>Auto</span></button>
-        <button class="pm-cbtn" id="pm-shuffle-live" title="Shuffle remaining"><i class="fas fa-shuffle"></i></button>
-        <button class="pm-cbtn" id="pm-close" title="Exit (Esc)"><i class="fas fa-times"></i></button>
+  <!-- ===== FOCUS MODE ===== -->
+  <div class="fm" id="fm" role="dialog" aria-modal="true" aria-label="Focus session">
+    <div class="fm-progress"><i id="fm-prog"></i></div>
+    <div class="fm-top">
+      <span class="fm-counter"><span id="fm-cur">1</span> <span>/ <span id="fm-total">1</span></span></span>
+      <div class="fm-top-actions">
+        <button class="fm-ibtn wide" id="fm-auto" title="Autoplay"><i class="fas fa-play"></i> Auto</button>
+        <button class="fm-ibtn" id="fm-shuffle" title="Shuffle remaining"><i class="fas fa-random"></i></button>
+        <button class="fm-ibtn" id="fm-close" title="Exit (Esc)"><i class="fas fa-times"></i></button>
       </div>
     </div>
-    <div class="pm-stage"><div class="pm-slide" id="pm-slide"></div></div>
-    <div class="pm-chrome-bot" id="pm-foot"></div>
+    <div class="fm-stage"><div class="fm-slide" id="fm-slide"></div></div>
+    <div class="fm-foot" id="fm-foot"></div>
   </div>
 
   <canvas id="ip-confetti"></canvas>
   <div class="ip-toast" id="ip-toast"><i class="fas fa-check-circle"></i><span id="ip-toast-text"></span></div>
 
   <script>
-  /* =================================================================
-     DATA — sample BI Engineer deck
-     ================================================================= */
+  (function () {
+  'use strict';
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s) => document.querySelector(s);
+
+  /* ---------------- CONTENT ---------------- */
   const CATS = {
-    technical:  { label: "Technical",  icon: "fa-database",      grad: "linear-gradient(135deg,#2f6bff,#1b4dd1)", blurb: "BI depth — SQL, modeling, DAX, Fabric, RPA. Show how you think, not just what you know." },
-    behavioral: { label: "Behavioral", icon: "fa-people-arrows", grad: "linear-gradient(135deg,#7c3aed,#6d28d9)", blurb: "STAR stories that prove ownership, collaboration, and impact under pressure." },
-    scripts:    { label: "Scripts",    icon: "fa-comment-dots",  grad: "linear-gradient(135deg,#06b6d4,#0e7490)", blurb: "Word-for-word lines for the moments that matter — intro, why-you, salary, closing." }
+    technical:  { label: 'Technical',  icon: 'fa-database',      num: '01', blurb: 'BI depth — SQL, modeling, DAX, Fabric, RPA. Show how you think, not just what you know.' },
+    behavioral: { label: 'Behavioral', icon: 'fa-people-arrows', num: '02', blurb: 'STAR stories that prove ownership, collaboration, and impact under pressure.' },
+    scripts:    { label: 'Scripts',    icon: 'fa-comment-dots',  num: '03', blurb: 'Word-for-word lines for the moments that matter — intro, why-you, salary, closing.' }
   };
 
   const DECK = [
-    { id:"t1", cat:"technical", sub:"Data Modeling", q:"Star schema vs. snowflake — which do you reach for and why?",
+    { id:'t1', cat:'technical', sub:'Data Modeling', q:'Star schema vs. snowflake — which do you reach for and why?',
       a:`<p>I default to a <strong>star schema</strong> for analytics: one central fact table surrounded by denormalized dimensions. Fewer joins means faster queries and a model that's intuitive for self-service users in Power BI / Tableau.</p>
       <ul><li><strong>Star</strong> — denormalized dims, best query performance, easiest for report builders.</li>
       <li><strong>Snowflake</strong> — dims normalized into sub-tables; saves storage and enforces integrity, but adds joins and complexity.</li></ul>
       <div class="say">In practice I model in a star schema and only snowflake when a dimension is huge and shared across facts — like a product hierarchy that has to stay consistent. Performance and usability win for BI workloads.</div>`},
-    { id:"t2", cat:"technical", sub:"SQL", q:"Walk me through window functions — when do they beat a GROUP BY?",
+    { id:'t2', cat:'technical', sub:'SQL', q:'Walk me through window functions — when do they beat a GROUP BY?',
       a:`<p>Window functions compute across a set of rows <strong>without collapsing them</strong> — so I keep row-level detail while adding aggregates alongside.</p>
       <ul><li><code>ROW_NUMBER()/RANK()</code> — dedupe or get "latest record per key."</li>
-      <li><code>SUM() OVER (PARTITION BY ... ORDER BY ...)</code> — running totals & YTD.</li>
+      <li><code>SUM() OVER (PARTITION BY ... ORDER BY ...)</code> — running totals &amp; YTD.</li>
       <li><code>LAG()/LEAD()</code> — period-over-period change without a self-join.</li></ul>
       <div class="say">Classic example: "show each order plus that customer's running total." A GROUP BY forces you to lose the order rows; a window function keeps the detail and adds the cumulative sum in one pass.</div>`},
-    { id:"t3", cat:"technical", sub:"DAX", q:"Explain CALCULATE in DAX like I'm a new analyst.",
+    { id:'t3', cat:'technical', sub:'DAX', q:"Explain CALCULATE in DAX like I'm a new analyst.",
       a:`<p><code>CALCULATE</code> evaluates an expression in a <strong>modified filter context</strong> — it's the engine behind almost every serious measure.</p>
       <ul><li>First argument = the measure/expression.</li><li>Remaining arguments = filters that <em>override</em> the current context.</li></ul>
       <p><code>Sales LY = CALCULATE([Total Sales], SAMEPERIODLASTYEAR('Date'[Date]))</code></p>
       <div class="say">I describe it as "do this calculation, but change the filters first." Master CALCULATE plus filter context and 90% of DAX clicks into place.</div>`},
-    { id:"t4", cat:"technical", sub:"DAX", q:"Measure vs. calculated column — how do you decide?",
+    { id:'t4', cat:'technical', sub:'DAX', q:'Measure vs. calculated column — how do you decide?',
       a:`<ul><li><strong>Calculated column</strong> — computed row-by-row at refresh, stored in the model, eats memory. Use when you need the value to slice/filter or sit on an axis.</li>
       <li><strong>Measure</strong> — computed on the fly in the current filter context, near-zero storage. Use for any aggregation: sums, ratios, KPIs.</li></ul>
       <div class="say">Rule of thumb I give juniors: if you're aggregating, it's a measure. If you need a per-row attribute to filter or group by, it's a column — and even then, push it to the source or Power Query when you can.</div>`},
-    { id:"t5", cat:"technical", sub:"ETL", q:"ETL vs. ELT — and where does the medallion architecture fit?",
+    { id:'t5', cat:'technical', sub:'ETL', q:'ETL vs. ELT — and where does the medallion architecture fit?',
       a:`<p><strong>ETL</strong> transforms before loading; <strong>ELT</strong> loads raw then transforms inside the warehouse/lakehouse — which is what I do in <strong>Microsoft Fabric</strong>.</p>
       <ul><li><strong>Bronze</strong> — raw ingested data, untouched.</li><li><strong>Silver</strong> — cleaned, conformed, deduplicated.</li><li><strong>Gold</strong> — business-ready star schemas the reports sit on.</li></ul>
       <div class="say">Modern cloud platforms make ELT the default — storage is cheap and compute is elastic. I land raw in bronze so I never lose source fidelity, then build silver and gold layers I can rebuild and audit at any time.</div>`},
-    { id:"t6", cat:"technical", sub:"Data Warehouse", q:"How do you handle Slowly Changing Dimensions?",
+    { id:'t6', cat:'technical', sub:'Data Warehouse', q:'How do you handle Slowly Changing Dimensions?',
       a:`<ul><li><strong>Type 1</strong> — overwrite. No history (e.g. fixing a typo).</li>
       <li><strong>Type 2</strong> — add a new row with start/end dates + a current flag. Full history; my default for things like a customer's region or a sales rep assignment.</li>
       <li><strong>Type 3</strong> — keep a "previous value" column. Limited history.</li></ul>
       <div class="say">For anything where "what was true at the time" matters for reporting — assignments, pricing tiers, org structure — I use Type 2 so a sale always rolls up to the dimension values that were valid on the transaction date.</div>`},
-    { id:"t7", cat:"technical", sub:"Performance", q:"A Power BI report is slow. How do you diagnose and fix it?",
+    { id:'t7', cat:'technical', sub:'Performance', q:'A Power BI report is slow. How do you diagnose and fix it?',
       a:`<p>I work outside-in with <strong>Performance Analyzer</strong> and DAX Studio to find whether it's the visual, the DAX, or the model.</p>
       <ul><li><strong>Model</strong> — star schema, drop unused columns, lower cardinality, prefer Import over DirectQuery where possible.</li>
       <li><strong>DAX</strong> — avoid row-by-row iterators on big tables, replace heavy <code>FILTER</code> with boolean filters, use variables.</li>
       <li><strong>Visuals</strong> — fewer visuals per page, limit slicers, avoid huge table visuals.</li></ul>
       <div class="say">I always measure before optimizing — Performance Analyzer tells me if I'm spending time in the DAX query or in visual rendering, so I fix the real bottleneck instead of guessing.</div>`},
-    { id:"t8", cat:"technical", sub:"Governance", q:"How do you implement row-level security at scale?",
+    { id:'t8', cat:'technical', sub:'Governance', q:'How do you implement row-level security at scale?',
       a:`<p>I define <strong>RLS roles</strong> with DAX filters on dimension tables, then for big orgs use <strong>dynamic RLS</strong> driven by a security/mapping table keyed on <code>USERPRINCIPALNAME()</code>.</p>
       <ul><li>Static roles for a handful of fixed groups.</li><li>Dynamic RLS so one role scales to thousands of users via a mapping table.</li><li>Always test with "View as role" before publishing.</li></ul>
       <div class="say">Dynamic RLS means I don't create a role per region — the user logs in, we look them up in a mapping table, and they only ever see their slice. One role, fully data-driven.</div>`},
-    { id:"t9", cat:"technical", sub:"Pipelines", q:"What is incremental refresh and why does it matter?",
+    { id:'t9', cat:'technical', sub:'Pipelines', q:'What is incremental refresh and why does it matter?',
       a:`<p>Instead of reloading an entire history every refresh, incremental refresh only pulls <strong>recent/changed partitions</strong> — say the last 7 days — while keeping years of archived data static.</p>
       <ul><li>Faster, cheaper refreshes.</li><li>Less load on source systems.</li><li>Configured with RangeStart / RangeEnd parameters in Power Query.</li></ul>
       <div class="say">For a fact table with tens of millions of rows, full refresh is wasteful and fragile. I partition by date and only refresh the hot window — refreshes drop from an hour to minutes.</div>`},
-    { id:"t10", cat:"technical", sub:"RPA", q:"How do you decide a process is worth automating with RPA?",
+    { id:'t10', cat:'technical', sub:'RPA', q:'How do you decide a process is worth automating with RPA?',
       a:`<p>I screen for processes that are <strong>repetitive, rules-based, high-volume, and stable</strong>. If the steps change weekly or need real judgment, RPA is the wrong tool.</p>
       <ul><li>Quantify volume × time × frequency to size the ROI.</li><li>Confirm the inputs are structured and the rules are deterministic.</li><li>Build in logging, exception handling, and a fallback path.</li></ul>
       <div class="say">My filter is simple: boring, frequent, and rule-based gets automated. I always add error handling and an audit log so the bot fails loudly and safely instead of quietly corrupting data.</div>`},
-    { id:"t11", cat:"technical", sub:"Quality", q:"How do you ensure the numbers on a dashboard are trustworthy?",
+    { id:'t11', cat:'technical', sub:'Quality', q:'How do you ensure the numbers on a dashboard are trustworthy?',
       a:`<ul><li><strong>Reconcile</strong> totals against the source system / a known-good report.</li>
       <li><strong>Tests</strong> — row counts, null checks, duplicate keys, referential integrity at the silver layer.</li>
       <li><strong>Single source of truth</strong> — one governed dataset, certified, so everyone uses the same definitions.</li>
       <li><strong>Documentation</strong> — clear measure definitions so "revenue" means one thing.</li></ul>
       <div class="say">Trust is the product. I reconcile to source on every release and keep a data dictionary, because the fastest way to lose a stakeholder is one wrong number they catch before you do.</div>`},
-    { id:"t12", cat:"technical", sub:"Storytelling", q:"How do you design a dashboard people actually use?",
+    { id:'t12', cat:'technical', sub:'Storytelling', q:'How do you design a dashboard people actually use?',
       a:`<p>I start with the <strong>decision</strong>, not the data: who's looking, what action they take, what question they ask first.</p>
       <ul><li>Top-left = the headline KPI; detail flows down/right.</li><li>Progressive disclosure — summary first, drill-through for detail.</li><li>Consistent color with meaning; restraint over decoration.</li></ul>
       <div class="say">A dashboard isn't a data dump — it's a decision tool. I design backward from "what will this person do differently after looking at it," and cut anything that doesn't serve that.</div>`},
 
-    { id:"b1", cat:"behavioral", sub:"Stakeholders", q:"Tell me about a time you handled a difficult stakeholder.",
+    { id:'b1', cat:'behavioral', sub:'Stakeholders', q:'Tell me about a time you handled a difficult stakeholder.',
       a:`<div class="star">
         <div><b>Situation</b> — A senior leader insisted a dashboard was "wrong" because the revenue didn't match their spreadsheet.</div>
         <div><b>Task</b> — Rebuild trust without throwing anyone under the bus.</div>
         <div><b>Action</b> — I walked them through the lineage line by line, found their sheet was double-counting a returns adjustment, and added a clearly labeled reconciliation view so the gap was visible and explainable.</div>
         <div><b>Result</b> — The leader became one of the dashboard's biggest advocates, and the reconciliation view became a standard I rolled out elsewhere.</div></div>
       <div class="say">I don't get defensive when someone challenges a number — I treat it as a chance to prove the data's integrity. Nine times out of ten we both learn something, and trust goes up.</div>`},
-    { id:"b2", cat:"behavioral", sub:"Impact", q:"Describe a time you improved a process.",
+    { id:'b2', cat:'behavioral', sub:'Impact', q:'Describe a time you improved a process.',
       a:`<div class="star">
         <div><b>Situation</b> — A monthly report took a full day of manual exports and copy-paste each cycle.</div>
         <div><b>Task</b> — Give the team their day back and remove human error.</div>
         <div><b>Action</b> — I built an automated pipeline that ingested the sources, applied the transforms, and refreshed a Power BI dataset on a schedule — plus an RPA bot for the one legacy system without an API.</div>
         <div><b>Result</b> — Reporting went from ~8 hours to near-zero touch, errors dropped, and the analyst moved to higher-value analysis.</div></div>
       <div class="say">I look for the boring, repetitive work that quietly drains a team and turn it into something that runs itself — then I redirect that time toward actual analysis.</div>`},
-    { id:"b3", cat:"behavioral", sub:"Resilience", q:"Tell me about a mistake you made and what you learned.",
+    { id:'b3', cat:'behavioral', sub:'Resilience', q:'Tell me about a mistake you made and what you learned.',
       a:`<div class="star">
         <div><b>Situation</b> — I shipped a measure change that quietly altered a KPI definition mid-quarter.</div>
         <div><b>Task</b> — Own it fast and prevent a repeat.</div>
         <div><b>Action</b> — I flagged it the moment I caught it, communicated the impact transparently, corrected it, and introduced version control + a change log and a peer-review step for measure changes.</div>
         <div><b>Result</b> — No lasting damage, and the review process caught two potential issues over the next quarter.</div></div>
       <div class="say">My instinct when I make a mistake is to surface it immediately and fix the system, not just the symptom — that's how a one-time error becomes a permanent guardrail.</div>`},
-    { id:"b4", cat:"behavioral", sub:"Prioritization", q:"How do you handle conflicting priorities and deadlines?",
+    { id:'b4', cat:'behavioral', sub:'Prioritization', q:'How do you handle conflicting priorities and deadlines?',
       a:`<div class="star">
         <div><b>Situation</b> — Two directors needed "urgent" dashboards the same week.</div>
         <div><b>Task</b> — Deliver value to both without burning out or shipping junk.</div>
         <div><b>Action</b> — I clarified the actual decision and deadline behind each, found one was truly board-driven and the other could take a phased v1, and aligned both stakeholders on the sequence transparently.</div>
         <div><b>Result</b> — Both got what they needed on time; the phased one even refined its requirements before the full build.</div></div>
       <div class="say">I prioritize by impact and real deadline, not by who asked loudest — and I make the trade-offs visible so stakeholders feel in control rather than deprioritized.</div>`},
-    { id:"b5", cat:"behavioral", sub:"Influence", q:"Tell me about a time you influenced without authority.",
+    { id:'b5', cat:'behavioral', sub:'Influence', q:'Tell me about a time you influenced without authority.',
       a:`<div class="star">
         <div><b>Situation</b> — Teams were each maintaining their own conflicting "revenue" metric.</div>
         <div><b>Task</b> — Get them onto one governed definition — without being their manager.</div>
         <div><b>Action</b> — I built a single certified dataset, showed each team it reproduced their numbers, and quantified the cost of the discrepancies to leadership to win sponsorship.</div>
         <div><b>Result</b> — Adoption of the shared model and far fewer "whose number is right" debates in reviews.</div></div>
       <div class="say">I influence with evidence and empathy — I show people the new way solves their pain first, and bring leadership the business case. People adopt what makes their life easier.</div>`},
-    { id:"b6", cat:"behavioral", sub:"Learning", q:"Tell me about a time you had to learn something new quickly.",
+    { id:'b6', cat:'behavioral', sub:'Learning', q:'Tell me about a time you had to learn something new quickly.',
       a:`<div class="star">
         <div><b>Situation</b> — A project required Microsoft Fabric when my background was more traditional Power BI / SQL.</div>
         <div><b>Task</b> — Get productive in lakehouse, dataflows, and notebooks fast.</div>
@@ -471,25 +922,25 @@
         <div><b>Result</b> — Delivered the pipeline on time and became the go-to person for Fabric questions.</div></div>
       <div class="say">I learn by building something real and small end-to-end, not by reading endlessly — and I document as I go so the whole team levels up with me.</div>`},
 
-    { id:"s1", cat:"scripts", sub:"Opener", q:'"Tell me about yourself."',
+    { id:'s1', cat:'scripts', sub:'Opener', q:'"Tell me about yourself."',
       a:`<div class="say">I'm a BI Engineer with around seven years turning messy data into decisions people actually trust. I've spanned the full stack of BI — SQL and data modeling, Power BI and Tableau, ELT pipelines in Microsoft Fabric, and RPA automation. Most recently as a Senior BI Engineer at TeamHealth, I've focused on building governed, reliable reporting and automating the manual work around it. What I enjoy most is the moment a stakeholder stops arguing about whose number is right and starts making a decision — that's the impact I'm after, and it's why this role caught my eye.</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Keep it ~60–90 seconds: present → past highlights → why this role.</p>`},
-    { id:"s2", cat:"scripts", sub:"Motivation", q:'"Why do you want this role / this company?"',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Keep it ~60–90 seconds: present → past highlights → why this role.</p>`},
+    { id:'s2', cat:'scripts', sub:'Motivation', q:'"Why do you want this role / this company?"',
       a:`<div class="say">Two reasons. First, the work — you're investing in [their data platform / analytics maturity], and that's exactly where I do my best work: building trustworthy data products that scale. Second, the impact — I want my dashboards driving real decisions, not sitting unused, and from what I've seen your team treats BI as a strategic function, not a report factory. I'd bring depth across modeling, Fabric, and automation, and I'm genuinely excited to plug into that.</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Always customize the bracketed parts with one specific, researched detail about them.</p>`},
-    { id:"s3", cat:"scripts", sub:"Strengths", q:'"What are your greatest strengths?"',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Always customize the bracketed parts with one specific, researched detail about them.</p>`},
+    { id:'s3', cat:'scripts', sub:'Strengths', q:'"What are your greatest strengths?"',
       a:`<div class="say">My core strength is bridging the technical and the business. I can model a star schema and tune DAX, but I'm just as comfortable sitting with a director to figure out the decision behind the request. The combination means I build things people actually use. The second is reliability — I treat data trust as the product, so I reconcile to source, document definitions, and automate the fragile manual steps before they break.</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Pick 2 strengths max and back each with how it shows up in your work.</p>`},
-    { id:"s4", cat:"scripts", sub:"Weakness", q:'"What is your greatest weakness?"',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Pick 2 strengths max and back each with how it shows up in your work.</p>`},
+    { id:'s4', cat:'scripts', sub:'Weakness', q:'"What is your greatest weakness?"',
       a:`<div class="say">Early on I tended to over-engineer — I'd build the elegant, fully-scalable solution when the team needed a good answer this week. I've learned to ship a solid v1 first, validate it solves the real problem, then iterate. I now explicitly ask "what decision does this need to support, and by when?" before I start building, and it's made me both faster and more useful.</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Real weakness + concrete fix + evidence you've improved. Never "I'm a perfectionist."</p>`},
-    { id:"s5", cat:"scripts", sub:"Transition", q:'"Why are you leaving / looking to move?"',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Real weakness + concrete fix + evidence you've improved. Never "I'm a perfectionist."</p>`},
+    { id:'s5', cat:'scripts', sub:'Transition', q:'"Why are you leaving / looking to move?"',
       a:`<div class="say">I've grown a lot where I am and I'm proud of what I've built, but I'm looking for a role with more scope to shape the data platform and work on harder, higher-impact problems. This isn't about leaving something behind — it's about moving toward a team where BI is central to how decisions get made, which is exactly what this role looks like.</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Stay positive — frame it as moving toward growth, never away from problems.</p>`},
-    { id:"s6", cat:"scripts", sub:"Compensation", q:'"What are your salary expectations?"',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Stay positive — frame it as moving toward growth, never away from problems.</p>`},
+    { id:'s6', cat:'scripts', sub:'Compensation', q:'"What are your salary expectations?"',
       a:`<div class="say">I'm looking for a package that reflects my experience across BI engineering, Fabric, and automation, and is competitive for this market and scope. Based on my research the range for this kind of role is around [your researched range] — but I'm flexible and most focused on overall fit. What range did you have budgeted for the position?</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Anchor with a researched range, then turn it back to them. Never undersell on the spot.</p>`},
-    { id:"s7", cat:"scripts", sub:"Closing", q:'"Do you have any questions for us?" (always yes)',
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Anchor with a researched range, then turn it back to them. Never undersell on the spot.</p>`},
+    { id:'s7', cat:'scripts', sub:'Closing', q:'"Do you have any questions for us?" (always yes)',
       a:`<ul>
         <li>What does success in this role look like in the first 6–12 months?</li>
         <li>How does the team think about data governance and a single source of truth today?</li>
@@ -497,474 +948,1215 @@
         <li>What's the biggest data challenge the team is wrestling with right now?</li>
         <li>How would you describe the collaboration between BI and the business stakeholders?</li></ul>
       <div class="say">I'm genuinely curious — what would make someone a standout in this role versus just solid?</div>`},
-    { id:"s8", cat:"scripts", sub:"Closing", q:"Your closing statement — leave them remembering you.",
+    { id:'s8', cat:'scripts', sub:'Closing', q:'Your closing statement — leave them remembering you.',
       a:`<div class="say">Thank you — this was a great conversation and it's only made me more excited. To be direct: I think I'm a strong fit. You need someone who can build trustworthy data products end-to-end and partner with the business to drive decisions, and that's exactly the work I love and have a track record in. I'd be thrilled to bring that to your team. What are the next steps in the process?</div>
-      <p style="margin-top:14px;color:var(--muted);font-size:.88rem"><i class="fas fa-lightbulb"></i> Confident, not arrogant. Reaffirm fit, express enthusiasm, ask about next steps.</p>`}
+      <p style="margin-top:12px;color:var(--muted);font-size:.86rem"><i class="fas fa-lightbulb"></i> Confident, not arrogant. Reaffirm fit, express enthusiasm, ask about next steps.</p>`}
   ];
 
   const QUOTES = [
-    "You don't have to be perfect — you have to be prepared.",
-    "Confidence is just preparation you can feel.",
-    "Every rep today is a calmer answer tomorrow.",
-    "You've already done the hard work. This is just telling the story.",
-    "Slow is smooth, smooth is fast. Breathe and answer.",
-    "They're not trying to trip you up — they want you to be great.",
-    "You know your work better than anyone in that room.",
-    "Small consistent reps beat one panicked cram session.",
-    "Nervous and ready can feel the same. Choose ready.",
-    "The best interview is a conversation between two experts. Be one of them."
+    ['You don\'t have to be perfect — you have to be ', 'prepared.'],
+    ['Confidence is just preparation you can ', 'feel.'],
+    ['Every rep today is a calmer answer ', 'tomorrow.'],
+    ['You\'ve done the hard work. This is just telling the ', 'story.'],
+    ['Slow is smooth, smooth is ', 'fast.'],
+    ['They want you to be ', 'great.'],
+    ['You know your work better than anyone in that ', 'room.'],
+    ['Small consistent reps beat one panicked ', 'cram.'],
+    ['Nervous and ready can feel the same. Choose ', 'ready.'],
+    ['The best interview is a conversation between two ', 'experts.']
   ];
 
-  /* =================================================================
-     STATE
-     ================================================================= */
-  const LS_KEY = "ip_progress_v1", LS_STREAK = "ip_streak_v1";
-  const state = loadState();
-  let activeCat = "all", searchTerm = "";
-  const hasGSAP = !!window.gsap;
-  if (hasGSAP && window.Draggable) gsap.registerPlugin(Draggable);
+  /* ---------------- STATE (same keys as before — progress survives) ---------------- */
+  const LS_KEY = 'ip_progress_v1', LS_STREAK = 'ip_streak_v1';
+  const state = (() => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; } })();
+  let activeCat = 'all', searchTerm = '';
 
-  function loadState(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e){ return {}; } }
-  function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-  const $ = s => document.querySelector(s);
-  const byCat = c => DECK.filter(d => d.cat === c);
-  const masteredCount = c => DECK.filter(d => (!c || d.cat===c) && state[d.id]==="mastered").length;
-  const escapeRx = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  const rand = (a,b) => a + Math.random()*(b-a);
-  const shuffle = arr => arr.slice().sort(()=>Math.random()-0.5);
+  const save = () => localStorage.setItem(LS_KEY, JSON.stringify(state));
+  const byCat = (c) => DECK.filter((d) => d.cat === c);
+  const masteredCount = (c) => DECK.filter((d) => (!c || d.cat === c) && state[d.id] === 'mastered').length;
+  const escapeRx = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const shuffle = (a) => a.slice().sort(() => Math.random() - 0.5);
 
-  /* ---- streak ---- */
-  const todayStr = () => new Date().toISOString().slice(0,10);
-  function getStreak(){ try { return JSON.parse(localStorage.getItem(LS_STREAK)) || {count:0,last:null,today:0,todayDate:null}; } catch(e){ return {count:0,last:null,today:0,todayDate:null}; } }
-  function bumpStreak(){
+  const todayStr = () => new Date().toISOString().slice(0, 10);
+  function getStreak() { try { return JSON.parse(localStorage.getItem(LS_STREAK)) || { count: 0, last: null, today: 0, todayDate: null }; } catch (e) { return { count: 0, last: null, today: 0, todayDate: null }; } }
+  function bumpStreak() {
     const s = getStreak(), t = todayStr();
-    if (s.last !== t){ const y = new Date(Date.now()-86400000).toISOString().slice(0,10); s.count = (s.last===y)?s.count+1:1; s.last = t; }
-    if (s.todayDate !== t){ s.today = 0; s.todayDate = t; }
+    if (s.last !== t) { const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); s.count = (s.last === y) ? s.count + 1 : 1; s.last = t; }
+    if (s.todayDate !== t) { s.today = 0; s.todayDate = t; }
     s.today += 1; localStorage.setItem(LS_STREAK, JSON.stringify(s)); return s;
   }
-  const reviewedToday = () => { const s = getStreak(); return s.todayDate===todayStr() ? s.today : 0; };
+  const reviewedToday = () => { const s = getStreak(); return s.todayDate === todayStr() ? s.today : 0; };
 
-  /* =================================================================
-     DASHBOARD
-     ================================================================= */
-  function renderGreeting(){
-    const h = new Date().getHours();
-    const part = h<12 ? "Good morning" : h<18 ? "Good afternoon" : "Good evening";
-    $("#ip-greet").textContent = `${part}, Joseph — let's get you ready.`;
-    $("#ip-quote-text").textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  /* ---------------- HERO / DASHBOARD ---------------- */
+  function renderQuote() {
+    const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    $('#ip-quote').innerHTML = '"' + q[0] + '<b>' + q[1] + '</b>"';
   }
   let ringInit = false;
-  function renderDashboard(animate){
-    const total = DECK.length, mastered = masteredCount(), pct = Math.round(mastered/total*100);
-    const R = 84, C = 2*Math.PI*R, meter = $("#ip-ring-meter");
+  function renderDashboard(animate) {
+    const total = DECK.length, mastered = masteredCount(), pct = Math.round(mastered / total * 100);
+    const R = 72, C = 2 * Math.PI * R, meter = $('#ip-ring-meter');
     meter.style.strokeDasharray = C;
-    const target = C*(1-pct/100);
-    const fromPct = ringInit ? (+($("#ip-ring-pct").textContent.replace('%',''))||0) : 0;
-    /* set final value first so it's correct even if the tween never ticks */
-    meter.style.strokeDashoffset = target; $("#ip-ring-pct").textContent = pct+"%";
-    if (hasGSAP && (animate || !ringInit)){
-      gsap.fromTo(meter, {strokeDashoffset: C*(1-fromPct/100)}, {strokeDashoffset: target, duration: 1.1, ease:"power2.out"});
-      const o = {v: fromPct};
-      gsap.to(o, {v: pct, duration: 1.1, ease:"power2.out", onUpdate:()=>{ $("#ip-ring-pct").textContent = Math.round(o.v)+"%"; }});
+    const from = ringInit ? (+($('#ip-ring-pct').textContent.replace('%', '')) || 0) : 0;
+    meter.style.strokeDashoffset = C * (1 - pct / 100);
+    $('#ip-ring-pct').textContent = pct + '%';
+    if (window.gsap && !REDUCED && (animate || !ringInit)) {
+      gsap.fromTo(meter, { strokeDashoffset: C * (1 - from / 100) }, { strokeDashoffset: C * (1 - pct / 100), duration: 1.1, ease: 'power2.out' });
+      const o = { v: from };
+      gsap.to(o, { v: pct, duration: 1.1, ease: 'power2.out', onUpdate: () => { $('#ip-ring-pct').textContent = Math.round(o.v) + '%'; } });
     }
     ringInit = true;
 
-    let status="Warming up", sub="Master slides to raise your score";
-    if (pct>=100){ status="Interview-ready 🚀"; sub="You've mastered every prompt. Go get it."; }
-    else if (pct>=75){ status="Sharp and confident"; sub="You're in great shape — keep the edge."; }
-    else if (pct>=40){ status="Building momentum"; sub="Solid progress. Keep the streak alive."; }
-    else if (pct>0){ status="Getting started"; sub="Every slide you master moves the needle."; }
-    $("#ip-ring-status").textContent = status; $("#ip-ring-sub").textContent = sub;
-
-    countTo("#ip-stat-mastered", mastered); countTo("#ip-stat-total", total);
-    countTo("#ip-stat-streak", getStreak().count); countTo("#ip-stat-today", reviewedToday());
-  }
-  function countTo(sel, val){
-    const el = $(sel); if (!el) return;
-    const from = +el.textContent||0;
-    el.textContent = val;  /* correct value first; tween is just flourish */
-    if (!hasGSAP || from===val) return;
-    const o = {v: from};
-    gsap.to(o, {v: val, duration:.7, ease:"power1.out", onUpdate:()=>{ el.textContent = Math.round(o.v); }});
+    let status = 'Warming up', sub = 'Master prompts to raise your score';
+    if (pct >= 100) { status = 'Interview-ready'; sub = 'Every prompt mastered. Go get it.'; }
+    else if (pct >= 75) { status = 'Sharp and confident'; sub = 'You\'re in great shape — keep the edge.'; }
+    else if (pct >= 40) { status = 'Building momentum'; sub = 'Solid progress. Keep the streak alive.'; }
+    else if (pct > 0) { status = 'Getting started'; sub = 'Every mastered prompt moves the needle.'; }
+    $('#ip-ring-status').textContent = status;
+    $('#ip-ring-sub').textContent = sub;
+    $('#ip-stat-mastered').textContent = mastered;
+    $('#ip-stat-total').textContent = total;
+    $('#ip-stat-today').textContent = reviewedToday();
+    $('#ip-streak-top').textContent = getStreak().count;
   }
 
-  function renderCats(){
-    const wrap = $("#ip-cats"); wrap.innerHTML = "";
-    Object.entries(CATS).forEach(([key,c])=>{
-      const total = byCat(key).length, done = masteredCount(key), pct = Math.round(done/total*100);
-      const el = document.createElement("div");
-      el.className = "ip-cat";
-      el.innerHTML = `<div class="ic" style="background:${c.grad}"><i class="fas ${c.icon}"></i></div>
-        <h3>${c.label}</h3><p>${c.blurb}</p>
+  function renderPillars() {
+    const wrap = $('#ip-pillars'); wrap.innerHTML = '';
+    Object.entries(CATS).forEach(([key, c]) => {
+      const total = byCat(key).length, done = masteredCount(key), pct = Math.round(done / total * 100);
+      const el = document.createElement('article');
+      el.className = 'ip-pillar';
+      el.innerHTML = `
+        <div class="k"><span class="num">${c.num}</span> ${c.label}</div>
+        <h3><i class="fas ${c.icon}" style="font-size:.85em; margin-right:8px; background:var(--grad-bright); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent"></i>${c.label}</h3>
+        <p>${c.blurb}</p>
         <div class="bar"><i style="width:${pct}%"></i></div>
         <div class="meta"><span><b>${done}</b> / ${total} mastered</span><span>${pct}%</span></div>`;
-      el.addEventListener("click", ()=>{ setCat(key); $("#ip-board").scrollIntoView({behavior:"smooth", block:"start"}); });
+      el.addEventListener('click', () => { setCat(key); $('#ip-toolbar').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); });
       wrap.appendChild(el);
     });
   }
-  function renderChips(){
-    const wrap = $("#ip-chips"); wrap.innerHTML = "";
-    [["all","All",DECK.length], ...Object.entries(CATS).map(([k,c])=>[k,c.label,byCat(k).length])].forEach(([key,label,cnt])=>{
-      const b = document.createElement("button");
-      b.className = "ip-chip"+(activeCat===key?" active":"");
-      b.innerHTML = `${label} <span class="cnt">${cnt}</span>`;
-      b.addEventListener("click", ()=> setCat(key));
+
+  function renderChips() {
+    const wrap = $('#ip-chips'); wrap.innerHTML = '';
+    [['all', 'All', DECK.length], ...Object.entries(CATS).map(([k, c]) => [k, c.label, byCat(k).length])].forEach(([key, label, cnt]) => {
+      const b = document.createElement('button');
+      b.className = 'filter-btn' + (activeCat === key ? ' active' : '');
+      b.innerHTML = `${label}<span class="cnt">${cnt}</span>`;
+      b.addEventListener('click', () => setCat(key));
       wrap.appendChild(b);
     });
   }
-  function setCat(c){ activeCat = c; renderChips(); layoutBoard(true); }
+  function setCat(c) { activeCat = c; renderChips(); renderDeck(); }
 
-  function filtered(){
-    let items = DECK.filter(d => activeCat==="all" || d.cat===activeCat);
-    if (searchTerm){ const rx = new RegExp(escapeRx(searchTerm),"i"); items = items.filter(d => rx.test(d.q)||rx.test(d.sub)||rx.test(d.a)); }
+  function filtered() {
+    let items = DECK.filter((d) => activeCat === 'all' || d.cat === activeCat);
+    if (searchTerm) { const rx = new RegExp(escapeRx(searchTerm), 'i'); items = items.filter((d) => rx.test(d.q) || rx.test(d.sub) || rx.test(d.a)); }
     return items;
   }
 
-  /* =================================================================
-     THE BOARD (scatter slide wall)
-     ================================================================= */
-  let boardCards = [];
-  function isMobile(){ return window.innerWidth < 760; }
-
-  function layoutBoard(animate){
-    const board = $("#ip-board");
-    board.querySelectorAll(".bc, .ip-board-empty").forEach(n => n.remove());
-    boardCards = [];
+  /* ---------------- DECK GRID ---------------- */
+  function renderDeck() {
+    const wrap = $('#ip-deck'); wrap.innerHTML = '';
     const items = filtered();
-    const hint = board.querySelector(".ip-board-hint");
-
-    if (!items.length){
-      const e = document.createElement("div");
-      e.className = "ip-board-empty";
-      e.innerHTML = `<i class="fas fa-search"></i><div>No prompts match that. Try another search or category.</div>`;
-      board.appendChild(e); board.style.height = "300px"; if (hint) hint.style.display="none"; return;
+    if (!items.length) {
+      wrap.innerHTML = '<div class="ip-empty"><i class="fas fa-search"></i>No prompts match that. Try another search or pillar.</div>';
+      return;
     }
-    if (hint) hint.style.display = "";
+    items.forEach((d) => {
+      const st = state[d.id];
+      const card = document.createElement('article');
+      card.className = 'ip-card' + (st === 'mastered' ? ' mastered' : st === 'review' ? ' review' : '');
+      card.dataset.id = d.id;
+      card.innerHTML = `
+        <div class="ip-card-top">
+          <span class="ip-tag t-${d.cat}">${CATS[d.cat].label}</span>
+          <span class="ip-sub">${d.sub}</span>
+          <span class="ip-dot"></span>
+        </div>
+        <div class="ip-q">${d.q}</div>
+        <div class="ip-a">${d.a}</div>
+        <div class="ip-card-actions">
+          <button class="ip-mini solid ip-flip"><i class="fas fa-eye"></i> Reveal</button>
+          <button class="ip-mini again" data-act="review"><i class="fas fa-rotate-right"></i> Again</button>
+          <button class="ip-mini good" data-act="mastered"><i class="fas fa-check"></i> Got it</button>
+        </div>`;
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%');
+      });
+      card.querySelector('.ip-flip').addEventListener('click', (e) => {
+        card.classList.toggle('open');
+        e.currentTarget.innerHTML = card.classList.contains('open')
+          ? '<i class="fas fa-eye-slash"></i> Hide' : '<i class="fas fa-eye"></i> Reveal';
+      });
+      card.querySelectorAll('[data-act]').forEach((btn) => btn.addEventListener('click', () => markCard(d.id, btn.dataset.act)));
+      wrap.appendChild(card);
+    });
+    if (window.gsap && !REDUCED) {
+      gsap.fromTo('#ip-deck .ip-card', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: .45, stagger: .04, ease: 'power3.out', clearProps: 'all' });
+    }
+  }
 
-    const mobile = isMobile();
-    board.classList.toggle("stacked", mobile);
+  function markCard(id, status) {
+    const prev = state[id];
+    state[id] = status; save(); bumpStreak();
+    renderDashboard(true); renderPillars(); renderChips();
+    const card = document.querySelector(`.ip-card[data-id="${id}"]`);
+    if (card) { card.classList.remove('mastered', 'review'); card.classList.add(status); }
+    if (status === 'mastered' && prev !== 'mastered') {
+      const m = masteredCount();
+      toast(`Mastered — ${m} / ${DECK.length} done`, true);
+      const pct = Math.round(m / DECK.length * 100);
+      if (pct === 100) burst(260); else if (m % 5 === 0) burst(120);
+    } else if (status === 'review') toast('Flagged for another pass', false);
+  }
 
-    if (mobile){
-      board.style.height = "auto";
-      items.forEach((d,i)=>{ const el = makeCard(d); board.appendChild(el); boardCards.push({el, d}); });
+  /* ---------------- FOCUS MODE ---------------- */
+  const FM = { queue: [], idx: 0, revealed: false, auto: null };
+
+  function openFM(queue) {
+    FM.queue = queue && queue.length ? queue : shuffle(DECK);
+    FM.idx = 0;
+    $('#fm').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    $('#fm-total').textContent = FM.queue.length;
+    renderFM(true, 1);
+  }
+  function closeFM() {
+    stopAuto();
+    $('#fm').classList.remove('show');
+    document.body.style.overflow = '';
+    renderDeck(); renderDashboard(true); renderPillars();
+  }
+
+  function renderFM(first, dir) {
+    const slide = $('#fm-slide');
+    if (FM.idx >= FM.queue.length) { renderFMDone(); return; }
+    const d = FM.queue[FM.idx];
+    FM.revealed = false;
+    $('#fm-cur').textContent = FM.idx + 1;
+    $('#fm-prog').style.width = (FM.idx / FM.queue.length * 100) + '%';
+
+    const html = `
+      <div class="fm-ghostnum" aria-hidden="true">${String(FM.idx + 1).padStart(2, '0')}</div>
+      <span class="fm-kicker"><i class="fas ${CATS[d.cat].icon}"></i> ${CATS[d.cat].label} · ${d.sub}</span>
+      <h2 class="fm-q">${d.q}</h2>
+      <div class="fm-a" id="fm-a">${d.a}</div>
+      <div class="fm-hint" id="fm-hint"><i class="fas fa-keyboard"></i> Press <kbd class="fm-kbd">Space</kbd> to reveal the model answer</div>`;
+
+    const swap = () => {
+      slide.innerHTML = html;
+      renderFMFoot();
+      if (window.gsap && !REDUCED) {
+        gsap.fromTo(slide,
+          { xPercent: 12 * dir, opacity: 0, rotateY: 5 * dir, transformPerspective: 1600 },
+          { xPercent: 0, opacity: 1, rotateY: 0, duration: .5, ease: 'power3.out', onComplete: () => gsap.set(slide, { clearProps: 'transform' }) });
+        gsap.fromTo(slide.querySelectorAll('.fm-kicker, .fm-q, .fm-hint'),
+          { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .45, stagger: .07, ease: 'power2.out', delay: .12, clearProps: 'all' });
+      }
+    };
+    if (window.gsap && !REDUCED && !first) {
+      gsap.to(slide, { xPercent: -12 * dir, opacity: 0, rotateY: -5 * dir, duration: .28, ease: 'power2.in', onComplete: swap });
+    } else swap();
+  }
+
+  function renderFMFoot(done) {
+    const foot = $('#fm-foot');
+    if (done) { foot.innerHTML = ''; return; }
+    foot.innerHTML = `
+      <button class="fm-nav" id="fm-prev" title="Previous (←)"><i class="fas fa-chevron-left"></i></button>
+      <button class="ip-mini fm-grade-again" id="fm-again" style="padding:12px 20px; font-size:.88rem"><i class="fas fa-rotate-right"></i> Review again</button>
+      <button class="btn btn-ghost" id="fm-reveal"><i class="fas fa-eye"></i> Reveal</button>
+      <button class="ip-mini fm-grade-got" id="fm-got" style="padding:12px 22px; font-size:.9rem"><i class="fas fa-check"></i> Got it</button>
+      <button class="fm-nav" id="fm-next" title="Next (→)"><i class="fas fa-chevron-right"></i></button>
+      <div class="fm-keys"><kbd>Space</kbd> reveal · <kbd>1</kbd> again · <kbd>2</kbd> got it · <kbd>←</kbd><kbd>→</kbd> navigate · <kbd>Esc</kbd> exit</div>`;
+    $('#fm-prev').onclick = () => { if (FM.idx > 0) { FM.idx--; renderFM(false, -1); } };
+    $('#fm-next').onclick = fmNext;
+    $('#fm-reveal').onclick = fmReveal;
+    $('#fm-again').onclick = () => { markCard(FM.queue[FM.idx].id, 'review'); fmNext(); };
+    $('#fm-got').onclick = () => { markCard(FM.queue[FM.idx].id, 'mastered'); fmNext(); };
+  }
+
+  function fmReveal() {
+    const a = $('#fm-a');
+    if (!a || FM.revealed) return;
+    FM.revealed = true;
+    a.classList.add('show');
+    const hint = $('#fm-hint'); if (hint) hint.style.display = 'none';
+    const rb = $('#fm-reveal'); if (rb) { rb.innerHTML = '<i class="fas fa-check-circle"></i> Revealed'; rb.style.opacity = .55; rb.disabled = true; }
+    if (window.gsap && !REDUCED) gsap.from(a.children, { opacity: 0, y: 14, duration: .4, stagger: .06, ease: 'power2.out' });
+  }
+  function fmNext() { FM.idx++; renderFM(false, 1); }
+
+  function renderFMDone() {
+    stopAuto();
+    const did = FM.queue.length, pct = Math.round(masteredCount() / DECK.length * 100), streak = getStreak().count;
+    $('#fm-cur').textContent = did;
+    $('#fm-prog').style.width = '100%';
+    const slide = $('#fm-slide');
+    slide.innerHTML = `<div class="fm-done">
+      <div class="big">🎉</div>
+      <h3>Session <span class="serif-accent">complete.</span></h3>
+      <p>You worked through <b>${did}</b> prompt${did > 1 ? 's' : ''}. Readiness is at <b>${pct}%</b>, streak at <b>${streak} day${streak !== 1 ? 's' : ''}</b>. Proud of you — go get that offer.</p></div>`;
+    if (window.gsap && !REDUCED) gsap.fromTo(slide, { opacity: 0, scale: .94 }, { opacity: 1, scale: 1, duration: .5, ease: 'back.out(1.5)', onComplete: () => gsap.set(slide, { clearProps: 'transform' }) });
+    burst(160);
+    const foot = $('#fm-foot');
+    foot.innerHTML = `
+      <button class="btn btn-primary" id="fm-again-all"><i class="fas fa-redo"></i> Go again (shuffled)</button>
+      <button class="btn btn-ghost" id="fm-finish"><i class="fas fa-flag-checkered"></i> Done for now</button>`;
+    $('#fm-again-all').onclick = () => openFM(shuffle(DECK));
+    $('#fm-finish').onclick = closeFM;
+  }
+
+  function toggleAuto() {
+    const b = $('#fm-auto');
+    if (FM.auto) { stopAuto(); return; }
+    b.classList.add('on');
+    b.innerHTML = '<i class="fas fa-pause"></i> Auto';
+    FM.auto = setInterval(() => {
+      if (FM.idx >= FM.queue.length) { stopAuto(); return; }
+      if (!FM.revealed) fmReveal(); else fmNext();
+    }, 5200);
+  }
+  function stopAuto() {
+    if (FM.auto) { clearInterval(FM.auto); FM.auto = null; }
+    const b = $('#fm-auto');
+    if (b) { b.classList.remove('on'); b.innerHTML = '<i class="fas fa-play"></i> Auto'; }
+  }
+
+  /* ---------------- TOAST + CONFETTI ---------------- */
+  let toastTimer;
+  function toast(msg, good) {
+    const t = $('#ip-toast');
+    $('#ip-toast-text').textContent = msg;
+    const i = t.querySelector('i');
+    i.className = good ? 'fas fa-check-circle' : 'fas fa-flag';
+    i.style.color = good ? '#4ade80' : '#fbbf24';
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function burst(n) {
+    if (REDUCED) return;
+    const cv = $('#ip-confetti'), ctx = cv.getContext('2d');
+    cv.width = innerWidth; cv.height = innerHeight;
+    const colors = ['#2f6bff', '#7c3aed', '#06b6d4', '#22c55e', '#f59e0b'];
+    const parts = Array.from({ length: n }, () => ({
+      x: innerWidth / 2 + (Math.random() - .5) * 140, y: innerHeight / 2.3,
+      vx: (Math.random() - .5) * 15, vy: Math.random() * -16 - 4, g: .35 + Math.random() * .2,
+      s: 5 + Math.random() * 7, c: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 6.28, vr: (Math.random() - .5) * .4, life: 0
+    }));
+    let frame = 0;
+    (function anim() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      parts.forEach((p) => {
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.c; ctx.globalAlpha = Math.max(0, 1 - p.life / 95);
+        ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * .6); ctx.restore();
+      });
+      if (++frame < 100) requestAnimationFrame(anim);
+      else ctx.clearRect(0, 0, cv.width, cv.height);
+    })();
+  }
+
+  /* ---------------- WIRING ---------------- */
+  $('#ip-search').addEventListener('input', (e) => { searchTerm = e.target.value.trim(); renderDeck(); });
+  $('#ip-start-session').addEventListener('click', () => openFM(shuffle(DECK)));
+  $('#ip-present-top').addEventListener('click', () => openFM(shuffle(filtered().length ? filtered() : DECK)));
+  $('#ip-review-weak').addEventListener('click', () => {
+    const weak = DECK.filter((d) => state[d.id] !== 'mastered');
+    if (!weak.length) { toast('You\'ve mastered everything 🎉', true); burst(220); return; }
+    openFM(shuffle(weak));
+  });
+  $('#fm-close').addEventListener('click', closeFM);
+  $('#fm-auto').addEventListener('click', toggleAuto);
+  $('#fm-shuffle').addEventListener('click', () => {
+    FM.queue = FM.queue.slice(0, FM.idx).concat(shuffle(FM.queue.slice(FM.idx)));
+    renderFM(false, 1); toast('Shuffled the rest', true);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (!$('#fm').classList.contains('show')) return;
+    if (e.key === 'Escape') return closeFM();
+    if (FM.idx >= FM.queue.length) return;
+    if (e.code === 'Space') { e.preventDefault(); fmReveal(); }
+    else if (e.key === 'ArrowRight') fmNext();
+    else if (e.key === 'ArrowLeft') { if (FM.idx > 0) { FM.idx--; renderFM(false, -1); } }
+    else if (e.key === '1') { markCard(FM.queue[FM.idx].id, 'review'); fmNext(); }
+    else if (e.key === '2') { markCard(FM.queue[FM.idx].id, 'mastered'); fmNext(); }
+  });
+  $('#ip-reset').addEventListener('click', () => {
+    if (!confirm('Reset all progress and streak? This can\'t be undone.')) return;
+    localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_STREAK);
+    Object.keys(state).forEach((k) => delete state[k]);
+    renderAll(); toast('Fresh start — you\'ve got this', false);
+  });
+
+  /* ---------------- SPEECH RECOGNITION & AUDIO VISUALIZER (SPEECH LAB) ---------------- */
+  let recognition = null;
+  let isListening = false;
+  let recordTimerInterval = null;
+  let recordStartTime = 0;
+  let accumulatedTranscript = '';
+  let transcriptHistory = [];
+
+  // Web Audio visualizer variables
+  let audioCtx = null;
+  let analyser = null;
+  let source = null;
+  let animationFrameId = null;
+  let mediaStream = null;
+  const volHistory = new Array(70).fill(0); // 70 visual bars
+
+  // MediaRecorder variables
+  let mediaRecorder = null;
+  let audioChunks = [];
+
+  // Modulate WebSocket variable
+  let ws = null;
+
+  // Diagnostics Terminal Logger
+  function logDiag(msg) {
+    const log = $('#ip-diag-log');
+    if (!log) return;
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    log.innerHTML += `\n[${time}] ${msg}`;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function loadMicrophones() {
+    try {
+      logDiag('Enumerating input devices...');
+      let devices = await navigator.mediaDevices.enumerateDevices();
+      let audioDevices = devices.filter(d => d.kind === 'audioinput');
+
+      const hasLabels = audioDevices.some(d => d.label);
+      if (!hasLabels) {
+        logDiag('No microphone labels found. Requesting temporary permission stream...');
+        const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        tempStream.getTracks().forEach(track => track.stop());
+        devices = await navigator.mediaDevices.enumerateDevices();
+        audioDevices = devices.filter(d => d.kind === 'audioinput');
+      }
+
+      const select = $('#ip-mic-select');
+      if (!select) return;
+
+      select.innerHTML = '';
+      if (audioDevices.length === 0) {
+        select.innerHTML = '<option value="">No microphones found</option>';
+        logDiag('No microphones detected.');
+        return;
+      }
+
+      audioDevices.forEach((device, index) => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        option.text = device.label || `Microphone ${index + 1}`;
+        select.appendChild(option);
+      });
+      logDiag(`Loaded ${audioDevices.length} microphone(s) successfully.`);
+    } catch (err) {
+      console.error('Error listing audio input devices:', err);
+      logDiag(`Device enumeration error: ${err.message}`);
+      updateStatus('<span style="color:#ef4444"><i class="fas fa-lock"></i> Microphone access blocked or not found.</span>');
+    }
+  }
+
+  function startRecordingBackup(stream) {
+    audioChunks = [];
+    try {
+      let options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'audio/ogg' };
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = {};
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        logDiag('MediaRecorder stopped. Generating audio blob...');
+        const mimeType = mediaRecorder.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunks, { type: mimeType });
+        logDiag(`Audio blob generated. Size: ${(audioBlob.size / 1024).toFixed(1)} KB, Format: ${mimeType}`);
+
+        const currentText = $('#ip-transcript-rich').innerText.trim();
+        const engine = $('#ip-opt-engine').value;
+        if (!currentText && audioBlob.size > 1000 && (engine === 'modulate-batch' || engine === 'browser-speech')) {
+          logDiag('SpeechRecognition produced no text. Invoking Modulate.ai transcription fallback...');
+          await runCloudTranscription(audioBlob);
+        }
+      };
+
+      mediaRecorder.start();
+      logDiag('MediaRecorder backup recording started.');
+    } catch (e) {
+      console.error('Error starting MediaRecorder:', e);
+      logDiag(`MediaRecorder error: ${e.message}`);
+    }
+  }
+
+  function startRecordingStreaming(stream) {
+    audioChunks = [];
+    try {
+      let options = { mimeType: 'audio/webm' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'audio/ogg' };
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = {};
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+      mediaRecorder.ondataavailable = async (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+          
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            try {
+              const buf = await event.data.arrayBuffer();
+              ws.send(buf);
+            } catch (err) {
+              logDiag(`WebSocket send exception: ${err.message}`);
+            }
+          }
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        logDiag('Streaming MediaRecorder stopped.');
+      };
+
+      mediaRecorder.start(250); // Stream chunks every 250ms for low latency
+      logDiag('Streaming MediaRecorder active with 250ms chunks.');
+    } catch (e) {
+      console.error('Error starting MediaRecorder streaming:', e);
+      logDiag(`MediaRecorder streaming error: ${e.message}`);
+    }
+  }
+
+  function stopRecordingBackup() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      try {
+        mediaRecorder.stop();
+        logDiag('MediaRecorder stop triggered.');
+      } catch (e) {
+        logDiag(`MediaRecorder stop exception: ${e.message}`);
+      }
+    }
+  }
+
+  function connectWebSocket(stream) {
+    logDiag('Connecting to Modulate.ai Streaming STT WebSocket...');
+    const apiKey = '5842dbea-9ee6-4be8-9f03-b4351e686267';
+    // Accessing Velma streaming endpoint
+    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming?api_key=${apiKey}`;
+
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      logDiag('Modulate WebSocket connection opened successfully.');
+      updateStatus('<span style="color:#06b6d4"><i class="fas fa-circle-notch fa-spin"></i> Live Streaming via Modulate.ai...</span>');
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        logDiag(`WS response payload: ${event.data}`);
+        
+        let text = "";
+        let isFinal = false;
+
+        // Parse transcription from standard Velma response objects
+        if (data.type === 'utterance' && data.utterance) {
+          text = data.utterance.text || "";
+          isFinal = true;
+        } else if (data.text !== undefined) {
+          text = data.text;
+          isFinal = data.is_final !== undefined ? data.is_final : true;
+        } else if (data.transcript !== undefined) {
+          text = data.transcript;
+          isFinal = data.is_final !== undefined ? data.is_final : true;
+        }
+
+        if (text) {
+          if (isFinal) {
+            accumulatedTranscript += text + " ";
+            renderTranscriptText(accumulatedTranscript.trim() + " ", "");
+          } else {
+            renderTranscriptText(accumulatedTranscript, text);
+          }
+        }
+      } catch (e) {
+        console.error('WS JSON parse error:', e);
+      }
+    };
+
+    ws.onerror = (err) => {
+      logDiag(`Modulate WebSocket encountered an error.`);
+      console.error(err);
+    };
+
+    ws.onclose = (event) => {
+      logDiag(`Modulate WebSocket closed (code: ${event.code}, reason: ${event.reason || 'none'}).`);
+      // Auto-reconnect if listener is active
+      if (isListening && $('#ip-opt-engine').value === 'modulate-stream') {
+        logDiag('Auto-reconnecting Modulate WebSocket in 1s...');
+        setTimeout(() => {
+          if (isListening && $('#ip-opt-engine').value === 'modulate-stream') {
+            connectWebSocket(stream);
+          }
+        }, 1000);
+      }
+    };
+  }
+
+  async function runCloudTranscription(audioBlob) {
+    updateStatus('<span style="color:var(--brand)"><i class="fas fa-circle-notch fa-spin"></i> Web Speech silent. Transcribing via Modulate.ai...</span>');
+    logDiag('Sending audio blob to Modulate.ai API `/api/transcribe`...');
+
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'speech.webm');
+
+    try {
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      
+      if (data.success && data.text) {
+        logDiag(`Cloud transcription success: "${data.text}"`);
+        
+        const editor = $('#ip-transcript-rich');
+        let text = editor.innerText.trim();
+        if (text) {
+          text += ' ' + data.text;
+        } else {
+          text = data.text;
+        }
+        
+        accumulatedTranscript = text;
+        renderTranscriptText(text, '');
+        updateStatus('<span style="color:#22c55e"><i class="fas fa-check-circle"></i> Cloud transcription complete.</span>');
+        toast('Transcribed via Modulate.ai!', true);
+      } else {
+        logDiag(`Cloud transcription returned empty results or error: ${data.error || 'empty text'}`);
+        updateStatus('<span style="color:var(--muted)"><i class="fas fa-info-circle"></i> Cloud transcription returned empty result.</span>');
+      }
+    } catch (err) {
+      console.error('Cloud transcription request failed:', err);
+      logDiag(`Cloud transcription network failure: ${err.message}`);
+      updateStatus('<span style="color:#ef4444"><i class="fas fa-exclamation-triangle"></i> Cloud transcription failed.</span>');
+    }
+  }
+
+  async function startVisualizer(deviceId, isStreaming = false) {
+    if ($('#ip-opt-disable-vis').checked) {
+      logDiag('Sound bar visualizer completely disabled by user setting to release microphone locks.');
+      try {
+        const constraints = {
+          audio: (deviceId && deviceId !== 'default') ? { deviceId: { exact: deviceId } } : true
+        };
+        logDiag('Capturing getUserMedia for recording stream...');
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        logDiag('Recording stream captured.');
+        
+        if (isStreaming) {
+          connectWebSocket(mediaStream);
+          startRecordingStreaming(mediaStream);
+        } else {
+          startRecordingBackup(mediaStream);
+        }
+      } catch (err) {
+        logDiag(`Resilient fallback to default mic stream...`);
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          if (isStreaming) {
+            connectWebSocket(mediaStream);
+            startRecordingStreaming(mediaStream);
+          } else {
+            startRecordingBackup(mediaStream);
+          }
+        } catch (e) {
+          logDiag(`Failed to capture fallback stream: ${e.message}`);
+        }
+      }
       return;
     }
 
-    const W = board.clientWidth, CW = 290, GAP = 26;
-    const cols = Math.max(1, Math.floor((W + GAP) / (CW + GAP)));
-    const cellW = W / cols, rowH = 264;
-    const rows = Math.ceil(items.length / cols);
-    board.style.height = (rows * rowH + 40) + "px";
+    try {
+      stopVisualizer();
+      logDiag(`Starting visualizer audio context (device: ${deviceId || 'default'})...`);
 
-    items.forEach((d,i)=>{
-      const col = i % cols, row = Math.floor(i / cols);
-      const baseX = col*cellW + (cellW-CW)/2 + rand(-16,16);
-      const baseY = row*rowH + rand(-12,12) + 8;
-      const rot = rand(-5,5);
-      const el = makeCard(d);
-      el.dataset.rot = rot;
-      board.appendChild(el);
-      const card = {el, d, x: Math.max(0, baseX), y: Math.max(0, baseY), rot};
-      boardCards.push(card);
-
-      if (hasGSAP){
-        gsap.set(el, {x: card.x, y: card.y, rotation: rot});
-        if (animate){
-          gsap.from(el, {x: card.x + rand(-160,160), y: card.y + rand(-120,120), rotation: rand(-30,30),
-            opacity: 0, scale: .8, duration: .7, ease: "back.out(1.4)", delay: i*0.035});
-        }
-        wireCardMotion(card);
-      } else {
-        el.style.transform = `translate(${card.x}px,${card.y}px) rotate(${rot}deg)`;
-        el.addEventListener("click", ()=> openPM(filtered(), filtered().findIndex(x=>x.id===d.id)));
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+      
+      if (audioCtx.state === 'suspended') {
+        logDiag('AudioContext suspended. Resuming...');
+        await audioCtx.resume();
       }
-    });
+
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+
+      const constraints = {
+        audio: (deviceId && deviceId !== 'default') ? { deviceId: { exact: deviceId } } : true
+      };
+
+      let stream;
+      try {
+        logDiag(`Capturing getUserMedia stream (constraints: ${JSON.stringify(constraints)})...`);
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        logDiag('getUserMedia stream captured successfully.');
+      } catch (err) {
+        console.warn('Failed to get mic with constraints, trying fallback:', err);
+        logDiag(`Failed constraints. Retrying with default audio fallback...`);
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        logDiag('Default audio fallback stream captured successfully.');
+      }
+      
+      mediaStream = stream;
+      source = audioCtx.createMediaStreamSource(mediaStream);
+      source.connect(analyser);
+      
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      analyser.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      logDiag('Audio graph connected successfully (analyser -> muted gain -> destination).');
+
+      if (isStreaming) {
+        connectWebSocket(mediaStream);
+        startRecordingStreaming(mediaStream);
+      } else {
+        startRecordingBackup(mediaStream);
+      }
+      drawVisualizer();
+    } catch (e) {
+      console.error('Error starting audio visualizer context:', e);
+      logDiag(`Visualizer activation error: ${e.message}`);
+    }
   }
 
-  function makeCard(d){
-    const idx = DECK.findIndex(x=>x.id===d.id)+1;
-    const st = state[d.id];
-    const el = document.createElement("article");
-    el.className = "bc"+(st==="mastered"?" mastered":st==="review"?" review":"");
-    el.dataset.id = d.id;
-    el.innerHTML = `<div class="bc-inner">
-      <div class="bc-band ${d.cat}"></div>
-      <div class="bc-body">
-        <div class="bc-top">
-          <span class="bc-num">${String(idx).padStart(2,'0')}</span>
-          <span class="bc-tag ${d.cat}">${CATS[d.cat].label}</span>
-          <span class="bc-dot"></span>
-        </div>
-        <div class="bc-sub">${d.sub}</div>
-        <div class="bc-q">${d.q}</div>
-        <span class="bc-cta">Present this <i class="fas fa-arrow-right"></i></span>
-      </div></div>`;
-    return el;
+  function stopVisualizer() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+    }
+    if (audioCtx) {
+      audioCtx.close();
+      audioCtx = null;
+    }
+    
+    const canvas = $('#ip-audio-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.fillStyle = '#18181b';
+      ctx.fillRect(0, 0, w, h);
+      
+      ctx.fillStyle = '#52525b';
+      const barSpacing = w / volHistory.length;
+      for (let i = 0; i < volHistory.length; i++) {
+        volHistory[i] = 0;
+        const x = i * barSpacing;
+        ctx.fillRect(x, (h - 2) / 2, 3, 2);
+      }
+      
+      ctx.beginPath();
+      ctx.moveTo(w * 0.8, 0);
+      ctx.lineTo(w * 0.8, h);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
   }
 
-  function wireCardMotion(card){
-    const el = card.el;
-    let dragged = false;
-    const drag = Draggable.create(el, {
-      type: "x,y", bounds: "#ip-board", zIndexBoost: true,
-      onPress(){ dragged = false; gsap.to(el, {rotation:0, scale:1.05, duration:.25, ease:"power2.out"});
-        el.querySelector(".bc-inner").style.animationPlayState = "paused"; },
-      onDrag(){ dragged = true; },
-      onRelease(){ card.x = this.x; card.y = this.y;
-        if (!dragged) gsap.to(el, {scale:1, rotation:card.rot, duration:.3, ease:"power2.out"});
-        el.querySelector(".bc-inner").style.animationPlayState = ""; },
-      onClick(){ if (!dragged) openPM(filtered(), filtered().findIndex(x=>x.id===card.d.id)); }
-    })[0];
-    card._drag = drag;
+  function drawVisualizer() {
+    const canvas = $('#ip-audio-canvas');
+    if (!canvas) return;
 
-    el.addEventListener("mouseenter", ()=>{ if (drag.isDragging) return;
-      gsap.to(el, {rotation:0, scale:1.05, zIndex:50, duration:.3, ease:"power2.out", overwrite:"auto"}); });
-    el.addEventListener("mousemove", e=>{ if (drag.isDragging) return;
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX-r.left)/r.width-0.5, py = (e.clientY-r.top)/r.height-0.5;
-      gsap.to(el, {rotationY: px*14, rotationX: -py*14, duration:.4, ease:"power2.out", overwrite:"auto"}); });
-    el.addEventListener("mouseleave", ()=>{ if (drag.isDragging) return;
-      gsap.to(el, {rotation:card.rot, rotationX:0, rotationY:0, scale:1, zIndex:1, duration:.5, ease:"power2.out", overwrite:"auto"}); });
+    const ctx = canvas.getContext('2d');
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      if (!isListening) return;
+      animationFrameId = requestAnimationFrame(draw);
+      analyser.getByteTimeDomainData(dataArray);
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const val = (dataArray[i] - 128) / 128;
+        sum += val * val;
+      }
+      const rms = Math.sqrt(sum / bufferLength);
+      const volume = Math.min(rms * 4.5, 1.0);
+
+      volHistory.shift();
+      volHistory.push(volume);
+
+      ctx.fillStyle = '#18181b';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      const barSpacing = w / volHistory.length;
+      for (let i = 0; i < volHistory.length; i++) {
+        const vol = volHistory[i];
+        const barHeight = Math.max(2, vol * (h * 0.85));
+        const barWidth = 3;
+        const x = i * barSpacing;
+        const y = (h - barHeight) / 2;
+
+        if (i >= volHistory.length * 0.8) {
+          ctx.fillStyle = 'rgba(226, 232, 240, 0.9)';
+        } else {
+          ctx.fillStyle = '#71717a';
+        }
+        ctx.fillRect(x, y, barWidth, barHeight);
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(w * 0.8, 0);
+      ctx.lineTo(w * 0.8, h);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    };
+
+    draw();
   }
 
-  function reshuffle(){
-    if (isMobile()){ layoutBoard(true); return; }
-    const board = $("#ip-board"), W = board.clientWidth, CW = 290, GAP = 26;
-    const cols = Math.max(1, Math.floor((W + GAP)/(CW + GAP)));
-    const cellW = W/cols, rowH = 264;
-    const order = shuffle(boardCards);
-    order.forEach((card,i)=>{
-      const col = i%cols, row = Math.floor(i/cols);
-      card.x = Math.max(0, col*cellW + (cellW-CW)/2 + rand(-16,16));
-      card.y = Math.max(0, row*rowH + rand(-12,12) + 8);
-      card.rot = rand(-5,5); card.el.dataset.rot = card.rot;
-      if (hasGSAP) gsap.to(card.el, {x:card.x, y:card.y, rotation:card.rot, rotationX:0, rotationY:0, scale:1,
-        duration:.7, ease:"back.out(1.3)", delay:i*0.03, overwrite:"auto"});
-    });
-    toast("Board reshuffled 🔀", true);
+  function initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      logDiag('SpeechRecognition API not found in this browser context.');
+      updateStatus('<span style="color:#ef4444"><i class="fas fa-exclamation-triangle"></i> Speech Recognition API is not supported in this browser. Please use Chrome, Edge or Safari.</span>');
+      $('#ip-rec-btn').disabled = true;
+      $('#ip-rec-btn').style.opacity = '0.5';
+      return;
+    }
+
+    logDiag('Initializing webkitSpeechRecognition instance...');
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = $('#ip-opt-lang').value;
+    logDiag(`Recognition properties configured (continuous: true, interim: true, lang: "${recognition.lang}").`);
+
+    recognition.onstart = () => {
+      isListening = true;
+      $('#ip-rec-btn').classList.add('recording');
+      updateStatus('<span style="color:var(--brand-ink)"><i class="fas fa-circle-notch fa-spin"></i> Listening... Speak clearly.</span>');
+      startTimer();
+      logDiag('SpeechRecognition started (onstart event fired).');
+    };
+
+    recognition.onaudiostart = () => logDiag('Audio input session started (onaudiostart)');
+    recognition.onsoundstart = () => logDiag('Sound wave activity detected (onsoundstart)');
+    recognition.onspeechstart = () => logDiag('Speech vocal activity detected (onspeechstart)');
+    
+    recognition.onspeechend = () => logDiag('Vocal speech stopped (onspeechend)');
+    recognition.onsoundend = () => logDiag('Sound wave stopped (onsoundend)');
+    recognition.onaudioend = () => logDiag('Audio capturing ended (onaudioend)');
+
+    recognition.onresult = (event) => {
+      logDiag(`Transcription result event fired (resultIndex: ${event.resultIndex}, length: ${event.results.length})`);
+      let interimTranscript = '';
+      let newFinals = '';
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const transcript = event.results[i][0].transcript;
+        const isFinal = event.results[i].isFinal;
+        const confidence = event.results[i][0].confidence;
+        logDiag(`  - Result ${i}: "${transcript}" (isFinal: ${isFinal}, confidence: ${confidence.toFixed(3)})`);
+
+        if (isFinal) {
+          newFinals += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      if (newFinals) {
+        accumulatedTranscript += newFinals;
+        window.latestTranscription = accumulatedTranscript.trim();
+      }
+
+      renderTranscriptText(accumulatedTranscript, interimTranscript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      logDiag(`SpeechRecognition error event: "${event.error}"`);
+      if (event.error === 'not-allowed') {
+        updateStatus('<span style="color:#ef4444"><i class="fas fa-lock"></i> Microphone access blocked. Enable permission in address bar.</span>');
+        stopListening();
+      } else if (event.error === 'network') {
+        updateStatus('<span style="color:#ef4444"><i class="fas fa-wifi"></i> Network error. Speech recognition requires internet.</span>');
+      } else if (event.error === 'no-speech') {
+        // Normal quiet filter
+      } else {
+        updateStatus(`<span style="color:#ef4444"><i class="fas fa-exclamation-triangle"></i> Error: ${event.error}</span>`);
+      }
+    };
+
+    recognition.onend = () => {
+      logDiag('SpeechRecognition session finished (onend event fired).');
+      if (isListening && $('#ip-opt-continuous').checked && $('#ip-opt-engine').value === 'browser-speech') {
+        logDiag('Continuous mode active. Restarting SpeechRecognition...');
+        try {
+          recognition.lang = $('#ip-opt-lang').value;
+          recognition.start();
+        } catch (e) {
+          logDiag(`Error restarting: ${e.message}`);
+        }
+      } else {
+        stopListening();
+      }
+    };
   }
 
-  /* =================================================================
-     PRESENTATION MODE
-     ================================================================= */
-  const PM = { queue: [], idx: 0, revealed: false, auto: null };
-  const TRANSITIONS = [
-    { out:{xPercent:-120, opacity:0}, in:{xPercent:120, opacity:0} },
-    { out:{xPercent:120, opacity:0}, in:{xPercent:-120, opacity:0} },
-    { out:{yPercent:-110, opacity:0}, in:{yPercent:110, opacity:0} },
-    { out:{yPercent:110, opacity:0}, in:{yPercent:-110, opacity:0} },
-    { out:{scale:.55, opacity:0}, in:{scale:1.3, opacity:0} },
-    { out:{rotationY:95, opacity:0, transformOrigin:"center center"}, in:{rotationY:-95, opacity:0, transformOrigin:"center center"} },
-    { out:{rotationY:-90, opacity:.2, transformOrigin:"left center"}, in:{rotationY:90, opacity:.2, transformOrigin:"right center"} },
-    { out:{rotationX:80, opacity:0, transformOrigin:"center top"}, in:{rotationX:-80, opacity:0, transformOrigin:"center bottom"} }
-  ];
+  function startListening() {
+    logDiag('Start listening requested.');
+    
+    accumulatedTranscript = $('#ip-transcript-rich').innerText.trim();
+    if (accumulatedTranscript) {
+      accumulatedTranscript += ' ';
+    }
+    
+    isListening = true;
+    const engine = $('#ip-opt-engine').value;
+    const deviceId = $('#ip-mic-select').value;
+    logDiag(`Using transcription engine: "${engine}"`);
 
-  function openPM(queue, startIdx){
-    PM.queue = queue && queue.length ? queue : shuffle(DECK);
-    PM.idx = Math.max(0, startIdx||0);
-    $("#pm").classList.add("show");
-    document.body.style.overflow = "hidden";
-    $("#pm-total").textContent = PM.queue.length;
-    renderPM(true);
+    if (engine === 'browser-speech') {
+      if (!recognition) initSpeechRecognition();
+      if (!recognition) return;
+      
+      startVisualizer(deviceId, false);
+      try {
+        recognition.continuous = $('#ip-opt-continuous').checked;
+        recognition.interimResults = $('#ip-opt-interim').checked;
+        recognition.lang = $('#ip-opt-lang').value;
+        logDiag(`Calling recognition.start() with lang "${recognition.lang}"...`);
+        recognition.start();
+      } catch (e) {
+        console.error('Recognition start error:', e);
+        logDiag(`Recognition start exception: ${e.message}`);
+      }
+    } else if (engine === 'modulate-stream') {
+      startVisualizer(deviceId, true);
+      $('#ip-rec-btn').classList.add('recording');
+      updateStatus('<span style="color:#06b6d4"><i class="fas fa-circle-notch fa-spin"></i> Streaming via Modulate.ai...</span>');
+      startTimer();
+    } else if (engine === 'modulate-batch') {
+      startVisualizer(deviceId, false);
+      $('#ip-rec-btn').classList.add('recording');
+      updateStatus('<span style="color:var(--brand)"><i class="fas fa-circle-notch fa-spin"></i> Recording backup (Modulate.ai batch)...</span>');
+      startTimer();
+    }
   }
-  function closePM(){ stopAuto(); $("#pm").classList.remove("show"); document.body.style.overflow=""; layoutBoard(false); renderDashboard(true); }
 
-  function renderPM(first){
-    const slide = $("#pm-slide");
-    if (PM.idx >= PM.queue.length){ renderPMDone(); return; }
-    const d = PM.queue[PM.idx];
-    const num = DECK.findIndex(x=>x.id===d.id)+1;
-    PM.revealed = false;
-    $("#pm-cur").textContent = PM.idx+1;
-    $("#pm-prog").style.width = (PM.idx/PM.queue.length*100)+"%";
+  function stopListening() {
+    logDiag('Stop listening requested.');
+    isListening = false;
+    
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (e) {
+        logDiag(`SpeechRecognition stop exception: ${e.message}`);
+      }
+    }
 
-    const html = `<div class="pm-watermark">${String(num).padStart(2,'0')}</div>
-      <span class="pm-ribbon ${d.cat}"><span class="rdot"></span> ${CATS[d.cat].label} · ${d.sub}</span>
-      <h2 class="pm-q">${d.q}</h2>
-      <div class="pm-a" id="pm-a">${d.a}</div>
-      <div class="pm-tip" id="pm-tip"><i class="fas fa-keyboard"></i> Press <kbd>Space</kbd> to reveal the model answer</div>`;
+    if (ws) {
+      try {
+        ws.close();
+        ws = null;
+        logDiag('Modulate WebSocket connection closed.');
+      } catch (e) {
+        logDiag(`WebSocket close exception: ${e.message}`);
+      }
+    }
 
-    const t = TRANSITIONS[Math.floor(Math.random()*TRANSITIONS.length)];
-    if (hasGSAP && !first){
-      gsap.to(slide, {...t.out, duration:.32, ease:"power2.in", onComplete(){
-        slide.innerHTML = html;
-        gsap.fromTo(slide, {...t.in}, {xPercent:0, yPercent:0, scale:1, rotationY:0, rotationX:0, opacity:1, duration:.5, ease:"power3.out",
-          onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
-      }});
+    $('#ip-rec-btn').classList.remove('recording');
+    stopTimer();
+    stopRecordingBackup();
+    stopVisualizer();
+    updateStatus('Recording paused. Click microphone to resume.');
+    saveToHistory();
+  }
+
+  function toggleListening() {
+    if (isListening) {
+      stopListening();
     } else {
-      slide.innerHTML = html;
-      if (hasGSAP) gsap.fromTo(slide, {opacity:0, y:30, scale:.96}, {opacity:1, y:0, scale:1, duration:.6, ease:"power3.out", onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
-    }
-    renderPMFoot(false);
-  }
-
-  function renderPMFoot(done){
-    const foot = $("#pm-foot");
-    if (done){ foot.innerHTML = ""; return; }
-    foot.innerHTML = `
-      <button class="pm-nav" id="pm-prev" title="Previous (←)"><i class="fas fa-chevron-left"></i></button>
-      <button class="pm-grade again" id="pm-again"><i class="fas fa-rotate-right"></i> Review again</button>
-      <button class="pm-grade reveal" id="pm-reveal"><i class="fas fa-eye"></i> Reveal</button>
-      <button class="pm-grade got" id="pm-got"><i class="fas fa-check"></i> Got it</button>
-      <button class="pm-nav" id="pm-next" title="Next (→)"><i class="fas fa-chevron-right"></i></button>
-      <div class="pm-kbd"><kbd>Space</kbd> reveal · <kbd>1</kbd> review · <kbd>2</kbd> got it · <kbd>←</kbd> <kbd>→</kbd> navigate · <kbd>Esc</kbd> exit</div>`;
-    $("#pm-prev").onclick = pmPrev;
-    $("#pm-next").onclick = pmNext;
-    $("#pm-reveal").onclick = pmReveal;
-    $("#pm-again").onclick = ()=>{ const d=PM.queue[PM.idx]; markCard(d.id,"review"); pmNext(); };
-    $("#pm-got").onclick = ()=>{ const d=PM.queue[PM.idx]; markCard(d.id,"mastered"); pmNext(); };
-  }
-
-  function pmReveal(){
-    const a = $("#pm-a"); if (!a || PM.revealed) return;
-    PM.revealed = true; a.classList.add("show");
-    const tip = $("#pm-tip"); if (tip) tip.style.display="none";
-    const rb = $("#pm-reveal"); if (rb){ rb.innerHTML = '<i class="fas fa-check-circle"></i> Revealed'; rb.style.opacity=.55; }
-    if (hasGSAP) gsap.from(a.children, {opacity:0, y:16, duration:.45, stagger:.06, ease:"power2.out"});
-  }
-  function pmNext(){ PM.idx++; renderPM(false); }
-  function pmPrev(){ if (PM.idx>0){ PM.idx--; renderPM(false); } }
-
-  function renderPMDone(){
-    stopAuto();
-    const did = PM.queue.length, pct = Math.round(masteredCount()/DECK.length*100), streak = getStreak().count;
-    $("#pm-cur").textContent = did; $("#pm-prog").style.width = "100%";
-    const slide = $("#pm-slide");
-    slide.innerHTML = `<div class="pm-done">
-      <div class="big">🎉</div>
-      <h3>Session complete!</h3>
-      <p>You presented <b>${did}</b> slide${did>1?'s':''}. Readiness is now <b>${pct}%</b> and your streak is <b>${streak} day${streak!==1?'s':''}</b>. Proud of you — go get that offer.</p></div>`;
-    if (hasGSAP) gsap.fromTo(slide, {opacity:0, scale:.9}, {opacity:1, scale:1, duration:.5, ease:"back.out(1.5)", onComplete(){ gsap.set(slide,{clearProps:"transform"}); }});
-    burst(180);
-    const foot = $("#pm-foot");
-    foot.innerHTML = `<button class="pm-grade got" id="pm-again-all"><i class="fas fa-redo"></i> Go again (shuffled)</button>
-      <button class="pm-grade again" id="pm-finish"><i class="fas fa-flag-checkered"></i> Done for now</button>`;
-    $("#pm-again-all").onclick = ()=> openPM(shuffle(DECK), 0);
-    $("#pm-finish").onclick = closePM;
-  }
-
-  /* autoplay */
-  function toggleAuto(){
-    if (PM.auto){ stopAuto(); }
-    else {
-      $("#pm-autoplay").innerHTML = '<i class="fas fa-pause"></i> <span>Auto</span>';
-      $("#pm-autoplay").style.background = "rgba(34,211,238,.3)";
-      PM.auto = setInterval(()=>{
-        if (PM.idx >= PM.queue.length){ stopAuto(); return; }
-        if (!PM.revealed) pmReveal(); else pmNext();
-      }, 5200);
+      startListening();
     }
   }
-  function stopAuto(){ if (PM.auto){ clearInterval(PM.auto); PM.auto=null; }
-    const b = $("#pm-autoplay"); if (b){ b.innerHTML = '<i class="fas fa-play"></i> <span>Auto</span>'; b.style.background=""; } }
 
-  /* =================================================================
-     MARK / TOAST / CONFETTI
-     ================================================================= */
-  function markCard(id, status){
-    const prev = state[id]; state[id] = status; saveState(); bumpStreak();
-    renderDashboard(true); renderCats(); renderChips();
-    const bc = document.querySelector(`.bc[data-id="${id}"]`);
-    if (bc){ bc.classList.remove("mastered","review"); bc.classList.add(status); }
-    if (status==="mastered" && prev!=="mastered"){
-      const m = masteredCount();
-      toast(`Mastered! ${m} / ${DECK.length} done`, true);
-      const pct = Math.round(m/DECK.length*100);
-      if (pct===100) burst(280); else if (m%5===0) burst(130);
-    } else if (status==="review"){ toast("Flagged to review again", false); }
+  function updateStatus(html) {
+    $('#ip-rec-status').innerHTML = html;
   }
 
-  let toastTimer;
-  function toast(msg, good){
-    const t = $("#ip-toast"); $("#ip-toast-text").textContent = msg;
-    const i = t.querySelector("i"); i.className = good ? "fas fa-check-circle" : "fas fa-flag";
-    i.style.color = good ? "#4ade80" : "#fbbf24";
-    t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(()=> t.classList.remove("show"), 2200);
+  function startTimer() {
+    stopTimer();
+    recordStartTime = Date.now();
+    $('#ip-rec-timer').textContent = '00:00';
+    $('#ip-rec-timer').style.color = '#ef4444';
+    recordTimerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+      const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const s = String(elapsed % 60).padStart(2, '0');
+      $('#ip-rec-timer').textContent = `${m}:${s}`;
+    }, 1000);
   }
 
-  function burst(n){
-    const cv = $("#ip-confetti"), ctx = cv.getContext("2d");
-    cv.width = innerWidth; cv.height = innerHeight;
-    const colors = ["#2f6bff","#7c3aed","#06b6d4","#22c55e","#f59e0b"];
-    const parts = Array.from({length:n}, ()=>({ x: innerWidth/2+(Math.random()-.5)*140, y: innerHeight/2.3,
-      vx:(Math.random()-.5)*15, vy:Math.random()*-16-4, g:.35+Math.random()*.2, s:5+Math.random()*7,
-      c:colors[Math.floor(Math.random()*colors.length)], rot:Math.random()*6.28, vr:(Math.random()-.5)*.4, life:0 }));
-    let frame=0;
-    (function anim(){
-      ctx.clearRect(0,0,cv.width,cv.height);
-      parts.forEach(p=>{ p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life++;
-        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.globalAlpha=Math.max(0,1-p.life/95);
-        ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); ctx.restore(); });
-      if (++frame<100) requestAnimationFrame(anim); else ctx.clearRect(0,0,cv.width,cv.height);
-    })();
+  function stopTimer() {
+    if (recordTimerInterval) {
+      clearInterval(recordTimerInterval);
+      recordTimerInterval = null;
+    }
+    $('#ip-rec-timer').style.color = 'var(--muted)';
   }
 
-  /* =================================================================
-     HERO PARTICLES (constellation)
-     ================================================================= */
-  function initParticles(){
-    const cv = $("#ip-particles"); if (!cv) return;
-    const ctx = cv.getContext("2d"); let w,h,pts;
-    function size(){ const r = cv.parentElement.getBoundingClientRect(); w=cv.width=r.width; h=cv.height=r.height;
-      pts = Array.from({length: Math.min(46, Math.floor(w/22))}, ()=>({ x:Math.random()*w, y:Math.random()*h,
-        vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35, r:Math.random()*2+1 })); }
-    size(); window.addEventListener("resize", size);
-    (function loop(){
-      ctx.clearRect(0,0,w,h);
-      pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1;
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.28); ctx.fillStyle="rgba(47,107,255,.32)"; ctx.fill(); });
-      for (let i=0;i<pts.length;i++) for (let j=i+1;j<pts.length;j++){
-        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, dist=Math.hypot(dx,dy);
-        if (dist<110){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.strokeStyle=`rgba(124,58,237,${.13*(1-dist/110)})`; ctx.lineWidth=1; ctx.stroke(); } }
-      requestAnimationFrame(loop);
-    })();
+  function renderTranscriptText(finalText, interimText) {
+    const editor = $('#ip-transcript-rich');
+    if (!editor) return;
+
+    let html = finalText;
+    if (interimText && $('#ip-opt-interim').checked) {
+      html += `<span class="interim">${interimText}</span>`;
+    }
+
+    editor.innerHTML = html;
+
+    window.latestTranscription = (finalText + interimText).trim();
+
+    if ($('#ip-opt-autoscroll').checked) {
+      editor.scrollTop = editor.scrollHeight;
+    }
+
+    updateWordCount(finalText + interimText);
   }
 
-  /* =================================================================
-     WIRING
-     ================================================================= */
-  $("#ip-search").addEventListener("input", e=>{ searchTerm = e.target.value.trim(); layoutBoard(false); });
-  $("#ip-shuffle").addEventListener("click", reshuffle);
-  $("#ip-present").addEventListener("click", ()=> openPM(shuffle(filtered()), 0));
-  $("#ip-start-session").addEventListener("click", ()=> openPM(shuffle(DECK), 0));
-  $("#ip-review-weak").addEventListener("click", ()=>{
-    const weak = DECK.filter(d => state[d.id]!=="mastered");
-    if (!weak.length){ toast("You've mastered everything! 🎉", true); burst(220); return; }
-    openPM(shuffle(weak), 0);
-  });
-  $("#pm-close").addEventListener("click", closePM);
-  $("#pm-autoplay").addEventListener("click", toggleAuto);
-  $("#pm-shuffle-live").addEventListener("click", ()=>{
-    const remaining = PM.queue.slice(PM.idx);
-    PM.queue = PM.queue.slice(0,PM.idx).concat(shuffle(remaining));
-    renderPM(false); toast("Shuffled the rest 🔀", true);
+  function updateWordCount(text) {
+    const cleanText = text.trim();
+    const words = cleanText ? cleanText.split(/\s+/).length : 0;
+    const chars = text.length;
+    $('#ip-word-count').textContent = `${words} word${words !== 1 ? 's' : ''} · ${chars} character${chars !== 1 ? 's' : ''}`;
+  }
+
+  function saveToHistory() {
+    const text = $('#ip-transcript-rich').innerText.trim();
+    if (!text) return;
+
+    if (transcriptHistory.length > 0 && transcriptHistory[0].text === text) return;
+
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const item = { id: Date.now(), timestamp, text };
+    transcriptHistory.unshift(item);
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const list = $('#ip-history-list');
+    if (!list) return;
+
+    if (transcriptHistory.length === 0) {
+      list.innerHTML = '<div class="ip-history-empty">No transcripts saved in this session. Click "Got it" or pause to log your transcripts.</div>';
+      return;
+    }
+
+    list.innerHTML = transcriptHistory.map(item => `
+      <div class="ip-history-item" data-id="${item.id}">
+        <div class="ip-history-meta">
+          <span><i class="far fa-clock"></i> ${item.timestamp}</span>
+          <span class="ip-history-actions">
+            <button class="ip-history-btn ip-history-copy" title="Copy to clipboard"><i class="fas fa-copy"></i> Copy</button>
+            <button class="ip-history-btn ip-history-del" style="color:#ef4444" title="Delete"><i class="fas fa-trash-alt"></i> Delete</button>
+          </span>
+        </div>
+        <div class="ip-history-text">${item.text}</div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.ip-history-item').forEach(itemEl => {
+      const id = parseInt(itemEl.dataset.id);
+      const text = itemEl.querySelector('.ip-history-text').textContent;
+
+      itemEl.querySelector('.ip-history-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(text).then(() => {
+          toast('Copied to clipboard!', true);
+        });
+      });
+
+      itemEl.querySelector('.ip-history-del').addEventListener('click', () => {
+        transcriptHistory = transcriptHistory.filter(h => h.id !== id);
+        renderHistory();
+        toast('History item deleted', false);
+      });
+    });
+  }
+
+  function updateEngineUI() {
+    const engine = $('#ip-opt-engine').value;
+    const langSelect = $('#ip-opt-lang');
+    if (!langSelect) return;
+    
+    if (engine === 'modulate-stream') {
+      langSelect.disabled = true;
+      langSelect.style.opacity = '0.5';
+      logDiag('Language selection disabled (Modulate.ai Streaming is English-only).');
+    } else {
+      langSelect.disabled = false;
+      langSelect.style.opacity = '1';
+    }
+  }
+
+  function switchTab(tabId) {
+    const deckBtn = $('#ip-tab-deck');
+    const speechBtn = $('#ip-tab-speech');
+    const deckView = $('#ip-practice-view');
+    const speechView = $('#ip-speech-view');
+
+    if (tabId === 'speech') {
+      deckBtn.classList.remove('active');
+      speechBtn.classList.add('active');
+      deckView.style.display = 'none';
+      speechView.style.display = 'block';
+      loadMicrophones();
+      updateEngineUI();
+      if (!recognition) initSpeechRecognition();
+      stopVisualizer();
+      logDiag('Entered Speech Lab tab.');
+    } else {
+      speechBtn.classList.remove('active');
+      deckBtn.classList.add('active');
+      speechView.style.display = 'none';
+      deckView.style.display = 'block';
+      if (isListening) stopListening();
+      stopVisualizer();
+      logDiag('Exited Speech Lab tab.');
+    }
+  }
+
+  $('#ip-tab-deck').addEventListener('click', () => switchTab('deck'));
+  $('#ip-tab-speech').addEventListener('click', () => switchTab('speech'));
+  $('#ip-rec-btn').addEventListener('click', toggleListening);
+
+  $('#ip-mic-select').addEventListener('change', () => {
+    logDiag(`Microphone source changed to: ${$('#ip-mic-select').value}`);
+    if (isListening) {
+      stopListening();
+      setTimeout(() => {
+        startListening();
+      }, 400);
+    }
   });
 
-  document.addEventListener("keydown", e=>{
-    if (!$("#pm").classList.contains("show")) return;
-    if (e.key==="Escape") return closePM();
-    if (PM.idx >= PM.queue.length) return;
-    const d = PM.queue[PM.idx];
-    if (e.code==="Space"){ e.preventDefault(); pmReveal(); }
-    else if (e.key==="ArrowRight"){ pmNext(); }
-    else if (e.key==="ArrowLeft"){ pmPrev(); }
-    else if (e.key==="1"){ markCard(d.id,"review"); pmNext(); }
-    else if (e.key==="2"){ markCard(d.id,"mastered"); pmNext(); }
+  $('#ip-opt-engine').addEventListener('change', () => {
+    logDiag(`Selected transcription engine changed to: ${$('#ip-opt-engine').value}`);
+    updateEngineUI();
+    if (isListening) {
+      stopListening();
+      setTimeout(() => {
+        startListening();
+      }, 400);
+    }
   });
 
-  $("#ip-reset").addEventListener("click", ()=>{
-    if (!confirm("Reset all progress and streak? This can't be undone.")) return;
-    localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_STREAK);
-    for (const k in state) delete state[k];
-    renderGreeting(); renderDashboard(true); renderCats(); renderChips(); layoutBoard(true);
-    toast("Progress reset — fresh start", false);
+  $('#ip-opt-lang').addEventListener('change', () => {
+    logDiag(`Selected language changed to: ${$('#ip-opt-lang').value}`);
+    if (isListening) {
+      stopListening();
+      setTimeout(() => {
+        startListening();
+      }, 400);
+    }
   });
 
-  let rT; window.addEventListener("resize", ()=>{ clearTimeout(rT); rT = setTimeout(()=> layoutBoard(false), 250); });
+  $('#ip-btn-clear').addEventListener('click', () => {
+    const text = $('#ip-transcript-rich').innerText.trim();
+    if (text && confirm('Clear current transcript?')) {
+      saveToHistory();
+      accumulatedTranscript = '';
+      window.latestTranscription = '';
+      renderTranscriptText('', '');
+      updateWordCount('');
+      toast('Workspace cleared', false);
+      logDiag('Workspace cleared.');
+    }
+  });
 
-  /* INIT */
-  renderGreeting(); renderDashboard(false); renderCats(); renderChips(); layoutBoard(true); initParticles();
+  $('#ip-btn-copy').addEventListener('click', () => {
+    const text = $('#ip-transcript-rich').innerText.trim();
+    if (!text) {
+      toast('Nothing to copy', false);
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      toast('Copied to clipboard!', true);
+    });
+  });
+
+  $('#ip-btn-download').addEventListener('click', () => {
+    const text = $('#ip-transcript-rich').innerText.trim();
+    if (!text) {
+      toast('Nothing to download', false);
+      return;
+    }
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `speech-transcript-${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Downloaded successfully!', true);
+  });
+
+  $('#ip-transcript-rich').addEventListener('input', (e) => {
+    accumulatedTranscript = e.target.innerText;
+    window.latestTranscription = accumulatedTranscript.trim();
+    updateWordCount(accumulatedTranscript);
+  });
+
+  /* ---------------- INIT ---------------- */
+  function renderAll() { renderQuote(); renderDashboard(false); renderPillars(); renderChips(); renderDeck(); stopVisualizer(); }
+  renderAll();
+  if (window.gsap && !REDUCED) {
+    gsap.fromTo('.ip-hero-left > *, .ip-ready', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .65, stagger: .08, ease: 'power3.out', clearProps: 'all', delay: .1 });
+  }
+  })();
   </script>
 </body>
 </html>
