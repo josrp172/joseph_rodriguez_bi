@@ -1418,14 +1418,14 @@
       }
 
       mediaRecorder = new MediaRecorder(stream, options);
-      mediaRecorder.ondataavailable = async (event) => {
+      mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           audioChunks.push(event.data);
           
           if (ws && ws.readyState === WebSocket.OPEN) {
             try {
-              const buf = await event.data.arrayBuffer();
-              ws.send(buf);
+              // Send the Blob directly in synchronous execution to guarantee audio packet order
+              ws.send(event.data);
             } catch (err) {
               logDiag(`WebSocket send exception: ${err.message}`);
             }
@@ -1460,14 +1460,9 @@
     logDiag('Connecting to Modulate.ai Streaming STT WebSocket...');
     const apiKey = '5842dbea-9ee6-4be8-9f03-b4351e686267';
     
-    // Determine the browser's supported recording container format
-    let format = 'webm';
-    if (!MediaRecorder.isTypeSupported('audio/webm')) {
-      format = 'ogg';
-    }
-    
-    // Target the specialized low-latency English STT model
-    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming-english-v2?api_key=${apiKey}&audio_format=${format}`;
+    // Target the specialized low-latency English STT model.
+    // Container formats (webm/ogg) are auto-detected by the server, so no additional parameters are needed.
+    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming-english-v2?api_key=${apiKey}`;
     logDiag(`WebSocket URL initialized: ${wsUrl}`);
 
     ws = new WebSocket(wsUrl);
@@ -1475,6 +1470,9 @@
     ws.onopen = () => {
       logDiag('Modulate WebSocket connection opened successfully.');
       updateStatus('<span style="color:#06b6d4"><i class="fas fa-circle-notch fa-spin"></i> Live Streaming via Modulate.ai...</span>');
+      
+      // Start streaming audio only after the connection is open so the container headers are captured first
+      startRecordingStreaming(stream);
     };
 
     ws.onmessage = (event) => {
@@ -1573,7 +1571,6 @@
         
         if (isStreaming) {
           connectWebSocket(mediaStream);
-          startRecordingStreaming(mediaStream);
         } else {
           startRecordingBackup(mediaStream);
         }
@@ -1583,7 +1580,6 @@
           mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
           if (isStreaming) {
             connectWebSocket(mediaStream);
-            startRecordingStreaming(mediaStream);
           } else {
             startRecordingBackup(mediaStream);
           }
@@ -1637,7 +1633,6 @@
 
       if (isStreaming) {
         connectWebSocket(mediaStream);
-        startRecordingStreaming(mediaStream);
       } else {
         startRecordingBackup(mediaStream);
       }
