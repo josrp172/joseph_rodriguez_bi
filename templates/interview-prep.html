@@ -1459,8 +1459,16 @@
   function connectWebSocket(stream) {
     logDiag('Connecting to Modulate.ai Streaming STT WebSocket...');
     const apiKey = '5842dbea-9ee6-4be8-9f03-b4351e686267';
-    // Accessing Velma streaming endpoint
-    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming?api_key=${apiKey}`;
+    
+    // Determine the browser's supported recording container format
+    let format = 'webm';
+    if (!MediaRecorder.isTypeSupported('audio/webm')) {
+      format = 'ogg';
+    }
+    
+    // Target the specialized low-latency English STT model
+    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming-english-v2?api_key=${apiKey}&audio_format=${format}`;
+    logDiag(`WebSocket URL initialized: ${wsUrl}`);
 
     ws = new WebSocket(wsUrl);
 
@@ -1474,28 +1482,19 @@
         const data = JSON.parse(event.data);
         logDiag(`WS response payload: ${event.data}`);
         
-        let text = "";
-        let isFinal = false;
-
-        // Parse transcription from standard Velma response objects
-        if (data.type === 'utterance' && data.utterance) {
-          text = data.utterance.text || "";
-          isFinal = true;
-        } else if (data.text !== undefined) {
-          text = data.text;
-          isFinal = data.is_final !== undefined ? data.is_final : true;
-        } else if (data.transcript !== undefined) {
-          text = data.transcript;
-          isFinal = data.is_final !== undefined ? data.is_final : true;
-        }
-
-        if (text) {
-          if (isFinal) {
-            accumulatedTranscript += text + " ";
-            renderTranscriptText(accumulatedTranscript.trim() + " ", "");
-          } else {
-            renderTranscriptText(accumulatedTranscript, text);
-          }
+        if (data.type === 'partial_utterance' && data.partial_utterance) {
+          // Replace rolling/interim displayed text (not a delta)
+          const interimText = data.partial_utterance.text || "";
+          logDiag(`  - Partial: "${interimText}"`);
+          renderTranscriptText(accumulatedTranscript, interimText);
+        } else if (data.type === 'utterance' && data.utterance) {
+          // Lock in the finalized utterance sentence, append, and clear interim
+          const finalizedText = data.utterance.text || "";
+          logDiag(`  - Utterance Finalized: "${finalizedText}"`);
+          accumulatedTranscript += finalizedText + " ";
+          renderTranscriptText(accumulatedTranscript, "");
+        } else if (data.type === 'done') {
+          logDiag(`  - Stream done event received (processed duration: ${data.duration_ms}ms)`);
         }
       } catch (e) {
         console.error('WS JSON parse error:', e);
