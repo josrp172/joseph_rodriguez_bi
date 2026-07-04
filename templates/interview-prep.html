@@ -1406,42 +1406,50 @@
     }
   }
 
-  function startRecordingStreaming(stream) {
-    audioChunks = [];
-    try {
-      let options = { mimeType: 'audio/webm' };
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options = { mimeType: 'audio/ogg' };
-      }
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        options = {};
-      }
+  let scriptProcessor = null;
 
-      mediaRecorder = new MediaRecorder(stream, options);
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.push(event.data);
+  function startRawPCMStreaming(stream) {
+    try {
+      logDiag('Setting up ScriptProcessorNode for 16kHz mono PCM streaming...');
+      
+      // 2048 buffer size, 1 input channel, 1 output channel.
+      // At 16000Hz, a buffer of 2048 gives low-latency processing every ~128ms.
+      scriptProcessor = audioCtx.createScriptProcessor(2048, 1, 1);
+      
+      source.connect(scriptProcessor);
+      scriptProcessor.connect(audioCtx.destination);
+
+      scriptProcessor.onaudioprocess = (event) => {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          const inputData = event.inputBuffer.getChannelData(0);
           
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            try {
-              // Send the Blob directly in synchronous execution to guarantee audio packet order
-              ws.send(event.data);
-            } catch (err) {
-              logDiag(`WebSocket send exception: ${err.message}`);
-            }
+          // Convert Float32Array [-1.0, 1.0] to 16-bit signed PCM (s16le)
+          const pcmData = new Int16Array(inputData.length);
+          for (let i = 0; i < inputData.length; i++) {
+            const s = Math.max(-1, Math.min(1, inputData[i]));
+            pcmData[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
           }
+          
+          // Send raw PCM bytes directly over the WebSocket
+          ws.send(pcmData.buffer);
         }
       };
-
-      mediaRecorder.onstop = () => {
-        logDiag('Streaming MediaRecorder stopped.');
-      };
-
-      mediaRecorder.start(250); // Stream chunks every 250ms for low latency
-      logDiag('Streaming MediaRecorder active with 250ms chunks.');
+      logDiag('ScriptProcessorNode active. Streaming raw 16kHz PCM...');
     } catch (e) {
-      console.error('Error starting MediaRecorder streaming:', e);
-      logDiag(`MediaRecorder streaming error: ${e.message}`);
+      console.error('Error starting PCM streaming:', e);
+      logDiag(`PCM streaming error: ${e.message}`);
+    }
+  }
+
+  function stopRawPCMStreaming() {
+    if (scriptProcessor) {
+      try {
+        scriptProcessor.disconnect();
+        scriptProcessor = null;
+        logDiag('ScriptProcessorNode disconnected.');
+      } catch (e) {
+        logDiag(`ScriptProcessor disconnect error: ${e.message}`);
+      }
     }
   }
 
@@ -1460,9 +1468,8 @@
     logDiag('Connecting to Modulate.ai Streaming STT WebSocket...');
     const apiKey = '5842dbea-9ee6-4be8-9f03-b4351e686267';
     
-    // Target the specialized low-latency English STT model.
-    // Container formats (webm/ogg) are auto-detected by the server, so no additional parameters are needed.
-    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming-english-v2?api_key=${apiKey}`;
+    // Connect using optimal raw 16 kHz mono PCM configuration (bypasses server decoder)
+    const wsUrl = `wss://platform.modulate.ai/api/velma-2-stt-streaming-english-v2?api_key=${apiKey}&audio_format=s16le&sample_rate=16000&num_channels=1`;
     logDiag(`WebSocket URL initialized: ${wsUrl}`);
 
     ws = new WebSocket(wsUrl);
@@ -1471,8 +1478,8 @@
       logDiag('Modulate WebSocket connection opened successfully.');
       updateStatus('<span style="color:#06b6d4"><i class="fas fa-circle-notch fa-spin"></i> Live Streaming via Modulate.ai...</span>');
       
-      // Start streaming audio only after the connection is open so the container headers are captured first
-      startRecordingStreaming(stream);
+      // Start streaming raw PCM bytes
+      startRawPCMStreaming(stream);
     };
 
     ws.onmessage = (event) => {
@@ -1902,6 +1909,7 @@
     $('#ip-rec-btn').classList.remove('recording');
     stopTimer();
     stopRecordingBackup();
+    stopRawPCMStreaming();
     stopVisualizer();
     updateStatus('Recording paused. Click microphone to resume.');
     saveToHistory();
